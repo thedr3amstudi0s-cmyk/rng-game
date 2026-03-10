@@ -785,10 +785,8 @@ function initFirebase(cfg){
   db    = firebase.firestore();
   rtdb  = firebase.database();
   // Enable offline persistence
-  // Use newer cache settings instead of deprecated enablePersistence
-  try {
-    db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
-  } catch(e) {}
+  // Offline persistence (compat SDK)
+  db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 }
 
 
@@ -1085,12 +1083,14 @@ function buildCrateInfoPanel(crate){
   });
 }
 
-function buildSpinTrack(crate){
+function buildSpinTrack(crate, winningItem, landIdx){
   const track=document.getElementById('spin-track');
   track.innerHTML=''; track.style.transform='translateX(0)';
+  track.style.transition='none';
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
   for(let i=0;i<60;i++){
-    const item=pool[Math.floor(Math.random()*pool.length)];
+    // Place the real winning item exactly at the landing index
+    const item = (winningItem && i===landIdx) ? winningItem : pool[Math.floor(Math.random()*pool.length)];
     const r=getRarity(item.rarity);
     const col=r.color==='rainbow'?'#fff':r.color;
     const el=document.createElement('div');
@@ -1154,24 +1154,27 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
 
 function animateSpin(crate, winningItem){
   return new Promise(resolve=>{
-    // Build track with random filler items
-    buildSpinTrack(crate);
-    const track=document.getElementById('spin-track');
     const iW=108;
     const landIdx=44+Math.floor(Math.random()*3);
-    // Replace the landing slot with the REAL winning item
-    const landingEl=track.querySelectorAll('.spin-item')[landIdx];
-    if(landingEl && winningItem){
-      const r=getRarity(winningItem.rarity);
-      const col=r.color==='rainbow'?'#fff':r.color;
-      landingEl.style.borderColor=col+'88';
-      landingEl.innerHTML=`<span>${winningItem.icon}</span><div class="spin-item-name">${winningItem.name}</div>`;
-    }
+    // Build track with winning item baked in at landIdx
+    buildSpinTrack(crate, winningItem, landIdx);
+    const track=document.getElementById('spin-track');
     const cW=document.getElementById('spin-container').offsetWidth/2;
     const targetX=-(landIdx*iW-cW+iW/2);
+    // Force reflow so transition fires correctly
+    void track.offsetWidth;
     track.style.transition='transform 3.5s cubic-bezier(0.12,0,0.08,1)';
     track.style.transform=`translateX(${targetX}px)`;
-    setTimeout(()=>{track.querySelectorAll('.spin-item')[landIdx]?.classList.add('landing');resolve();},3600);
+    setTimeout(()=>{
+      const landingEl=track.querySelectorAll('.spin-item')[landIdx];
+      if(landingEl){
+        const r=getRarity(winningItem.rarity);
+        const col=r.color==='rainbow'?'#fff':r.color;
+        landingEl.style.borderColor=col;
+        landingEl.style.boxShadow=`0 0 20px ${r.glow||col+'44'}`;
+      }
+      resolve();
+    },3600);
   });
 }
 
