@@ -785,7 +785,10 @@ function initFirebase(cfg){
   db    = firebase.firestore();
   rtdb  = firebase.database();
   // Enable offline persistence
-  db.enablePersistence().catch(()=>{});
+  // Use newer cache settings instead of deprecated enablePersistence
+  try {
+    db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+  } catch(e) {}
 }
 
 
@@ -940,11 +943,13 @@ function updateCoinDisplay(coins){
 // ============================================================
 function setupPresence(){
   if(!S.user||!S.profile)return;
-  const uid=S.user.uid;
-  const ref=rtdb.ref('presence/'+uid);
-  S.presenceRef=ref;
-  ref.set({uid,username:S.profile.username,online:true});
-  ref.onDisconnect().remove();
+  try {
+    const uid=S.user.uid;
+    const ref=rtdb.ref('presence/'+uid);
+    S.presenceRef=ref;
+    ref.set({uid,username:S.profile.username,online:true});
+    ref.onDisconnect().remove();
+  } catch(e){ console.warn('Presence unavailable:', e.message); }
 }
 
 async function leavePresence(){
@@ -952,22 +957,25 @@ async function leavePresence(){
 }
 
 function listenToPresence(){
-  rtdb.ref('presence').on('value',snap=>{
-    const data=snap.val()||{};
-    S.onlinePlayers=Object.values(data).filter(p=>p.uid!==S.user?.uid);
-    if(document.getElementById('page-trade').classList.contains('active')) renderOnlinePlayers();
-  });
+  try {
+    rtdb.ref('presence').on('value',snap=>{
+      const data=snap.val()||{};
+      S.onlinePlayers=Object.values(data).filter(p=>p.uid!==S.user?.uid);
+      if(document.getElementById('page-trade').classList.contains('active')) renderOnlinePlayers();
+    });
+  } catch(e){ console.warn('Presence listen unavailable:', e.message); }
 }
 
 // ============================================================
 // CHAT (Firebase Realtime DB)
 // ============================================================
 function listenToChat(){
-  // Listen to last 50 messages
-  rtdb.ref('chat').limitToLast(50).on('child_added',snap=>{
-    const msg=snap.val();
-    appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
-  });
+  try {
+    rtdb.ref('chat').limitToLast(50).on('child_added',snap=>{
+      const msg=snap.val();
+      if(msg) appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
+    });
+  } catch(e){ console.warn('Chat unavailable:', e.message); }
 }
 
 document.getElementById('chat-send').addEventListener('click',sendChat);
@@ -978,10 +986,12 @@ async function sendChat(){
   const text=input.value.trim().slice(0,200);
   if(!text||!S.user)return;
   input.value='';
-  await rtdb.ref('chat').push({
-    username:S.profile.username, text, isSystem:false,
-    ts:firebase.database.ServerValue.TIMESTAMP,
-  });
+  try {
+    await rtdb.ref('chat').push({
+      username:S.profile.username, text, isSystem:false,
+      ts:firebase.database.ServerValue.TIMESTAMP,
+    });
+  } catch(e){ appendChatMessage(S.profile.username, text, false, ''); }
 }
 
 function appendChatMessage(username,text,isSystem=false,cls=''){
@@ -1109,9 +1119,10 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const btn=document.getElementById('btn-open-crate');
   btn.disabled=true;
   document.getElementById('result-panel').classList.add('hidden');
-  await animateSpin(crate);
+  // Roll the REAL item first, then animate it landing in center
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
+  await animateSpin(crate, item);
   // Save to Firestore
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
   S.inventory.push(invItem);
@@ -1141,18 +1152,26 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   btn.disabled=false;
 });
 
-function animateSpin(crate){
+function animateSpin(crate, winningItem){
   return new Promise(resolve=>{
+    // Build track with random filler items
     buildSpinTrack(crate);
     const track=document.getElementById('spin-track');
-    const items=track.querySelectorAll('.spin-item');
     const iW=108;
     const landIdx=44+Math.floor(Math.random()*3);
+    // Replace the landing slot with the REAL winning item
+    const landingEl=track.querySelectorAll('.spin-item')[landIdx];
+    if(landingEl && winningItem){
+      const r=getRarity(winningItem.rarity);
+      const col=r.color==='rainbow'?'#fff':r.color;
+      landingEl.style.borderColor=col+'88';
+      landingEl.innerHTML=`<span>${winningItem.icon}</span><div class="spin-item-name">${winningItem.name}</div>`;
+    }
     const cW=document.getElementById('spin-container').offsetWidth/2;
     const targetX=-(landIdx*iW-cW+iW/2);
     track.style.transition='transform 3.5s cubic-bezier(0.12,0,0.08,1)';
     track.style.transform=`translateX(${targetX}px)`;
-    setTimeout(()=>{items[landIdx]?.classList.add('landing');resolve();},3600);
+    setTimeout(()=>{track.querySelectorAll('.spin-item')[landIdx]?.classList.add('landing');resolve();},3600);
   });
 }
 
