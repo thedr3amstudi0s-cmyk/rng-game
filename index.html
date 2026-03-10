@@ -786,7 +786,7 @@ function initFirebase(cfg){
   rtdb  = firebase.database();
   // Enable offline persistence
   // Offline persistence (compat SDK)
-  db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+  // Offline persistence disabled to avoid deprecation warnings
 }
 
 
