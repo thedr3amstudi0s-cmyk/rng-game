@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>CrateVault — Unlock the Impossible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700&display=swap" rel="stylesheet"/>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<style>
+/* ============================================================
+   CRATEVAULT — COMPLETE STYLESHEET
+   ============================================================ */
+:root {
+  --bg-deep:    #050810;
+  --bg-dark:    #0a0e1a;
+  --bg-card:    #0f1424;
+  --bg-card2:   #141928;
+  --bg-hover:   #1a2035;
+  --border:     #1e2840;
+  --border-b:   #2a3555;
+  --accent:     #4f8ef7;
+  --accent-g:   #4f8ef744;
+  --text-1:     #e8eaf6;
+  --text-2:     #8b93b8;
+  --text-3:     #4a5270;
+  --gold:       #f59e0b;
+  --gold-g:     #f59e0b44;
+  --font-d: 'Orbitron', sans-serif;
+  --font-u: 'Rajdhani', sans-serif;
+  --font-m: 'Space Mono', monospace;
+  --r: 8px; --rl: 14px; --t: 0.2s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{background:var(--bg-deep);color:var(--text-1);font-family:var(--font-u);min-height:100vh;overflow-x:hidden;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+input,select{font-family:inherit;color:inherit;border:none;outline:none;background:none;}
+.hidden{display:none!important;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg-dark);}
+::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
+
+/* ── SCREENS ─────────────────────────────────────────────── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ── AUTH ────────────────────────────────────────────────── */
+#auth-screen{align-items:center;justify-content:center;position:relative;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
+.auth-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.auth-container{position:relative;z-index:2;width:100%;max-width:400px;padding:20px;
+  display:flex;flex-direction:column;align-items:center;gap:32px;}
+.auth-logo{text-align:center;}
+.logo-icon{font-size:3rem;animation:pulse-glow 2s infinite;}
+.logo-text{font-family:var(--font-d);font-size:2.5rem;font-weight:900;letter-spacing:.1em;}
+.logo-text span{color:var(--accent);}
+.logo-sub{color:var(--text-2);font-size:.875rem;letter-spacing:.3em;text-transform:uppercase;margin-top:4px;}
+.auth-card{width:100%;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--rl);padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.auth-tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--bg-dark);
+  border-radius:var(--r);padding:3px;}
+.auth-tab{flex:1;padding:8px;border-radius:6px;font-family:var(--font-d);font-size:.75rem;
+  font-weight:700;letter-spacing:.1em;color:var(--text-2);transition:var(--t);}
+.auth-tab.active{background:var(--accent);color:#fff;box-shadow:0 0 20px var(--accent-g);}
+.auth-form{display:flex;flex-direction:column;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:.7rem;font-family:var(--font-d);letter-spacing:.15em;color:var(--text-2);}
+.form-group input{background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px 14px;font-size:1rem;color:var(--text-1);transition:var(--t);}
+.form-group input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-g);}
+.auth-error{color:#ef4444;font-size:.85rem;min-height:20px;}
+.auth-note{color:var(--text-2);font-size:.85rem;text-align:center;}
+.auth-note strong{color:var(--gold);}
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn-primary{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;
+  padding:13px 24px;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;
+  font-weight:700;letter-spacing:.1em;transition:var(--t);
+  box-shadow:0 4px 20px var(--accent-g);width:100%;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 30px var(--accent-g);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-ghost{background:transparent;border:1px solid var(--border-b);color:var(--text-2);
+  padding:7px 14px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;
+  letter-spacing:.1em;transition:var(--t);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-open{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;
+  padding:16px 48px;border-radius:var(--r);font-family:var(--font-d);font-size:1.1rem;
+  font-weight:900;letter-spacing:.15em;transition:var(--t);
+  box-shadow:0 4px 30px rgba(245,158,11,.4);position:relative;overflow:hidden;}
+.btn-open::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.1) 50%,transparent 60%);
+  transform:translateX(-100%) rotate(45deg);transition:.6s;}
+.btn-open:hover::before{transform:translateX(100%) rotate(45deg);}
+.btn-open:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(245,158,11,.6);}
+.btn-open:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-back{background:transparent;border:1px solid var(--border-b);color:var(--text-2);
+  padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;
+  letter-spacing:.05em;transition:var(--t);}
+.btn-back:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── GAME LAYOUT ─────────────────────────────────────────── */
+#game-screen{flex-direction:column;height:100vh;overflow:hidden;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);
+  z-index:100;flex-shrink:0;}
+.nav-logo{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
+.coin-display{display:flex;align-items:center;gap:6px;background:var(--bg-dark);
+  border:1px solid var(--border);border-radius:20px;padding:5px 14px;
+  font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--gold);}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.player-name{font-family:var(--font-d);font-size:.8rem;color:var(--text-2);}
+.game-layout{display:grid;grid-template-columns:72px 1fr 260px;flex:1;overflow:hidden;}
+.side-nav{background:var(--bg-card);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:12px 0;gap:4px;overflow-y:auto;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 4px;border-radius:var(--r);margin:0 6px;color:var(--text-3);transition:var(--t);}
+.nav-icon{font-size:1.4rem;}.nav-label{font-size:.5rem;font-family:var(--font-d);letter-spacing:.1em;}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-2);}
+.nav-item.active{background:var(--bg-hover);color:var(--accent);}
+.page-content{overflow-y:auto;padding:24px;background:var(--bg-deep);}
+.page{display:none;}.page.active{display:block;}
+.page-header{margin-bottom:24px;}
+.page-header h2{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
+.page-header p{color:var(--text-2);font-size:.9rem;margin-top:4px;}
+
+/* ── CHAT ────────────────────────────────────────────────── */
+.chat-panel{background:var(--bg-card);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;}
+.chat-header{padding:14px 16px;border-bottom:1px solid var(--border);
+  font-family:var(--font-d);font-size:.75rem;letter-spacing:.1em;color:var(--text-2);flex-shrink:0;}
+.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.chat-msg{font-size:.85rem;line-height:1.4;}
+.chat-msg-user{color:var(--accent);font-weight:600;}
+.chat-msg-system{color:var(--gold);font-style:italic;}
+.chat-msg-announce{color:#ff00ff;font-weight:700;}
+.chat-input-row{display:flex;gap:8px;padding:10px;border-top:1px solid var(--border);flex-shrink:0;}
+.chat-input-row input{flex:1;background:var(--bg-dark);border:1px solid var(--border);
+  border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
+.chat-input-row input:focus{border-color:var(--accent);}
+.chat-input-row button{background:var(--accent);color:#fff;padding:8px 14px;
+  border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
+  letter-spacing:.1em;transition:var(--t);}
+.chat-input-row button:hover{background:#6ba3ff;}
+
+/* ── CRATES PAGE ─────────────────────────────────────────── */
+.crates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
+.crate-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);
+  padding:20px 16px;text-align:center;cursor:pointer;transition:var(--t);
+  position:relative;overflow:hidden;}
+.crate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--cc,var(--accent));opacity:.7;}
+.crate-card:hover{transform:translateY(-4px);border-color:var(--cc,var(--accent));
+  box-shadow:0 8px 30px rgba(0,0,0,.4),0 0 20px var(--cg,var(--accent-g));}
+.crate-emoji{font-size:2.5rem;margin-bottom:10px;display:block;}
+.crate-name{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.08em;margin-bottom:6px;}
+.crate-desc{font-size:.75rem;color:var(--text-2);margin-bottom:12px;line-height:1.3;}
+.crate-price{display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark);
+  border:1px solid var(--border);border-radius:20px;padding:4px 12px;
+  font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--gold);}
+
+/* ── CRATE OPENING ───────────────────────────────────────── */
+.crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+.crate-open-header h2{font-family:var(--font-d);font-size:1.3rem;font-weight:900;letter-spacing:.15em;}
+.crate-info-panel{background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--rl);padding:16px 20px;margin-bottom:28px;display:flex;gap:20px;flex-wrap:wrap;}
+.crate-info-items{display:flex;flex-wrap:wrap;gap:8px;flex:1;}
+.crate-item-pill{display:inline-flex;align-items:center;gap:5px;background:var(--bg-dark);
+  border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:.78rem;}
+.spin-container{position:relative;width:100%;height:120px;overflow:hidden;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:24px;}
+.spin-indicator{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+  width:2px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);z-index:10;pointer-events:none;}
+.spin-indicator::before,.spin-indicator::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;}
+.spin-indicator::before{top:-1px;border-left:8px solid transparent;border-right:8px solid transparent;
+  border-top:10px solid var(--accent);margin-left:-7px;}
+.spin-indicator::after{bottom:-1px;border-left:8px solid transparent;border-right:8px solid transparent;
+  border-bottom:10px solid var(--accent);margin-left:-7px;}
+.spin-track{display:flex;align-items:center;height:100%;position:absolute;left:0;
+  will-change:transform;gap:4px;padding:0 calc(50% - 54px);}
+.spin-item{width:104px;height:104px;flex-shrink:0;background:var(--bg-card2);
+  border:2px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;font-size:1.8rem;}
+.spin-item-name{font-size:.55rem;font-family:var(--font-d);letter-spacing:.05em;
+  color:var(--text-2);text-align:center;padding:0 4px;}
+.open-controls{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;}
+.open-price-display{font-family:var(--font-d);font-size:1rem;color:var(--gold);font-weight:700;}
+.open-coins-info{color:var(--text-2);font-size:.85rem;}
+.result-panel{background:var(--bg-card);border:2px solid var(--rc,var(--accent));
+  border-radius:var(--rl);padding:32px;text-align:center;
+  box-shadow:0 0 40px var(--rg,var(--accent-g));animation:result-appear .5s ease;}
+@keyframes result-appear{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.result-inner{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.result-icon{font-size:5rem;animation:float 3s infinite ease-in-out;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.result-name{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
+.result-rarity{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.2em;
+  padding:4px 16px;border-radius:20px;border:1px solid currentColor;}
+.result-value{color:var(--gold);font-family:var(--font-d);font-size:.9rem;}
+.result-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.btn-keep,.btn-sell-result,.btn-open-again{padding:10px 20px;border-radius:var(--r);
+  font-family:var(--font-d);font-size:.75rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+.btn-keep{background:var(--accent);color:#fff;}
+.btn-sell-result{background:var(--bg-dark);border:1px solid var(--gold);color:var(--gold);}
+.btn-open-again{background:var(--bg-dark);border:1px solid var(--border-b);color:var(--text-2);}
+.btn-keep:hover{box-shadow:0 0 20px var(--accent-g);}
+.btn-sell-result:hover{background:var(--gold);color:#000;}
+.btn-open-again:hover{border-color:var(--text-2);color:var(--text-1);}
+
+/* ── INVENTORY ───────────────────────────────────────────── */
+.inv-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.search-input,.sort-select{background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
+.search-input{flex:1;min-width:160px;}.search-input:focus,.sort-select:focus{border-color:var(--accent);}
+.btn-sell-selected{background:var(--bg-card);border:1px solid var(--gold);color:var(--gold);
+  padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;
+  font-weight:700;letter-spacing:.08em;transition:var(--t);white-space:nowrap;}
+.btn-sell-selected:hover{background:var(--gold);color:#000;}
+.inv-stats{display:flex;gap:16px;margin:12px 0 16px;color:var(--text-2);font-size:.85rem;}
+.inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
+.item-card{background:var(--bg-card);border:2px solid var(--ic,var(--border));
+  border-radius:var(--r);padding:10px 6px;text-align:center;cursor:pointer;
+  transition:var(--t);position:relative;user-select:none;}
+.item-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px var(--ig,transparent);}
+.item-card.selected{background:var(--bg-hover);box-shadow:0 0 0 2px var(--accent);}
+.item-icon{font-size:2rem;display:block;margin-bottom:4px;}
+.item-name{font-size:.6rem;font-family:var(--font-d);letter-spacing:.04em;color:var(--text-2);line-height:1.2;}
+.item-value-small{font-size:.6rem;color:var(--gold);margin-top:2px;font-family:var(--font-m);}
+
+/* ── TRADE ───────────────────────────────────────────────── */
+.trade-players-panel{background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--rl);padding:16px 20px;margin-bottom:20px;}
+.trade-players-panel h3{font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;
+  color:var(--text-2);margin-bottom:12px;}
+.online-players-list{display:flex;flex-wrap:wrap;gap:8px;}
+.no-players{color:var(--text-3);font-size:.85rem;font-style:italic;}
+.online-player-chip{display:flex;align-items:center;gap:8px;background:var(--bg-dark);
+  border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.85rem;transition:var(--t);}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0;}
+.online-player-name{font-family:var(--font-d);font-size:.7rem;letter-spacing:.05em;}
+.btn-trade-request{background:var(--accent);color:#fff;padding:4px 12px;border-radius:12px;
+  font-family:var(--font-d);font-size:.65rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+.btn-trade-request:hover{background:#6ba3ff;}
+.trade-room{display:flex;flex-direction:column;gap:16px;}
+.trade-warning-banner{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);
+  border-radius:var(--r);padding:10px 16px;color:var(--gold);font-size:.85rem;text-align:center;}
+.trade-panels{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;}
+.trade-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.trade-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);
+  font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);
+  display:flex;justify-content:space-between;align-items:center;}
+.trade-player-label{color:var(--accent);}
+.trade-items-zone{min-height:130px;padding:12px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;}
+.trade-empty-hint{color:var(--text-3);font-size:.8rem;font-style:italic;}
+.trade-status-you,.trade-status-them{padding:8px 16px;border-top:1px solid var(--border);
+  font-family:var(--font-d);font-size:.7rem;letter-spacing:.08em;text-align:center;}
+.trade-vs{display:flex;align-items:center;justify-content:center;font-family:var(--font-d);
+  font-size:1.2rem;font-weight:900;color:var(--text-3);padding-top:40px;}
+.trade-inv-section h4{font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;
+  color:var(--text-2);margin-bottom:10px;}
+.trade-inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
+  gap:6px;max-height:240px;overflow-y:auto;}
+.trade-controls{display:flex;gap:12px;}
+.btn-accept-trade{flex:1;padding:13px;background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;
+  letter-spacing:.1em;transition:var(--t);box-shadow:0 4px 20px rgba(34,197,94,.3);}
+.btn-accept-trade:hover{box-shadow:0 8px 30px rgba(34,197,94,.5);transform:translateY(-1px);}
+.btn-cancel-trade{flex:1;padding:13px;background:var(--bg-dark);border:1px solid #ef4444;
+  color:#ef4444;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;
+  font-weight:700;letter-spacing:.1em;transition:var(--t);}
+.btn-cancel-trade:hover{background:#ef4444;color:#fff;}
+.trade-message{padding:10px;font-size:.85rem;color:var(--gold);text-align:center;min-height:20px;}
+
+/* ── FINAL TRADE MODAL ───────────────────────────────────── */
+.trade-final-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);
+  display:flex;align-items:center;justify-content:center;z-index:1000;}
+.trade-final-inner{background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);
+  padding:32px;max-width:480px;width:90%;text-align:center;
+  box-shadow:0 0 60px var(--gold-g);display:flex;flex-direction:column;gap:16px;}
+.trade-final-inner h3{font-family:var(--font-d);font-size:1.2rem;color:var(--gold);letter-spacing:.1em;}
+.final-trade-summary{background:var(--bg-dark);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;font-size:.85rem;color:var(--text-2);text-align:left;}
+.countdown-display{font-family:var(--font-d);font-size:.9rem;color:var(--text-2);letter-spacing:.08em;}
+#countdown-num{color:var(--gold);font-size:1.4rem;font-weight:900;}
+.btn-final-accept{padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;
+  border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;font-weight:700;
+  letter-spacing:.1em;transition:var(--t);}
+.btn-final-accept.disabled{opacity:.3;cursor:not-allowed;}
+.btn-final-accept:not(.disabled):hover{box-shadow:0 0 30px rgba(34,197,94,.5);}
+.btn-cancel-final{padding:10px;background:transparent;border:1px solid var(--border-b);
+  color:var(--text-2);border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;
+  letter-spacing:.08em;transition:var(--t);}
+.btn-cancel-final:hover{border-color:#ef4444;color:#ef4444;}
+
+/* ── LEADERBOARD ─────────────────────────────────────────── */
+.lb-tabs{display:flex;gap:6px;margin-bottom:20px;}
+.lb-tab{padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
+  letter-spacing:.08em;color:var(--text-2);transition:var(--t);}
+.lb-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.lb-tab:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+.leaderboard-list{display:flex;flex-direction:column;gap:8px;}
+.lb-row{display:flex;align-items:center;gap:14px;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;transition:var(--t);}
+.lb-row:hover{border-color:var(--border-b);}
+.lb-rank{font-family:var(--font-d);font-size:1.1rem;font-weight:900;min-width:32px;text-align:center;}
+.lb-rank-1{color:var(--gold);}.lb-rank-2{color:#c0c0c0;}.lb-rank-3{color:#cd7f32;}
+.lb-info{flex:1;}
+.lb-username{font-family:var(--font-d);font-size:.9rem;font-weight:700;letter-spacing:.05em;}
+.lb-sub{color:var(--text-2);font-size:.78rem;margin-top:2px;}
+.lb-value{font-family:var(--font-m);font-size:.9rem;color:var(--gold);font-weight:700;}
+
+/* ── TRADE HISTORY ───────────────────────────────────────── */
+.history-list{display:flex;flex-direction:column;gap:10px;}
+.history-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;}
+.history-header{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.8rem;}
+.history-partner{color:var(--accent);font-family:var(--font-d);font-size:.75rem;}
+.history-date{color:var(--text-3);font-family:var(--font-m);font-size:.7rem;}
+.history-items-label{color:var(--text-3);font-size:.7rem;margin-bottom:3px;}
+.history-items-list{display:flex;gap:4px;flex-wrap:wrap;}
+.history-item-chip{padding:3px 8px;border-radius:12px;border:1px solid;font-size:.7rem;}
+
+/* ── GLOBAL BANNER ───────────────────────────────────────── */
+.global-banner{position:fixed;top:56px;left:0;right:0;z-index:500;
+  background:linear-gradient(135deg,#7c3aed,#4f8ef7);padding:10px 20px;text-align:center;
+  font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.08em;color:#fff;
+  animation:banner-slide .4s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+@keyframes banner-slide{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ── TOOLTIP ─────────────────────────────────────────────── */
+.item-tooltip{position:fixed;z-index:900;background:var(--bg-card);border:1px solid var(--border-b);
+  border-radius:var(--r);padding:12px 14px;min-width:160px;max-width:220px;
+  pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+.tooltip-icon{font-size:2rem;text-align:center;margin-bottom:6px;}
+.tooltip-name{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.05em;text-align:center;margin-bottom:4px;}
+.tooltip-rarity{font-size:.7rem;font-family:var(--font-d);text-align:center;letter-spacing:.1em;margin-bottom:6px;}
+.tooltip-desc{font-size:.78rem;color:var(--text-2);text-align:center;margin-bottom:6px;}
+.tooltip-value{font-family:var(--font-m);font-size:.75rem;color:var(--gold);text-align:center;}
+
+/* ── TOASTS ──────────────────────────────────────────────── */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--bg-card);border:1px solid var(--border-b);border-left:3px solid var(--accent);
+  border-radius:var(--r);padding:12px 16px;min-width:220px;font-size:.85rem;color:var(--text-1);
+  animation:toast-in .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.toast.success{border-left-color:#22c55e;}.toast.error{border-left-color:#ef4444;}.toast.gold{border-left-color:var(--gold);}
+@keyframes toast-in{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
+
+/* ── ULTRA OVERLAY ───────────────────────────────────────── */
+.ultra-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;
+  display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .5s ease;}
+@keyframes ultra-fade-in{from{opacity:0}to{opacity:1}}
+.ultra-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;}
+.ultra-rays{position:absolute;width:600px;height:600px;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.05) 10deg,transparent 20deg);
+  animation:rays-spin 4s linear infinite;border-radius:50%;pointer-events:none;}
+@keyframes rays-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.ultra-icon{font-size:7rem;animation:ultra-pulse 1s infinite alternate;position:relative;z-index:1;}
+@keyframes ultra-pulse{from{transform:scale(1)}to{transform:scale(1.1);filter:brightness(1.3)}}
+.ultra-text{font-family:var(--font-d);font-size:3rem;font-weight:900;letter-spacing:.2em;
+  background:linear-gradient(90deg,#ff00ff,#00ffff,#ffd700,#ff00ff);background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:rainbow-shift 2s linear infinite;}
+@keyframes rainbow-shift{to{background-position:300% 0}}
+.ultra-sub{color:var(--text-2);font-family:var(--font-d);font-size:1rem;letter-spacing:.1em;}
+.btn-ultra-close{background:linear-gradient(135deg,#ff00ff,#00ffff);color:#000;
+  padding:14px 40px;border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;
+  font-weight:900;letter-spacing:.15em;transition:var(--t);}
+.btn-ultra-close:hover{transform:scale(1.05);}
+
+/* ── INCOMING TRADE ──────────────────────────────────────── */
+.incoming-trade-modal{position:fixed;bottom:80px;right:24px;background:var(--bg-card);
+  border:1px solid var(--accent);border-radius:var(--rl);padding:16px 20px;z-index:800;
+  max-width:280px;box-shadow:0 0 30px var(--accent-g);animation:toast-in .3s ease;}
+.incoming-trade-modal h4{font-family:var(--font-d);font-size:.8rem;color:var(--accent);margin-bottom:8px;}
+.incoming-trade-modal p{font-size:.85rem;color:var(--text-2);margin-bottom:12px;}
+.incoming-trade-btns{display:flex;gap:8px;}
+.btn-atr{flex:1;padding:8px;background:#22c55e;color:#fff;border-radius:var(--r);
+  font-family:var(--font-d);font-size:.7rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+.btn-dtr{flex:1;padding:8px;background:var(--bg-dark);border:1px solid #ef4444;color:#ef4444;
+  border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
+  letter-spacing:.08em;transition:var(--t);}
+
+/* ── ANIMATIONS ──────────────────────────────────────────── */
+@keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 8px var(--accent))}50%{filter:drop-shadow(0 0 20px var(--accent))}}
+@keyframes rainbow-border{
+  0%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}
+  16%{border-color:#ff7700;box-shadow:0 0 20px #ff770044}
+  33%{border-color:#ffff00;box-shadow:0 0 20px #ffff0044}
+  50%{border-color:#00ff00;box-shadow:0 0 20px #00ff0044}
+  66%{border-color:#0000ff;box-shadow:0 0 20px #0000ff44}
+  83%{border-color:#8b00ff;box-shadow:0 0 20px #8b00ff44}
+  100%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}
+}
+.rarity-divine{animation:rainbow-border 2s linear infinite!important;}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:900px){.game-layout{grid-template-columns:60px 1fr}.chat-panel{display:none}}
+@media(max-width:600px){
+  .game-layout{grid-template-columns:1fr}
+  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:4px}
+  .trade-panels{grid-template-columns:1fr}
+  .crates-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     FIREBASE SETUP SCREEN (shown if not configured)
+══════════════════════════════════════════════════════════ -->
+<div id="setup-screen" class="screen active">
+  <div class="setup-card">
+    <h2>⚡ CRATEVAULT — Firebase Setup</h2>
+    <p>To play, you need a free Firebase project. Follow these steps once, then paste your config below.</p>
+    <div class="setup-steps">
+      <div class="setup-step"><strong>Step 1:</strong> Go to <strong>console.firebase.google.com</strong> → Add project → name it anything.</div>
+      <div class="setup-step"><strong>Step 2:</strong> In the project, click <strong>Firestore Database</strong> → Create database → <strong>Start in test mode</strong>.</div>
+      <div class="setup-step"><strong>Step 3:</strong> Click <strong>Authentication</strong> → Get started → Enable <strong>Email/Password</strong> sign-in.</div>
+      <div class="setup-step"><strong>Step 4:</strong> Click the ⚙️ gear → <strong>Project settings</strong> → scroll down to <strong>"Your apps"</strong> → click <strong>&lt;/&gt; Web</strong> → register app → copy the <code>firebaseConfig</code> values below.</div>
+    </div>
+    <div class="config-inputs">
+      <input id="cfg-apikey"    placeholder="apiKey" />
+      <input id="cfg-authdomain" placeholder="authDomain  (e.g. myapp.firebaseapp.com)" />
+      <input id="cfg-projectid" placeholder="projectId" />
+      <input id="cfg-dburl"     placeholder="databaseURL  (e.g. https://myapp-default-rtdb.firebaseio.com)" />
+      <input id="cfg-appid"     placeholder="appId" />
+    </div>
+    <button class="btn-primary" id="cfg-save-btn">SAVE & START GAME</button>
+    <div class="auth-error" id="cfg-error" style="margin-top:10px;"></div>
+    <p style="margin-top:12px;font-size:.75rem;color:var(--text-3);">
+      Your config is saved locally in your browser — never shared with anyone.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════════════════════════ -->
+<div id="auth-screen" class="screen">
+  <div class="auth-particles" id="auth-particles"></div>
+  <div class="auth-container">
+    <div class="auth-logo">
+      <div class="logo-icon">⚡</div>
+      <h1 class="logo-text">CRATE<span>VAULT</span></h1>
+      <p class="logo-sub">Unlock the Impossible</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">LOGIN</button>
+        <button class="auth-tab" data-tab="register">REGISTER</button>
+      </div>
+      <div class="auth-form" id="login-form">
+        <div class="form-group"><label>EMAIL</label>
+          <input type="email" id="login-email" placeholder="Enter email" /></div>
+        <div class="form-group"><label>PASSWORD</label>
+          <input type="password" id="login-password" placeholder="Enter password" /></div>
+        <button class="btn-primary" id="login-btn">ENTER THE VAULT</button>
+        <div class="auth-error" id="login-error"></div>
+      </div>
+      <div class="auth-form hidden" id="register-form">
+        <div class="form-group"><label>USERNAME</label>
+          <input type="text" id="reg-username" placeholder="Choose username (3-20 chars)" /></div>
+        <div class="form-group"><label>EMAIL</label>
+          <input type="email" id="reg-email" placeholder="Enter email" /></div>
+        <div class="form-group"><label>PASSWORD</label>
+          <input type="password" id="reg-password" placeholder="Choose password (6+ chars)" /></div>
+        <button class="btn-primary" id="register-btn">CREATE ACCOUNT</button>
+        <div class="auth-error" id="reg-error"></div>
+        <p class="auth-note">🎁 New players start with <strong>500 coins</strong>!</p>
+      </div>
+      <button class="btn-ghost" style="margin-top:12px;width:100%" id="reconfigure-btn">⚙ Change Firebase Config</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN GAME
+══════════════════════════════════════════════════════════ -->
+<div id="game-screen" class="screen">
+  <header class="top-nav">
+    <div class="nav-logo">⚡ CRATEVAULT</div>
+    <div class="coin-display"><span>🪙</span><span id="coin-balance">0</span></div>
+    <div class="nav-right">
+      <span class="player-name" id="nav-username">—</span>
+      <button class="btn-ghost" id="logout-btn">EXIT</button>
+    </div>
+  </header>
+
+  <div id="global-banner" class="global-banner hidden"></div>
+
+  <div class="game-layout">
+    <nav class="side-nav">
+      <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
+      <button class="nav-item" data-page="inventory"><span class="nav-icon">🎒</span><span class="nav-label">INVENTORY</span></button>
+      <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
+      <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
+      <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
+    </nav>
+
+    <main class="page-content">
+
+      <!-- CRATES -->
+      <section class="page active" id="page-crates">
+        <div class="page-header"><h2>CRATE SHOP</h2><p>Roll for rare items. Fortune favors the bold.</p></div>
+        <div class="crates-grid" id="crates-grid"></div>
+      </section>
+
+      <!-- CRATE OPENING -->
+      <section class="page" id="page-opening">
+        <div class="crate-open-header">
+          <button class="btn-back" id="back-from-opening">← BACK</button>
+          <h2 id="opening-crate-name">CRATE</h2>
+        </div>
+        <div class="crate-info-panel" id="crate-info-panel"></div>
+        <div class="spin-container" id="spin-container">
+          <div class="spin-indicator"></div>
+          <div class="spin-track" id="spin-track"></div>
+        </div>
+        <div class="open-controls">
+          <div class="open-price-display" id="open-price-display"></div>
+          <button class="btn-open" id="btn-open-crate">OPEN CRATE</button>
+          <div class="open-coins-info">Balance: <span id="opening-coin-balance">0</span> 🪙</div>
+        </div>
+        <div class="result-panel hidden" id="result-panel">
+          <div class="result-inner">
+            <div class="result-icon" id="result-icon"></div>
+            <div class="result-name" id="result-name"></div>
+            <div class="result-rarity" id="result-rarity"></div>
+            <div class="result-value" id="result-value"></div>
+            <div class="result-buttons">
+              <button class="btn-keep" id="btn-keep-item">KEEP ITEM</button>
+              <button class="btn-sell-result" id="btn-sell-result">SELL FOR COINS</button>
+              <button class="btn-open-again" id="btn-open-again">OPEN AGAIN</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVENTORY -->
+      <section class="page" id="page-inventory">
+        <div class="page-header">
+          <h2>INVENTORY</h2>
+          <div class="inv-controls">
+            <input type="text" id="inv-search" placeholder="🔍 Search items..." class="search-input"/>
+            <select id="inv-sort" class="sort-select">
+              <option value="rarity">Sort: Rarity</option>
+              <option value="value">Sort: Value</option>
+              <option value="name">Sort: Name</option>
+            </select>
+            <button class="btn-sell-selected" id="btn-sell-selected">SELL SELECTED</button>
+          </div>
+        </div>
+        <div class="inv-stats"><span id="inv-count">0 items</span><span id="inv-total-value">Total: 0 🪙</span></div>
+        <div class="inventory-grid" id="inventory-grid"></div>
+      </section>
+
+      <!-- TRADE -->
+      <section class="page" id="page-trade">
+        <div class="page-header"><h2>TRADING</h2><p>⚠️ Always double-check items before finalizing a trade.</p></div>
+        <div class="trade-players-panel">
+          <h3>ONLINE PLAYERS</h3>
+          <div id="online-players-list" class="online-players-list"><div class="no-players">No other players online</div></div>
+        </div>
+        <div class="trade-room hidden" id="trade-room">
+          <div class="trade-warning-banner">⚠️ ANTI-SCAM PROTECTION ACTIVE — Read items carefully before accepting!</div>
+          <div class="trade-panels">
+            <div class="trade-panel">
+              <div class="trade-panel-header"><span>YOUR OFFER</span><span id="trade-you-name" class="trade-player-label">You</span></div>
+              <div class="trade-items-zone" id="trade-items-you"><div class="trade-empty-hint">Click items below to add</div></div>
+              <div class="trade-status-you" id="trade-status-you">—</div>
+            </div>
+            <div class="trade-vs">VS</div>
+            <div class="trade-panel">
+              <div class="trade-panel-header"><span>THEIR OFFER</span><span id="trade-them-name" class="trade-player-label">Partner</span></div>
+              <div class="trade-items-zone" id="trade-items-them"><div class="trade-empty-hint">Waiting for partner...</div></div>
+              <div class="trade-status-them" id="trade-status-them">—</div>
+            </div>
+          </div>
+          <div class="trade-inv-section" style="margin-top:16px">
+            <h4>YOUR INVENTORY — click to add/remove</h4>
+            <div class="trade-inventory-grid" id="trade-inventory-mini"></div>
+          </div>
+          <div class="trade-controls" style="margin-top:16px">
+            <button class="btn-accept-trade" id="btn-accept-trade">✓ ACCEPT</button>
+            <button class="btn-cancel-trade" id="btn-cancel-trade">✗ CANCEL</button>
+          </div>
+          <div class="trade-message" id="trade-message"></div>
+        </div>
+        <div class="trade-final-modal hidden" id="trade-final-modal">
+          <div class="trade-final-inner">
+            <h3>⚠️ FINAL CONFIRMATION</h3>
+            <p>Review the trade one last time. This cannot be undone.</p>
+            <div class="final-trade-summary" id="final-trade-summary"></div>
+            <div class="countdown-display">Final accept available in <span id="countdown-num">5</span>...</div>
+            <button class="btn-final-accept disabled" id="btn-final-accept" disabled>FINAL ACCEPT</button>
+            <button class="btn-cancel-final" id="btn-cancel-final">CANCEL</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section class="page" id="page-leaderboard">
+        <div class="page-header"><h2>LEADERBOARDS</h2></div>
+        <div class="lb-tabs">
+          <button class="lb-tab active" data-lb="richest">💰 Richest</button>
+          <button class="lb-tab" data-lb="mostCrates">📦 Most Crates</button>
+          <button class="lb-tab" data-lb="mostValue">💎 Top Value</button>
+        </div>
+        <div class="leaderboard-list" id="leaderboard-list"></div>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="page" id="page-history">
+        <div class="page-header"><h2>TRADE HISTORY</h2></div>
+        <div class="history-list" id="history-list"></div>
+      </section>
+
+    </main>
+
+    <aside class="chat-panel">
+      <div class="chat-header">💬 GLOBAL CHAT</div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Type message..." maxlength="200"/>
+        <button id="chat-send">SEND</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="item-tooltip hidden" id="item-tooltip">
+  <div class="tooltip-icon" id="tt-icon"></div>
+  <div class="tooltip-name" id="tt-name"></div>
+  <div class="tooltip-rarity" id="tt-rarity"></div>
+  <div class="tooltip-desc" id="tt-desc"></div>
+  <div class="tooltip-value" id="tt-value"></div>
+</div>
+
+<!-- TOASTS -->
+<div id="toast-container"></div>
+
+<!-- ULTRA OVERLAY -->
+<div class="ultra-overlay hidden" id="ultra-overlay">
+  <div class="ultra-inner">
+    <div class="ultra-rays"></div>
+    <div class="ultra-icon" id="ultra-icon">💠</div>
+    <div class="ultra-text" id="ultra-text">ULTRA RARE!</div>
+    <div class="ultra-sub" id="ultra-sub"></div>
+    <button class="btn-ultra-close" id="btn-ultra-close">INCREDIBLE!</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// GAME DATA
+// ============================================================
+const RARITIES = {
+  common:    {name:'Common',    color:'#9ca3af',glow:'#9ca3af44',chance:.60,   tier:1},
+  uncommon:  {name:'Uncommon',  color:'#22c55e',glow:'#22c55e44',chance:.25,   tier:2},
+  rare:      {name:'Rare',      color:'#3b82f6',glow:'#3b82f644',chance:.10,   tier:3},
+  epic:      {name:'Epic',      color:'#a855f7',glow:'#a855f744',chance:.04,   tier:4},
+  legendary: {name:'Legendary', color:'#f59e0b',glow:'#f59e0b44',chance:.009,  tier:5},
+  mythic:    {name:'Mythic',    color:'#ef4444',glow:'#ef444444',chance:.0009, tier:6},
+  divine:    {name:'Divine',    color:'#ffffff',glow:'#ffffff44',chance:.0001, tier:7},
+  ultra1:    {name:'Ultra',     color:'#00ffff',glow:'#00ffff88',chance:.000001,    tier:8, display:'1 in 1,000,000'},
+  ultra2:    {name:'Hyper',     color:'#ff00ff',glow:'#ff00ff88',chance:.00000001,  tier:9, display:'1 in 100,000,000'},
+  ultra3:    {name:'Cosmic',    color:'#ffffff',glow:'#ffffff99',chance:.000000001, tier:10,display:'1 in 1,000,000,000'},
+  ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',chance:.000000000001,tier:11,display:'1 in 1,000,000,000,000'},
+};
+
+const ITEMS = [
+  {id:'c001',name:'Rusty Coin',      rarity:'common',   icon:'🪙',value:5,   desc:'A worn tarnished coin.'},
+  {id:'c002',name:'Wooden Shield',   rarity:'common',   icon:'🛡️',value:8,   desc:'Basic wooden protection.'},
+  {id:'c003',name:'Old Dagger',      rarity:'common',   icon:'🗡️',value:6,   desc:'Dull but functional.'},
+  {id:'c004',name:'Bread Loaf',      rarity:'common',   icon:'🍞',value:3,   desc:'Surprisingly filling.'},
+  {id:'c005',name:'Pebble',          rarity:'common',   icon:'🪨',value:2,   desc:'Just a rock. Or is it?'},
+  {id:'c006',name:'Leather Boots',   rarity:'common',   icon:'👢',value:10,  desc:'Well-worn travel boots.'},
+  {id:'c007',name:'Hemp Rope',       rarity:'common',   icon:'🧵',value:4,   desc:'Always useful.'},
+  {id:'c008',name:'Candle',          rarity:'common',   icon:'🕯️',value:3,   desc:'Lights the darkest caves.'},
+  {id:'c009',name:'Cloth Bandage',   rarity:'common',   icon:'🩹',value:5,   desc:'Stops minor bleeding.'},
+  {id:'c010',name:'Wooden Bow',      rarity:'common',   icon:'🏹',value:9,   desc:'Simple but effective.'},
+  {id:'c011',name:'Fishing Rod',     rarity:'common',   icon:'🎣',value:7,   desc:'For the patient angler.'},
+  {id:'c012',name:'Iron Nail',       rarity:'common',   icon:'📌',value:2,   desc:'Holds things together.'},
+  {id:'c013',name:'Empty Bottle',    rarity:'common',   icon:'🍶',value:4,   desc:'Could hold anything.'},
+  {id:'c014',name:'Wool Hat',        rarity:'common',   icon:'🎩',value:6,   desc:'Keeps your head warm.'},
+  {id:'c015',name:'Tin Cup',         rarity:'common',   icon:'🫙',value:3,   desc:'Dented but drinkable.'},
+  {id:'u001',name:'Silver Ring',     rarity:'uncommon', icon:'💍',value:50,  desc:'A simple silver band.'},
+  {id:'u002',name:'Steel Sword',     rarity:'uncommon', icon:'⚔️',value:65,  desc:'Sharper than most.'},
+  {id:'u003',name:'Iron Helm',       rarity:'uncommon', icon:'⛑️',value:55,  desc:'Solid iron headgear.'},
+  {id:'u004',name:'Potion of Speed', rarity:'uncommon', icon:'🧪',value:70,  desc:'Fleet-footed formula.'},
+  {id:'u005',name:'Copper Key',      rarity:'uncommon', icon:'🗝️',value:45,  desc:'Opens many doors.'},
+  {id:'u006',name:'Map Fragment',    rarity:'uncommon', icon:'🗺️',value:60,  desc:'Part of a larger secret.'},
+  {id:'u007',name:'Storm Scroll',    rarity:'uncommon', icon:'📜',value:80,  desc:'Contains weather magic.'},
+  {id:'u008',name:'Fox Pelt',        rarity:'uncommon', icon:'🦊',value:55,  desc:'Warm and valuable fur.'},
+  {id:'u009',name:'Magic Compass',   rarity:'uncommon', icon:'🧭',value:75,  desc:'Points toward treasure.'},
+  {id:'u010',name:'Blue Crystal',    rarity:'uncommon', icon:'💎',value:90,  desc:'Faintly glowing gem.'},
+  {id:'u011',name:'Shadow Cloak',    rarity:'uncommon', icon:'🧥',value:85,  desc:'Hard to see in.'},
+  {id:'u012',name:'Bone Charm',      rarity:'uncommon', icon:'🦴',value:50,  desc:'Provides minor warding.'},
+  {id:'r001',name:'Enchanted Blade', rarity:'rare',     icon:'🔷',value:250, desc:'Hums with arcane energy.'},
+  {id:'r002',name:'Dragon Scale',    rarity:'rare',     icon:'🐉',value:300, desc:'Impervious to flame.'},
+  {id:'r003',name:'Mana Crystal',    rarity:'rare',     icon:'🔮',value:275, desc:'Crystallized magic.'},
+  {id:'r004',name:'Thunder Gauntlet',rarity:'rare',     icon:'⚡',value:320, desc:'Channels lightning.'},
+  {id:'r005',name:'Phantom Mask',    rarity:'rare',     icon:'👻',value:290, desc:'Face of the unseen.'},
+  {id:'r006',name:'Arcane Tome',     rarity:'rare',     icon:'📖',value:350, desc:'Ancient spellbook.'},
+  {id:'r007',name:'Vortex Staff',    rarity:'rare',     icon:'🌀',value:310, desc:'Creates small storms.'},
+  {id:'r008',name:'Ice Crown',       rarity:'rare',     icon:'👑',value:400, desc:'Freezes the mind.'},
+  {id:'r009',name:'Fire Emblem',     rarity:'rare',     icon:'🔥',value:330, desc:'Smoldering with power.'},
+  {id:'r010',name:'Moon Amulet',     rarity:'rare',     icon:'🌙',value:280, desc:'Grants lunar vision.'},
+  {id:'e001',name:'Void Blade',      rarity:'epic',     icon:'🌑',value:1200,desc:'Cuts through reality.'},
+  {id:'e002',name:'Soul Gem',        rarity:'epic',     icon:'💜',value:1500,desc:'Contains a trapped soul.'},
+  {id:'e003',name:'Titan Armor',     rarity:'epic',     icon:'🛡️',value:1800,desc:'Forged by giants.'},
+  {id:'e004',name:'Celestial Bow',   rarity:'epic',     icon:'🌟',value:1400,desc:'Arrows pierce stars.'},
+  {id:'e005',name:'Chaos Orb',       rarity:'epic',     icon:'🌪️',value:2000,desc:'Unpredictable power.'},
+  {id:'e006',name:'Phantom Crown',   rarity:'epic',     icon:'👑',value:2200,desc:'Ruler of shadows.'},
+  {id:'e007',name:'Elder Wand',      rarity:'epic',     icon:'🪄',value:1900,desc:'Mastery over death.'},
+  {id:'e008',name:'Abyssal Ring',    rarity:'epic',     icon:'🖤',value:1700,desc:'Power from the deep.'},
+  {id:'l001',name:'Sunforged Sword', rarity:'legendary',icon:'☀️',value:8000, desc:'Blazing with solar power.'},
+  {id:'l002',name:'Moonweave Robe',  rarity:'legendary',icon:'🌕',value:9500, desc:'Woven from moonlight.'},
+  {id:'l003',name:'Storm Trident',   rarity:'legendary',icon:'🔱',value:11000,desc:'Commands the seas.'},
+  {id:'l004',name:'Infinity Gauntlet',rarity:'legendary',icon:'✊',value:15000,desc:'Controls reality.'},
+  {id:'l005',name:'Phoenix Feather', rarity:'legendary',icon:'🦅',value:12000,desc:'Grants rebirth.'},
+  {id:'l006',name:'God Slayer',      rarity:'legendary',icon:'⚔️',value:20000,desc:'Even gods fear this.'},
+  {id:'m001',name:'Universe Key',    rarity:'mythic',   icon:'🗝️',value:75000, desc:'Opens any dimension.'},
+  {id:'m002',name:'Star Fragment',   rarity:'mythic',   icon:'⭐',value:100000,desc:'Piece of a dead star.'},
+  {id:'m003',name:'Reality Shard',   rarity:'mythic',   icon:'💫',value:120000,desc:'Reality bends around it.'},
+  {id:'m004',name:'Void Crystal',    rarity:'mythic',   icon:'🔲',value:90000, desc:'Fragment of nothingness.'},
+  {id:'d001',name:'Divine Relic',    rarity:'divine',   icon:'✨',value:500000, desc:'Touched by a deity.'},
+  {id:'d002',name:'Creation Orb',    rarity:'divine',   icon:'🌈',value:750000, desc:'Born at start of time.'},
+  {id:'ur01',name:'OMEGA SHARD',     rarity:'ultra1',   icon:'💠',value:5000000,      desc:'1 in a million. Truly impossible.'},
+  {id:'ur02',name:'NEXUS CORE',      rarity:'ultra2',   icon:'🔵',value:50000000,     desc:'One of only a few in existence.'},
+  {id:'ur03',name:'PRIMORDIAL EYE',  rarity:'ultra3',   icon:'👁️',value:500000000,    desc:'The eye that saw creation.'},
+  {id:'ur04',name:'ABSOLUTE ZERO',   rarity:'ultra4',   icon:'❄️',value:999999999999, desc:'The rarest item in existence.'},
+];
+
+const CRATES = [
+  {id:'starter',  name:'Starter Crate',  price:50,   icon:'📦',color:'#9ca3af',desc:'A basic crate for beginners.',      items:['c001','c002','c003','c004','c005','c006','c007','c008','u001','u002','r001']},
+  {id:'warrior',  name:'Warrior Crate',  price:150,  icon:'⚔️',color:'#ef4444',desc:'Contains combat gear and weapons.', items:['c003','c010','u002','u003','r001','r004','e001','l006']},
+  {id:'mystic',   name:'Mystic Crate',   price:200,  icon:'🔮',color:'#a855f7',desc:'Magical artifacts and arcane items.',items:['u007','u010','r003','r006','r007','e002','e007','l002','m003']},
+  {id:'explorer', name:'Explorer Crate', price:120,  icon:'🗺️',color:'#22c55e',desc:'Tools for the adventurous spirit.',  items:['c011','c012','u005','u006','u009','r010','e004','l005']},
+  {id:'shadow',   name:'Shadow Crate',   price:300,  icon:'🌑',color:'#6b21a8',desc:'Dark and mysterious contents.',       items:['u011','u012','r005','e001','e008','l004','m001','m004']},
+  {id:'celestial',name:'Celestial Crate',price:500,  icon:'🌟',color:'#f59e0b',desc:'Items blessed by the heavens.',       items:['r008','r010','e004','e006','l001','l002','l005','m002','d001']},
+  {id:'mythic',   name:'Mythic Crate',   price:1000, icon:'💀',color:'#ef4444',desc:'For the most daring collectors.',    items:['e001','e002','e005','l001','l003','l006','m001','m002','m003','m004','d001','d002']},
+  {id:'divine',   name:'Divine Crate',   price:2500, icon:'✨',color:'#ffffff',desc:'Touched by divinity itself.',         items:['l001','l002','l003','l004','l005','l006','m001','m002','m003','m004','d001','d002','ur01']},
+  {id:'void',     name:'Void Crate',     price:5000, icon:'🕳️',color:'#555555',desc:'From the space between worlds.',     items:['m001','m002','m003','m004','d001','d002','ur01','ur02']},
+  {id:'omega',    name:'OMEGA Crate',    price:10000,icon:'⚡',color:'#ffd700',desc:'The rarest crate in existence.',      items:['d001','d002','ur01','ur02','ur03','ur04']},
+];
+
+function getItem(id){return ITEMS.find(i=>i.id===id);}
+function getRarity(k){return RARITIES[k]||RARITIES.common;}
+function fmtNum(n){
+  if(n>=1e12)return(n/1e12).toFixed(1)+'T';
+  if(n>=1e9) return(n/1e9).toFixed(1)+'B';
+  if(n>=1e6) return(n/1e6).toFixed(1)+'M';
+  if(n>=1e3) return(n/1e3).toFixed(1)+'K';
+  return String(Math.floor(n));
+}
+function rarityOdds(k){
+  const r=RARITIES[k]; if(!r)return'';
+  if(r.display)return r.display;
+  const p=r.chance*100;
+  if(p>=1)return p.toFixed(0)+'%';
+  if(p>=.1)return p.toFixed(1)+'%';
+  return'1 in '+Math.round(1/r.chance).toLocaleString();
+}
+function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+
+// ============================================================
+// FIREBASE INIT
+// ============================================================
+let db, auth, rtdb;
+
+function initFirebase(cfg){
+  if(firebase.apps.length) firebase.apps.forEach(a=>a.delete());
+  firebase.initializeApp(cfg);
+  auth  = firebase.auth();
+  db    = firebase.firestore();
+  rtdb  = firebase.database();
+  // Enable offline persistence
+  db.enablePersistence().catch(()=>{});
+}
+
+
+// ── SETUP SCREEN ─────────────────────────────────────────────
+
+
+
+
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  user: null,         // Firebase auth user
+  profile: null,      // Firestore profile doc
+  inventory: [],      // local copy
+  selectedItems: new Set(),
+  currentCrate: null,
+  currentLbTab: 'richest',
+  lbData: {},
+  tradeRoomId: null,
+  tradeMyItems: [],
+  tradeTheirItems: [],
+  tradeMyAccepted: false,
+  tradeTheirAccepted: false,
+  tradeCountdownActive: false,
+  tradePartnerUid: null,
+  onlinePlayers: [],
+  presenceRef: null,
+  lastOpenedInvItem: null,
+};
+
+// ============================================================
+// UTILITY
+// ============================================================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+}
+function toast(msg,type=''){
+  const el=document.createElement('div');
+  el.className='toast '+(type||'');
+  el.textContent=msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>{el.style.animation='toast-out .3s ease forwards';setTimeout(()=>el.remove(),300);},3000);
+}
+function showGlobalBanner(msg){
+  const b=document.getElementById('global-banner');
+  b.textContent=msg; b.classList.remove('hidden');
+  setTimeout(()=>b.classList.add('hidden'),8000);
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+document.querySelectorAll('.auth-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('login-form').classList.toggle('hidden',tab.dataset.tab!=='login');
+    document.getElementById('register-form').classList.toggle('hidden',tab.dataset.tab!=='register');
+  });
+});
+
+document.getElementById('login-btn').addEventListener('click',async()=>{
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-password').value;
+  const err=document.getElementById('login-error');
+  err.textContent='';
+  try{
+    await auth.signInWithEmailAndPassword(email,pass);
+  }catch(e){ err.textContent=friendlyAuthError(e.code); }
+});
+
+document.getElementById('register-btn').addEventListener('click',async()=>{
+  const username=document.getElementById('reg-username').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-password').value;
+  const err=document.getElementById('reg-error');
+  err.textContent='';
+  if(!username||username.length<3||username.length>20){err.textContent='Username must be 3-20 characters.';return;}
+  try{
+    // Check username unique
+    const snap=await db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get();
+    if(!snap.empty){err.textContent='Username already taken.';return;}
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    // Create profile
+    await db.collection('users').doc(cred.user.uid).set({
+      uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
+      coins:500, inventory:[], tradeHistory:[], cratesOpened:0,
+      totalValue:0, rarestItem:null, rarestTier:0,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  }catch(e){ err.textContent=friendlyAuthError(e.code)||e.message; }
+});
+
+document.getElementById('logout-btn').addEventListener('click',async()=>{
+  await leavePresence();
+  await auth.signOut();
+  toast('Logged out.');
+});
+
+function friendlyAuthError(code){
+  const map={
+    'auth/user-not-found':'No account with that email.',
+    'auth/wrong-password':'Wrong password.',
+    'auth/email-already-in-use':'Email already in use.',
+    'auth/invalid-email':'Invalid email address.',
+    'auth/weak-password':'Password must be at least 6 characters.',
+  };
+  return map[code]||'';
+}
+
+// ── AUTH STATE OBSERVER ────────────────────────────────────
+function startAuthObserver(){
+  auth.onAuthStateChanged(async user=>{
+    if(user){
+      S.user=user;
+      const doc=await db.collection('users').doc(user.uid).get();
+      if(!doc.exists){ await auth.signOut(); return; }
+      S.profile=doc.data();
+      S.inventory=[...S.profile.inventory||[]];
+      document.getElementById('nav-username').textContent=S.profile.username;
+      updateCoinDisplay(S.profile.coins);
+      showScreen('game-screen');
+      loadCratesPage();
+      showPage('crates');
+      setupPresence();
+      listenToPresence();
+      listenToChat();
+      listenToTradeRequests();
+    } else {
+      S.user=null; S.profile=null;
+      showScreen('auth-screen');
+      spawnParticles();
+    }
+  });
+}
+
+function updateCoinDisplay(coins){
+  S.profile.coins=coins;
+  document.getElementById('coin-balance').textContent=fmtNum(coins);
+  document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
+}
+
+// ============================================================
+// REALTIME PRESENCE (Firebase Realtime DB)
+// ============================================================
+function setupPresence(){
+  if(!S.user||!S.profile)return;
+  const uid=S.user.uid;
+  const ref=rtdb.ref('presence/'+uid);
+  S.presenceRef=ref;
+  ref.set({uid,username:S.profile.username,online:true});
+  ref.onDisconnect().remove();
+}
+
+async function leavePresence(){
+  if(S.presenceRef){ await S.presenceRef.remove(); }
+}
+
+function listenToPresence(){
+  rtdb.ref('presence').on('value',snap=>{
+    const data=snap.val()||{};
+    S.onlinePlayers=Object.values(data).filter(p=>p.uid!==S.user?.uid);
+    if(document.getElementById('page-trade').classList.contains('active')) renderOnlinePlayers();
+  });
+}
+
+// ============================================================
+// CHAT (Firebase Realtime DB)
+// ============================================================
+function listenToChat(){
+  // Listen to last 50 messages
+  rtdb.ref('chat').limitToLast(50).on('child_added',snap=>{
+    const msg=snap.val();
+    appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
+  });
+}
+
+document.getElementById('chat-send').addEventListener('click',sendChat);
+document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
+
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const text=input.value.trim().slice(0,200);
+  if(!text||!S.user)return;
+  input.value='';
+  await rtdb.ref('chat').push({
+    username:S.profile.username, text, isSystem:false,
+    ts:firebase.database.ServerValue.TIMESTAMP,
+  });
+}
+
+function appendChatMessage(username,text,isSystem=false,cls=''){
+  const msgs=document.getElementById('chat-messages');
+  const el=document.createElement('div');
+  el.className='chat-msg '+(cls||'');
+  el.innerHTML=isSystem
+    ? `<span class="chat-msg-${cls||'system'}">${username}:</span> ${text}`
+    : `<span class="chat-msg-user">${username}:</span> ${text}`;
+  msgs.appendChild(el);
+  msgs.scrollTop=msgs.scrollHeight;
+  while(msgs.children.length>100)msgs.removeChild(msgs.firstChild);
+}
+
+// ============================================================
+// CRATES PAGE
+// ============================================================
+function loadCratesPage(){
+  const grid=document.getElementById('crates-grid');
+  grid.innerHTML='';
+  CRATES.forEach(crate=>{
+    const c=document.createElement('div');
+    c.className='crate-card';
+    c.style.setProperty('--cc',crate.color==='#ffffff'?'#aaa':crate.color);
+    c.style.setProperty('--cg',(crate.color==='#ffffff'?'#aaaaaa':crate.color)+'33');
+    c.innerHTML=`<span class="crate-emoji">${crate.icon}</span>
+      <div class="crate-name">${crate.name}</div>
+      <div class="crate-desc">${crate.desc}</div>
+      <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
+    c.addEventListener('click',()=>openCratePage(crate));
+    grid.appendChild(c);
+  });
+}
+
+// ============================================================
+// CRATE OPENING
+// ============================================================
+function openCratePage(crate){
+  S.currentCrate=crate;
+  document.getElementById('opening-crate-name').textContent=crate.name.toUpperCase();
+  document.getElementById('open-price-display').textContent='Cost: 🪙 '+crate.price.toLocaleString();
+  document.getElementById('opening-coin-balance').textContent=fmtNum(S.profile.coins);
+  document.getElementById('result-panel').classList.add('hidden');
+  document.getElementById('btn-open-crate').disabled=false;
+  buildCrateInfoPanel(crate);
+  buildSpinTrack(crate);
+  showPage('opening');
+}
+
+document.getElementById('back-from-opening').addEventListener('click',()=>showPage('crates'));
+
+function buildCrateInfoPanel(crate){
+  const panel=document.getElementById('crate-info-panel');
+  const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
+  const grouped={};
+  crateItems.forEach(item=>{if(!grouped[item.rarity])grouped[item.rarity]=[];grouped[item.rarity].push(item);});
+  const order=['ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
+  panel.innerHTML=`
+    <div style="flex:1">
+      <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div>
+      <div class="crate-info-items" id="cip-items"></div>
+    </div>
+    <div style="min-width:140px">
+      <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">ODDS</div>
+      <div id="cip-odds" style="display:flex;flex-direction:column;gap:4px"></div>
+    </div>`;
+  const itemsEl=document.getElementById('cip-items');
+  const oddsEl=document.getElementById('cip-odds');
+  const shownRar=new Set();
+  order.forEach(rar=>{
+    if(!grouped[rar])return;
+    shownRar.add(rar);
+    const r=getRarity(rar);
+    const col=r.color==='rainbow'?'#fff':r.color;
+    grouped[rar].forEach(item=>{
+      const pill=document.createElement('div');
+      pill.className='crate-item-pill';
+      pill.style.cssText=`border-color:${col}66;color:${col}`;
+      pill.innerHTML=`${item.icon} <span style="color:var(--text-2)">${item.name}</span>`;
+      itemsEl.appendChild(pill);
+    });
+  });
+  order.filter(r=>shownRar.has(r)).forEach(rar=>{
+    const r=getRarity(rar);
+    const col=r.color==='rainbow'?'#fff':r.color;
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem';
+    row.innerHTML=`<span style="color:${col};font-family:var(--font-d);font-size:.65rem;letter-spacing:.05em">${r.name}</span>
+      <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar)}</span>`;
+    oddsEl.appendChild(row);
+  });
+}
+
+function buildSpinTrack(crate){
+  const track=document.getElementById('spin-track');
+  track.innerHTML=''; track.style.transform='translateX(0)';
+  const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
+  for(let i=0;i<60;i++){
+    const item=pool[Math.floor(Math.random()*pool.length)];
+    const r=getRarity(item.rarity);
+    const col=r.color==='rainbow'?'#fff':r.color;
+    const el=document.createElement('div');
+    el.className='spin-item';
+    el.style.borderColor=col+'88';
+    el.innerHTML=`<span>${item.icon}</span><div class="spin-item-name">${item.name}</div>`;
+    track.appendChild(el);
+  }
+}
+
+function rollItem(crateId){
+  const crate=CRATES.find(c=>c.id===crateId);
+  if(!crate)return null;
+  const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
+  const weighted=pool.map(item=>({item,weight:getRarity(item.rarity).chance||0}));
+  const total=weighted.reduce((s,w)=>s+w.weight,0);
+  let rand=Math.random()*total;
+  for(const{item,weight}of weighted){rand-=weight;if(rand<=0)return item;}
+  return weighted[weighted.length-1].item;
+}
+
+document.getElementById('btn-open-crate').addEventListener('click',async()=>{
+  const crate=S.currentCrate;
+  if(!crate||!S.user)return;
+  if(S.profile.coins<crate.price){toast('Not enough coins! 🪙','error');return;}
+  const btn=document.getElementById('btn-open-crate');
+  btn.disabled=true;
+  document.getElementById('result-panel').classList.add('hidden');
+  await animateSpin(crate);
+  const item=rollItem(crate.id);
+  if(!item){btn.disabled=false;return;}
+  // Save to Firestore
+  const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
+  S.inventory.push(invItem);
+  S.profile.coins-=crate.price;
+  S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
+  const r=getRarity(item.rarity);
+  if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=item.id;S.profile.rarestTier=r.tier;}
+  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  await db.collection('users').doc(S.user.uid).update({
+    coins: firebase.firestore.FieldValue.increment(-crate.price),
+    inventory: S.inventory,
+    cratesOpened: S.profile.cratesOpened,
+    rarestItem: S.profile.rarestItem,
+    rarestTier: S.profile.rarestTier,
+    totalValue: S.profile.totalValue,
+  });
+  updateCoinDisplay(S.profile.coins);
+  showResult(item,r,invItem);
+  // Ultra rare announcement
+  if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
+    setTimeout(()=>showUltraOverlay(item),800);
+    const desc=r.display?`(${r.display})`:'';
+    const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name} ${desc}!`;
+    showGlobalBanner(msg);
+    await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',ts:firebase.database.ServerValue.TIMESTAMP});
+  }
+  btn.disabled=false;
+});
+
+function animateSpin(crate){
+  return new Promise(resolve=>{
+    buildSpinTrack(crate);
+    const track=document.getElementById('spin-track');
+    const items=track.querySelectorAll('.spin-item');
+    const iW=108;
+    const landIdx=44+Math.floor(Math.random()*3);
+    const cW=document.getElementById('spin-container').offsetWidth/2;
+    const targetX=-(landIdx*iW-cW+iW/2);
+    track.style.transition='transform 3.5s cubic-bezier(0.12,0,0.08,1)';
+    track.style.transform=`translateX(${targetX}px)`;
+    setTimeout(()=>{items[landIdx]?.classList.add('landing');resolve();},3600);
+  });
+}
+
+function showResult(item,r,invItem){
+  S.lastOpenedInvItem=invItem;
+  const col=r.color==='rainbow'?'#fff':r.color;
+  const panel=document.getElementById('result-panel');
+  panel.style.setProperty('--rc',col);
+  panel.style.setProperty('--rg',r.glow||col+'44');
+  panel.className='result-panel'+(item.rarity==='divine'?' rarity-divine':'');
+  document.getElementById('result-icon').textContent=item.icon;
+  document.getElementById('result-name').textContent=item.name;
+  const rarEl=document.getElementById('result-rarity');
+  rarEl.textContent=r.name.toUpperCase();
+  rarEl.style.color=col; rarEl.style.borderColor=col+'88';
+  document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
+  panel.classList.remove('hidden');
+}
+
+document.getElementById('btn-keep-item').addEventListener('click',()=>{
+  document.getElementById('result-panel').classList.add('hidden');
+  toast('Item kept!','success');
+});
+
+document.getElementById('btn-sell-result').addEventListener('click',async()=>{
+  const invItem=S.lastOpenedInvItem;
+  if(!invItem)return;
+  await sellItems([invItem.uniqueId]);
+  document.getElementById('result-panel').classList.add('hidden');
+});
+
+document.getElementById('btn-open-again').addEventListener('click',()=>{
+  document.getElementById('result-panel').classList.add('hidden');
+  document.getElementById('btn-open-crate').click();
+});
+
+// ============================================================
+// INVENTORY
+// ============================================================
+document.getElementById('inv-search').addEventListener('input',renderInventory);
+document.getElementById('inv-sort').addEventListener('change',renderInventory);
+
+function renderInventory(){
+  const grid=document.getElementById('inventory-grid');
+  const search=document.getElementById('inv-search').value.toLowerCase();
+  const sort=document.getElementById('inv-sort').value;
+  let items=[...S.inventory];
+  if(search)items=items.filter(inv=>{const it=getItem(inv.itemId);return it&&it.name.toLowerCase().includes(search);});
+  items.sort((a,b)=>{
+    const ia=getItem(a.itemId),ib=getItem(b.itemId); if(!ia||!ib)return 0;
+    if(sort==='rarity') return (getRarity(ib.rarity).tier||0)-(getRarity(ia.rarity).tier||0);
+    if(sort==='value')  return ib.value-ia.value;
+    if(sort==='name')   return ia.name.localeCompare(ib.name);
+    return 0;
+  });
+  grid.innerHTML='';
+  if(items.length===0){
+    grid.innerHTML='<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">Your inventory is empty. Open some crates!</div>';
+  } else {
+    items.forEach(inv=>makeItemCard(inv,grid,true));
+  }
+  const total=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  document.getElementById('inv-count').textContent=S.inventory.length+' items';
+  document.getElementById('inv-total-value').textContent='Total: '+fmtNum(total)+' 🪙';
+}
+
+function makeItemCard(inv,container,selectable=false,size=100){
+  const item=getItem(inv.itemId); if(!item)return null;
+  const r=getRarity(item.rarity);
+  const col=r.color==='rainbow'?'#fff':r.color;
+  const card=document.createElement('div');
+  card.className='item-card'+(item.rarity==='divine'?' rarity-divine':'');
+  card.style.setProperty('--ic',col+'aa');
+  card.style.setProperty('--ig',r.glow||'#9ca3af33');
+  if(size!==100)card.style.width=size+'px';
+  card.dataset.uid=inv.uniqueId;
+  if(selectable&&S.selectedItems.has(inv.uniqueId))card.classList.add('selected');
+  card.innerHTML=`<span class="item-icon">${item.icon}</span><div class="item-name">${item.name}</div><div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
+  if(selectable){
+    card.addEventListener('click',()=>{
+      if(S.selectedItems.has(inv.uniqueId)){S.selectedItems.delete(inv.uniqueId);card.classList.remove('selected');}
+      else{S.selectedItems.add(inv.uniqueId);card.classList.add('selected');}
+    });
+  }
+  card.addEventListener('mouseenter',e=>showTip(e,item,r));
+  card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
+  card.addEventListener('mousemove',e=>{
+    const tt=document.getElementById('item-tooltip');
+    tt.style.left=Math.min(e.clientX+12,window.innerWidth-240)+'px';
+    tt.style.top=Math.min(e.clientY+12,window.innerHeight-200)+'px';
+  });
+  container.appendChild(card);
+  return card;
+}
+
+function showTip(e,item,r){
+  const tt=document.getElementById('item-tooltip');
+  const col=r.color==='rainbow'?'#fff':r.color;
+  document.getElementById('tt-icon').textContent=item.icon;
+  document.getElementById('tt-name').textContent=item.name;
+  const rarEl=document.getElementById('tt-rarity');
+  rarEl.textContent=r.name; rarEl.style.color=col;
+  document.getElementById('tt-desc').textContent=item.desc||'';
+  document.getElementById('tt-value').textContent='🪙 '+item.value.toLocaleString();
+  tt.classList.remove('hidden');
+  tt.style.left=Math.min(e.clientX+12,window.innerWidth-240)+'px';
+  tt.style.top=Math.min(e.clientY+12,window.innerHeight-200)+'px';
+}
+
+document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
+  const ids=[...S.selectedItems];
+  if(!ids.length){toast('Select items to sell first.');return;}
+  await sellItems(ids);
+  S.selectedItems.clear();
+});
+
+async function sellItems(uniqueIds){
+  let earned=0;
+  for(const uid of uniqueIds){
+    const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
+    if(idx===-1)continue;
+    const item=getItem(S.inventory[idx].itemId);
+    if(item)earned+=Math.floor(item.value*.7);
+    S.inventory.splice(idx,1);
+  }
+  S.profile.coins+=earned;
+  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  await db.collection('users').doc(S.user.uid).update({
+    coins:firebase.firestore.FieldValue.increment(earned),
+    inventory:S.inventory,
+    totalValue:S.profile.totalValue,
+  });
+  updateCoinDisplay(S.profile.coins);
+  toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
+  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
+}
+
+// ============================================================
+// LEADERBOARD
+// ============================================================
+async function loadLeaderboard(){
+  try{
+    const [r1,r2,r3]=await Promise.all([
+      db.collection('users').orderBy('coins','desc').limit(10).get(),
+      db.collection('users').orderBy('cratesOpened','desc').limit(10).get(),
+      db.collection('users').orderBy('totalValue','desc').limit(10).get(),
+    ]);
+    const enrich=snap=>snap.docs.map(d=>{
+      const u=d.data();
+      const rItem=u.rarestItem?getItem(u.rarestItem):null;
+      return{...u,rarestItemName:rItem?rItem.name:'None',rarestItemIcon:rItem?rItem.icon:'—'};
+    });
+    S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
+    renderLeaderboard(S.currentLbTab);
+  }catch(e){toast('Leaderboard error','error');}
+}
+
+function renderLeaderboard(tab){
+  S.currentLbTab=tab;
+  const list=document.getElementById('leaderboard-list');
+  const rows=S.lbData[tab]||[];
+  list.innerHTML='';
+  rows.forEach((p,i)=>{
+    const row=document.createElement('div');
+    row.className='lb-row';
+    const rc=i===0?'lb-rank-1':i===1?'lb-rank-2':i===2?'lb-rank-3':'';
+    const rl=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+    let val='';
+    if(tab==='richest')    val='🪙 '+fmtNum(p.coins||0);
+    if(tab==='mostCrates') val=(p.cratesOpened||0).toLocaleString()+' crates';
+    if(tab==='mostValue')  val='🪙 '+fmtNum(p.totalValue||0);
+    row.innerHTML=`<div class="lb-rank ${rc}">${rl}</div>
+      <div class="lb-info"><div class="lb-username">${p.username}</div>
+        <div class="lb-sub">Rarest: ${p.rarestItemIcon} ${p.rarestItemName}</div></div>
+      <div class="lb-value">${val}</div>`;
+    list.appendChild(row);
+  });
+  if(!rows.length)list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">No data yet.</div>';
+}
+
+document.querySelectorAll('.lb-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    renderLeaderboard(tab.dataset.lb);
+  });
+});
+
+// ============================================================
+// TRADE HISTORY
+// ============================================================
+function renderTradeHistory(){
+  const list=document.getElementById('history-list');
+  const history=[...(S.profile.tradeHistory||[])].reverse();
+  list.innerHTML='';
+  if(!history.length){
+    list.innerHTML='<div style="color:var(--text-3);font-style:italic">No trades yet.</div>';
+    return;
+  }
+  history.forEach(trade=>{
+    const row=document.createElement('div');
+    row.className='history-row';
+    const date=new Date(trade.timestamp).toLocaleString();
+    const chips=(items)=>(items||[]).map(i=>{
+      const r=getRarity(i.rarity);const col=r.color==='rainbow'?'#fff':r.color;
+      return`<span class="history-item-chip" style="color:${col};border-color:${col}66">${i.name}</span>`;
+    }).join('')||'<span style="color:var(--text-3)">Nothing</span>';
+    row.innerHTML=`<div class="history-header">
+      <span class="history-partner">Trade with ${trade.partnerName}</span>
+      <span class="history-date">${date}</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div><div class="history-items-label">YOU GAVE:</div><div class="history-items-list">${chips(trade.itemsGiven)}</div></div>
+        <div><div class="history-items-label">YOU RECEIVED:</div><div class="history-items-list">${chips(trade.itemsReceived)}</div></div>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+// ============================================================
+// TRADE SYSTEM (Firebase Realtime DB)
+// ============================================================
+function listenToTradeRequests(){
+  if(!S.user)return;
+  rtdb.ref('tradeRequests/'+S.user.uid).on('child_added',snap=>{
+    const req=snap.val();
+    if(!req)return;
+    snap.ref.remove();
+    showIncomingTradeModal(req.fromUid,req.fromUsername);
+  });
+}
+
+function renderOnlinePlayers(){
+  const list=document.getElementById('online-players-list');
+  list.innerHTML='';
+  if(!S.onlinePlayers.length){list.innerHTML='<div class="no-players">No other players online</div>';return;}
+  S.onlinePlayers.forEach(p=>{
+    const chip=document.createElement('div');
+    chip.className='online-player-chip';
+    chip.innerHTML=`<div class="online-dot"></div>
+      <span class="online-player-name">${p.username}</span>
+      <button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`;
+    chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
+    list.appendChild(chip);
+  });
+}
+
+async function sendTradeRequest(toUid,toUsername){
+  await rtdb.ref('tradeRequests/'+toUid).push({
+    fromUid:S.user.uid, fromUsername:S.profile.username,
+    ts:firebase.database.ServerValue.TIMESTAMP,
+  });
+  toast('Trade request sent to '+toUsername+'!');
+}
+
+function showIncomingTradeModal(fromUid,fromUsername){
+  document.querySelectorAll('.incoming-trade-modal').forEach(e=>e.remove());
+  const modal=document.createElement('div');
+  modal.className='incoming-trade-modal';
+  modal.innerHTML=`<h4>🤝 TRADE REQUEST</h4><p><strong>${fromUsername}</strong> wants to trade!</p>
+    <div class="incoming-trade-btns">
+      <button class="btn-atr">ACCEPT</button>
+      <button class="btn-dtr">DECLINE</button>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('.btn-atr').addEventListener('click',()=>{modal.remove();createTradeRoom(fromUid,fromUsername);});
+  modal.querySelector('.btn-dtr').addEventListener('click',()=>{modal.remove();toast('Trade declined.');});
+  setTimeout(()=>modal.remove(),30000);
+}
+
+async function createTradeRoom(partnerUid,partnerUsername){
+  const roomId=genUID();
+  S.tradeRoomId=roomId;
+  S.tradePartnerUid=partnerUid;
+  S.tradeMyItems=[];
+  S.tradeTheirItems=[];
+  S.tradeMyAccepted=false;
+  S.tradeTheirAccepted=false;
+  // Create room in RTDB
+  const room={
+    roomId,
+    players:{
+      [S.user.uid]:{uid:S.user.uid,username:S.profile.username,items:[],accepted:false,finalAccepted:false},
+      [partnerUid]:{uid:partnerUid,username:partnerUsername,items:[],accepted:false,finalAccepted:false},
+    },
+    locked:false, createdAt:firebase.database.ServerValue.TIMESTAMP,
+  };
+  await rtdb.ref('tradeRooms/'+roomId).set(room);
+  // Notify partner
+  await rtdb.ref('tradeInvites/'+partnerUid).push({roomId,fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
+  listenToTradeRoom(roomId);
+  showPage('trade');
+  document.getElementById('trade-room').classList.remove('hidden');
+  document.getElementById('trade-you-name').textContent=S.profile.username;
+  document.getElementById('trade-them-name').textContent=partnerUsername;
+  renderTradeInventoryMini();
+  toast('Trade room created!','success');
+}
+
+// Partner receives room invite
+function setupTradeInviteListener(){
+  if(!S.user)return;
+  rtdb.ref('tradeInvites/'+S.user.uid).on('child_added',snap=>{
+    const inv=snap.val(); if(!inv)return;
+    snap.ref.remove();
+    S.tradeRoomId=inv.roomId;
+    S.tradePartnerUid=inv.fromUid;
+    S.tradeMyItems=[];
+    S.tradeTheirItems=[];
+    S.tradeMyAccepted=false;
+    S.tradeTheirAccepted=false;
+    listenToTradeRoom(inv.roomId);
+    showPage('trade');
+    document.getElementById('trade-room').classList.remove('hidden');
+    document.getElementById('trade-you-name').textContent=S.profile.username;
+    document.getElementById('trade-them-name').textContent=inv.fromUsername;
+    renderTradeInventoryMini();
+    toast('Joined trade room with '+inv.fromUsername+'!','success');
+  });
+}
+
+let tradeRoomListener=null;
+function listenToTradeRoom(roomId){
+  if(tradeRoomListener)tradeRoomListener();
+  const ref=rtdb.ref('tradeRooms/'+roomId);
+  const unsub=ref.on('value',snap=>{
+    const room=snap.val();
+    if(!room){resetTradeState();return;}
+    const players=room.players||{};
+    const myData=players[S.user.uid];
+    const theirData=players[S.tradePartnerUid];
+    if(myData){
+      S.tradeMyItems=myData.items||[];
+      S.tradeMyAccepted=myData.accepted||false;
+    }
+    if(theirData){
+      S.tradeTheirItems=theirData.items||[];
+      S.tradeTheirAccepted=theirData.accepted||false;
+      document.getElementById('trade-them-name').textContent=theirData.username||'Partner';
+    }
+    renderTradeItems('trade-items-you',S.tradeMyItems,true);
+    renderTradeItems('trade-items-them',S.tradeTheirItems,false);
+    renderTradeInventoryMini();
+    updateTradeStatus();
+    // Both accepted → show countdown
+    if(room.locked&&!S.tradeCountdownActive){
+      S.tradeCountdownActive=true;
+      showFinalModal(S.tradeMyItems,S.tradeTheirItems);
+    }
+    // Trade complete
+    if(room.completed){
+      handleTradeComplete(room);
+    }
+  });
+  tradeRoomListener=()=>ref.off('value',unsub);
+}
+
+function renderTradeItems(containerId,items,isYours){
+  const el=document.getElementById(containerId);
+  el.innerHTML='';
+  if(!items.length){el.innerHTML=`<div class="trade-empty-hint">${isYours?'Click items below to add':'Waiting for partner...'}</div>`;return;}
+  items.forEach(item=>{
+    const r=getRarity(item.rarity);
+    const col=r.color==='rainbow'?'#fff':r.color;
+    const card=document.createElement('div');
+    card.className='item-card';
+    card.style.width='80px';
+    card.style.setProperty('--ic',col+'aa');
+    card.style.setProperty('--ig',r.glow||'#9ca3af33');
+    card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
+    if(isYours){card.title='Click to remove';card.addEventListener('click',()=>removeFromTrade(item.uniqueId));}
+    card.addEventListener('mouseenter',e=>showTip(e,item,r));
+    card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
+    el.appendChild(card);
+  });
+}
+
+function renderTradeInventoryMini(){
+  const grid=document.getElementById('trade-inventory-mini');
+  grid.innerHTML='';
+  const inTrade=new Set(S.tradeMyItems.map(i=>i.uniqueId));
+  S.inventory.forEach(inv=>{
+    const item=getItem(inv.itemId); if(!item)return;
+    const r=getRarity(item.rarity);
+    const col=r.color==='rainbow'?'#fff':r.color;
+    const card=document.createElement('div');
+    card.className='item-card'+(inTrade.has(inv.uniqueId)?' selected':'');
+    card.style.width='75px';
+    card.style.setProperty('--ic',col+'aa');
+    card.style.setProperty('--ig',r.glow||'#9ca3af33');
+    card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
+    card.addEventListener('click',()=>inTrade.has(inv.uniqueId)?removeFromTrade(inv.uniqueId):addToTrade(inv));
+    card.addEventListener('mouseenter',e=>showTip(e,item,r));
+    card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
+    grid.appendChild(card);
+  });
+}
+
+async function addToTrade(inv){
+  if(!S.tradeRoomId)return;
+  const item=getItem(inv.itemId); if(!item)return;
+  const newItem={uniqueId:inv.uniqueId,itemId:inv.itemId,...item};
+  const myItems=[...S.tradeMyItems,newItem];
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({
+    items:myItems,accepted:false,finalAccepted:false,
+  });
+  // Reset both accepts
+  await resetTradeAccepts('Item added to trade.');
+}
+
+async function removeFromTrade(uniqueId){
+  if(!S.tradeRoomId)return;
+  const myItems=S.tradeMyItems.filter(i=>i.uniqueId!==uniqueId);
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({
+    items:myItems,accepted:false,finalAccepted:false,
+  });
+  await resetTradeAccepts('Item removed from trade.');
+}
+
+async function resetTradeAccepts(message){
+  if(!S.tradeRoomId)return;
+  S.tradeCountdownActive=false;
+  document.getElementById('trade-final-modal').classList.add('hidden');
+  document.getElementById('trade-message').textContent='⚠️ '+message;
+  document.getElementById('trade-message').style.color='var(--gold)';
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:false});
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:false,finalAccepted:false});
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.tradePartnerUid}`).update({accepted:false,finalAccepted:false});
+  toast('⚠️ '+message);
+}
+
+document.getElementById('btn-accept-trade').addEventListener('click',async()=>{
+  if(!S.tradeRoomId)return;
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
+  // Check if both accepted
+  const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
+  const players=snap.val()||{};
+  const allAccepted=Object.values(players).every(p=>p.accepted);
+  if(allAccepted){
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
+  }
+  toast('You accepted the trade. Waiting for partner...');
+});
+
+document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
+  if(!S.tradeRoomId)return;
+  await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();
+  resetTradeState();
+  toast('Trade cancelled.','error');
+});
+
+document.getElementById('btn-final-accept').addEventListener('click',async()=>{
+  if(!S.tradeRoomId||!S.tradeCountdownActive)return;
+  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({finalAccepted:true});
+  // Check if both final accepted
+  const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
+  const players=snap.val()||{};
+  const allFinal=Object.values(players).every(p=>p.finalAccepted);
+  if(allFinal){
+    await executeTrade();
+  }
+  document.getElementById('btn-final-accept').disabled=true;
+  document.getElementById('btn-final-accept').textContent='Waiting for partner...';
+});
+
+document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
+  if(!S.tradeRoomId)return;
+  await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();
+  resetTradeState();
+  toast('Trade cancelled.','error');
+});
+
+async function executeTrade(){
+  if(!S.tradeRoomId||!S.tradePartnerUid)return;
+  try{
+    // Load both inventories fresh from Firestore
+    const [myDoc,theirDoc]=await Promise.all([
+      db.collection('users').doc(S.user.uid).get(),
+      db.collection('users').doc(S.tradePartnerUid).get(),
+    ]);
+    const myData=myDoc.data(); const theirData=theirDoc.data();
+    let myInv=[...myData.inventory||[]];
+    let theirInv=[...theirData.inventory||[]];
+    // Remove my items from my inventory and add to theirs
+    for(const ti of S.tradeMyItems){
+      const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+      if(idx===-1){toast('Item mismatch! Trade cancelled.','error');await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();resetTradeState();return;}
+      const[removed]=myInv.splice(idx,1);
+      theirInv.push({...removed,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
+    }
+    // Remove their items from their inventory and add to mine
+    for(const ti of S.tradeTheirItems){
+      const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+      if(idx===-1){toast('Item mismatch! Trade cancelled.','error');await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();resetTradeState();return;}
+      const[removed]=theirInv.splice(idx,1);
+      myInv.push({...removed,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
+    }
+    // Log trade history
+    const tradeId=genUID(); const ts=new Date().toISOString();
+    const myLog={tradeId,partnerId:S.tradePartnerUid,partnerName:theirData.username,
+      itemsGiven:S.tradeMyItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+      itemsReceived:S.tradeTheirItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+      timestamp:ts};
+    const theirLog={tradeId,partnerId:S.user.uid,partnerName:S.profile.username,
+      itemsGiven:S.tradeTheirItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+      itemsReceived:S.tradeMyItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+      timestamp:ts};
+    const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+    const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+    // Batch update
+    const batch=db.batch();
+    batch.update(db.collection('users').doc(S.user.uid),{inventory:myInv,totalValue:myVal,
+      tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
+    batch.update(db.collection('users').doc(S.tradePartnerUid),{inventory:theirInv,totalValue:theirVal,
+      tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
+    await batch.commit();
+    // Mark room as completed
+    await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({completed:true});
+  }catch(e){
+    console.error('Trade error:',e);
+    toast('Trade failed: '+e.message,'error');
+  }
+}
+
+async function handleTradeComplete(room){
+  // Reload profile
+  const doc=await db.collection('users').doc(S.user.uid).get();
+  S.profile=doc.data();
+  S.inventory=[...S.profile.inventory||[]];
+  updateCoinDisplay(S.profile.coins);
+  await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();
+  resetTradeState();
+  toast('🎉 Trade completed successfully!','success');
+  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
+}
+
+function showFinalModal(myItems,theirItems){
+  const modal=document.getElementById('trade-final-modal');
+  const myName=S.profile.username;
+  const theirName=document.getElementById('trade-them-name').textContent;
+  const iList=items=>(items||[]).map(i=>`${i.icon} ${i.name}`).join(', ')||'Nothing';
+  document.getElementById('final-trade-summary').innerHTML=
+    `<div style="margin-bottom:8px"><strong style="color:var(--accent)">${myName} gives:</strong><br>${iList(myItems)}</div>
+     <div><strong style="color:var(--gold)">${theirName} gives:</strong><br>${iList(theirItems)}</div>`;
+  modal.classList.remove('hidden');
+  const btn=document.getElementById('btn-final-accept');
+  const num=document.getElementById('countdown-num');
+  btn.disabled=true; btn.className='btn-final-accept disabled'; btn.textContent='FINAL ACCEPT';
+  S.tradeCountdownActive=false;
+  let count=5; num.textContent=count;
+  const cd=setInterval(()=>{
+    count--; num.textContent=count;
+    if(count<=0){
+      clearInterval(cd);
+      btn.disabled=false; btn.className='btn-final-accept';
+      S.tradeCountdownActive=true;
+      document.getElementById('countdown-display').innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
+    }
+  },1000);
+}
+
+function updateTradeStatus(){
+  const you=document.getElementById('trade-status-you');
+  const them=document.getElementById('trade-status-them');
+  you.textContent=S.tradeMyAccepted?'✓ ACCEPTED':'— Pending';
+  you.style.color=S.tradeMyAccepted?'#22c55e':'var(--text-3)';
+  them.textContent=S.tradeTheirAccepted?'✓ ACCEPTED':'— Pending';
+  them.style.color=S.tradeTheirAccepted?'#22c55e':'var(--text-3)';
+}
+
+function resetTradeState(){
+  if(tradeRoomListener){tradeRoomListener();tradeRoomListener=null;}
+  S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
+  S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false;
+  document.getElementById('trade-room').classList.add('hidden');
+  document.getElementById('trade-final-modal').classList.add('hidden');
+  document.getElementById('trade-message').textContent='';
+}
+
+// ============================================================
+// NAV
+// ============================================================
+document.querySelectorAll('.nav-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const page=btn.dataset.page;
+    showPage(page);
+    if(page==='inventory')renderInventory();
+    if(page==='trade'){renderOnlinePlayers();if(S.tradeRoomId)renderTradeRoom();}
+    if(page==='leaderboard')loadLeaderboard();
+    if(page==='history')renderTradeHistory();
+  });
+});
+
+function renderTradeRoom(){
+  document.getElementById('trade-room').classList.remove('hidden');
+  renderTradeItems('trade-items-you',S.tradeMyItems,true);
+  renderTradeItems('trade-items-them',S.tradeTheirItems,false);
+  renderTradeInventoryMini();
+  updateTradeStatus();
+}
+
+// ============================================================
+// ULTRA OVERLAY
+// ============================================================
+function showUltraOverlay(item){
+  const r=getRarity(item.rarity);
+  document.getElementById('ultra-icon').textContent=item.icon;
+  document.getElementById('ultra-text').textContent=r.name.toUpperCase()+' DROP!';
+  document.getElementById('ultra-sub').textContent=r.display?'Odds: '+r.display:'You pulled a '+r.name+'!';
+  document.getElementById('ultra-overlay').classList.remove('hidden');
+}
+document.getElementById('btn-ultra-close').addEventListener('click',()=>{
+  document.getElementById('ultra-overlay').classList.add('hidden');
+});
+
+// ============================================================
+// PARTICLES
+// ============================================================
+function spawnParticles(){
+  const c=document.getElementById('auth-particles'); if(!c)return;
+  c.innerHTML='';
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');
+    const sz=Math.random()*3+1;
+    p.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      background:rgba(79,142,247,${Math.random()*.5+.1});
+      animation:float ${Math.random()*8+4}s ${Math.random()*8}s infinite ease-in-out;
+      box-shadow:0 0 ${sz*3}px rgba(79,142,247,.5)`;
+    c.appendChild(p);
+  }
+}
+
+// ============================================================
+// BOOT — Firebase config hardcoded, no setup screen needed
+// ============================================================
+(function boot(){
+  const cfg = {
+    apiKey:            "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
+    authDomain:        "rng-game-13854.firebaseapp.com",
+    projectId:         "rng-game-13854",
+    storageBucket:     "rng-game-13854.firebasestorage.app",
+    messagingSenderId: "60292248542",
+    appId:             "1:60292248542:web:2942a3a407dab5d51a234f",
+    measurementId:     "G-PH8Q3YGWZ3",
+    databaseURL:       "https://rng-game-13854-default-rtdb.firebaseio.com",
+  };
+  try{
+    initFirebase(cfg);
+    showScreen('auth-screen');
+    spawnParticles();
+    startAuthObserver();
+    firebase.auth().onAuthStateChanged(u=>{
+      if(u){ setupTradeInviteListener(); }
+    });
+  }catch(e){
+    console.error('Firebase init error:',e);
+    alert('Firebase failed to connect. Check the console for details.');
+  }
+})();
+</script>
+</body>
+</html>
