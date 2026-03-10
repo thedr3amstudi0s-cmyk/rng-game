@@ -859,10 +859,17 @@ document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-password').value;
   const err=document.getElementById('login-error');
+  const btn=document.getElementById('login-btn');
   err.textContent='';
+  if(!email||!pass){err.textContent='Please enter email and password.';return;}
+  btn.disabled=true; btn.textContent='LOADING...';
   try{
     await auth.signInWithEmailAndPassword(email,pass);
-  }catch(e){ err.textContent=friendlyAuthError(e.code); }
+    // onAuthStateChanged handles the rest
+  }catch(e){
+    err.textContent=friendlyAuthError(e.code)||'Login failed. Check your details.';
+    btn.disabled=false; btn.textContent='ENTER THE VAULT';
+  }
 });
 
 document.getElementById('register-btn').addEventListener('click',async()=>{
@@ -870,21 +877,44 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
   const email=document.getElementById('reg-email').value.trim();
   const pass=document.getElementById('reg-password').value;
   const err=document.getElementById('reg-error');
+  const btn=document.getElementById('register-btn');
   err.textContent='';
   if(!username||username.length<3||username.length>20){err.textContent='Username must be 3-20 characters.';return;}
+  if(!email){err.textContent='Please enter an email.';return;}
+  if(!pass||pass.length<6){err.textContent='Password must be at least 6 characters.';return;}
+  btn.disabled=true; btn.textContent='CREATING...';
   try{
-    // Check username unique
-    const snap=await db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get();
-    if(!snap.empty){err.textContent='Username already taken.';return;}
-    const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    // Create profile
-    await db.collection('users').doc(cred.user.uid).set({
+    // Do username check and auth creation in parallel for speed
+    const [snapResult, credResult] = await Promise.allSettled([
+      db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get(),
+      auth.createUserWithEmailAndPassword(email, pass),
+    ]);
+    // If username taken, delete the auth user we just made and bail
+    if(snapResult.status==='fulfilled' && !snapResult.value.empty){
+      if(credResult.status==='fulfilled') await credResult.value.user.delete();
+      err.textContent='Username already taken.';
+      btn.disabled=false; btn.textContent='CREATE ACCOUNT';
+      return;
+    }
+    // If auth failed (e.g. email already in use)
+    if(credResult.status==='rejected'){
+      err.textContent=friendlyAuthError(credResult.reason.code)||credResult.reason.message;
+      btn.disabled=false; btn.textContent='CREATE ACCOUNT';
+      return;
+    }
+    const cred=credResult.value;
+    // Write profile (non-blocking — onAuthStateChanged will load it)
+    db.collection('users').doc(cred.user.uid).set({
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
       coins:500, inventory:[], tradeHistory:[], cratesOpened:0,
       totalValue:0, rarestItem:null, rarestTier:0,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     });
-  }catch(e){ err.textContent=friendlyAuthError(e.code)||e.message; }
+    // Don't await — let onAuthStateChanged trigger login flow immediately
+  }catch(e){
+    err.textContent=friendlyAuthError(e.code)||e.message;
+    btn.disabled=false; btn.textContent='CREATE ACCOUNT';
+  }
 });
 
 document.getElementById('logout-btn').addEventListener('click',async()=>{
@@ -897,9 +927,12 @@ function friendlyAuthError(code){
   const map={
     'auth/user-not-found':'No account with that email.',
     'auth/wrong-password':'Wrong password.',
-    'auth/email-already-in-use':'Email already in use.',
+    'auth/invalid-credential':'Wrong email or password.',
+    'auth/email-already-in-use':'That email already has an account. Please log in.',
     'auth/invalid-email':'Invalid email address.',
     'auth/weak-password':'Password must be at least 6 characters.',
+    'auth/too-many-requests':'Too many attempts. Try again in a minute.',
+    'auth/network-request-failed':'Network error. Check your connection.',
   };
   return map[code]||'';
 }
@@ -909,15 +942,28 @@ function startAuthObserver(){
   auth.onAuthStateChanged(async user=>{
     if(user){
       S.user=user;
-      const doc=await db.collection('users').doc(user.uid).get();
-      if(!doc.exists){ await auth.signOut(); return; }
+      // Show game screen immediately — load profile in background
+      showScreen('game-screen');
+      loadCratesPage();
+      showPage('crates');
+      // Reset button states
+      const lb=document.getElementById('login-btn');
+      const rb=document.getElementById('register-btn');
+      if(lb){lb.disabled=false;lb.textContent='ENTER THE VAULT';}
+      if(rb){rb.disabled=false;rb.textContent='CREATE ACCOUNT';}
+      // Load profile (retry up to 5x in case Firestore write hasn't landed yet)
+      let doc, attempts=0;
+      while(attempts<5){
+        doc=await db.collection('users').doc(user.uid).get();
+        if(doc.exists) break;
+        await new Promise(r=>setTimeout(r,600));
+        attempts++;
+      }
+      if(!doc||!doc.exists){ await auth.signOut(); return; }
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       document.getElementById('nav-username').textContent=S.profile.username;
       updateCoinDisplay(S.profile.coins);
-      showScreen('game-screen');
-      loadCratesPage();
-      showPage('crates');
       setupPresence();
       listenToPresence();
       listenToChat();
