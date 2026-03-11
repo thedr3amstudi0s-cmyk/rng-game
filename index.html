@@ -661,108 +661,93 @@ const RARITIES = {
   ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
 };
 
-// Item values are what they're WORTH (sell price = 70% of this).
-// Crate expected value ≈ crate price × 0.5  (house edge ~50%)
-// so opening is a gamble, not free money.
+// Item values are calibrated so EV/price ≈ 0.50 for every crate.
+// Sell price = 70% of value. Ultra items are jackpots — exciting but not game-breaking.
 const ITEMS = [
-  // COMMON — worth 3–15 coins
-  {id:'c001',name:'Rusty Coin',      rarity:'common',   icon:'🪙',value:4,   desc:'A worn tarnished coin.'},
-  {id:'c002',name:'Wooden Shield',   rarity:'common',   icon:'🛡️',value:7,   desc:'Basic wooden protection.'},
-  {id:'c003',name:'Old Dagger',      rarity:'common',   icon:'🗡️',value:5,   desc:'Dull but functional.'},
-  {id:'c004',name:'Bread Loaf',      rarity:'common',   icon:'🍞',value:3,   desc:'Surprisingly filling.'},
-  {id:'c005',name:'Pebble',          rarity:'common',   icon:'🪨',value:2,   desc:'Just a rock. Or is it?'},
-  {id:'c006',name:'Leather Boots',   rarity:'common',   icon:'👢',value:8,   desc:'Well-worn travel boots.'},
-  {id:'c007',name:'Hemp Rope',       rarity:'common',   icon:'🧵',value:4,   desc:'Always useful.'},
-  {id:'c008',name:'Candle',          rarity:'common',   icon:'🕯️',value:3,   desc:'Lights the darkest caves.'},
-  {id:'c009',name:'Cloth Bandage',   rarity:'common',   icon:'🩹',value:4,   desc:'Stops minor bleeding.'},
-  {id:'c010',name:'Wooden Bow',      rarity:'common',   icon:'🏹',value:8,   desc:'Simple but effective.'},
-  {id:'c011',name:'Fishing Rod',     rarity:'common',   icon:'🎣',value:6,   desc:'For the patient angler.'},
-  {id:'c012',name:'Iron Nail',       rarity:'common',   icon:'📌',value:2,   desc:'Holds things together.'},
-  {id:'c013',name:'Empty Bottle',    rarity:'common',   icon:'🍶',value:3,   desc:'Could hold anything.'},
-  {id:'c014',name:'Wool Hat',        rarity:'common',   icon:'🎩',value:5,   desc:'Keeps your head warm.'},
-  {id:'c015',name:'Tin Cup',         rarity:'common',   icon:'🫙',value:3,   desc:'Dented but drinkable.'},
-  // UNCOMMON — worth 30–80 coins
-  {id:'u001',name:'Silver Ring',     rarity:'uncommon', icon:'💍',value:35,  desc:'A simple silver band.'},
-  {id:'u002',name:'Steel Sword',     rarity:'uncommon', icon:'⚔️',value:50,  desc:'Sharper than most.'},
-  {id:'u003',name:'Iron Helm',       rarity:'uncommon', icon:'⛑️',value:40,  desc:'Solid iron headgear.'},
-  {id:'u004',name:'Potion of Speed', rarity:'uncommon', icon:'🧪',value:55,  desc:'Fleet-footed formula.'},
-  {id:'u005',name:'Copper Key',      rarity:'uncommon', icon:'🗝️',value:32,  desc:'Opens many doors.'},
-  {id:'u006',name:'Map Fragment',    rarity:'uncommon', icon:'🗺️',value:45,  desc:'Part of a larger secret.'},
-  {id:'u007',name:'Storm Scroll',    rarity:'uncommon', icon:'📜',value:60,  desc:'Contains weather magic.'},
-  {id:'u008',name:'Fox Pelt',        rarity:'uncommon', icon:'🦊',value:40,  desc:'Warm and valuable fur.'},
-  {id:'u009',name:'Magic Compass',   rarity:'uncommon', icon:'🧭',value:58,  desc:'Points toward treasure.'},
-  {id:'u010',name:'Blue Crystal',    rarity:'uncommon', icon:'💎',value:70,  desc:'Faintly glowing gem.'},
-  {id:'u011',name:'Shadow Cloak',    rarity:'uncommon', icon:'🧥',value:65,  desc:'Hard to see in.'},
-  {id:'u012',name:'Bone Charm',      rarity:'uncommon', icon:'🦴',value:38,  desc:'Provides minor warding.'},
-  // RARE — worth 200–500 coins
-  {id:'r001',name:'Enchanted Blade', rarity:'rare',     icon:'🔷',value:200, desc:'Hums with arcane energy.'},
-  {id:'r002',name:'Dragon Scale',    rarity:'rare',     icon:'🐉',value:250, desc:'Impervious to flame.'},
-  {id:'r003',name:'Mana Crystal',    rarity:'rare',     icon:'🔮',value:220, desc:'Crystallized magic.'},
-  {id:'r004',name:'Thunder Gauntlet',rarity:'rare',     icon:'⚡',value:280, desc:'Channels lightning.'},
-  {id:'r005',name:'Phantom Mask',    rarity:'rare',     icon:'👻',value:230, desc:'Face of the unseen.'},
-  {id:'r006',name:'Arcane Tome',     rarity:'rare',     icon:'📖',value:300, desc:'Ancient spellbook.'},
-  {id:'r007',name:'Vortex Staff',    rarity:'rare',     icon:'🌀',value:260, desc:'Creates small storms.'},
-  {id:'r008',name:'Ice Crown',       rarity:'rare',     icon:'👑',value:350, desc:'Freezes the mind.'},
-  {id:'r009',name:'Fire Emblem',     rarity:'rare',     icon:'🔥',value:270, desc:'Smoldering with power.'},
-  {id:'r010',name:'Moon Amulet',     rarity:'rare',     icon:'🌙',value:210, desc:'Grants lunar vision.'},
-  // EPIC — worth 1,500–4,000 coins
-  {id:'e001',name:'Void Blade',      rarity:'epic',     icon:'🌑',value:1500, desc:'Cuts through reality.'},
-  {id:'e002',name:'Soul Gem',        rarity:'epic',     icon:'💜',value:2000, desc:'Contains a trapped soul.'},
-  {id:'e003',name:'Titan Armor',     rarity:'epic',     icon:'🛡️',value:2500, desc:'Forged by giants.'},
-  {id:'e004',name:'Celestial Bow',   rarity:'epic',     icon:'🌟',value:1800, desc:'Arrows pierce stars.'},
-  {id:'e005',name:'Chaos Orb',       rarity:'epic',     icon:'🌪️',value:2800, desc:'Unpredictable power.'},
-  {id:'e006',name:'Phantom Crown',   rarity:'epic',     icon:'👑',value:3200, desc:'Ruler of shadows.'},
-  {id:'e007',name:'Elder Wand',      rarity:'epic',     icon:'🪄',value:2200, desc:'Mastery over death.'},
-  {id:'e008',name:'Abyssal Ring',    rarity:'epic',     icon:'🖤',value:1900, desc:'Power from the deep.'},
-  // LEGENDARY — worth 10,000–30,000 coins
-  {id:'l001',name:'Sunforged Sword', rarity:'legendary',icon:'☀️',value:10000, desc:'Blazing with solar power.'},
-  {id:'l002',name:'Moonweave Robe',  rarity:'legendary',icon:'🌕',value:12000, desc:'Woven from moonlight.'},
-  {id:'l003',name:'Storm Trident',   rarity:'legendary',icon:'🔱',value:15000, desc:'Commands the seas.'},
-  {id:'l004',name:'Infinity Gauntlet',rarity:'legendary',icon:'✊',value:20000,desc:'Controls reality.'},
-  {id:'l005',name:'Phoenix Feather', rarity:'legendary',icon:'🦅',value:16000, desc:'Grants rebirth.'},
-  {id:'l006',name:'God Slayer',      rarity:'legendary',icon:'⚔️',value:28000, desc:'Even gods fear this.'},
-  // MYTHIC — worth 80,000–150,000 coins
-  {id:'m001',name:'Universe Key',    rarity:'mythic',   icon:'🗝️',value:80000,  desc:'Opens any dimension.'},
-  {id:'m002',name:'Star Fragment',   rarity:'mythic',   icon:'⭐',value:110000, desc:'Piece of a dead star.'},
-  {id:'m003',name:'Reality Shard',   rarity:'mythic',   icon:'💫',value:140000, desc:'Reality bends around it.'},
-  {id:'m004',name:'Void Crystal',    rarity:'mythic',   icon:'🔲',value:95000,  desc:'Fragment of nothingness.'},
-  // DIVINE — worth 600,000–900,000 coins
-  {id:'d001',name:'Divine Relic',    rarity:'divine',   icon:'✨',value:600000,  desc:'Touched by a deity.'},
-  {id:'d002',name:'Creation Orb',    rarity:'divine',   icon:'🌈',value:850000,  desc:'Born at start of time.'},
-  // ULTRA
-  {id:'ur01',name:'OMEGA SHARD',     rarity:'ultra1',   icon:'💠',value:5000000,       desc:'1 in a million. Truly impossible.'},
-  {id:'ur02',name:'NEXUS CORE',      rarity:'ultra2',   icon:'🔵',value:50000000,      desc:'One of only a few in existence.'},
-  {id:'ur03',name:'PRIMORDIAL EYE',  rarity:'ultra3',   icon:'👁️',value:500000000,     desc:'The eye that saw creation.'},
-  {id:'ur04',name:'ABSOLUTE ZERO',   rarity:'ultra4',   icon:'❄️',value:999999999999,  desc:'The rarest item in existence.'},
+  // COMMON — 3–8 coins
+  {id:'c001',name:'Rusty Coin',       rarity:'common',   icon:'🪙', value:3,  desc:'A worn tarnished coin.'},
+  {id:'c002',name:'Wooden Shield',    rarity:'common',   icon:'🛡️', value:6,  desc:'Basic wooden protection.'},
+  {id:'c003',name:'Old Dagger',       rarity:'common',   icon:'🗡️', value:5,  desc:'Dull but functional.'},
+  {id:'c004',name:'Bread Loaf',       rarity:'common',   icon:'🍞', value:3,  desc:'Surprisingly filling.'},
+  {id:'c005',name:'Pebble',           rarity:'common',   icon:'🪨', value:3,  desc:'Just a rock. Or is it?'},
+  {id:'c006',name:'Leather Boots',    rarity:'common',   icon:'👢', value:7,  desc:'Well-worn travel boots.'},
+  {id:'c007',name:'Hemp Rope',        rarity:'common',   icon:'🧵', value:4,  desc:'Always useful.'},
+  {id:'c008',name:'Candle',           rarity:'common',   icon:'🕯️', value:3,  desc:'Lights the darkest caves.'},
+  {id:'c009',name:'Cloth Bandage',    rarity:'common',   icon:'🩹', value:4,  desc:'Stops minor bleeding.'},
+  {id:'c010',name:'Wooden Bow',       rarity:'common',   icon:'🏹', value:7,  desc:'Simple but effective.'},
+  {id:'c011',name:'Fishing Rod',      rarity:'common',   icon:'🎣', value:5,  desc:'For the patient angler.'},
+  {id:'c012',name:'Iron Nail',        rarity:'common',   icon:'📌', value:3,  desc:'Holds things together.'},
+  {id:'c013',name:'Empty Bottle',     rarity:'common',   icon:'🍶', value:3,  desc:'Could hold anything.'},
+  {id:'c014',name:'Wool Hat',         rarity:'common',   icon:'🎩', value:5,  desc:'Keeps your head warm.'},
+  {id:'c015',name:'Tin Cup',          rarity:'common',   icon:'🫙', value:3,  desc:'Dented but drinkable.'},
+  // UNCOMMON — 20–50 coins
+  {id:'u001',name:'Silver Ring',      rarity:'uncommon', icon:'💍', value:22, desc:'A simple silver band.'},
+  {id:'u002',name:'Steel Sword',      rarity:'uncommon', icon:'⚔️', value:38, desc:'Sharper than most.'},
+  {id:'u003',name:'Iron Helm',        rarity:'uncommon', icon:'⛑️', value:28, desc:'Solid iron headgear.'},
+  {id:'u004',name:'Potion of Speed',  rarity:'uncommon', icon:'🧪', value:45, desc:'Fleet-footed formula.'},
+  {id:'u005',name:'Copper Key',       rarity:'uncommon', icon:'🗝️', value:20, desc:'Opens many doors.'},
+  {id:'u006',name:'Map Fragment',     rarity:'uncommon', icon:'🗺️', value:32, desc:'Part of a larger secret.'},
+  {id:'u007',name:'Storm Scroll',     rarity:'uncommon', icon:'📜', value:48, desc:'Contains weather magic.'},
+  {id:'u008',name:'Fox Pelt',         rarity:'uncommon', icon:'🦊', value:28, desc:'Warm and valuable fur.'},
+  {id:'u009',name:'Magic Compass',    rarity:'uncommon', icon:'🧭', value:42, desc:'Points toward treasure.'},
+  {id:'u010',name:'Blue Crystal',     rarity:'uncommon', icon:'💎', value:50, desc:'Faintly glowing gem.'},
+  {id:'u011',name:'Shadow Cloak',     rarity:'uncommon', icon:'🧥', value:46, desc:'Hard to see in.'},
+  {id:'u012',name:'Bone Charm',       rarity:'uncommon', icon:'🦴', value:25, desc:'Provides minor warding.'},
+  // RARE — 120–220 coins
+  {id:'r001',name:'Enchanted Blade',  rarity:'rare',     icon:'🔷', value:130, desc:'Hums with arcane energy.'},
+  {id:'r002',name:'Dragon Scale',     rarity:'rare',     icon:'🐉', value:180, desc:'Impervious to flame.'},
+  {id:'r003',name:'Mana Crystal',     rarity:'rare',     icon:'🔮', value:150, desc:'Crystallized magic.'},
+  {id:'r004',name:'Thunder Gauntlet', rarity:'rare',     icon:'⚡', value:200, desc:'Channels lightning.'},
+  {id:'r005',name:'Phantom Mask',     rarity:'rare',     icon:'👻', value:160, desc:'Face of the unseen.'},
+  {id:'r006',name:'Arcane Tome',      rarity:'rare',     icon:'📖', value:210, desc:'Ancient spellbook.'},
+  {id:'r007',name:'Vortex Staff',     rarity:'rare',     icon:'🌀', value:170, desc:'Creates small storms.'},
+  {id:'r008',name:'Ice Crown',        rarity:'rare',     icon:'👑', value:220, desc:'Freezes the mind.'},
+  {id:'r009',name:'Fire Emblem',      rarity:'rare',     icon:'🔥', value:175, desc:'Smoldering with power.'},
+  {id:'r010',name:'Moon Amulet',      rarity:'rare',     icon:'🌙', value:140, desc:'Grants lunar vision.'},
+  // EPIC — 600–1,200 coins
+  {id:'e001',name:'Void Blade',       rarity:'epic',     icon:'🌑', value:650,  desc:'Cuts through reality.'},
+  {id:'e002',name:'Soul Gem',         rarity:'epic',     icon:'💜', value:900,  desc:'Contains a trapped soul.'},
+  {id:'e003',name:'Titan Armor',      rarity:'epic',     icon:'🛡️', value:1100, desc:'Forged by giants.'},
+  {id:'e004',name:'Celestial Bow',    rarity:'epic',     icon:'🌟', value:750,  desc:'Arrows pierce stars.'},
+  {id:'e005',name:'Chaos Orb',        rarity:'epic',     icon:'🌪️', value:1200, desc:'Unpredictable power.'},
+  {id:'e006',name:'Phantom Crown',    rarity:'epic',     icon:'👑', value:1150, desc:'Ruler of shadows.'},
+  {id:'e007',name:'Elder Wand',       rarity:'epic',     icon:'🪄', value:950,  desc:'Mastery over death.'},
+  {id:'e008',name:'Abyssal Ring',     rarity:'epic',     icon:'🖤', value:700,  desc:'Power from the deep.'},
+  // LEGENDARY — 3,000–8,000 coins
+  {id:'l001',name:'Sunforged Sword',  rarity:'legendary',icon:'☀️', value:3200,  desc:'Blazing with solar power.'},
+  {id:'l002',name:'Moonweave Robe',   rarity:'legendary',icon:'🌕', value:4500,  desc:'Woven from moonlight.'},
+  {id:'l003',name:'Storm Trident',    rarity:'legendary',icon:'🔱', value:5500,  desc:'Commands the seas.'},
+  {id:'l004',name:'Infinity Gauntlet',rarity:'legendary',icon:'✊', value:7000,  desc:'Controls reality.'},
+  {id:'l005',name:'Phoenix Feather',  rarity:'legendary',icon:'🦅', value:6000,  desc:'Grants rebirth.'},
+  {id:'l006',name:'God Slayer',       rarity:'legendary',icon:'⚔️', value:8000,  desc:'Even gods fear this.'},
+  // MYTHIC — 15,000–30,000 coins
+  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:16000, desc:'Opens any dimension.'},
+  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:22000, desc:'Piece of a dead star.'},
+  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:30000, desc:'Reality bends around it.'},
+  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:18000, desc:'Fragment of nothingness.'},
+  // DIVINE — 80,000–150,000 coins
+  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:85000,  desc:'Touched by a deity.'},
+  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:145000, desc:'Born at start of time.'},
+  // ULTRA — exciting jackpots, but priced so EV stays sane
+  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:500000,     desc:'1 in a million. Truly impossible.'},
+  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:2000000,    desc:'One of only a few in existence.'},
+  {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:10000000,   desc:'The eye that saw creation.'},
+  {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:50000000,   desc:'The rarest item in existence.'},
 ];
 
-// ── PER-CRATE ODDS ────────────────────────────────────────────────────────────
-// Each crate defines its own drop chances per rarity tier.
-// Expected value = sum(chance × avg_item_value_of_that_rarity_in_pool)
-// Target: EV ≈ crate_price × 0.45  (player gets back ~45 cents per coin spent on average)
-//
-// STARTER  (25c): common 70%, uncommon 25%, rare 5%          EV ≈ ~11c  ✓ (fun, slight loss)
-// WARRIOR  (75c): common 55%, uncommon 30%, rare 12%, epic 3% EV ≈ ~34c ✓
-// EXPLORER (80c): common 50%, uncommon 35%, rare 12%, epic 3% EV ≈ ~36c ✓
-// MYSTIC  (120c): common 40%, uncommon 35%, rare 18%, epic 7% EV ≈ ~56c ✓
-// SHADOW  (200c): common 30%, uncommon 25%, rare 25%, epic 18%, leg 2%  EV ≈ ~90c ✓
-// CELESTIAL(350c): rare 40%, epic 40%, legendary 18%, mythic 2%         EV ≈ ~160c ✓
-// MYTHIC  (750c): rare 20%, epic 45%, legendary 30%, mythic 5%          EV ≈ ~340c ✓
-// DIVINE (2000c): epic 15%, legendary 50%, mythic 30%, divine 5%        EV ≈ ~900c ✓
-// VOID   (5000c): legendary 20%, mythic 55%, divine 24%, ultra1 1%      EV ≈ ~2300c ✓
-// OMEGA (15000c): mythic 40%, divine 40%, ultra1 15%, ultra2 4%, ultra3 0.9%, ultra4 0.1% EV ≈ ~6800c ✓
-
+// Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
 const CRATES = [
   {
-    id:'starter', name:'Starter Crate', price:25, icon:'📦', color:'#9ca3af',
-    desc:'Perfect for new adventurers.',
+    id:'starter', name:'Starter Crate', price:40, icon:'📦', color:'#9ca3af',
+    desc:'Perfect for new adventurers. ~50% return.',
     odds:{common:0.70, uncommon:0.25, rare:0.05},
-    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015',
+    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010',
+           'c011','c012','c013','c014','c015',
            'u001','u002','u003','u004','u005',
            'r001','r002'],
   },
   {
-    id:'warrior', name:'Warrior Crate', price:75, icon:'⚔️', color:'#ef4444',
+    id:'warrior', name:'Warrior Crate', price:120, icon:'⚔️', color:'#ef4444',
     desc:'Combat gear and deadly weapons.',
     odds:{common:0.55, uncommon:0.30, rare:0.12, epic:0.03},
     items:['c001','c003','c006','c009','c010','c012',
@@ -771,7 +756,7 @@ const CRATES = [
            'e001','e003'],
   },
   {
-    id:'explorer', name:'Explorer Crate', price:80, icon:'🗺️', color:'#22c55e',
+    id:'explorer', name:'Explorer Crate', price:130, icon:'🗺️', color:'#22c55e',
     desc:'Tools for the adventurous spirit.',
     odds:{common:0.50, uncommon:0.35, rare:0.12, epic:0.03},
     items:['c004','c007','c011','c013','c014','c015',
@@ -780,7 +765,7 @@ const CRATES = [
            'e004','e007'],
   },
   {
-    id:'mystic', name:'Mystic Crate', price:120, icon:'🔮', color:'#a855f7',
+    id:'mystic', name:'Mystic Crate', price:220, icon:'🔮', color:'#a855f7',
     desc:'Magical artifacts and arcane secrets.',
     odds:{common:0.40, uncommon:0.35, rare:0.18, epic:0.07},
     items:['c002','c008','c013',
@@ -789,7 +774,7 @@ const CRATES = [
            'e002','e004','e007'],
   },
   {
-    id:'shadow', name:'Shadow Crate', price:200, icon:'🌑', color:'#6b21a8',
+    id:'shadow', name:'Shadow Crate', price:650, icon:'🌑', color:'#6b21a8',
     desc:'Dark and mysterious contents.',
     odds:{common:0.30, uncommon:0.25, rare:0.25, epic:0.18, legendary:0.02},
     items:['c005','c009',
@@ -799,7 +784,7 @@ const CRATES = [
            'l004'],
   },
   {
-    id:'celestial', name:'Celestial Crate', price:350, icon:'🌟', color:'#f59e0b',
+    id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
     desc:'Blessed by the heavens above.',
     odds:{rare:0.40, epic:0.40, legendary:0.18, mythic:0.02},
     items:['r008','r003','r010',
@@ -808,7 +793,7 @@ const CRATES = [
            'm002'],
   },
   {
-    id:'mythic', name:'Mythic Crate', price:750, icon:'💀', color:'#ef4444',
+    id:'mythic', name:'Mythic Crate', price:6500, icon:'💀', color:'#ef4444',
     desc:'Only the brave dare open this.',
     odds:{rare:0.20, epic:0.45, legendary:0.30, mythic:0.05},
     items:['r001','r004','r006',
@@ -817,7 +802,7 @@ const CRATES = [
            'm001','m004'],
   },
   {
-    id:'divine', name:'Divine Crate', price:2000, icon:'✨', color:'#ddddff',
+    id:'divine', name:'Divine Crate', price:30000, icon:'✨', color:'#ddddff',
     desc:'Touched by divinity itself.',
     odds:{epic:0.15, legendary:0.50, mythic:0.30, divine:0.05},
     items:['e003','e004','e006','e007',
@@ -826,7 +811,7 @@ const CRATES = [
            'd001','d002'],
   },
   {
-    id:'void', name:'Void Crate', price:5000, icon:'🕳️', color:'#555555',
+    id:'void', name:'Void Crate', price:90000, icon:'🕳️', color:'#555555',
     desc:'From the space between worlds.',
     odds:{legendary:0.20, mythic:0.55, divine:0.24, ultra1:0.01},
     items:['l003','l004','l006',
@@ -835,7 +820,7 @@ const CRATES = [
            'ur01'],
   },
   {
-    id:'omega', name:'OMEGA Crate', price:15000, icon:'⚡', color:'#ffd700',
+    id:'omega', name:'OMEGA Crate', price:700000, icon:'⚡', color:'#ffd700',
     desc:'The rarest crate in existence.',
     odds:{mythic:0.40, divine:0.40, ultra1:0.15, ultra2:0.04, ultra3:0.009, ultra4:0.001},
     items:['m001','m002','m003','m004',
