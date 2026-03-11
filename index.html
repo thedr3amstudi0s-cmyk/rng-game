@@ -191,10 +191,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .spin-indicator::after{bottom:-1px;border-left:8px solid transparent;border-right:8px solid transparent;
   border-bottom:10px solid var(--accent);margin-left:-7px;}
 .spin-track{display:flex;align-items:center;height:100%;position:absolute;left:0;
-  will-change:transform;gap:4px;padding:0 calc(50% - 54px);}
-.spin-item{width:104px;height:104px;flex-shrink:0;background:var(--bg-card2);
+  will-change:transform;gap:0;padding:0;}
+.spin-item{width:108px;height:108px;flex-shrink:0;background:var(--bg-card2);
   border:2px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:4px;font-size:1.8rem;}
+  align-items:center;justify-content:center;gap:4px;font-size:1.8rem;
+  box-sizing:border-box;}
 .spin-item-name{font-size:.55rem;font-family:var(--font-d);letter-spacing:.05em;
   color:var(--text-2);text-align:center;padding:0 4px;}
 .open-controls{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;}
@@ -724,17 +725,29 @@ const ITEMS = [
   {id:'ur04',name:'ABSOLUTE ZERO',   rarity:'ultra4',   icon:'❄️',value:999999999999, desc:'The rarest item in existence.'},
 ];
 
+// Balanced crates: price ≈ 30–40% of expected value at common/uncommon rates
+// Each tier has guaranteed minimum pool diversity so common items fill the spinner
 const CRATES = [
-  {id:'starter',  name:'Starter Crate',  price:50,   icon:'📦',color:'#9ca3af',desc:'A basic crate for beginners.',      items:['c001','c002','c003','c004','c005','c006','c007','c008','u001','u002','r001']},
-  {id:'warrior',  name:'Warrior Crate',  price:150,  icon:'⚔️',color:'#ef4444',desc:'Contains combat gear and weapons.', items:['c003','c010','u002','u003','r001','r004','e001','l006']},
-  {id:'mystic',   name:'Mystic Crate',   price:200,  icon:'🔮',color:'#a855f7',desc:'Magical artifacts and arcane items.',items:['u007','u010','r003','r006','r007','e002','e007','l002','m003']},
-  {id:'explorer', name:'Explorer Crate', price:120,  icon:'🗺️',color:'#22c55e',desc:'Tools for the adventurous spirit.',  items:['c011','c012','u005','u006','u009','r010','e004','l005']},
-  {id:'shadow',   name:'Shadow Crate',   price:300,  icon:'🌑',color:'#6b21a8',desc:'Dark and mysterious contents.',       items:['u011','u012','r005','e001','e008','l004','m001','m004']},
-  {id:'celestial',name:'Celestial Crate',price:500,  icon:'🌟',color:'#f59e0b',desc:'Items blessed by the heavens.',       items:['r008','r010','e004','e006','l001','l002','l005','m002','d001']},
-  {id:'mythic',   name:'Mythic Crate',   price:1000, icon:'💀',color:'#ef4444',desc:'For the most daring collectors.',    items:['e001','e002','e005','l001','l003','l006','m001','m002','m003','m004','d001','d002']},
-  {id:'divine',   name:'Divine Crate',   price:2500, icon:'✨',color:'#ffffff',desc:'Touched by divinity itself.',         items:['l001','l002','l003','l004','l005','l006','m001','m002','m003','m004','d001','d002','ur01']},
-  {id:'void',     name:'Void Crate',     price:5000, icon:'🕳️',color:'#555555',desc:'From the space between worlds.',     items:['m001','m002','m003','m004','d001','d002','ur01','ur02']},
-  {id:'omega',    name:'OMEGA Crate',    price:10000,icon:'⚡',color:'#ffd700',desc:'The rarest crate in existence.',      items:['d001','d002','ur01','ur02','ur03','ur04']},
+  {id:'starter',  name:'Starter Crate',  price:25,   icon:'📦',color:'#9ca3af',desc:'Perfect for new adventurers.',
+   items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015','u001','u002','u003','r001']},
+  {id:'warrior',  name:'Warrior Crate',  price:75,   icon:'⚔️',color:'#ef4444',desc:'Combat gear and deadly weapons.',
+   items:['c001','c003','c006','c010','c012','u002','u003','u004','r001','r004','r009','e001','e003','l006']},
+  {id:'explorer', name:'Explorer Crate', price:80,   icon:'🗺️',color:'#22c55e',desc:'Tools for the adventurous spirit.',
+   items:['c004','c007','c011','c013','c015','u005','u006','u008','u009','r002','r010','e004','l005']},
+  {id:'mystic',   name:'Mystic Crate',   price:120,  icon:'🔮',color:'#a855f7',desc:'Magical artifacts and arcane secrets.',
+   items:['c008','c013','u007','u010','u012','r003','r006','r007','r010','e002','e007','l002','m003']},
+  {id:'shadow',   name:'Shadow Crate',   price:200,  icon:'🌑',color:'#6b21a8',desc:'Dark and mysterious contents.',
+   items:['c005','u011','u012','r005','r009','e001','e005','e008','l004','m001','m004']},
+  {id:'celestial',name:'Celestial Crate',price:350,  icon:'🌟',color:'#f59e0b',desc:'Blessed by the heavens above.',
+   items:['u009','u010','r008','r010','e004','e006','l001','l002','l005','m002','d001']},
+  {id:'mythic',   name:'Mythic Crate',   price:750,  icon:'💀',color:'#ef4444',desc:'Only the brave dare open this.',
+   items:['r001','r006','e001','e002','e005','e006','l001','l003','l006','m001','m002','m003','m004','d001','d002']},
+  {id:'divine',   name:'Divine Crate',   price:2000, icon:'✨',color:'#ddddff',desc:'Touched by divinity itself.',
+   items:['e003','e004','l001','l002','l003','l004','l005','l006','m001','m002','m003','m004','d001','d002','ur01']},
+  {id:'void',     name:'Void Crate',     price:5000, icon:'🕳️',color:'#555555',desc:'From the space between worlds.',
+   items:['l004','l006','m001','m002','m003','m004','d001','d002','ur01','ur02']},
+  {id:'omega',    name:'OMEGA Crate',    price:15000,icon:'⚡',color:'#ffd700',desc:'The rarest crate in existence.',
+   items:['m003','m004','d001','d002','ur01','ur02','ur03','ur04']},
 ];
 
 function getItem(id){return ITEMS.find(i=>i.id===id);}
@@ -1081,7 +1094,7 @@ function openCratePage(crate){
   document.getElementById('result-panel').classList.add('hidden');
   document.getElementById('btn-open-crate').disabled=false;
   buildCrateInfoPanel(crate);
-  buildSpinTrack(crate,null,-1);
+  buildSpinTrack(crate,null,999);
   showPage('opening');
 }
 
@@ -1133,13 +1146,14 @@ function buildSpinTrack(crate, winningItem, landIdx){
   const track=document.getElementById('spin-track');
   track.innerHTML=''; track.style.transform='translateX(0)'; track.style.transition='none';
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
+  // Generate 60 items; place winning item exactly at landIdx
   for(let i=0;i<60;i++){
-    const item=(winningItem&&i===landIdx)?winningItem:pool[Math.floor(Math.random()*pool.length)];
+    const item=(winningItem && i===landIdx) ? winningItem : pool[Math.floor(Math.random()*pool.length)];
     const r=getRarity(item.rarity);
-    const col=r.color==='#ffffff'?'#aaa':r.color;
+    const col=r.color==='#ffffff'?'#e0e0ff':r.color;
     const el=document.createElement('div');
     el.className='spin-item';
-    el.style.borderColor=col+'88';
+    el.style.borderColor=col+'66';
     el.innerHTML=`<span>${item.icon}</span><div class="spin-item-name">${item.name}</div>`;
     track.appendChild(el);
   }
@@ -1201,25 +1215,30 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
 
 function animateSpin(crate,winningItem){
   return new Promise(resolve=>{
-    const iW=108;
-    const landIdx=44+Math.floor(Math.random()*3);
+    const iW=108; // exactly matches .spin-item width
+    // Land somewhere in the middle-right of the track for a convincing spin
+    const landIdx=40+Math.floor(Math.random()*6);
     buildSpinTrack(crate,winningItem,landIdx);
     const track=document.getElementById('spin-track');
-    const cW=document.getElementById('spin-container').offsetWidth/2;
-    const targetX=-(landIdx*iW-cW+iW/2);
-    void track.offsetWidth; // Force reflow
-    track.style.transition='transform 3.5s cubic-bezier(0.12,0,0.08,1)';
+    const containerW=document.getElementById('spin-container').offsetWidth;
+    // Center of item at landIdx = landIdx*iW + iW/2
+    // We want that to align with the indicator at containerW/2
+    // So: translateX = containerW/2 - (landIdx*iW + iW/2)
+    const targetX = containerW/2 - (landIdx*iW + iW/2);
+    void track.offsetWidth; // Force reflow before transition
+    track.style.transition='transform 4s cubic-bezier(0.08,0,0.06,1)';
     track.style.transform=`translateX(${targetX}px)`;
     setTimeout(()=>{
       const landingEl=track.querySelectorAll('.spin-item')[landIdx];
       if(landingEl){
         const r=getRarity(winningItem.rarity);
-        const col=r.color==='#ffffff'?'#aaa':r.color;
+        const col=r.color==='#ffffff'?'#e0e0ff':r.color;
         landingEl.style.borderColor=col;
-        landingEl.style.boxShadow=`0 0 20px ${r.glow||col+'44'}`;
+        landingEl.style.boxShadow=`0 0 24px ${r.glow||col+'66'}`;
+        landingEl.style.background='var(--bg-hover)';
       }
       resolve();
-    },3600);
+    },4100);
   });
 }
 
