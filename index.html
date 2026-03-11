@@ -14,9 +14,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <style>
-/* ============================================================
-   CRATEVAULT — COMPLETE STYLESHEET
-   ============================================================ */
 :root {
   --bg-deep:    #050810;
   --bg-dark:    #0a0e1a;
@@ -104,6 +101,17 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;
   letter-spacing:.05em;transition:var(--t);}
 .btn-back:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── LOADING OVERLAY ─────────────────────────────────────── */
+#loading-overlay{position:fixed;inset:0;background:var(--bg-deep);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:opacity .4s ease;}
+#loading-overlay.fade-out{opacity:0;pointer-events:none;}
+.loading-logo{font-family:var(--font-d);font-size:2rem;font-weight:900;letter-spacing:.2em;color:var(--accent);}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
 
 /* ── GAME LAYOUT ─────────────────────────────────────────── */
 #game-screen{flex-direction:column;height:100vh;overflow:hidden;}
@@ -413,37 +421,14 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════
-     FIREBASE SETUP SCREEN (shown if not configured)
-══════════════════════════════════════════════════════════ -->
-<div id="setup-screen" class="screen active">
-  <div class="setup-card">
-    <h2>⚡ CRATEVAULT — Firebase Setup</h2>
-    <p>To play, you need a free Firebase project. Follow these steps once, then paste your config below.</p>
-    <div class="setup-steps">
-      <div class="setup-step"><strong>Step 1:</strong> Go to <strong>console.firebase.google.com</strong> → Add project → name it anything.</div>
-      <div class="setup-step"><strong>Step 2:</strong> In the project, click <strong>Firestore Database</strong> → Create database → <strong>Start in test mode</strong>.</div>
-      <div class="setup-step"><strong>Step 3:</strong> Click <strong>Authentication</strong> → Get started → Enable <strong>Email/Password</strong> sign-in.</div>
-      <div class="setup-step"><strong>Step 4:</strong> Click the ⚙️ gear → <strong>Project settings</strong> → scroll down to <strong>"Your apps"</strong> → click <strong>&lt;/&gt; Web</strong> → register app → copy the <code>firebaseConfig</code> values below.</div>
-    </div>
-    <div class="config-inputs">
-      <input id="cfg-apikey"    placeholder="apiKey" />
-      <input id="cfg-authdomain" placeholder="authDomain  (e.g. myapp.firebaseapp.com)" />
-      <input id="cfg-projectid" placeholder="projectId" />
-      <input id="cfg-dburl"     placeholder="databaseURL  (e.g. https://myapp-default-rtdb.firebaseio.com)" />
-      <input id="cfg-appid"     placeholder="appId" />
-    </div>
-    <button class="btn-primary" id="cfg-save-btn">SAVE & START GAME</button>
-    <div class="auth-error" id="cfg-error" style="margin-top:10px;"></div>
-    <p style="margin-top:12px;font-size:.75rem;color:var(--text-3);">
-      Your config is saved locally in your browser — never shared with anyone.
-    </p>
-  </div>
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="loading-logo">⚡ CRATEVAULT</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text">CONNECTING TO THE VAULT...</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     AUTH SCREEN
-══════════════════════════════════════════════════════════ -->
+<!-- AUTH SCREEN -->
 <div id="auth-screen" class="screen">
   <div class="auth-particles" id="auth-particles"></div>
   <div class="auth-container">
@@ -476,14 +461,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="auth-error" id="reg-error"></div>
         <p class="auth-note">🎁 New players start with <strong>500 coins</strong>!</p>
       </div>
-      <button class="btn-ghost" style="margin-top:12px;width:100%" id="reconfigure-btn">⚙ Change Firebase Config</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     MAIN GAME
-══════════════════════════════════════════════════════════ -->
+<!-- MAIN GAME -->
 <div id="game-screen" class="screen">
   <header class="top-nav">
     <div class="nav-logo">⚡ CRATEVAULT</div>
@@ -594,12 +576,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
           <div class="trade-message" id="trade-message"></div>
         </div>
+        <!-- FINAL MODAL lives inside page-trade so it's always accessible -->
         <div class="trade-final-modal hidden" id="trade-final-modal">
           <div class="trade-final-inner">
             <h3>⚠️ FINAL CONFIRMATION</h3>
             <p>Review the trade one last time. This cannot be undone.</p>
             <div class="final-trade-summary" id="final-trade-summary"></div>
-            <div class="countdown-display">Final accept available in <span id="countdown-num">5</span>...</div>
+            <div class="countdown-display">Final accept available in <span id="countdown-num">5</span>s...</div>
             <button class="btn-final-accept disabled" id="btn-final-accept" disabled>FINAL ACCEPT</button>
             <button class="btn-cancel-final" id="btn-cancel-final">CANCEL</button>
           </div>
@@ -784,24 +767,15 @@ function initFirebase(cfg){
   auth  = firebase.auth();
   db    = firebase.firestore();
   rtdb  = firebase.database();
-  // Enable offline persistence
-  // Offline persistence (compat SDK)
-  // Offline persistence disabled to avoid deprecation warnings
 }
-
-
-// ── SETUP SCREEN ─────────────────────────────────────────────
-
-
-
 
 // ============================================================
 // STATE
 // ============================================================
 const S = {
-  user: null,         // Firebase auth user
-  profile: null,      // Firestore profile doc
-  inventory: [],      // local copy
+  user: null,
+  profile: null,
+  inventory: [],
   selectedItems: new Set(),
   currentCrate: null,
   currentLbTab: 'richest',
@@ -816,6 +790,8 @@ const S = {
   onlinePlayers: [],
   presenceRef: null,
   lastOpenedInvItem: null,
+  // FIX: track whether realtime listeners have been set up to avoid duplicates
+  listenersInitialized: false,
 };
 
 // ============================================================
@@ -824,6 +800,11 @@ const S = {
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+function hideLoadingOverlay(){
+  const ol = document.getElementById('loading-overlay');
+  ol.classList.add('fade-out');
+  setTimeout(()=>{ ol.style.display='none'; }, 400);
 }
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -844,7 +825,7 @@ function showGlobalBanner(msg){
 }
 
 // ============================================================
-// AUTH
+// AUTH TABS
 // ============================================================
 document.querySelectorAll('.auth-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
@@ -855,6 +836,14 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
   });
 });
 
+// Enter key on login fields
+['login-email','login-password'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('login-btn').click(); });
+});
+
+// ============================================================
+// LOGIN — FIX: no polling loop, just sign in and let observer handle it
+// ============================================================
 document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-password').value;
@@ -872,6 +861,9 @@ document.getElementById('login-btn').addEventListener('click',async()=>{
   }
 });
 
+// ============================================================
+// REGISTER
+// ============================================================
 document.getElementById('register-btn').addEventListener('click',async()=>{
   const username=document.getElementById('reg-username').value.trim();
   const email=document.getElementById('reg-email').value.trim();
@@ -884,33 +876,21 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
   if(!pass||pass.length<6){err.textContent='Password must be at least 6 characters.';return;}
   btn.disabled=true; btn.textContent='CREATING...';
   try{
-    // Do username check and auth creation in parallel for speed
-    const [snapResult, credResult] = await Promise.allSettled([
-      db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get(),
-      auth.createUserWithEmailAndPassword(email, pass),
-    ]);
-    // If username taken, delete the auth user we just made and bail
-    if(snapResult.status==='fulfilled' && !snapResult.value.empty){
-      if(credResult.status==='fulfilled') await credResult.value.user.delete();
+    // Check username first, then create auth
+    const snap=await db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get();
+    if(!snap.empty){
       err.textContent='Username already taken.';
       btn.disabled=false; btn.textContent='CREATE ACCOUNT';
       return;
     }
-    // If auth failed (e.g. email already in use)
-    if(credResult.status==='rejected'){
-      err.textContent=friendlyAuthError(credResult.reason.code)||credResult.reason.message;
-      btn.disabled=false; btn.textContent='CREATE ACCOUNT';
-      return;
-    }
-    const cred=credResult.value;
-    // Write profile (non-blocking — onAuthStateChanged will load it)
-    db.collection('users').doc(cred.user.uid).set({
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    // Write profile — onAuthStateChanged will pick it up
+    await db.collection('users').doc(cred.user.uid).set({
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
       coins:500, inventory:[], tradeHistory:[], cratesOpened:0,
       totalValue:0, rarestItem:null, rarestTier:0,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     });
-    // Don't await — let onAuthStateChanged trigger login flow immediately
   }catch(e){
     err.textContent=friendlyAuthError(e.code)||e.message;
     btn.disabled=false; btn.textContent='CREATE ACCOUNT';
@@ -919,6 +899,7 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
 
 document.getElementById('logout-btn').addEventListener('click',async()=>{
   await leavePresence();
+  S.listenersInitialized=false;
   await auth.signOut();
   toast('Logged out.');
 });
@@ -928,48 +909,60 @@ function friendlyAuthError(code){
     'auth/user-not-found':'No account with that email.',
     'auth/wrong-password':'Wrong password.',
     'auth/invalid-credential':'Wrong email or password.',
+    'auth/invalid-login-credentials':'Wrong email or password.',
     'auth/email-already-in-use':'That email already has an account. Please log in.',
     'auth/invalid-email':'Invalid email address.',
     'auth/weak-password':'Password must be at least 6 characters.',
     'auth/too-many-requests':'Too many attempts. Try again in a minute.',
     'auth/network-request-failed':'Network error. Check your connection.',
+    'auth/user-disabled':'This account has been disabled.',
   };
   return map[code]||'';
 }
 
-// ── AUTH STATE OBSERVER ────────────────────────────────────
+// ============================================================
+// AUTH STATE OBSERVER
+// FIX: Show game screen immediately, load profile in background
+// FIX: Only set up realtime listeners once per session
+// ============================================================
 function startAuthObserver(){
   auth.onAuthStateChanged(async user=>{
     if(user){
       S.user=user;
-      // Show game screen immediately — load profile in background
+      // Show game immediately — don't wait for profile
       showScreen('game-screen');
+      hideLoadingOverlay();
       loadCratesPage();
       showPage('crates');
-      // Reset button states
+      // Reset auth button states
       const lb=document.getElementById('login-btn');
       const rb=document.getElementById('register-btn');
       if(lb){lb.disabled=false;lb.textContent='ENTER THE VAULT';}
       if(rb){rb.disabled=false;rb.textContent='CREATE ACCOUNT';}
-      // Load profile (retry up to 5x in case Firestore write hasn't landed yet)
-      let doc, attempts=0;
-      while(attempts<5){
-        doc=await db.collection('users').doc(user.uid).get();
-        if(doc.exists) break;
-        await new Promise(r=>setTimeout(r,600));
-        attempts++;
+      // Load profile — retry a few times for new registrations
+      let doc=null;
+      for(let i=0;i<5;i++){
+        try{ doc=await db.collection('users').doc(user.uid).get(); }catch(e){ break; }
+        if(doc&&doc.exists) break;
+        await new Promise(r=>setTimeout(r,500));
       }
-      if(!doc||!doc.exists){ await auth.signOut(); return; }
+      if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       document.getElementById('nav-username').textContent=S.profile.username;
       updateCoinDisplay(S.profile.coins);
-      setupPresence();
-      listenToPresence();
-      listenToChat();
-      listenToTradeRequests();
+      // FIX: Only initialize realtime listeners once to avoid duplicate handlers
+      if(!S.listenersInitialized){
+        S.listenersInitialized=true;
+        setupPresence();
+        listenToPresence();
+        listenToChat();
+        listenToTradeRequests();
+        setupTradeInviteListener();
+      }
     } else {
-      S.user=null; S.profile=null;
+      S.user=null; S.profile=null; S.listenersInitialized=false;
+      hideLoadingOverlay();
       showScreen('auth-screen');
       spawnParticles();
     }
@@ -983,43 +976,43 @@ function updateCoinDisplay(coins){
 }
 
 // ============================================================
-// REALTIME PRESENCE (Firebase Realtime DB)
+// REALTIME PRESENCE
 // ============================================================
 function setupPresence(){
   if(!S.user||!S.profile)return;
-  try {
+  try{
     const uid=S.user.uid;
     const ref=rtdb.ref('presence/'+uid);
     S.presenceRef=ref;
     ref.set({uid,username:S.profile.username,online:true});
     ref.onDisconnect().remove();
-  } catch(e){ console.warn('Presence unavailable:', e.message); }
+  }catch(e){ console.warn('Presence unavailable:',e.message); }
 }
 
 async function leavePresence(){
-  if(S.presenceRef){ await S.presenceRef.remove(); }
+  try{ if(S.presenceRef){ await S.presenceRef.remove(); S.presenceRef=null; } }catch(e){}
 }
 
 function listenToPresence(){
-  try {
+  try{
     rtdb.ref('presence').on('value',snap=>{
       const data=snap.val()||{};
       S.onlinePlayers=Object.values(data).filter(p=>p.uid!==S.user?.uid);
       if(document.getElementById('page-trade').classList.contains('active')) renderOnlinePlayers();
     });
-  } catch(e){ console.warn('Presence listen unavailable:', e.message); }
+  }catch(e){ console.warn('Presence listen unavailable:',e.message); }
 }
 
 // ============================================================
-// CHAT (Firebase Realtime DB)
+// CHAT
 // ============================================================
 function listenToChat(){
-  try {
+  try{
     rtdb.ref('chat').limitToLast(50).on('child_added',snap=>{
       const msg=snap.val();
       if(msg) appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
     });
-  } catch(e){ console.warn('Chat unavailable:', e.message); }
+  }catch(e){ console.warn('Chat unavailable:',e.message); }
 }
 
 document.getElementById('chat-send').addEventListener('click',sendChat);
@@ -1028,27 +1021,30 @@ document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==
 async function sendChat(){
   const input=document.getElementById('chat-input');
   const text=input.value.trim().slice(0,200);
-  if(!text||!S.user)return;
+  if(!text||!S.user||!S.profile)return;
   input.value='';
-  try {
+  try{
     await rtdb.ref('chat').push({
       username:S.profile.username, text, isSystem:false,
       ts:firebase.database.ServerValue.TIMESTAMP,
     });
-  } catch(e){ appendChatMessage(S.profile.username, text, false, ''); }
+  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
 }
 
 function appendChatMessage(username,text,isSystem=false,cls=''){
   const msgs=document.getElementById('chat-messages');
   const el=document.createElement('div');
-  el.className='chat-msg '+(cls||'');
+  el.className='chat-msg';
+  const spanCls=cls||'system';
   el.innerHTML=isSystem
-    ? `<span class="chat-msg-${cls||'system'}">${username}:</span> ${text}`
-    : `<span class="chat-msg-user">${username}:</span> ${text}`;
+    ? `<span class="chat-msg-${spanCls}">${escHtml(username)}:</span> ${escHtml(text)}`
+    : `<span class="chat-msg-user">${escHtml(username)}:</span> ${escHtml(text)}`;
   msgs.appendChild(el);
   msgs.scrollTop=msgs.scrollHeight;
-  while(msgs.children.length>100)msgs.removeChild(msgs.firstChild);
+  while(msgs.children.length>100) msgs.removeChild(msgs.firstChild);
 }
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ============================================================
 // CRATES PAGE
@@ -1065,7 +1061,11 @@ function loadCratesPage(){
       <div class="crate-name">${crate.name}</div>
       <div class="crate-desc">${crate.desc}</div>
       <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
-    c.addEventListener('click',()=>openCratePage(crate));
+    c.addEventListener('click',()=>{
+      // FIX: Guard — don't allow opening if profile not loaded yet
+      if(!S.profile){ toast('Still loading your profile, please wait...'); return; }
+      openCratePage(crate);
+    });
     grid.appendChild(c);
   });
 }
@@ -1081,7 +1081,7 @@ function openCratePage(crate){
   document.getElementById('result-panel').classList.add('hidden');
   document.getElementById('btn-open-crate').disabled=false;
   buildCrateInfoPanel(crate);
-  buildSpinTrack(crate);
+  buildSpinTrack(crate,null,-1);
   showPage('opening');
 }
 
@@ -1091,7 +1091,7 @@ function buildCrateInfoPanel(crate){
   const panel=document.getElementById('crate-info-panel');
   const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
   const grouped={};
-  crateItems.forEach(item=>{if(!grouped[item.rarity])grouped[item.rarity]=[];grouped[item.rarity].push(item);});
+  crateItems.forEach(item=>{ if(!grouped[item.rarity])grouped[item.rarity]=[]; grouped[item.rarity].push(item); });
   const order=['ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
   panel.innerHTML=`
     <div style="flex:1">
@@ -1109,7 +1109,7 @@ function buildCrateInfoPanel(crate){
     if(!grouped[rar])return;
     shownRar.add(rar);
     const r=getRarity(rar);
-    const col=r.color==='rainbow'?'#fff':r.color;
+    const col=r.color==='#ffffff'?'#aaa':r.color;
     grouped[rar].forEach(item=>{
       const pill=document.createElement('div');
       pill.className='crate-item-pill';
@@ -1120,7 +1120,7 @@ function buildCrateInfoPanel(crate){
   });
   order.filter(r=>shownRar.has(r)).forEach(rar=>{
     const r=getRarity(rar);
-    const col=r.color==='rainbow'?'#fff':r.color;
+    const col=r.color==='#ffffff'?'#aaa':r.color;
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem';
     row.innerHTML=`<span style="color:${col};font-family:var(--font-d);font-size:.65rem;letter-spacing:.05em">${r.name}</span>
@@ -1131,14 +1131,12 @@ function buildCrateInfoPanel(crate){
 
 function buildSpinTrack(crate, winningItem, landIdx){
   const track=document.getElementById('spin-track');
-  track.innerHTML=''; track.style.transform='translateX(0)';
-  track.style.transition='none';
+  track.innerHTML=''; track.style.transform='translateX(0)'; track.style.transition='none';
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
   for(let i=0;i<60;i++){
-    // Place the real winning item exactly at the landing index
-    const item = (winningItem && i===landIdx) ? winningItem : pool[Math.floor(Math.random()*pool.length)];
+    const item=(winningItem&&i===landIdx)?winningItem:pool[Math.floor(Math.random()*pool.length)];
     const r=getRarity(item.rarity);
-    const col=r.color==='rainbow'?'#fff':r.color;
+    const col=r.color==='#ffffff'?'#aaa':r.color;
     const el=document.createElement('div');
     el.className='spin-item';
     el.style.borderColor=col+'88';
@@ -1160,15 +1158,14 @@ function rollItem(crateId){
 
 document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const crate=S.currentCrate;
-  if(!crate||!S.user)return;
+  if(!crate||!S.user||!S.profile)return;
   if(S.profile.coins<crate.price){toast('Not enough coins! 🪙','error');return;}
   const btn=document.getElementById('btn-open-crate');
   btn.disabled=true;
   document.getElementById('result-panel').classList.add('hidden');
-  // Roll the REAL item first, then animate it landing in center
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
-  await animateSpin(crate, item);
+  await animateSpin(crate,item);
   // Save to Firestore
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
   S.inventory.push(invItem);
@@ -1177,14 +1174,16 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const r=getRarity(item.rarity);
   if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=item.id;S.profile.rarestTier=r.tier;}
   S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-  await db.collection('users').doc(S.user.uid).update({
-    coins: firebase.firestore.FieldValue.increment(-crate.price),
-    inventory: S.inventory,
-    cratesOpened: S.profile.cratesOpened,
-    rarestItem: S.profile.rarestItem,
-    rarestTier: S.profile.rarestTier,
-    totalValue: S.profile.totalValue,
-  });
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      coins:firebase.firestore.FieldValue.increment(-crate.price),
+      inventory:S.inventory,
+      cratesOpened:S.profile.cratesOpened,
+      rarestItem:S.profile.rarestItem,
+      rarestTier:S.profile.rarestTier,
+      totalValue:S.profile.totalValue,
+    });
+  }catch(e){ toast('Save error: '+e.message,'error'); }
   updateCoinDisplay(S.profile.coins);
   showResult(item,r,invItem);
   // Ultra rare announcement
@@ -1193,29 +1192,29 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
     const desc=r.display?`(${r.display})`:'';
     const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name} ${desc}!`;
     showGlobalBanner(msg);
-    await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',ts:firebase.database.ServerValue.TIMESTAMP});
+    try{
+      await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',ts:firebase.database.ServerValue.TIMESTAMP});
+    }catch(e){}
   }
   btn.disabled=false;
 });
 
-function animateSpin(crate, winningItem){
+function animateSpin(crate,winningItem){
   return new Promise(resolve=>{
     const iW=108;
     const landIdx=44+Math.floor(Math.random()*3);
-    // Build track with winning item baked in at landIdx
-    buildSpinTrack(crate, winningItem, landIdx);
+    buildSpinTrack(crate,winningItem,landIdx);
     const track=document.getElementById('spin-track');
     const cW=document.getElementById('spin-container').offsetWidth/2;
     const targetX=-(landIdx*iW-cW+iW/2);
-    // Force reflow so transition fires correctly
-    void track.offsetWidth;
+    void track.offsetWidth; // Force reflow
     track.style.transition='transform 3.5s cubic-bezier(0.12,0,0.08,1)';
     track.style.transform=`translateX(${targetX}px)`;
     setTimeout(()=>{
       const landingEl=track.querySelectorAll('.spin-item')[landIdx];
       if(landingEl){
         const r=getRarity(winningItem.rarity);
-        const col=r.color==='rainbow'?'#fff':r.color;
+        const col=r.color==='#ffffff'?'#aaa':r.color;
         landingEl.style.borderColor=col;
         landingEl.style.boxShadow=`0 0 20px ${r.glow||col+'44'}`;
       }
@@ -1226,7 +1225,7 @@ function animateSpin(crate, winningItem){
 
 function showResult(item,r,invItem){
   S.lastOpenedInvItem=invItem;
-  const col=r.color==='rainbow'?'#fff':r.color;
+  const col=r.color==='#ffffff'?'#aaa':r.color;
   const panel=document.getElementById('result-panel');
   panel.style.setProperty('--rc',col);
   panel.style.setProperty('--rg',r.glow||col+'44');
@@ -1268,7 +1267,7 @@ function renderInventory(){
   const search=document.getElementById('inv-search').value.toLowerCase();
   const sort=document.getElementById('inv-sort').value;
   let items=[...S.inventory];
-  if(search)items=items.filter(inv=>{const it=getItem(inv.itemId);return it&&it.name.toLowerCase().includes(search);});
+  if(search) items=items.filter(inv=>{const it=getItem(inv.itemId);return it&&it.name.toLowerCase().includes(search);});
   items.sort((a,b)=>{
     const ia=getItem(a.itemId),ib=getItem(b.itemId); if(!ia||!ib)return 0;
     if(sort==='rarity') return (getRarity(ib.rarity).tier||0)-(getRarity(ia.rarity).tier||0);
@@ -1277,7 +1276,7 @@ function renderInventory(){
     return 0;
   });
   grid.innerHTML='';
-  if(items.length===0){
+  if(!items.length){
     grid.innerHTML='<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">Your inventory is empty. Open some crates!</div>';
   } else {
     items.forEach(inv=>makeItemCard(inv,grid,true));
@@ -1287,17 +1286,16 @@ function renderInventory(){
   document.getElementById('inv-total-value').textContent='Total: '+fmtNum(total)+' 🪙';
 }
 
-function makeItemCard(inv,container,selectable=false,size=100){
+function makeItemCard(inv,container,selectable=false){
   const item=getItem(inv.itemId); if(!item)return null;
   const r=getRarity(item.rarity);
-  const col=r.color==='rainbow'?'#fff':r.color;
+  const col=r.color==='#ffffff'?'#aaa':r.color;
   const card=document.createElement('div');
   card.className='item-card'+(item.rarity==='divine'?' rarity-divine':'');
   card.style.setProperty('--ic',col+'aa');
   card.style.setProperty('--ig',r.glow||'#9ca3af33');
-  if(size!==100)card.style.width=size+'px';
   card.dataset.uid=inv.uniqueId;
-  if(selectable&&S.selectedItems.has(inv.uniqueId))card.classList.add('selected');
+  if(selectable&&S.selectedItems.has(inv.uniqueId)) card.classList.add('selected');
   card.innerHTML=`<span class="item-icon">${item.icon}</span><div class="item-name">${item.name}</div><div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
   if(selectable){
     card.addEventListener('click',()=>{
@@ -1318,7 +1316,7 @@ function makeItemCard(inv,container,selectable=false,size=100){
 
 function showTip(e,item,r){
   const tt=document.getElementById('item-tooltip');
-  const col=r.color==='rainbow'?'#fff':r.color;
+  const col=r.color==='#ffffff'?'#aaa':r.color;
   document.getElementById('tt-icon').textContent=item.icon;
   document.getElementById('tt-name').textContent=item.name;
   const rarEl=document.getElementById('tt-rarity');
@@ -1343,25 +1341,28 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
-    if(item)earned+=Math.floor(item.value*.7);
+    if(item) earned+=Math.floor(item.value*.7);
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
   S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-  await db.collection('users').doc(S.user.uid).update({
-    coins:firebase.firestore.FieldValue.increment(earned),
-    inventory:S.inventory,
-    totalValue:S.profile.totalValue,
-  });
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      coins:firebase.firestore.FieldValue.increment(earned),
+      inventory:S.inventory,
+      totalValue:S.profile.totalValue,
+    });
+  }catch(e){ toast('Save error','error'); return; }
   updateCoinDisplay(S.profile.coins);
   toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
-  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
+  if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
 
 // ============================================================
 // LEADERBOARD
 // ============================================================
 async function loadLeaderboard(){
+  document.getElementById('leaderboard-list').innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
   try{
     const [r1,r2,r3]=await Promise.all([
       db.collection('users').orderBy('coins','desc').limit(10).get(),
@@ -1375,7 +1376,7 @@ async function loadLeaderboard(){
     });
     S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
     renderLeaderboard(S.currentLbTab);
-  }catch(e){toast('Leaderboard error','error');}
+  }catch(e){ document.getElementById('leaderboard-list').innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard.</div>'; }
 }
 
 function renderLeaderboard(tab){
@@ -1393,12 +1394,12 @@ function renderLeaderboard(tab){
     if(tab==='mostCrates') val=(p.cratesOpened||0).toLocaleString()+' crates';
     if(tab==='mostValue')  val='🪙 '+fmtNum(p.totalValue||0);
     row.innerHTML=`<div class="lb-rank ${rc}">${rl}</div>
-      <div class="lb-info"><div class="lb-username">${p.username}</div>
-        <div class="lb-sub">Rarest: ${p.rarestItemIcon} ${p.rarestItemName}</div></div>
+      <div class="lb-info"><div class="lb-username">${escHtml(p.username)}</div>
+        <div class="lb-sub">Rarest: ${p.rarestItemIcon} ${escHtml(p.rarestItemName)}</div></div>
       <div class="lb-value">${val}</div>`;
     list.appendChild(row);
   });
-  if(!rows.length)list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">No data yet.</div>';
+  if(!rows.length) list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">No data yet.</div>';
 }
 
 document.querySelectorAll('.lb-tab').forEach(tab=>{
@@ -1414,6 +1415,7 @@ document.querySelectorAll('.lb-tab').forEach(tab=>{
 // ============================================================
 function renderTradeHistory(){
   const list=document.getElementById('history-list');
+  if(!S.profile){ list.innerHTML='<div style="color:var(--text-3);font-style:italic">Loading...</div>'; return; }
   const history=[...(S.profile.tradeHistory||[])].reverse();
   list.innerHTML='';
   if(!history.length){
@@ -1425,11 +1427,11 @@ function renderTradeHistory(){
     row.className='history-row';
     const date=new Date(trade.timestamp).toLocaleString();
     const chips=(items)=>(items||[]).map(i=>{
-      const r=getRarity(i.rarity);const col=r.color==='rainbow'?'#fff':r.color;
-      return`<span class="history-item-chip" style="color:${col};border-color:${col}66">${i.name}</span>`;
+      const r=getRarity(i.rarity);const col=r.color==='#ffffff'?'#aaa':r.color;
+      return`<span class="history-item-chip" style="color:${col};border-color:${col}66">${escHtml(i.name)}</span>`;
     }).join('')||'<span style="color:var(--text-3)">Nothing</span>';
     row.innerHTML=`<div class="history-header">
-      <span class="history-partner">Trade with ${trade.partnerName}</span>
+      <span class="history-partner">Trade with ${escHtml(trade.partnerName)}</span>
       <span class="history-date">${date}</span></div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div><div class="history-items-label">YOU GAVE:</div><div class="history-items-list">${chips(trade.itemsGiven)}</div></div>
@@ -1440,7 +1442,7 @@ function renderTradeHistory(){
 }
 
 // ============================================================
-// TRADE SYSTEM (Firebase Realtime DB)
+// TRADE SYSTEM
 // ============================================================
 function listenToTradeRequests(){
   if(!S.user)return;
@@ -1460,7 +1462,7 @@ function renderOnlinePlayers(){
     const chip=document.createElement('div');
     chip.className='online-player-chip';
     chip.innerHTML=`<div class="online-dot"></div>
-      <span class="online-player-name">${p.username}</span>
+      <span class="online-player-name">${escHtml(p.username)}</span>
       <button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`;
     chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
     list.appendChild(chip);
@@ -1468,26 +1470,29 @@ function renderOnlinePlayers(){
 }
 
 async function sendTradeRequest(toUid,toUsername){
-  await rtdb.ref('tradeRequests/'+toUid).push({
-    fromUid:S.user.uid, fromUsername:S.profile.username,
-    ts:firebase.database.ServerValue.TIMESTAMP,
-  });
-  toast('Trade request sent to '+toUsername+'!');
+  if(!S.user||!S.profile)return;
+  try{
+    await rtdb.ref('tradeRequests/'+toUid).push({
+      fromUid:S.user.uid,fromUsername:S.profile.username,
+      ts:firebase.database.ServerValue.TIMESTAMP,
+    });
+    toast('Trade request sent to '+toUsername+'!');
+  }catch(e){ toast('Failed to send trade request','error'); }
 }
 
 function showIncomingTradeModal(fromUid,fromUsername){
   document.querySelectorAll('.incoming-trade-modal').forEach(e=>e.remove());
   const modal=document.createElement('div');
   modal.className='incoming-trade-modal';
-  modal.innerHTML=`<h4>🤝 TRADE REQUEST</h4><p><strong>${fromUsername}</strong> wants to trade!</p>
+  modal.innerHTML=`<h4>🤝 TRADE REQUEST</h4><p><strong>${escHtml(fromUsername)}</strong> wants to trade!</p>
     <div class="incoming-trade-btns">
       <button class="btn-atr">ACCEPT</button>
       <button class="btn-dtr">DECLINE</button>
     </div>`;
   document.body.appendChild(modal);
-  modal.querySelector('.btn-atr').addEventListener('click',()=>{modal.remove();createTradeRoom(fromUid,fromUsername);});
-  modal.querySelector('.btn-dtr').addEventListener('click',()=>{modal.remove();toast('Trade declined.');});
-  setTimeout(()=>modal.remove(),30000);
+  modal.querySelector('.btn-atr').addEventListener('click',()=>{ modal.remove(); createTradeRoom(fromUid,fromUsername); });
+  modal.querySelector('.btn-dtr').addEventListener('click',()=>{ modal.remove(); toast('Trade declined.'); });
+  setTimeout(()=>{ if(document.body.contains(modal)) modal.remove(); },30000);
 }
 
 async function createTradeRoom(partnerUid,partnerUsername){
@@ -1498,14 +1503,13 @@ async function createTradeRoom(partnerUid,partnerUsername){
   S.tradeTheirItems=[];
   S.tradeMyAccepted=false;
   S.tradeTheirAccepted=false;
-  // Create room in RTDB
   const room={
     roomId,
     players:{
       [S.user.uid]:{uid:S.user.uid,username:S.profile.username,items:[],accepted:false,finalAccepted:false},
       [partnerUid]:{uid:partnerUid,username:partnerUsername,items:[],accepted:false,finalAccepted:false},
     },
-    locked:false, createdAt:firebase.database.ServerValue.TIMESTAMP,
+    locked:false,createdAt:firebase.database.ServerValue.TIMESTAMP,
   };
   await rtdb.ref('tradeRooms/'+roomId).set(room);
   // Notify partner
@@ -1519,7 +1523,7 @@ async function createTradeRoom(partnerUid,partnerUsername){
   toast('Trade room created!','success');
 }
 
-// Partner receives room invite
+// FIX: partner receives invite via this listener (was incorrectly a standalone function called again from boot)
 function setupTradeInviteListener(){
   if(!S.user)return;
   rtdb.ref('tradeInvites/'+S.user.uid).on('child_added',snap=>{
@@ -1534,7 +1538,7 @@ function setupTradeInviteListener(){
     listenToTradeRoom(inv.roomId);
     showPage('trade');
     document.getElementById('trade-room').classList.remove('hidden');
-    document.getElementById('trade-you-name').textContent=S.profile.username;
+    document.getElementById('trade-you-name').textContent=S.profile?.username||'You';
     document.getElementById('trade-them-name').textContent=inv.fromUsername;
     renderTradeInventoryMini();
     toast('Joined trade room with '+inv.fromUsername+'!','success');
@@ -1543,11 +1547,11 @@ function setupTradeInviteListener(){
 
 let tradeRoomListener=null;
 function listenToTradeRoom(roomId){
-  if(tradeRoomListener)tradeRoomListener();
+  if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
   const ref=rtdb.ref('tradeRooms/'+roomId);
-  const unsub=ref.on('value',snap=>{
+  const handler=snap=>{
     const room=snap.val();
-    if(!room){resetTradeState();return;}
+    if(!room){ resetTradeState(); return; }
     const players=room.players||{};
     const myData=players[S.user.uid];
     const theirData=players[S.tradePartnerUid];
@@ -1564,33 +1568,36 @@ function listenToTradeRoom(roomId){
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
     renderTradeInventoryMini();
     updateTradeStatus();
-    // Both accepted → show countdown
+    // Both accepted → show final modal (only once)
     if(room.locked&&!S.tradeCountdownActive){
       S.tradeCountdownActive=true;
       showFinalModal(S.tradeMyItems,S.tradeTheirItems);
     }
-    // Trade complete
     if(room.completed){
       handleTradeComplete(room);
     }
-  });
-  tradeRoomListener=()=>ref.off('value',unsub);
+  };
+  ref.on('value',handler);
+  tradeRoomListener=()=>ref.off('value',handler);
 }
 
 function renderTradeItems(containerId,items,isYours){
   const el=document.getElementById(containerId);
   el.innerHTML='';
-  if(!items.length){el.innerHTML=`<div class="trade-empty-hint">${isYours?'Click items below to add':'Waiting for partner...'}</div>`;return;}
+  if(!items||!items.length){
+    el.innerHTML=`<div class="trade-empty-hint">${isYours?'Click items below to add':'Waiting for partner...'}</div>`;
+    return;
+  }
   items.forEach(item=>{
     const r=getRarity(item.rarity);
-    const col=r.color==='rainbow'?'#fff':r.color;
+    const col=r.color==='#ffffff'?'#aaa':r.color;
     const card=document.createElement('div');
     card.className='item-card';
     card.style.width='80px';
     card.style.setProperty('--ic',col+'aa');
     card.style.setProperty('--ig',r.glow||'#9ca3af33');
     card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
-    if(isYours){card.title='Click to remove';card.addEventListener('click',()=>removeFromTrade(item.uniqueId));}
+    if(isYours){ card.title='Click to remove'; card.addEventListener('click',()=>removeFromTrade(item.uniqueId)); }
     card.addEventListener('mouseenter',e=>showTip(e,item,r));
     card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
     el.appendChild(card);
@@ -1600,11 +1607,11 @@ function renderTradeItems(containerId,items,isYours){
 function renderTradeInventoryMini(){
   const grid=document.getElementById('trade-inventory-mini');
   grid.innerHTML='';
-  const inTrade=new Set(S.tradeMyItems.map(i=>i.uniqueId));
+  const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
   S.inventory.forEach(inv=>{
     const item=getItem(inv.itemId); if(!item)return;
     const r=getRarity(item.rarity);
-    const col=r.color==='rainbow'?'#fff':r.color;
+    const col=r.color==='#ffffff'?'#aaa':r.color;
     const card=document.createElement('div');
     card.className='item-card'+(inTrade.has(inv.uniqueId)?' selected':'');
     card.style.width='75px';
@@ -1623,20 +1630,19 @@ async function addToTrade(inv){
   const item=getItem(inv.itemId); if(!item)return;
   const newItem={uniqueId:inv.uniqueId,itemId:inv.itemId,...item};
   const myItems=[...S.tradeMyItems,newItem];
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({
-    items:myItems,accepted:false,finalAccepted:false,
-  });
-  // Reset both accepts
-  await resetTradeAccepts('Item added to trade.');
+  try{
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,accepted:false,finalAccepted:false});
+    await resetTradeAccepts('Item added to trade.');
+  }catch(e){ toast('Error adding item','error'); }
 }
 
 async function removeFromTrade(uniqueId){
   if(!S.tradeRoomId)return;
   const myItems=S.tradeMyItems.filter(i=>i.uniqueId!==uniqueId);
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({
-    items:myItems,accepted:false,finalAccepted:false,
-  });
-  await resetTradeAccepts('Item removed from trade.');
+  try{
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,accepted:false,finalAccepted:false});
+    await resetTradeAccepts('Item removed from trade.');
+  }catch(e){ toast('Error removing item','error'); }
 }
 
 async function resetTradeAccepts(message){
@@ -1644,50 +1650,54 @@ async function resetTradeAccepts(message){
   S.tradeCountdownActive=false;
   document.getElementById('trade-final-modal').classList.add('hidden');
   document.getElementById('trade-message').textContent='⚠️ '+message;
-  document.getElementById('trade-message').style.color='var(--gold)';
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:false});
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:false,finalAccepted:false});
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.tradePartnerUid}`).update({accepted:false,finalAccepted:false});
-  toast('⚠️ '+message);
+  try{
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:false});
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:false,finalAccepted:false});
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.tradePartnerUid}`).update({accepted:false,finalAccepted:false});
+  }catch(e){}
 }
 
 document.getElementById('btn-accept-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
-  // Check if both accepted
-  const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
-  const players=snap.val()||{};
-  const allAccepted=Object.values(players).every(p=>p.accepted);
-  if(allAccepted){
-    await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
-  }
-  toast('You accepted the trade. Waiting for partner...');
+  try{
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
+    // Check if both accepted
+    const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
+    const players=snap.val()||{};
+    const allAccepted=Object.values(players).every(p=>p.accepted);
+    if(allAccepted){
+      await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
+    } else {
+      toast('Waiting for partner to accept...');
+    }
+  }catch(e){ toast('Error accepting trade','error'); }
 });
 
 document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();
+  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
   resetTradeState();
   toast('Trade cancelled.','error');
 });
 
+// FIX: btn-final-accept used S.tradeCountdownActive check incorrectly — now just checks if button is enabled
 document.getElementById('btn-final-accept').addEventListener('click',async()=>{
-  if(!S.tradeRoomId||!S.tradeCountdownActive)return;
-  await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({finalAccepted:true});
-  // Check if both final accepted
-  const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
-  const players=snap.val()||{};
-  const allFinal=Object.values(players).every(p=>p.finalAccepted);
-  if(allFinal){
-    await executeTrade();
-  }
-  document.getElementById('btn-final-accept').disabled=true;
-  document.getElementById('btn-final-accept').textContent='Waiting for partner...';
+  const btn=document.getElementById('btn-final-accept');
+  if(btn.disabled||btn.classList.contains('disabled'))return;
+  if(!S.tradeRoomId)return;
+  btn.disabled=true; btn.textContent='Waiting for partner...';
+  try{
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({finalAccepted:true});
+    const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
+    const players=snap.val()||{};
+    const allFinal=Object.values(players).every(p=>p.finalAccepted);
+    if(allFinal){ await executeTrade(); }
+  }catch(e){ toast('Error finalizing trade','error'); btn.disabled=false; btn.textContent='FINAL ACCEPT'; }
 });
 
 document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();
+  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
   resetTradeState();
   toast('Trade cancelled.','error');
 });
@@ -1695,30 +1705,29 @@ document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
 async function executeTrade(){
   if(!S.tradeRoomId||!S.tradePartnerUid)return;
   try{
-    // Load both inventories fresh from Firestore
     const [myDoc,theirDoc]=await Promise.all([
       db.collection('users').doc(S.user.uid).get(),
       db.collection('users').doc(S.tradePartnerUid).get(),
     ]);
+    if(!myDoc.exists||!theirDoc.exists){ toast('Trade error: user not found','error'); return; }
     const myData=myDoc.data(); const theirData=theirDoc.data();
     let myInv=[...myData.inventory||[]];
     let theirInv=[...theirData.inventory||[]];
-    // Remove my items from my inventory and add to theirs
+    // Remove my items from my inventory
     for(const ti of S.tradeMyItems){
       const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
-      if(idx===-1){toast('Item mismatch! Trade cancelled.','error');await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();resetTradeState();return;}
+      if(idx===-1){ toast('Item mismatch! Trade cancelled.','error'); await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); resetTradeState(); return; }
       const[removed]=myInv.splice(idx,1);
       theirInv.push({...removed,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
     }
-    // Remove their items from their inventory and add to mine
+    // Remove their items from their inventory
     for(const ti of S.tradeTheirItems){
       const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
-      if(idx===-1){toast('Item mismatch! Trade cancelled.','error');await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();resetTradeState();return;}
+      if(idx===-1){ toast('Item mismatch! Trade cancelled.','error'); await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); resetTradeState(); return; }
       const[removed]=theirInv.splice(idx,1);
       myInv.push({...removed,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
     }
-    // Log trade history
-    const tradeId=genUID(); const ts=new Date().toISOString();
+    const ts=new Date().toISOString(); const tradeId=genUID();
     const myLog={tradeId,partnerId:S.tradePartnerUid,partnerName:theirData.username,
       itemsGiven:S.tradeMyItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
       itemsReceived:S.tradeTheirItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
@@ -1729,14 +1738,10 @@ async function executeTrade(){
       timestamp:ts};
     const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
     const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-    // Batch update
     const batch=db.batch();
-    batch.update(db.collection('users').doc(S.user.uid),{inventory:myInv,totalValue:myVal,
-      tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
-    batch.update(db.collection('users').doc(S.tradePartnerUid),{inventory:theirInv,totalValue:theirVal,
-      tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
+    batch.update(db.collection('users').doc(S.user.uid),{inventory:myInv,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
+    batch.update(db.collection('users').doc(S.tradePartnerUid),{inventory:theirInv,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
     await batch.commit();
-    // Mark room as completed
     await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({completed:true});
   }catch(e){
     console.error('Trade error:',e);
@@ -1745,38 +1750,48 @@ async function executeTrade(){
 }
 
 async function handleTradeComplete(room){
-  // Reload profile
-  const doc=await db.collection('users').doc(S.user.uid).get();
-  S.profile=doc.data();
-  S.inventory=[...S.profile.inventory||[]];
-  updateCoinDisplay(S.profile.coins);
-  await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();
+  try{
+    const doc=await db.collection('users').doc(S.user.uid).get();
+    if(doc.exists){
+      S.profile=doc.data();
+      S.inventory=[...S.profile.inventory||[]];
+      updateCoinDisplay(S.profile.coins);
+    }
+  }catch(e){}
+  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
   resetTradeState();
   toast('🎉 Trade completed successfully!','success');
-  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
+  if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
 
+// FIX: showFinalModal - countdown properly enables the button and doesn't use wrong element ID
 function showFinalModal(myItems,theirItems){
   const modal=document.getElementById('trade-final-modal');
-  const myName=S.profile.username;
   const theirName=document.getElementById('trade-them-name').textContent;
   const iList=items=>(items||[]).map(i=>`${i.icon} ${i.name}`).join(', ')||'Nothing';
   document.getElementById('final-trade-summary').innerHTML=
-    `<div style="margin-bottom:8px"><strong style="color:var(--accent)">${myName} gives:</strong><br>${iList(myItems)}</div>
-     <div><strong style="color:var(--gold)">${theirName} gives:</strong><br>${iList(theirItems)}</div>`;
+    `<div style="margin-bottom:8px"><strong style="color:var(--accent)">${escHtml(S.profile.username)} gives:</strong><br>${iList(myItems)}</div>
+     <div><strong style="color:var(--gold)">${escHtml(theirName)} gives:</strong><br>${iList(theirItems)}</div>`;
   modal.classList.remove('hidden');
   const btn=document.getElementById('btn-final-accept');
-  const num=document.getElementById('countdown-num');
-  btn.disabled=true; btn.className='btn-final-accept disabled'; btn.textContent='FINAL ACCEPT';
-  S.tradeCountdownActive=false;
-  let count=5; num.textContent=count;
+  const numEl=document.getElementById('countdown-num');
+  const cdDisplay=modal.querySelector('.countdown-display');
+  // Reset button state
+  btn.disabled=true;
+  btn.className='btn-final-accept disabled';
+  btn.textContent='FINAL ACCEPT';
+  let count=5;
+  numEl.textContent=count;
+  cdDisplay.innerHTML=`Final accept available in <span id="countdown-num">${count}</span>s...`;
   const cd=setInterval(()=>{
-    count--; num.textContent=count;
+    count--;
+    const n=document.getElementById('countdown-num');
+    if(n) n.textContent=count;
     if(count<=0){
       clearInterval(cd);
-      btn.disabled=false; btn.className='btn-final-accept';
-      S.tradeCountdownActive=true;
-      document.getElementById('countdown-display').innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
+      btn.disabled=false;
+      btn.className='btn-final-accept';
+      if(cdDisplay) cdDisplay.innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
     }
   },1000);
 }
@@ -1791,7 +1806,7 @@ function updateTradeStatus(){
 }
 
 function resetTradeState(){
-  if(tradeRoomListener){tradeRoomListener();tradeRoomListener=null;}
+  if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
   S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
   S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false;
   document.getElementById('trade-room').classList.add('hidden');
@@ -1806,14 +1821,14 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const page=btn.dataset.page;
     showPage(page);
-    if(page==='inventory')renderInventory();
-    if(page==='trade'){renderOnlinePlayers();if(S.tradeRoomId)renderTradeRoom();}
-    if(page==='leaderboard')loadLeaderboard();
-    if(page==='history')renderTradeHistory();
+    if(page==='inventory') renderInventory();
+    if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
+    if(page==='leaderboard') loadLeaderboard();
+    if(page==='history') renderTradeHistory();
   });
 });
 
-function renderTradeRoom(){
+function renderTradeUI(){
   document.getElementById('trade-room').classList.remove('hidden');
   renderTradeItems('trade-items-you',S.tradeMyItems,true);
   renderTradeItems('trade-items-them',S.tradeTheirItems,false);
@@ -1854,7 +1869,7 @@ function spawnParticles(){
 }
 
 // ============================================================
-// BOOT — Firebase config hardcoded, no setup screen needed
+// BOOT
 // ============================================================
 (function boot(){
   const cfg = {
@@ -1869,15 +1884,13 @@ function spawnParticles(){
   };
   try{
     initFirebase(cfg);
-    showScreen('auth-screen');
-    spawnParticles();
     startAuthObserver();
-    firebase.auth().onAuthStateChanged(u=>{
-      if(u){ setupTradeInviteListener(); }
-    });
+    // Particles shown after auth observer fires for non-logged-in state
   }catch(e){
     console.error('Firebase init error:',e);
-    alert('Firebase failed to connect. Check the console for details.');
+    hideLoadingOverlay();
+    showScreen('auth-screen');
+    spawnParticles();
   }
 })();
 </script>
