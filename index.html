@@ -242,6 +242,27 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;
   font-weight:700;letter-spacing:.08em;transition:var(--t);white-space:nowrap;}
 .btn-sell-selected:hover{background:var(--gold);color:#000;}
+.auto-sell-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:12px 16px;margin-bottom:14px;}
+.auto-sell-header{display:flex;align-items:center;gap:10px;margin-bottom:0;}
+.auto-sell-title{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.1em;color:var(--text-2);}
+.auto-sell-off{font-family:var(--font-d);font-size:.75rem;color:var(--text-3);}
+.auto-sell-on{font-family:var(--font-d);font-size:.75rem;color:#22c55e;font-weight:700;}
+.toggle-switch{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--bg-dark);border-radius:20px;border:1px solid var(--border);transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:2px;top:2px;background:var(--text-3);border-radius:50%;transition:.2s;}
+.toggle-switch input:checked+.toggle-slider{background:#22c55e33;border-color:#22c55e;}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(16px);background:#22c55e;}
+.auto-sell-config{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
+.auto-sell-mode-row{display:flex;gap:20px;}
+.mode-option{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.82rem;color:var(--text-2);}
+.mode-option input{accent-color:var(--accent);}
+.auto-sell-rarity-row,.auto-sell-price-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.auto-sell-hint{font-size:.78rem;color:var(--text-3);white-space:nowrap;}
+.rarity-chips{display:flex;gap:5px;flex-wrap:wrap;}
+.rarity-chip{padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg-dark);color:var(--text-3);font-size:.72rem;font-family:var(--font-d);cursor:pointer;transition:all .15s;}
+.rarity-chip.active{border-color:var(--accent);color:#fff;background:var(--accent)33;}
+.auto-sell-price-input{width:110px;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-1);padding:4px 8px;border-radius:6px;font-family:var(--font-m);font-size:.82rem;}
 .inv-stats{display:flex;gap:16px;margin:12px 0 16px;color:var(--text-2);font-size:.85rem;}
 .inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
 .item-card{background:var(--bg-card);border:2px solid var(--ic,var(--border));
@@ -575,6 +596,45 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               <option value="name">Sort: Name</option>
             </select>
             <button class="btn-sell-selected" id="btn-sell-selected">SELL SELECTED</button>
+          </div>
+        </div>
+        <div class="auto-sell-panel" id="auto-sell-panel">
+          <div class="auto-sell-header">
+            <span class="auto-sell-title">⚡ AUTO-SELL</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="auto-sell-toggle"/>
+              <span class="toggle-slider"></span>
+            </label>
+            <span id="auto-sell-status" class="auto-sell-off">OFF</span>
+          </div>
+          <div class="auto-sell-config" id="auto-sell-config">
+            <div class="auto-sell-mode-row">
+              <label class="mode-option">
+                <input type="radio" name="auto-sell-mode" value="rarity" id="mode-rarity" checked/>
+                <span>Sell by Rarity</span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="auto-sell-mode" value="price" id="mode-price"/>
+                <span>Sell by Value</span>
+              </label>
+            </div>
+            <div class="auto-sell-rarity-row" id="auto-sell-rarity-row">
+              <span class="auto-sell-hint">Sell items at or below:</span>
+              <div class="rarity-chips" id="rarity-chips">
+                <button class="rarity-chip active" data-rarity="common">Common</button>
+                <button class="rarity-chip" data-rarity="uncommon">Uncommon</button>
+                <button class="rarity-chip" data-rarity="rare">Rare</button>
+                <button class="rarity-chip" data-rarity="epic">Epic</button>
+                <button class="rarity-chip" data-rarity="legendary">Legendary</button>
+                <button class="rarity-chip" data-rarity="mythic">Mythic</button>
+                <button class="rarity-chip" data-rarity="divine">Divine</button>
+              </div>
+            </div>
+            <div class="auto-sell-price-row hidden" id="auto-sell-price-row">
+              <span class="auto-sell-hint">Sell items worth less than:</span>
+              <input type="number" id="auto-sell-price-input" placeholder="e.g. 500" min="0" class="auto-sell-price-input"/>
+              <span>🪙</span>
+            </div>
           </div>
         </div>
         <div class="inv-stats"><span id="inv-count">0 items</span><span id="inv-total-value">Total: 0 🪙</span></div>
@@ -947,6 +1007,10 @@ const S = {
   tradeSortBy: 'rarity',
   luckBoost: null,      // 'minor' | 'huge' | null
   luckBoostUsed: false,
+  autoSell: false,
+  autoSellMode: 'rarity',
+  autoSellRarity: 'common',
+  autoSellPrice: 0,
   lastOpenedInvItem: null,
   // FIX: track whether realtime listeners have been set up to avoid duplicates
   listenersInitialized: false,
@@ -1524,6 +1588,24 @@ function animateSpin(crate,winningItem){
 
 function showResult(item,r,invItem){
   S.lastOpenedInvItem=invItem;
+
+  // Auto-sell check
+  if(S.autoSell){
+    let shouldSell=false;
+    if(S.autoSellMode==='rarity'){
+      const itemTier=rarityTierOrder.indexOf(item.rarity);
+      const threshTier=rarityTierOrder.indexOf(S.autoSellRarity);
+      shouldSell=itemTier!==-1&&threshTier!==-1&&itemTier<=threshTier;
+    } else if(S.autoSellMode==='price'){
+      shouldSell=item.value<S.autoSellPrice;
+    }
+    if(shouldSell){
+      const earned=Math.floor(item.value*.90);
+      toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
+      sellItems([invItem.uniqueId]);
+      return; // skip showing result panel
+    }
+  }
   const col=r.color==='#ffffff'?'#aaa':r.color;
   const panel=document.getElementById('result-panel');
   panel.style.setProperty('--rc',col);
@@ -1560,6 +1642,40 @@ document.getElementById('btn-open-again').addEventListener('click',()=>{
 // ============================================================
 document.getElementById('inv-search').addEventListener('input',renderInventory);
 document.getElementById('inv-sort').addEventListener('change',renderInventory);
+
+// ── AUTO-SELL UI ────────────────────────────────────────────────────────────
+const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4'];
+
+document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
+  S.autoSell=e.target.checked;
+  const status=document.getElementById('auto-sell-status');
+  const config=document.getElementById('auto-sell-config');
+  status.textContent=S.autoSell?'ON':'OFF';
+  status.className=S.autoSell?'auto-sell-on':'auto-sell-off';
+  config.style.display=S.autoSell?'flex':'none';
+});
+// Start with config hidden
+document.getElementById('auto-sell-config').style.display='none';
+
+document.querySelectorAll('input[name="auto-sell-mode"]').forEach(radio=>{
+  radio.addEventListener('change',e=>{
+    S.autoSellMode=e.target.value;
+    document.getElementById('auto-sell-rarity-row').classList.toggle('hidden',e.target.value!=='rarity');
+    document.getElementById('auto-sell-price-row').classList.toggle('hidden',e.target.value!=='price');
+  });
+});
+
+document.querySelectorAll('.rarity-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.rarity-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    S.autoSellRarity=chip.dataset.rarity;
+  });
+});
+
+document.getElementById('auto-sell-price-input').addEventListener('input',e=>{
+  S.autoSellPrice=parseInt(e.target.value)||0;
+});
 
 function renderInventory(){
   const grid=document.getElementById('inventory-grid');
