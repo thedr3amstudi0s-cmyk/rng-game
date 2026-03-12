@@ -267,6 +267,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .trade-player-label{color:var(--accent);}
 .trade-items-zone{min-height:130px;padding:12px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;}
 .trade-empty-hint{color:var(--text-3);font-size:.8rem;font-style:italic;}
+.trade-coin-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-dark);border-top:1px solid var(--border);font-size:.8rem;flex-wrap:wrap;}
+.btn-sm{padding:4px 10px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:var(--font-d);}
+.btn-sm:hover{opacity:.85;}
+.trade-sort-btn{padding:3px 10px;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-3);border-radius:6px;cursor:pointer;font-size:.72rem;font-family:var(--font-d);}
+.trade-sort-btn.active{border-color:var(--accent);color:var(--accent);}
+.trade-sort-btn:hover{border-color:var(--text-2);color:var(--text-2);}
 .trade-status-you,.trade-status-them{padding:8px 16px;border-top:1px solid var(--border);
   font-family:var(--font-d);font-size:.7rem;letter-spacing:.08em;text-align:center;}
 .trade-vs{display:flex;align-items:center;justify-content:center;font-family:var(--font-d);
@@ -558,17 +564,34 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <div class="trade-panel">
               <div class="trade-panel-header"><span>YOUR OFFER</span><span id="trade-you-name" class="trade-player-label">You</span></div>
               <div class="trade-items-zone" id="trade-items-you"><div class="trade-empty-hint">Click items below to add</div></div>
+              <div class="trade-coin-row">
+                <span>🪙 Add coins:</span>
+                <input type="number" id="trade-coin-input" min="0" placeholder="0" style="width:100px;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-1);padding:4px 8px;border-radius:6px;font-family:var(--font-m)"/>
+                <button id="btn-set-coins" class="btn-sm">SET</button>
+                <span id="trade-coin-offer-display" style="color:var(--gold);font-weight:700"></span>
+              </div>
               <div class="trade-status-you" id="trade-status-you">—</div>
             </div>
             <div class="trade-vs">VS</div>
             <div class="trade-panel">
               <div class="trade-panel-header"><span>THEIR OFFER</span><span id="trade-them-name" class="trade-player-label">Partner</span></div>
               <div class="trade-items-zone" id="trade-items-them"><div class="trade-empty-hint">Waiting for partner...</div></div>
+              <div class="trade-coin-row" style="justify-content:center">
+                <span id="trade-their-coins-display" style="color:var(--gold);font-weight:700"></span>
+              </div>
               <div class="trade-status-them" id="trade-status-them">—</div>
             </div>
           </div>
           <div class="trade-inv-section" style="margin-top:16px">
-            <h4>YOUR INVENTORY — click to add/remove</h4>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+              <h4 style="margin:0">YOUR INVENTORY — click to add/remove</h4>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span style="font-size:.75rem;color:var(--text-3)">SORT:</span>
+                <button class="trade-sort-btn active" data-sort="rarity">Rarity</button>
+                <button class="trade-sort-btn" data-sort="value">Value</button>
+                <button class="trade-sort-btn" data-sort="name">Name</button>
+              </div>
+            </div>
             <div class="trade-inventory-grid" id="trade-inventory-mini"></div>
           </div>
           <div class="trade-controls" style="margin-top:16px">
@@ -889,6 +912,9 @@ const S = {
   onlinePlayers: [],
   presenceRef: null,
   presenceHeartbeat: null,
+  tradeMyCoins: 0,
+  tradeTheirCoins: 0,
+  tradeSortBy: 'rarity',
   lastOpenedInvItem: null,
   // FIX: track whether realtime listeners have been set up to avoid duplicates
   listenersInitialized: false,
@@ -1705,12 +1731,16 @@ function listenToTradeRoom(roomId){
     const theirData=players[S.tradePartnerUid];
     if(myData){
       S.tradeMyItems=myData.items||[];
+      S.tradeMyCoins=myData.coins||0;
       S.tradeMyAccepted=myData.accepted||false;
     }
     if(theirData){
       S.tradeTheirItems=theirData.items||[];
+      S.tradeTheirCoins=theirData.coins||0;
       S.tradeTheirAccepted=theirData.accepted||false;
       document.getElementById('trade-them-name').textContent=theirData.username||'Partner';
+      const theirCoinsEl=document.getElementById('trade-their-coins-display');
+      if(theirCoinsEl) theirCoinsEl.textContent=S.tradeTheirCoins>0?`🪙 ${fmtNum(S.tradeTheirCoins)} offered`:'';
     }
     renderTradeItems('trade-items-you',S.tradeMyItems,true);
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
@@ -1756,7 +1786,27 @@ function renderTradeInventoryMini(){
   const grid=document.getElementById('trade-inventory-mini');
   grid.innerHTML='';
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
-  S.inventory.forEach(inv=>{
+  const rarityOrder={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
+
+  let items=[...S.inventory];
+  if(S.tradeSortBy==='rarity'){
+    items.sort((a,b)=>{
+      const ia=getItem(a.itemId), ib=getItem(b.itemId);
+      return (rarityOrder[ib?.rarity]||0)-(rarityOrder[ia?.rarity]||0);
+    });
+  } else if(S.tradeSortBy==='value'){
+    items.sort((a,b)=>{
+      const ia=getItem(a.itemId), ib=getItem(b.itemId);
+      return (ib?.value||0)-(ia?.value||0);
+    });
+  } else if(S.tradeSortBy==='name'){
+    items.sort((a,b)=>{
+      const ia=getItem(a.itemId), ib=getItem(b.itemId);
+      return (ia?.name||'').localeCompare(ib?.name||'');
+    });
+  }
+
+  items.forEach(inv=>{
     const item=getItem(inv.itemId); if(!item)return;
     const r=getRarity(item.rarity);
     const col=r.color==='#ffffff'?'#aaa':r.color;
@@ -1779,7 +1829,7 @@ async function addToTrade(inv){
   const newItem={uniqueId:inv.uniqueId,itemId:inv.itemId,...item};
   const myItems=[...S.tradeMyItems,newItem];
   try{
-    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,accepted:false,finalAccepted:false});
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,coins:S.tradeMyCoins,accepted:false,finalAccepted:false});
     await resetTradeAccepts('Item added to trade.');
   }catch(e){ toast('Error adding item','error'); }
 }
@@ -1788,9 +1838,22 @@ async function removeFromTrade(uniqueId){
   if(!S.tradeRoomId)return;
   const myItems=S.tradeMyItems.filter(i=>i.uniqueId!==uniqueId);
   try{
-    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,accepted:false,finalAccepted:false});
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,coins:S.tradeMyCoins,accepted:false,finalAccepted:false});
     await resetTradeAccepts('Item removed from trade.');
   }catch(e){ toast('Error removing item','error'); }
+}
+
+async function setTradeCoins(amount){
+  if(!S.tradeRoomId)return;
+  const coins=Math.max(0,Math.floor(amount)||0);
+  if(coins>(S.profile?.coins||0)){ toast('Not enough coins!','error'); return; }
+  S.tradeMyCoins=coins;
+  document.getElementById('trade-coin-offer-display').textContent=coins>0?`🪙 ${fmtNum(coins)} offered`:'';
+  document.getElementById('trade-coin-input').value=coins||'';
+  try{
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:S.tradeMyItems,coins,accepted:false,finalAccepted:false});
+    await resetTradeAccepts(coins>0?`Offering 🪙 ${fmtNum(coins)} coins.`:'Coin offer removed.');
+  }catch(e){ toast('Error setting coins','error'); }
 }
 
 async function resetTradeAccepts(message){
@@ -1828,6 +1891,25 @@ document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
   toast('Trade cancelled.','error');
 });
 
+// Coin offer SET button
+document.getElementById('btn-set-coins').addEventListener('click',()=>{
+  const val=parseInt(document.getElementById('trade-coin-input').value)||0;
+  setTradeCoins(val);
+});
+document.getElementById('trade-coin-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter') setTradeCoins(parseInt(e.target.value)||0);
+});
+
+// Sort buttons
+document.querySelectorAll('.trade-sort-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.trade-sort-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    S.tradeSortBy=btn.dataset.sort;
+    renderTradeInventoryMini();
+  });
+});
+
 // FIX: btn-final-accept used S.tradeCountdownActive check incorrectly — now just checks if button is enabled
 document.getElementById('btn-final-accept').addEventListener('click',async()=>{
   const btn=document.getElementById('btn-final-accept');
@@ -1853,47 +1935,71 @@ document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
 async function executeTrade(){
   if(!S.tradeRoomId||!S.tradePartnerUid)return;
   try{
-    const [myDoc,theirDoc]=await Promise.all([
-      db.collection('users').doc(S.user.uid).get(),
-      db.collection('users').doc(S.tradePartnerUid).get(),
-    ]);
-    if(!myDoc.exists||!theirDoc.exists){ toast('Trade error: user not found','error'); return; }
-    const myData=myDoc.data(); const theirData=theirDoc.data();
-    let myInv=[...myData.inventory||[]];
-    let theirInv=[...theirData.inventory||[]];
-    // Remove my items from my inventory
-    for(const ti of S.tradeMyItems){
-      const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
-      if(idx===-1){ toast('Item mismatch! Trade cancelled.','error'); await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); resetTradeState(); return; }
-      const[removed]=myInv.splice(idx,1);
-      theirInv.push({...removed,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
-    }
-    // Remove their items from their inventory
-    for(const ti of S.tradeTheirItems){
-      const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
-      if(idx===-1){ toast('Item mismatch! Trade cancelled.','error'); await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); resetTradeState(); return; }
-      const[removed]=theirInv.splice(idx,1);
-      myInv.push({...removed,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
-    }
-    const ts=new Date().toISOString(); const tradeId=genUID();
-    const myLog={tradeId,partnerId:S.tradePartnerUid,partnerName:theirData.username,
-      itemsGiven:S.tradeMyItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
-      itemsReceived:S.tradeTheirItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
-      timestamp:ts};
-    const theirLog={tradeId,partnerId:S.user.uid,partnerName:S.profile.username,
-      itemsGiven:S.tradeTheirItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
-      itemsReceived:S.tradeMyItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
-      timestamp:ts};
-    const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-    const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-    const batch=db.batch();
-    batch.update(db.collection('users').doc(S.user.uid),{inventory:myInv,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
-    batch.update(db.collection('users').doc(S.tradePartnerUid),{inventory:theirInv,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
-    await batch.commit();
+    // Re-read agreed terms from RTDB at execution time
+    const roomSnap=await rtdb.ref('tradeRooms/'+S.tradeRoomId).get();
+    const room=roomSnap.val();
+    if(!room){ toast('Trade room gone — trade cancelled.','error'); resetTradeState(); return; }
+    const myAgreedItems=(room.players?.[S.user.uid]?.items)||[];
+    const theirAgreedItems=(room.players?.[S.tradePartnerUid]?.items)||[];
+    const myAgreedCoins=(room.players?.[S.user.uid]?.coins)||0;
+    const theirAgreedCoins=(room.players?.[S.tradePartnerUid]?.coins)||0;
+
+    // Firestore transaction — reads and writes are atomic, preventing duplication
+    await db.runTransaction(async tx=>{
+      const myRef=db.collection('users').doc(S.user.uid);
+      const theirRef=db.collection('users').doc(S.tradePartnerUid);
+      const [myDoc,theirDoc]=await Promise.all([tx.get(myRef),tx.get(theirRef)]);
+      if(!myDoc.exists||!theirDoc.exists) throw new Error('User not found');
+      const myData=myDoc.data(); const theirData=theirDoc.data();
+      let myInv=[...myData.inventory||[]];
+      let theirInv=[...theirData.inventory||[]];
+      let myCoins=myData.coins||0;
+      let theirCoins=theirData.coins||0;
+
+      // Validate and move my items
+      for(const ti of myAgreedItems){
+        const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+        if(idx===-1) throw new Error('DUPE_DETECTED: Item "'+ti.name+'" not in your inventory');
+        myInv.splice(idx,1);
+        theirInv.push({itemId:ti.itemId,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
+      }
+      // Validate and move their items
+      for(const ti of theirAgreedItems){
+        const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+        if(idx===-1) throw new Error('DUPE_DETECTED: Item "'+ti.name+'" not in partner inventory');
+        theirInv.splice(idx,1);
+        myInv.push({itemId:ti.itemId,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
+      }
+      // Validate and transfer coins
+      if(myAgreedCoins>myCoins) throw new Error('Not enough coins to complete trade');
+      if(theirAgreedCoins>theirCoins) throw new Error("Partner doesn't have enough coins");
+      myCoins=myCoins-myAgreedCoins+theirAgreedCoins;
+      theirCoins=theirCoins-theirAgreedCoins+myAgreedCoins;
+
+      const ts=new Date().toISOString(); const tradeId=genUID();
+      const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+      const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+      const myLog={tradeId,partnerId:S.tradePartnerUid,partnerName:theirData.username,
+        itemsGiven:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+        itemsReceived:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+        coinsGiven:myAgreedCoins,coinsReceived:theirAgreedCoins,timestamp:ts};
+      const theirLog={tradeId,partnerId:S.user.uid,partnerName:myData.username,
+        itemsGiven:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+        itemsReceived:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
+        coinsGiven:theirAgreedCoins,coinsReceived:myAgreedCoins,timestamp:ts};
+      tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
+      tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
+    });
     await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({completed:true});
   }catch(e){
     console.error('Trade error:',e);
-    toast('Trade failed: '+e.message,'error');
+    if(e.message&&e.message.startsWith('DUPE_DETECTED')){
+      toast('⛔ '+e.message.replace('DUPE_DETECTED: ',''),'error');
+    } else {
+      toast('Trade failed: '+e.message,'error');
+    }
+    try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(_){}
+    resetTradeState();
   }
 }
 
@@ -1916,10 +2022,15 @@ async function handleTradeComplete(room){
 function showFinalModal(myItems,theirItems){
   const modal=document.getElementById('trade-final-modal');
   const theirName=document.getElementById('trade-them-name').textContent;
-  const iList=items=>(items||[]).map(i=>`${i.icon} ${i.name}`).join(', ')||'Nothing';
+  const iList=(items,coins)=>{
+    const parts=[];
+    if(coins>0) parts.push(`🪙 ${fmtNum(coins)} coins`);
+    (items||[]).forEach(i=>parts.push(`${i.icon} ${i.name}`));
+    return parts.join(', ')||'Nothing';
+  };
   document.getElementById('final-trade-summary').innerHTML=
-    `<div style="margin-bottom:8px"><strong style="color:var(--accent)">${escHtml(S.profile.username)} gives:</strong><br>${iList(myItems)}</div>
-     <div><strong style="color:var(--gold)">${escHtml(theirName)} gives:</strong><br>${iList(theirItems)}</div>`;
+    `<div style="margin-bottom:8px"><strong style="color:var(--accent)">${escHtml(S.profile.username)} gives:</strong><br>${iList(myItems,S.tradeMyCoins)}</div>
+     <div><strong style="color:var(--gold)">${escHtml(theirName)} gives:</strong><br>${iList(theirItems,S.tradeTheirCoins)}</div>`;
   modal.classList.remove('hidden');
   const btn=document.getElementById('btn-final-accept');
   const numEl=document.getElementById('countdown-num');
@@ -1957,6 +2068,13 @@ function resetTradeState(){
   if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
   S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
   S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false;
+  S.tradeMyCoins=0; S.tradeTheirCoins=0;
+  const coinInput=document.getElementById('trade-coin-input');
+  if(coinInput) coinInput.value='';
+  const coinDisplay=document.getElementById('trade-coin-offer-display');
+  if(coinDisplay) coinDisplay.textContent='';
+  const theirCoins=document.getElementById('trade-their-coins-display');
+  if(theirCoins) theirCoins.textContent='';
   document.getElementById('trade-room').classList.add('hidden');
   document.getElementById('trade-final-modal').classList.add('hidden');
   document.getElementById('trade-message').textContent='';
