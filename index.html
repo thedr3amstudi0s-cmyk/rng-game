@@ -1512,7 +1512,7 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
-    if(item) earned+=Math.floor(item.value*.60);
+    if(item) earned+=Math.floor(item.value*.90);
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
