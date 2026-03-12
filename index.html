@@ -1109,7 +1109,7 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
     // Write profile — onAuthStateChanged will pick it up
     await db.collection('users').doc(cred.user.uid).set({
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
-      coins:400, inventory:[], tradeHistory:[], cratesOpened:0,
+      coins:400, inventory:[], tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
       totalValue:0, rarestItem:null, rarestTier:0,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     });
@@ -1182,8 +1182,8 @@ function startAuthObserver(){
         listenToTradeRequests();
         setupTradeInviteListener();
       }
-      checkLuckMilestone();
-      updateLuckBar();
+      checkLuckMilestone(null);
+      updateLuckBar(null);
     } else {
       S.user=null; S.profile=null; S.listenersInitialized=false;
       hideLoadingOverlay();
@@ -1201,65 +1201,91 @@ function updateCoinDisplay(coins){
 
 // Daily login bonus — scales with login streak
 // Luck milestone: every 10 crates = minor boost, every 100 = huge boost
-function checkLuckMilestone(){
-  if(!S.profile) return;
-  const opened=S.profile.cratesOpened||0;
-  if(opened>0 && opened%100===0){
-    S.luckBoost='huge';
-    S.luckBoostUsed=false;
-    toast(`🌟 HUGE LUCK BOOST ACTIVE! Your next crate has massively improved odds!`,'gold',6000);
-  } else if(opened>0 && opened%10===0){
-    S.luckBoost='minor';
-    S.luckBoostUsed=false;
-    toast(`✨ Luck Boost! Your next crate has better odds!`,'gold',4000);
-  }
-  updateLuckBar();
+// Luck milestones based on COINS SPENT (not crates opened)
+// Minor boost every 1,000 coins spent; Huge boost every 10,000 coins spent
+// Opening a Starter (50c) adds 50 luck; Omega (180k) adds 180,000 luck
+// Luck thresholds are per-crate: minor = 10x price, huge = 100x price
+// This prevents cheap crate grinding from boosting expensive crate rolls.
+
+function getLuckThresholds(crate){
+  return { minor: crate.price*10, huge: crate.price*100 };
 }
 
-function updateLuckBar(){
+function checkLuckMilestone(crate){
+  if(!S.profile||!crate) return;
+  const perCrate=S.profile.luckCoinsPerCrate||{};
+  const total=perCrate[crate.id]||0;
+  const prev=total-crate.price;
+  const {minor,huge}=getLuckThresholds(crate);
+  if(Math.floor(total/huge)>Math.floor(prev/huge)){
+    S.luckBoost='huge';
+    S.luckBoostCrate=crate.id;
+    S.luckBoostUsed=false;
+    toast('🌟 HUGE LUCK BOOST on '+crate.name+'! Next open has massively improved odds!','gold',6000);
+  } else if(Math.floor(total/minor)>Math.floor(prev/minor)){
+    S.luckBoost='minor';
+    S.luckBoostCrate=crate.id;
+    S.luckBoostUsed=false;
+    toast('✨ Luck Boost on '+crate.name+'! Next open has better odds!','gold',4000);
+  }
+  updateLuckBar(crate);
+}
+
+function updateLuckBar(crate){
   const fill=document.getElementById('luck-bar-fill');
   const count=document.getElementById('luck-bar-count');
   const status=document.getElementById('luck-bar-status');
   if(!fill||!count||!status) return;
 
-  const opened=S.profile?.cratesOpened||0;
-  // Position within 0-100 cycle
-  const cycle=opened%100;
-  const pct=cycle/100*100;
+  if(!crate){
+    fill.style.width='0%';
+    fill.className='luck-bar-fill';
+    count.textContent='';
+    status.textContent='Open a crate to build luck';
+    status.style.color='var(--text-3)';
+    return;
+  }
 
-  fill.style.width=pct+'%';
-  fill.className='luck-bar-fill';
+  const {minor,huge}=getLuckThresholds(crate);
+  const perCrate=S.profile?.luckCoinsPerCrate||{};
+  const total=perCrate[crate.id]||0;
+  const boostActive=S.luckBoost && S.luckBoostCrate===crate.id;
 
-  if(S.luckBoost==='huge'){
+  if(boostActive && S.luckBoost==='huge'){
     fill.style.width='100%';
-    fill.classList.add('boost-huge');
-    count.textContent='100 / 100';
+    fill.className='luck-bar-fill boost-huge';
+    count.textContent='🌟 HUGE BOOST READY';
     status.textContent='🌟 HUGE BOOST READY — open now!';
     status.style.color='#ff00ff';
-  } else if(S.luckBoost==='minor'){
-    const minorCycle=opened%10;
+    return;
+  }
+  if(boostActive && S.luckBoost==='minor'){
     fill.style.width='100%';
-    fill.classList.add('boost-minor');
-    count.textContent='10 / 10';
+    fill.className='luck-bar-fill boost-minor';
+    count.textContent='✨ BOOST READY';
     status.textContent='✨ LUCK BOOST READY — open now!';
     status.style.color='#f59e0b';
+    return;
+  }
+
+  const minorProgress=total%minor;
+  const hugeProgress=total%huge;
+  const minorPct=minorProgress/minor*100;
+  const hugeRatio=hugeProgress/huge;
+
+  fill.style.width=minorPct+'%';
+  fill.className='luck-bar-fill';
+  fill.style.background='linear-gradient(90deg,#3b82f6,'+(hugeRatio>0.7?'#f59e0b':'#a855f7')+')';
+
+  count.textContent='🪙 '+fmtNum(minorProgress)+' / '+fmtNum(minor)+'  ('+fmtNum(hugeProgress)+' / '+fmtNum(huge)+' for 🌟)';
+  const toMinor=minor-minorProgress;
+  const toHuge=huge-hugeProgress;
+  if(hugeRatio>=0.9){
+    status.textContent='🌟 '+fmtNum(toHuge)+' coins to HUGE BOOST!';
+    status.style.color='#f59e0b';
   } else {
-    // Show minor cycle (0-10) inside the bar, major milestone at 100
-    const minorPct=(opened%10)/10*100;
-    const majorPct=cycle/100*100;
-    // Blend: fill shows minor progress, color shifts as you approach 100
-    fill.style.width=minorPct+'%';
-    fill.style.background=`linear-gradient(90deg,#3b82f6,#a855f7)`;
-    count.textContent=`${opened%10} / 10  (${cycle} / 100)`;
-    const next10=10-(opened%10);
-    const next100=100-cycle;
-    if(cycle>=90){
-      status.textContent=`🌟 ${next100} more for HUGE BOOST!`;
-      status.style.color='#f59e0b';
-    } else {
-      status.textContent=next10===10?`Next boost in 10 opens`:`✨ ${next10} more for luck boost`;
-      status.style.color='var(--text-3)';
-    }
+    status.textContent='✨ '+fmtNum(toMinor)+' coins to next boost';
+    status.style.color='var(--text-3)';
   }
 }
 
@@ -1392,8 +1418,7 @@ function openCratePage(crate){
   document.getElementById('open-price-display').textContent='Cost: 🪙 '+crate.price.toLocaleString();
   document.getElementById('opening-coin-balance').textContent=fmtNum(S.profile.coins);
   document.getElementById('result-panel').classList.add('hidden');
-  updateLuckBar();
-  document.getElementById('btn-open-crate').disabled=false;
+  updateLuckBar(crate);
   buildCrateInfoPanel(crate);
   buildSpinTrack(crate,null,999);
   showPage('opening');
@@ -1470,7 +1495,7 @@ function rollItem(crateId){
   const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
   let odds={...crate.odds};
 
-  if(S.luckBoost && !S.luckBoostUsed){
+  if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate===crateId){
     const entries=Object.entries(odds);
     const maxTier=Math.max(...entries.map(([r])=>rarityTier[r]||0));
     const minTier=Math.min(...entries.map(([r])=>rarityTier[r]||0));
@@ -1528,7 +1553,9 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   S.inventory.push(invItem);
   S.profile.coins-=crate.price;
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
-  checkLuckMilestone();
+  if(!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate={};
+  S.profile.luckCoinsPerCrate[crate.id]=(S.profile.luckCoinsPerCrate[crate.id]||0)+crate.price;
+  checkLuckMilestone(crate);
   const r=getRarity(item.rarity);
   if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=item.id;S.profile.rarestTier=r.tier;}
   S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
@@ -1537,6 +1564,7 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
       coins:firebase.firestore.FieldValue.increment(-crate.price),
       inventory:S.inventory,
       cratesOpened:S.profile.cratesOpened,
+      [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(crate.price),
       rarestItem:S.profile.rarestItem,
       rarestTier:S.profile.rarestTier,
       totalValue:S.profile.totalValue,
