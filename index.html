@@ -456,7 +456,68 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   .trade-panels{grid-template-columns:1fr}
   .crates-grid{grid-template-columns:repeat(2,1fr)}
 }
-</style>
+/* ── ARENA ───────────────────────────────────────────────── */
+.arena-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;}
+.btn-arena-primary{padding:10px 22px;background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;border:none;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.08em;transition:all .15s;}
+.btn-arena-primary:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.btn-arena-secondary{padding:10px 18px;background:var(--bg-card);border:1px solid var(--accent);color:var(--accent);border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;cursor:pointer;}
+.btn-arena-secondary:hover{background:var(--accent);color:#fff;}
+.btn-arena-danger{padding:6px 14px;background:transparent;border:1px solid #ef4444;color:#ef4444;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;cursor:pointer;}
+.btn-arena-danger:hover{background:#ef4444;color:#fff;}
+.arena-join-row{display:flex;gap:8px;}
+.arena-code-input{width:120px;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-1);padding:8px 12px;border-radius:var(--r);font-family:var(--font-d);font-size:1rem;letter-spacing:.2em;text-transform:uppercase;}
+.arena-public-section h3{font-family:var(--font-d);font-size:.8rem;color:var(--text-3);letter-spacing:.1em;margin-bottom:10px;}
+.arena-public-list{display:flex;flex-direction:column;gap:8px;}
+.arena-public-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.arena-public-card-info{font-size:.85rem;color:var(--text-2);}
+.arena-public-card-info strong{color:var(--text-1);font-family:var(--font-d);}
+.arena-empty{color:var(--text-3);font-size:.85rem;padding:16px 0;}
+/* lobby room */
+.arena-lobby-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.arena-lobby-title{flex:1;}
+.arena-lobby-title h3{font-family:var(--font-d);font-size:1.1rem;font-weight:900;margin:0 0 4px;}
+.arena-code-display{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-3);}
+.lobby-code-val{font-family:var(--font-d);font-size:1.1rem;color:var(--accent);letter-spacing:.2em;}
+.lobby-settings{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;}
+.lobby-setting-row{display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--text-2);}
+.lobby-setting-row label:first-child{width:110px;flex-shrink:0;}
+.lobby-select,.lobby-input{background:var(--bg-dark);border:1px solid var(--border);color:var(--text-1);padding:5px 10px;border-radius:6px;font-family:var(--font-m);font-size:.82rem;}
+.lobby-teams{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.lobby-team-card{flex:1;min-width:140px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
+.lobby-team-card h4{font-family:var(--font-d);font-size:.75rem;letter-spacing:.1em;margin:0 0 8px;}
+.lobby-team-slot{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:.8rem;color:var(--text-2);}
+.lobby-team-slot:last-child{border-bottom:none;}
+.lobby-team-slot .slot-name{flex:1;}
+.lobby-team-slot.empty{color:var(--text-3);font-style:italic;}
+.lobby-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.lobby-wager-info{font-size:.82rem;color:var(--gold);}
+.lobby-waiting-msg{font-size:.82rem;color:var(--text-3);font-style:italic;}
+/* match */
+.arena-canvas{display:block;width:100%;max-width:700px;margin:0 auto;border:2px solid var(--border);border-radius:var(--r);cursor:crosshair;touch-action:none;}
+.arena-hud{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;gap:8px;max-width:700px;margin:0 auto 6px;}
+.hud-left{display:flex;align-items:center;gap:8px;}
+.hud-hp{display:flex;align-items:center;gap:6px;font-size:.8rem;}
+.hp-bar-track{width:100px;height:10px;background:var(--bg-dark);border-radius:6px;overflow:hidden;border:1px solid var(--border);}
+.hp-bar-fill{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:6px;transition:width .2s;}
+.hud-center{flex:1;text-align:center;}
+.hud-scoreboard{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:.78rem;font-family:var(--font-d);}
+.hud-score-entry{padding:2px 8px;border-radius:4px;border:1px solid;}
+.arena-controls-hint{text-align:center;font-size:.72rem;color:var(--text-3);margin-top:6px;max-width:700px;margin-left:auto;margin-right:auto;}
+/* match end */
+.match-end-inner{max-width:500px;margin:60px auto;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:40px 32px;}
+.match-end-title{font-family:var(--font-d);font-size:2rem;font-weight:900;letter-spacing:.15em;margin-bottom:8px;}
+.match-end-wager{color:var(--gold);font-size:1.1rem;margin-bottom:20px;}
+.match-end-scoreboard{margin-bottom:28px;display:flex;flex-direction:column;gap:8px;}
+.hud-lives{font-size:.9rem;letter-spacing:2px;margin-left:8px;}
+.hud-countdown{font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#ef4444;letter-spacing:.1em;animation:luck-pulse .6s infinite;}
+.hud-spectate-label{font-family:var(--font-d);font-size:.7rem;color:#a855f7;letter-spacing:.1em;border:1px solid #a855f7;padding:2px 8px;border-radius:4px;}
+.spectate-controls{display:flex;align-items:center;gap:8px;max-width:700px;margin:0 auto 4px;font-size:.78rem;color:var(--text-3);flex-wrap:wrap;}
+.spectate-player-list{display:flex;gap:6px;flex-wrap:wrap;}
+.spectate-btn{padding:2px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg-dark);color:var(--text-2);cursor:pointer;font-size:.75rem;}
+.spectate-btn.active{border-color:#a855f7;color:#a855f7;}
+.exit-glow{animation:exit-pulse 1s ease-in-out infinite;}
+@keyframes exit-pulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.8) drop-shadow(0 0 8px #22c55e);}}
+
 </head>
 <body>
 
@@ -522,6 +583,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
       <button class="nav-item" data-page="inventory"><span class="nav-icon">🎒</span><span class="nav-label">INVENTORY</span></button>
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
+      <button class="nav-item" data-page="arena"><span class="nav-icon">⚔️</span><span class="nav-label">ARENA</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
     </nav>
@@ -702,6 +764,124 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
       </section>
+
+      <!-- ARENA -->
+      <section class="page" id="page-arena">
+        <!-- LOBBY BROWSER -->
+        <div id="arena-lobby-browser">
+          <div class="page-header"><h2>⚔️ ARENA</h2><p>Maze duels. Wager coins. Last team standing wins.</p></div>
+          <div class="arena-actions">
+            <button class="btn-arena-primary" id="btn-create-lobby">+ CREATE LOBBY</button>
+            <div class="arena-join-row">
+              <input type="text" id="arena-join-code" placeholder="Enter 4-char code" maxlength="4" class="arena-code-input"/>
+              <button class="btn-arena-secondary" id="btn-join-code">JOIN</button>
+            </div>
+          </div>
+          <div class="arena-public-section">
+            <h3>PUBLIC LOBBIES</h3>
+            <div id="arena-public-list" class="arena-public-list"><div class="arena-empty">No public lobbies open</div></div>
+          </div>
+        </div>
+
+        <!-- LOBBY ROOM -->
+        <div id="arena-lobby-room" class="hidden">
+          <div class="arena-lobby-header">
+            <button class="btn-back" id="btn-leave-lobby">← LEAVE</button>
+            <div class="arena-lobby-title">
+              <h3 id="lobby-title">LOBBY</h3>
+              <div class="arena-code-display">
+                <span>Code: </span>
+                <span id="lobby-code-text" class="lobby-code-val">????</span>
+                <button class="btn-sm" id="btn-toggle-code">HIDE</button>
+              </div>
+            </div>
+          </div>
+          <div class="lobby-settings" id="lobby-settings">
+            <div class="lobby-setting-row">
+              <label>Kill Target</label>
+              <select id="lobby-kill-target" class="lobby-select">
+                <option value="5">5 kills</option>
+                <option value="10" selected>10 kills</option>
+                <option value="15">15 kills</option>
+                <option value="20">20 kills</option>
+                <option value="25">25 kills</option>
+              </select>
+            </div>
+            <div class="lobby-setting-row">
+              <label>Wager per player</label>
+              <input type="number" id="lobby-wager" class="lobby-input" min="0" placeholder="0" value="100"/>
+              <span style="color:var(--gold);font-size:.8rem">🪙</span>
+            </div>
+            <div class="lobby-setting-row">
+              <label>Teams</label>
+              <select id="lobby-format" class="lobby-select">
+                <optgroup label="Standard">
+                  <option value="1v1">1v1</option>
+                  <option value="2v2">2v2</option>
+                  <option value="3v3">3v3</option>
+                  <option value="4v4">4v4</option>
+                </optgroup>
+                <optgroup label="Multi-team">
+                  <option value="1v1v1">1v1v1 (FFA)</option>
+                  <option value="2v2v2">2v2v2</option>
+                  <option value="3v3v3">3v3v3</option>
+                  <option value="4v4v4">4v4v4</option>
+                </optgroup>
+                <optgroup label="Free For All">
+                  <option value="ffa">FFA (any size)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="lobby-setting-row">
+              <label>Public lobby</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="lobby-public-toggle"/>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="lobby-teams" id="lobby-teams"></div>
+          <div class="lobby-footer">
+            <div id="lobby-wager-info" class="lobby-wager-info"></div>
+            <button class="btn-arena-primary" id="btn-start-match" style="display:none">START MATCH</button>
+            <div id="lobby-waiting-msg" class="lobby-waiting-msg">Waiting for host to start...</div>
+          </div>
+        </div>
+
+        <!-- MATCH / GAME CANVAS -->
+        <div id="arena-match" class="hidden">
+          <div class="arena-hud">
+            <div class="hud-left">
+              <div class="hud-hp"><span>❤️</span><div class="hp-bar-track"><div class="hp-bar-fill" id="hud-hp-fill"></div></div><span id="hud-hp-text">100</span></div>
+              <div class="hud-lives" id="hud-lives">💀💀💀</div>
+            </div>
+            <div class="hud-center">
+              <div id="hud-countdown" class="hud-countdown hidden"></div>
+              <div id="hud-scoreboard" class="hud-scoreboard"></div>
+            </div>
+            <div class="hud-right">
+              <div id="hud-spectate-label" class="hud-spectate-label hidden">👁 SPECTATING</div>
+              <button class="btn-arena-danger" id="btn-forfeit">FORFEIT</button>
+            </div>
+          </div>
+          <div id="spectate-controls" class="spectate-controls hidden">
+            <span>Spectating:</span>
+            <div id="spectate-player-list" class="spectate-player-list"></div>
+          </div>
+          <canvas id="arena-canvas" class="arena-canvas"></canvas>
+          <div class="arena-controls-hint" id="arena-controls-hint">WASD / Arrow keys to move &nbsp;|&nbsp; Click or Space to attack</div>
+        </div>
+
+        <!-- MATCH END -->
+        <div id="arena-match-end" class="hidden">
+          <div class="match-end-inner">
+            <div id="match-end-title" class="match-end-title">VICTORY</div>
+            <div id="match-end-wager" class="match-end-wager"></div>
+            <div id="match-end-scoreboard" class="match-end-scoreboard"></div>
+            <button class="btn-arena-primary" id="btn-match-end-ok">BACK TO LOBBY</button>
+          </div>
+        </div>
+
 
       <!-- LEADERBOARD -->
       <section class="page" id="page-leaderboard">
@@ -2436,7 +2616,937 @@ function spawnParticles(){
     showScreen('auth-screen');
     spawnParticles();
   }
-})();
+
+// ============================================================
+// ARENA — Maze Duel Game
+// ============================================================
+
+const ARENA = {
+  TILE: 32,
+  COLS: 71,
+  ROWS: 71,
+  TIEBREAKER_COLS: 31,
+  TIEBREAKER_ROWS: 31,
+  VISION: 110,
+  PLAYER_R: 10,
+  ATTACK_R: 28,
+  ATTACK_DURATION: 200,
+  HP_MAX: 100,
+  SPEED: 2.2,
+  LIVES: 3,
+  LAST_PLAYER_COUNTDOWN: 60,
+  EXIT_R: 18,
+  TEAM_COLORS: ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4'],
+};
+
+// ── State ────────────────────────────────────────────────────
+const AS = {
+  lobbyId: null,
+  lobbyData: null,
+  lobbyListener: null,
+  matchListener: null,
+  publicListener: null,
+  codeHidden: false,
+  isHost: false,
+  // in-match
+  canvas: null, ctx: null,
+  maze: null,
+  players: {},      // uid → player object
+  myId: null,
+  keys: {},
+  lastTime: 0,
+  raf: null,
+  attacking: false,
+  attackTime: 0,
+  matchId: null,
+  killTarget: 10,
+  wager: 0,
+  format: '1v1',
+  teams: [],
+  matchEnded: false,
+  isSpectating: false,
+  spectateTarget: null,   // uid being spectated
+  exitPos: null,          // {x,y} in pixel coords
+  lastPlayerCountdown: null,
+  countdownInterval: null,
+  isTiebreaker: false,
+};
+
+// ── Maze Generation (recursive backtracker) ──────────────────
+function generateMaze(cols, rows) {
+  const grid = Array.from({length: rows}, () => Array(cols).fill(1));
+  function carve(x, y) {
+    const dirs = [[0,-2],[0,2],[-2,0],[2,0]].sort(()=>Math.random()-.5);
+    grid[y][x] = 0;
+    for (const [dx,dy] of dirs) {
+      const nx=x+dx, ny=y+dy;
+      if(ny>0&&ny<rows-1&&nx>0&&nx<cols-1&&grid[ny][nx]===1){
+        grid[y+dy/2][x+dx/2]=0;
+        carve(nx,ny);
+      }
+    }
+  }
+  carve(1,1);
+  for(let i=0;i<Math.floor(cols*rows*0.06);i++){
+    const x=1+Math.floor(Math.random()*(cols-2));
+    const y=1+Math.floor(Math.random()*(rows-2));
+    grid[y][x]=0;
+  }
+  return grid;
+}
+
+// Place exit far from player spawns
+function placeExit(maze, spawnPoints) {
+  const T = ARENA.TILE;
+  const open = [];
+  for(let y=1;y<maze.length-1;y++)
+    for(let x=1;x<maze[0].length-1;x++)
+      if(maze[y][x]===0) open.push({x,y});
+
+  // Score by minimum distance to any spawn — pick the farthest open cell
+  let best = null, bestDist = -1;
+  open.forEach(cell => {
+    const px = cell.x*T+T/2, py = cell.y*T+T/2;
+    const minDist = Math.min(...spawnPoints.map(s=>Math.hypot(s.x-px,s.y-py)));
+    if(minDist > bestDist){ bestDist=minDist; best={x:px,y:py}; }
+  });
+  return best;
+}
+
+function getSpawnPoints(maze, count) {
+  const open = [];
+  for(let y=1;y<maze.length-1;y++)
+    for(let x=1;x<maze[0].length-1;x++)
+      if(maze[y][x]===0) open.push({x,y});
+  // spread them across corners
+  const corners = [
+    open.find(p=>p.x<5&&p.y<5),
+    open.find(p=>p.x>maze[0].length-6&&p.y<5),
+    open.find(p=>p.x<5&&p.y>maze.length-6),
+    open.find(p=>p.x>maze[0].length-6&&p.y>maze.length-6),
+    open[Math.floor(open.length/2)],
+    open[Math.floor(open.length/3)],
+  ].filter(Boolean);
+  while(corners.length < count) corners.push(open[Math.floor(Math.random()*open.length)]);
+  return corners.slice(0, count).map(p=>({x: p.x*ARENA.TILE+ARENA.TILE/2, y: p.y*ARENA.TILE+ARENA.TILE/2}));
+}
+
+// ── Lobby Code ───────────────────────────────────────────────
+function genLobbyCode() {
+  return Math.random().toString(36).slice(2,6).toUpperCase();
+}
+
+function arenaShowView(view) {
+  ['arena-lobby-browser','arena-lobby-room','arena-match','arena-match-end']
+    .forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById(view).classList.remove('hidden');
+}
+
+// ── Create Lobby ─────────────────────────────────────────────
+document.getElementById('btn-create-lobby').addEventListener('click', async () => {
+  if(!S.user||!S.profile) return;
+  const code = genLobbyCode();
+  const format = '1v1';
+  const lobby = {
+    code, host: S.user.uid, hostName: S.profile.username,
+    format, killTarget: 10, wager: 100, isPublic: false,
+    status: 'waiting',
+    players: { [S.user.uid]: { uid: S.user.uid, name: S.profile.username, team: 0, ready: false } },
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
+  };
+  const ref = rtdb.ref('arenaLobbies/'+code);
+  await ref.set(lobby);
+  AS.lobbyId = code;
+  AS.isHost = true;
+  joinLobbyRoom(code);
+});
+
+// ── Join by Code ─────────────────────────────────────────────
+document.getElementById('btn-join-code').addEventListener('click', () => {
+  const code = document.getElementById('arena-join-code').value.toUpperCase().trim();
+  if(code.length!==4){toast('Enter a 4-character code','error');return;}
+  joinLobbyByCode(code);
+});
+
+async function joinLobbyByCode(code) {
+  const snap = await rtdb.ref('arenaLobbies/'+code).get();
+  if(!snap.exists()){toast('Lobby not found','error');return;}
+  const lobby = snap.val();
+  if(lobby.status!=='waiting'){toast('That match already started','error');return;}
+  AS.lobbyId = code;
+  AS.isHost = (lobby.host === S.user.uid);
+  await rtdb.ref(`arenaLobbies/${code}/players/${S.user.uid}`).set({
+    uid: S.user.uid, name: S.profile.username, team: 0, ready: false
+  });
+  joinLobbyRoom(code);
+}
+
+function joinLobbyRoom(code) {
+  arenaShowView('arena-lobby-room');
+  document.getElementById('lobby-code-text').textContent = code;
+  document.getElementById('btn-start-match').style.display = AS.isHost ? 'block' : 'none';
+  document.getElementById('lobby-waiting-msg').style.display = AS.isHost ? 'none' : 'block';
+  document.getElementById('lobby-settings').style.display = AS.isHost ? 'flex' : 'none';
+  if(AS.lobbyListener) { AS.lobbyListener(); AS.lobbyListener=null; }
+  const ref = rtdb.ref('arenaLobbies/'+code);
+  const handler = snap => {
+    const data = snap.val(); if(!data) { leaveLobby(); return; }
+    AS.lobbyData = data;
+    renderLobbyRoom(data);
+    if(data.status==='started' && data.matchId) {
+      startClientMatch(data);
+    }
+  };
+  ref.on('value', handler);
+  AS.lobbyListener = () => ref.off('value', handler);
+}
+
+function renderLobbyRoom(data) {
+  document.getElementById('lobby-title').textContent = data.hostName+"'s Lobby";
+  if(!AS.codeHidden) document.getElementById('lobby-code-text').textContent = data.code;
+  document.getElementById('lobby-wager-info').textContent =
+    `Wager: 🪙 ${fmtNum(data.wager||0)} per player`;
+
+  // parse format into teams array
+  const teams = parseFormat(data.format||'1v1');
+  const players = Object.values(data.players||{});
+
+  // auto-assign teams for new players
+  if(AS.isHost) {
+    document.getElementById('lobby-format').value = data.format||'1v1';
+    document.getElementById('lobby-kill-target').value = data.killTarget||10;
+    document.getElementById('lobby-wager').value = data.wager||100;
+    document.getElementById('lobby-public-toggle').checked = data.isPublic||false;
+  }
+
+  // render team slots
+  const teamsEl = document.getElementById('lobby-teams');
+  teamsEl.innerHTML = '';
+  teams.forEach((size, ti) => {
+    const teamPlayers = players.filter(p=>p.team===ti);
+    const card = document.createElement('div');
+    card.className = 'lobby-team-card';
+    card.style.borderColor = ARENA.TEAM_COLORS[ti]+'88';
+    card.innerHTML = `<h4 style="color:${ARENA.TEAM_COLORS[ti]}">TEAM ${ti+1}</h4>`;
+    for(let i=0;i<size;i++){
+      const slot = document.createElement('div');
+      slot.className = 'lobby-team-slot';
+      if(teamPlayers[i]){
+        slot.innerHTML = `<span class="slot-name">${escHtml(teamPlayers[i].name)}</span>${teamPlayers[i].uid===data.host?'<span style="font-size:.65rem;color:var(--gold)">HOST</span>':''}`;
+        // allow player to click a team slot to switch teams
+        const uid = teamPlayers[i].uid;
+        if(uid===S.user.uid){
+          slot.style.cursor='pointer'; slot.title='Click to switch teams';
+          slot.addEventListener('click', () => switchTeam(teams.length));
+        }
+      } else {
+        slot.classList.add('empty');
+        slot.innerHTML = `<span>empty slot</span>`;
+        if(AS.isHost) { slot.style.cursor='default'; }
+      }
+      card.appendChild(slot);
+    }
+    teamsEl.appendChild(card);
+  });
+}
+
+async function switchTeam(numTeams) {
+  const cur = AS.lobbyData?.players?.[S.user.uid]?.team||0;
+  const next = (cur+1)%numTeams;
+  await rtdb.ref(`arenaLobbies/${AS.lobbyId}/players/${S.user.uid}/team`).set(next);
+}
+
+function parseFormat(fmt) {
+  if(fmt==='ffa') return [1,1,1,1,1,1,1,1].slice(0,8); // up to 8 FFA
+  // e.g. "2v2v2" → [2,2,2]
+  return fmt.split('v').map(Number);
+}
+
+// Host settings listeners
+['lobby-format','lobby-kill-target'].forEach(id => {
+  document.getElementById(id).addEventListener('change', async e => {
+    if(!AS.isHost||!AS.lobbyId) return;
+    await rtdb.ref('arenaLobbies/'+AS.lobbyId).update({[id==='lobby-format'?'format':'killTarget']: e.target.value==='lobby-format'?e.target.value:Number(e.target.value)});
+  });
+});
+document.getElementById('lobby-format').addEventListener('change', async e => {
+  if(!AS.isHost||!AS.lobbyId) return;
+  await rtdb.ref('arenaLobbies/'+AS.lobbyId).update({format: e.target.value});
+});
+document.getElementById('lobby-kill-target').addEventListener('change', async e => {
+  if(!AS.isHost||!AS.lobbyId) return;
+  await rtdb.ref('arenaLobbies/'+AS.lobbyId).update({killTarget: Number(e.target.value)});
+});
+document.getElementById('lobby-wager').addEventListener('blur', async e => {
+  if(!AS.isHost||!AS.lobbyId) return;
+  await rtdb.ref('arenaLobbies/'+AS.lobbyId).update({wager: Math.max(0,parseInt(e.target.value)||0)});
+});
+document.getElementById('lobby-public-toggle').addEventListener('change', async e => {
+  if(!AS.isHost||!AS.lobbyId) return;
+  await rtdb.ref('arenaLobbies/'+AS.lobbyId).update({isPublic: e.target.checked});
+});
+
+// Hide/show code
+document.getElementById('btn-toggle-code').addEventListener('click', () => {
+  AS.codeHidden = !AS.codeHidden;
+  document.getElementById('lobby-code-text').textContent = AS.codeHidden ? '????' : (AS.lobbyId||'????');
+  document.getElementById('btn-toggle-code').textContent = AS.codeHidden ? 'SHOW' : 'HIDE';
+});
+
+// Leave lobby
+document.getElementById('btn-leave-lobby').addEventListener('click', leaveLobby);
+async function leaveLobby() {
+  if(AS.lobbyListener){AS.lobbyListener();AS.lobbyListener=null;}
+  if(AS.lobbyId && S.user) {
+    if(AS.isHost) await rtdb.ref('arenaLobbies/'+AS.lobbyId).remove();
+    else await rtdb.ref(`arenaLobbies/${AS.lobbyId}/players/${S.user.uid}`).remove();
+  }
+  AS.lobbyId=null; AS.isHost=false; AS.lobbyData=null;
+  arenaShowView('arena-lobby-browser');
+}
+
+// ── Public Lobby Browser ─────────────────────────────────────
+function listenToPublicLobbies() {
+  if(AS.publicListener){AS.publicListener();AS.publicListener=null;}
+  const ref = rtdb.ref('arenaLobbies').orderByChild('isPublic').equalTo(true);
+  const handler = snap => {
+    const el = document.getElementById('arena-public-list');
+    const lobbies = [];
+    snap.forEach(c => lobbies.push(c.val()));
+    el.innerHTML = '';
+    if(!lobbies.length){ el.innerHTML='<div class="arena-empty">No public lobbies open</div>'; return; }
+    lobbies.forEach(l => {
+      if(l.status!=='waiting') return;
+      const players = Object.values(l.players||{});
+      const card = document.createElement('div');
+      card.className='arena-public-card';
+      card.innerHTML=`<div class="arena-public-card-info"><strong>${escHtml(l.hostName)}</strong> · ${escHtml(l.format||'1v1')} · Kill target: ${l.killTarget||10} · 🪙${fmtNum(l.wager||0)} wager<br><span style="color:var(--text-3);font-size:.75rem">${players.length} player${players.length!==1?'s':''} waiting</span></div>`;
+      const btn = document.createElement('button');
+      btn.className='btn-arena-secondary'; btn.textContent='JOIN';
+      btn.addEventListener('click', ()=>joinLobbyByCode(l.code));
+      card.appendChild(btn);
+      el.appendChild(card);
+    });
+  };
+  ref.on('value', handler);
+  AS.publicListener = () => ref.off('value', handler);
+}
+
+// ── Start Match (host) ────────────────────────────────────────
+document.getElementById('btn-start-match').addEventListener('click', async () => {
+  if(!AS.isHost||!AS.lobbyId||!AS.lobbyData) return;
+  const data = AS.lobbyData;
+  const players = Object.values(data.players||{});
+  if(players.length<2){ toast('Need at least 2 players','error'); return; }
+
+  const wager = data.wager||0;
+  // Validate everyone has enough coins
+  for(const p of players){
+    if(p.uid===S.user.uid){
+      if((S.profile.coins||0)<wager){ toast('You don\'t have enough coins for the wager','error'); return; }
+    }
+  }
+
+  const maze = generateMaze(ARENA.COLS, ARENA.ROWS);
+  const spawnPoints = getSpawnPoints(maze, Math.max(3, players.length*2));
+  const exitPos = placeExit(maze, spawnPoints);
+  const matchId = genUID();
+
+  const matchPlayers = {};
+  players.forEach((p,i) => {
+    const sp = spawnPoints[i % spawnPoints.length];
+    matchPlayers[p.uid] = {
+      uid: p.uid, name: p.name, team: p.team,
+      x: sp.x, y: sp.y, hp: ARENA.HP_MAX,
+      lives: ARENA.LIVES, eliminated: false, escaped: false,
+    };
+  });
+
+  const matchData = {
+    matchId, lobbyCode: AS.lobbyId,
+    maze: maze.map(r=>r.join('')).join('|'),
+    spawnPoints, exitPos,
+    players: matchPlayers,
+    killTarget: data.killTarget||10,
+    wager,
+    format: data.format||'1v1',
+    status: 'active',
+    isTiebreaker: false,
+    lastPlayerCountdown: null,
+    startedAt: firebase.database.ServerValue.TIMESTAMP,
+  };
+
+  await rtdb.ref('arenaMatches/'+matchId).set(matchData);
+  await rtdb.ref('arenaLobbies/'+AS.lobbyId).update({status:'started', matchId});
+});
+
+// ── Client: receive match start ───────────────────────────────
+function startClientMatch(lobbyData) {
+  if(AS.matchListener){AS.matchListener();AS.matchListener=null;}
+  AS.matchId = lobbyData.matchId;
+  const ref = rtdb.ref('arenaMatches/'+AS.matchId);
+  const handler = snap => {
+    const data = snap.val(); if(!data) return;
+    if(data.status==='active'){
+      if(!AS.matchRunning) initMatch(data);
+      else syncMatchState(data);
+    }
+    if(data.status==='ended'||data.status==='tiebreaker') endMatch(data);
+  };
+  ref.on('value', handler);
+  AS.matchListener = () => ref.off('value', handler);
+}
+
+let AS_matchRunning = false;
+
+function initMatch(data) {
+  AS_matchRunning = true;
+  AS.matchEnded = false;
+  AS.isSpectating = false;
+  AS.spectateTarget = null;
+  AS.killTarget = data.killTarget||10;
+  AS.wager = data.wager||0;
+  AS.format = data.format||'1v1';
+  AS.myId = S.user.uid;
+  AS.isTiebreaker = data.isTiebreaker||false;
+  AS.exitPos = data.exitPos||null;
+
+  AS.maze = data.maze.split('|').map(r=>r.split('').map(Number));
+
+  AS.players = {};
+  Object.values(data.players||{}).forEach(p=>{
+    AS.players[p.uid]={...p, attackAnim:0};
+  });
+
+  // Check if we start as spectator (eliminated before match start — shouldn't happen but safety)
+  const me = AS.players[AS.myId];
+  if(me && me.eliminated) enterSpectateMode();
+
+  arenaShowView('arena-match');
+  const canvas = document.getElementById('arena-canvas');
+  AS.canvas = canvas;
+  AS.ctx = canvas.getContext('2d');
+  const cols = AS.isTiebreaker ? ARENA.TIEBREAKER_COLS : ARENA.COLS;
+  const rows = AS.isTiebreaker ? ARENA.TIEBREAKER_ROWS : ARENA.ROWS;
+  canvas.width = cols * ARENA.TILE;
+  canvas.height = rows * ARENA.TILE;
+
+  AS.keys = {};
+  window.addEventListener('keydown', arenaKeyDown);
+  window.addEventListener('keyup', arenaKeyUp);
+  canvas.addEventListener('click', arenaClick);
+
+  if(!data.isTiebreaker) startLastPlayerWatch();
+
+  AS.raf = requestAnimationFrame(arenaLoop);
+}
+
+function syncMatchState(data) {
+  const prevMe = AS.players[AS.myId] ? {...AS.players[AS.myId]} : null;
+
+  Object.values(data.players||{}).forEach(p=>{
+    if(p.uid===AS.myId) {
+      // sync lives and eliminated from server but keep local position
+      if(AS.players[p.uid]) {
+        AS.players[p.uid].lives = p.lives;
+        AS.players[p.uid].eliminated = p.eliminated;
+        AS.players[p.uid].escaped = p.escaped;
+        AS.players[p.uid].hp = p.hp;
+      }
+    } else {
+      if(AS.players[p.uid]) {
+        Object.assign(AS.players[p.uid], p);
+      }
+    }
+  });
+
+  // Check if we just got eliminated
+  const me = AS.players[AS.myId];
+  if(me && me.eliminated && !AS.isSpectating) enterSpectateMode();
+
+  // Handle tiebreaker trigger
+  if(data.status==='tiebreaker' && data.tiebreakerMatchId && !AS.matchEnded) {
+    toast('⚠️ TIE — starting tiebreaker!','gold',4000);
+  }
+
+  // Handle countdown
+  if(data.lastPlayerCountdown != null) {
+    document.getElementById('hud-countdown').classList.remove('hidden');
+    document.getElementById('hud-countdown').textContent = '⏱ Last player: '+data.lastPlayerCountdown+'s';
+  } else {
+    document.getElementById('hud-countdown').classList.add('hidden');
+  }
+
+  updateHUD();
+}
+
+// ── Last-Player Countdown (host only) ────────────────────────
+function startLastPlayerWatch() {
+  if(!AS.isHost) return;
+  setInterval(async () => {
+    if(AS.matchEnded||!AS.matchId) return;
+    const snap = await rtdb.ref('arenaMatches/'+AS.matchId+'/players').get();
+    const players = Object.values(snap.val()||{});
+    const alive = players.filter(p=>!p.eliminated&&!p.escaped);
+    if(alive.length===1) {
+      const cur = (await rtdb.ref('arenaMatches/'+AS.matchId+'/lastPlayerCountdown').get()).val();
+      if(cur==null) {
+        // start countdown
+        let count = ARENA.LAST_PLAYER_COUNTDOWN;
+        await rtdb.ref('arenaMatches/'+AS.matchId).update({lastPlayerCountdown:count});
+        const interval = setInterval(async () => {
+          count--;
+          if(count<=0) {
+            clearInterval(interval);
+            // check for tie
+            await checkTieOrWin();
+          } else {
+            await rtdb.ref('arenaMatches/'+AS.matchId).update({lastPlayerCountdown:count});
+          }
+        }, 1000);
+      }
+    } else if(alive.length!==1) {
+      // reset countdown if more/fewer players alive
+      await rtdb.ref('arenaMatches/'+AS.matchId).update({lastPlayerCountdown:null});
+    }
+  }, 2000);
+}
+
+// ── Spectate Mode ────────────────────────────────────────────
+function enterSpectateMode() {
+  AS.isSpectating = true;
+  const me = AS.players[AS.myId];
+  // pick first alive teammate to spectate
+  const teammates = Object.values(AS.players).filter(p=>p.uid!==AS.myId&&p.team===me?.team&&!p.eliminated);
+  AS.spectateTarget = teammates[0]?.uid || null;
+
+  document.getElementById('hud-spectate-label').classList.remove('hidden');
+  document.getElementById('arena-controls-hint').textContent = '👁 Spectating teammate — use arrow keys or click their name to switch';
+
+  const specEl = document.getElementById('spectate-controls');
+  specEl.classList.remove('hidden');
+  renderSpectateButtons();
+}
+
+function renderSpectateButtons() {
+  const me = AS.players[AS.myId];
+  const list = document.getElementById('spectate-player-list');
+  list.innerHTML='';
+  Object.values(AS.players)
+    .filter(p=>p.uid!==AS.myId&&p.team===me?.team&&!p.eliminated)
+    .forEach(p=>{
+      const btn = document.createElement('button');
+      btn.className='spectate-btn'+(AS.spectateTarget===p.uid?' active':'');
+      btn.textContent=p.name;
+      btn.addEventListener('click',()=>{ AS.spectateTarget=p.uid; renderSpectateButtons(); });
+      list.appendChild(btn);
+    });
+}
+
+// ── Input ────────────────────────────────────────────────────
+function arenaKeyDown(e){
+  AS.keys[e.key]=true;
+  if(e.key===' '){ e.preventDefault(); doAttack(); }
+}
+function arenaKeyUp(e){ AS.keys[e.key]=false; }
+function arenaClick(){ doAttack(); }
+
+function doAttack(){
+  if(AS.isSpectating||AS.attacking) return;
+  AS.attacking=true;
+  AS.attackTime=performance.now();
+  const me=AS.players[AS.myId]; if(!me||me.eliminated) return;
+  Object.values(AS.players).forEach(p=>{
+    if(p.uid===AS.myId||p.eliminated) return;
+    const dx=p.x-me.x, dy=p.y-me.y;
+    if(Math.hypot(dx,dy)<ARENA.ATTACK_R+ARENA.PLAYER_R) hitPlayer(p.uid, 34); // 3 hits to kill
+  });
+  setTimeout(()=>AS.attacking=false, ARENA.ATTACK_DURATION);
+}
+
+async function hitPlayer(targetUid, dmg){
+  if(!AS.matchId||AS.matchEnded) return;
+  const target=AS.players[targetUid]; if(!target||target.eliminated) return;
+  const newHp=Math.max(0, target.hp-dmg);
+  const updates={['players/'+targetUid+'/hp']: newHp};
+
+  if(newHp<=0){
+    const newLives = (target.lives||ARENA.LIVES) - 1;
+    updates['players/'+targetUid+'/lives'] = newLives;
+
+    if(newLives<=0){
+      // fully eliminated
+      updates['players/'+targetUid+'/eliminated'] = true;
+      updates['players/'+targetUid+'/hp'] = 0;
+      toast('💀 '+target.name+' has been eliminated!','gold',3000);
+    } else {
+      // respawn
+      const spawns=(await rtdb.ref('arenaMatches/'+AS.matchId+'/spawnPoints').get()).val()||[];
+      const sp=spawns[Math.floor(Math.random()*spawns.length)]||{x:ARENA.TILE*1.5,y:ARENA.TILE*1.5};
+      updates['players/'+targetUid+'/hp'] = ARENA.HP_MAX;
+      updates['players/'+targetUid+'/x'] = sp.x;
+      updates['players/'+targetUid+'/y'] = sp.y;
+      toast('⚔️ You hit '+target.name+'! '+newLives+' lives left.','gold',2000);
+    }
+    await rtdb.ref('arenaMatches/'+AS.matchId).update(updates);
+    await checkTieOrWin();
+  } else {
+    await rtdb.ref('arenaMatches/'+AS.matchId).update(updates);
+  }
+}
+
+async function checkTieOrWin(){
+  if(!AS.matchId||AS.matchEnded) return;
+  const snap=await rtdb.ref('arenaMatches/'+AS.matchId+'/players').get();
+  const players=Object.values(snap.val()||{});
+
+  // Group active (not eliminated, not escaped) players by team
+  const activeByTeam={};
+  players.forEach(p=>{
+    if(!p.eliminated&&!p.escaped){
+      if(!activeByTeam[p.team]) activeByTeam[p.team]=[];
+      activeByTeam[p.team].push(p);
+    }
+  });
+
+  const teamsStillIn = Object.keys(activeByTeam);
+
+  // Check if any team has escaped
+  const escapedTeams = new Set(players.filter(p=>p.escaped).map(p=>p.team));
+  if(escapedTeams.size>0){
+    const winner = [...escapedTeams][0];
+    await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'ended',winningTeam:winner,lastPlayerCountdown:null});
+    return;
+  }
+
+  // Only 1 team left active
+  if(teamsStillIn.length===1){
+    await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'ended',winningTeam:Number(teamsStillIn[0]),lastPlayerCountdown:null});
+    return;
+  }
+
+  // No active players left → tie → tiebreaker
+  if(teamsStillIn.length===0){
+    await triggerTiebreaker(players);
+    return;
+  }
+
+  // Only 1 active player across all teams → countdown should be running (handled by host watch)
+}
+
+async function triggerTiebreaker(players) {
+  if(!AS.isHost) return;
+  // Everyone gets a fresh life in the tiebreaker — not just survivors
+  const survivors = players; // all players, lives reset to 1
+  if(survivors.length<2){ 
+    // edge case: only 1 survivor
+    const winner = survivors[0]?.team??0;
+    await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'ended',winningTeam:winner});
+    return;
+  }
+
+  const tbMaze = generateMaze(ARENA.TIEBREAKER_COLS, ARENA.TIEBREAKER_ROWS);
+  const tbSpawns = getSpawnPoints(tbMaze, survivors.length*2);
+  const tbExit = placeExit(tbMaze, tbSpawns);
+  const tbMatchId = genUID();
+
+  const tbPlayers = {};
+  survivors.forEach((p,i)=>{
+    const sp = tbSpawns[i%tbSpawns.length];
+    tbPlayers[p.uid] = {
+      uid:p.uid, name:p.name, team:p.team,
+      x:sp.x, y:sp.y, hp:ARENA.HP_MAX, lives:1, eliminated:false, escaped:false
+    };
+  });
+
+  const tbData = {
+    matchId:tbMatchId, lobbyCode:AS.lobbyId,
+    maze:tbMaze.map(r=>r.join('')).join('|'),
+    spawnPoints:tbSpawns, exitPos:tbExit,
+    players:tbPlayers,
+    killTarget:AS.killTarget, wager:AS.wager,
+    format:AS.format, status:'active',
+    isTiebreaker:true, lastPlayerCountdown:null,
+    startedAt:firebase.database.ServerValue.TIMESTAMP,
+  };
+
+  await rtdb.ref('arenaMatches/'+tbMatchId).set(tbData);
+  // mark original match ended as tiebreaker
+  await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'tiebreaker',tiebreakerMatchId:tbMatchId});
+}
+
+// ── Game Loop ─────────────────────────────────────────────────
+function arenaLoop(ts){
+  if(AS.matchEnded) return;
+  const dt=Math.min((ts-(AS.lastTime||ts))/16.67,3);
+  AS.lastTime=ts;
+  if(!AS.isSpectating) moveMe(dt);
+  renderMaze();
+  updateHUD();
+  AS.raf=requestAnimationFrame(arenaLoop);
+}
+
+function moveMe(dt){
+  const me=AS.players[AS.myId]; if(!me||me.eliminated) return;
+  let dx=0,dy=0;
+  if(AS.keys['ArrowLeft']||AS.keys['a']||AS.keys['A']) dx=-1;
+  if(AS.keys['ArrowRight']||AS.keys['d']||AS.keys['D']) dx=1;
+  if(AS.keys['ArrowUp']||AS.keys['w']||AS.keys['W']) dy=-1;
+  if(AS.keys['ArrowDown']||AS.keys['s']||AS.keys['S']) dy=1;
+  if(!dx&&!dy) return;
+  if(dx&&dy){dx*=0.707;dy*=0.707;}
+  const nx=me.x+dx*ARENA.SPEED*dt;
+  const ny=me.y+dy*ARENA.SPEED*dt;
+  const T=ARENA.TILE, R=ARENA.PLAYER_R;
+  const blocked=(x,y)=>{ const tx=Math.floor(x/T),ty=Math.floor(y/T); return AS.maze[ty]?.[tx]===1; };
+  if(!blocked(nx-R,me.y-R)&&!blocked(nx+R,me.y-R)&&!blocked(nx-R,me.y+R)&&!blocked(nx+R,me.y+R)) me.x=nx;
+  if(!blocked(me.x-R,ny-R)&&!blocked(me.x+R,ny-R)&&!blocked(me.x-R,ny+R)&&!blocked(me.x+R,ny+R)) me.y=ny;
+
+  // Check exit collision
+  if(AS.exitPos && !me.escaped){
+    if(Math.hypot(me.x-AS.exitPos.x, me.y-AS.exitPos.y)<ARENA.EXIT_R+ARENA.PLAYER_R){
+      me.escaped=true;
+      rtdb.ref('arenaMatches/'+AS.matchId+'/players/'+AS.myId).update({escaped:true});
+      toast('🚪 You found the exit! Your team wins!','gold',5000);
+      checkTieOrWin();
+    }
+  }
+
+  if(!moveMe._tick) moveMe._tick=0;
+  if(++moveMe._tick%4===0){
+    rtdb.ref('arenaMatches/'+AS.matchId+'/players/'+AS.myId).update({x:Math.round(me.x),y:Math.round(me.y)});
+  }
+}
+
+function renderMaze(){
+  const ctx=AS.ctx, canvas=AS.canvas;
+
+  // Use spectate target as camera center if spectating
+  const viewTarget = AS.isSpectating && AS.spectateTarget
+    ? AS.players[AS.spectateTarget]
+    : AS.players[AS.myId];
+  if(!viewTarget) return;
+
+  const T=ARENA.TILE;
+  const W=canvas.width, H=canvas.height;
+  const camX=viewTarget.x-W/2, camY=viewTarget.y-H/2;
+
+  ctx.save();
+  ctx.fillStyle='#0a0a12';
+  ctx.fillRect(0,0,W,H);
+  ctx.translate(-camX,-camY);
+
+  // Maze walls
+  for(let r=0;r<AS.maze.length;r++){
+    for(let c=0;c<AS.maze[r].length;c++){
+      if(AS.maze[r][c]===1){
+        ctx.fillStyle='#1e1b4b';
+        ctx.fillRect(c*T,r*T,T,T);
+        ctx.strokeStyle='#312e81';
+        ctx.lineWidth=1;
+        ctx.strokeRect(c*T,r*T,T,T);
+      }
+    }
+  }
+
+  // Exit portal (visible when close)
+  if(AS.exitPos){
+    const distToExit=Math.hypot(viewTarget.x-AS.exitPos.x,viewTarget.y-AS.exitPos.y);
+    if(distToExit<ARENA.VISION*1.4){
+      const glow=ctx.createRadialGradient(AS.exitPos.x,AS.exitPos.y,2,AS.exitPos.x,AS.exitPos.y,ARENA.EXIT_R);
+      glow.addColorStop(0,'#22c55ecc');
+      glow.addColorStop(1,'#22c55e00');
+      ctx.beginPath(); ctx.arc(AS.exitPos.x,AS.exitPos.y,ARENA.EXIT_R,0,Math.PI*2);
+      ctx.fillStyle=glow; ctx.fill();
+      ctx.strokeStyle='#22c55e'; ctx.lineWidth=3; ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('EXIT',AS.exitPos.x,AS.exitPos.y);
+      ctx.textBaseline='alphabetic';
+    }
+  }
+
+  // Other players
+  Object.values(AS.players).forEach(p=>{
+    if(p.uid===viewTarget.uid||p.eliminated) return;
+    const dist=Math.hypot(p.x-viewTarget.x,p.y-viewTarget.y);
+    if(dist>ARENA.VISION*1.5) return;
+    const col=ARENA.TEAM_COLORS[p.team]||'#fff';
+    ctx.beginPath(); ctx.arc(p.x,p.y,ARENA.PLAYER_R,0,Math.PI*2);
+    ctx.fillStyle=col+'cc'; ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(p.name.slice(0,8),p.x,p.y-ARENA.PLAYER_R-4);
+    const hpPct=p.hp/ARENA.HP_MAX;
+    ctx.fillStyle='#1a1a2e'; ctx.fillRect(p.x-16,p.y-ARENA.PLAYER_R-16,32,4);
+    ctx.fillStyle=hpPct>0.5?'#22c55e':hpPct>0.25?'#f59e0b':'#ef4444';
+    ctx.fillRect(p.x-16,p.y-ARENA.PLAYER_R-16,32*hpPct,4);
+    // Lives dots
+    for(let l=0;l<(p.lives||0);l++){
+      ctx.beginPath(); ctx.arc(p.x-8+l*8,p.y+ARENA.PLAYER_R+8,3,0,Math.PI*2);
+      ctx.fillStyle='#ef4444'; ctx.fill();
+    }
+  });
+
+  // Draw view target (self or spectated player)
+  const myCol=ARENA.TEAM_COLORS[viewTarget.team]||'#3b82f6';
+  if(AS.attacking && !AS.isSpectating){
+    ctx.beginPath(); ctx.arc(viewTarget.x,viewTarget.y,ARENA.ATTACK_R,0,Math.PI*2);
+    ctx.fillStyle=myCol+'33'; ctx.fill();
+    ctx.strokeStyle=myCol+'99'; ctx.lineWidth=2; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  }
+  ctx.beginPath(); ctx.arc(viewTarget.x,viewTarget.y,ARENA.PLAYER_R,0,Math.PI*2);
+  ctx.fillStyle=AS.isSpectating?myCol+'88':myCol; ctx.fill();
+  ctx.strokeStyle=AS.isSpectating?'#a855f7':'#fff'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('⚔',viewTarget.x,viewTarget.y);
+  ctx.textBaseline='alphabetic';
+
+  ctx.restore();
+
+  // Fog of war — same radius whether playing or spectating
+  const fogGrad=ctx.createRadialGradient(W/2,H/2,ARENA.VISION*0.6,W/2,H/2,ARENA.VISION*1.1);
+  fogGrad.addColorStop(0,'rgba(0,0,0,0)');
+  fogGrad.addColorStop(1,'rgba(0,0,0,0.97)');
+  ctx.save();
+  ctx.fillStyle=fogGrad;
+  ctx.fillRect(0,0,W,H);
+  ctx.restore();
+}
+
+function updateHUD(){
+  const me=AS.players[AS.myId]; if(!me) return;
+  const display = AS.isSpectating && AS.spectateTarget ? AS.players[AS.spectateTarget] : me;
+
+  const hpPct=(display?.hp||0)/ARENA.HP_MAX*100;
+  document.getElementById('hud-hp-fill').style.width=hpPct+'%';
+  document.getElementById('hud-hp-fill').style.background=hpPct>50?'linear-gradient(90deg,#22c55e,#16a34a)':hpPct>25?'linear-gradient(90deg,#f59e0b,#d97706)':'linear-gradient(90deg,#ef4444,#dc2626)';
+  document.getElementById('hud-hp-text').textContent=display?.hp||0;
+
+  // Lives display
+  const livesEl=document.getElementById('hud-lives');
+  const lives=me.lives??ARENA.LIVES;
+  livesEl.textContent='❤️'.repeat(Math.max(0,lives))+'🖤'.repeat(Math.max(0,ARENA.LIVES-lives));
+
+  // Scoreboard — show alive counts per team
+  const sb=document.getElementById('hud-scoreboard');
+  const teams={};
+  Object.values(AS.players).forEach(p=>{
+    if(!teams[p.team]) teams[p.team]={alive:0,escaped:0,color:ARENA.TEAM_COLORS[p.team],name:'Team '+(p.team+1)};
+    if(!p.eliminated&&!p.escaped) teams[p.team].alive++;
+    if(p.escaped) teams[p.team].escaped++;
+  });
+  sb.innerHTML=Object.values(teams).map(t=>{
+    const status=t.escaped>0?'🚪 ESCAPED':(t.alive+' alive');
+    return `<span class="hud-score-entry" style="color:${t.color};border-color:${t.color}44">${t.name}: ${status}</span>`;
+  }).join('');
+
+  // Update spectate buttons if spectating
+  if(AS.isSpectating) renderSpectateButtons();
+}
+
+// ── Match End ─────────────────────────────────────────────────
+async function endMatch(data){
+  if(AS.matchEnded) return;
+
+  // Tiebreaker: switch to new match rather than ending
+  if(data.status==='tiebreaker' && data.tiebreakerMatchId){
+    if(AS.matchListener){AS.matchListener();AS.matchListener=null;}
+    cancelAnimationFrame(AS.raf);
+    AS.matchEnded=false; AS_matchRunning=false;
+    AS.isSpectating=false; AS.spectateTarget=null;
+    document.getElementById('hud-spectate-label').classList.add('hidden');
+    document.getElementById('spectate-controls').classList.add('hidden');
+    AS.matchId=data.tiebreakerMatchId;
+    const tbRef=rtdb.ref('arenaMatches/'+data.tiebreakerMatchId);
+    const tbHandler=snap=>{
+      const d=snap.val(); if(!d) return;
+      if(d.status==='active'){ if(!AS_matchRunning) initMatch(d); else syncMatchState(d); }
+      if(d.status==='ended'||d.status==='tiebreaker') endMatch(d);
+    };
+    tbRef.on('value',tbHandler);
+    AS.matchListener=()=>tbRef.off('value',tbHandler);
+    return;
+  }
+
+  AS.matchEnded=true; AS_matchRunning=false;
+  cancelAnimationFrame(AS.raf);
+  window.removeEventListener('keydown',arenaKeyDown);
+  window.removeEventListener('keyup',arenaKeyUp);
+  if(AS.canvas) AS.canvas.removeEventListener('click',arenaClick);
+  if(AS.matchListener){AS.matchListener();AS.matchListener=null;}
+
+  const me=AS.players[AS.myId];
+  const myTeam=me?.team??-1;
+  const won=data.winningTeam===myTeam;
+  const allPlayers=Object.values(data.players||{});
+  const wager=data.wager||0;
+  const numWinners=allPlayers.filter(p=>p.team===data.winningTeam).length;
+  const totalPot=wager*allPlayers.length;
+  const perWinner=numWinners>0?Math.floor(totalPot/numWinners):0;
+
+  if(wager>0){
+    try{
+      await db.runTransaction(async tx=>{
+        const losers=allPlayers.filter(p=>p.team!==data.winningTeam);
+        const winners=allPlayers.filter(p=>p.team===data.winningTeam);
+        for(const p of losers){
+          const ref=db.collection('users').doc(p.uid);
+          const doc=await tx.get(ref);
+          if(!doc.exists) throw new Error('User not found');
+          if((doc.data().coins||0)<wager) throw new Error(p.name+' has insufficient coins');
+          tx.update(ref,{coins:firebase.firestore.FieldValue.increment(-wager)});
+        }
+        for(const p of winners){
+          tx.update(db.collection('users').doc(p.uid),{coins:firebase.firestore.FieldValue.increment(perWinner)});
+        }
+      });
+      if(won){S.profile.coins+=perWinner-wager; updateCoinDisplay(S.profile.coins);}
+      else{S.profile.coins-=wager; updateCoinDisplay(S.profile.coins);}
+    }catch(e){ toast('Wager error: '+e.message,'error'); }
+  }
+
+  setTimeout(()=>rtdb.ref('arenaMatches/'+AS.matchId).remove(),5000);
+  arenaShowView('arena-match-end');
+  const isTie=data.winningTeam==null;
+  document.getElementById('match-end-title').textContent=isTie?'🤝 TIE':(won?'🏆 VICTORY':'💀 DEFEATED');
+  document.getElementById('match-end-title').style.color=isTie?'#6b7280':(won?'#f59e0b':'#ef4444');
+  document.getElementById('match-end-wager').textContent=isTie?'Wager returned':(won?'+🪙 '+fmtNum(perWinner-wager)+' profit':(wager>0?'-🪙 '+fmtNum(wager):'No wager'));
+
+  const sbEl=document.getElementById('match-end-scoreboard');
+  sbEl.innerHTML='';
+  allPlayers.forEach(p=>{
+    const row=document.createElement('div'); row.className='match-end-row';
+    const col=ARENA.TEAM_COLORS[p.team]||'#fff';
+    const status=p.escaped?'🚪 ESCAPED':p.eliminated?'💀 ELIMINATED':'survived';
+    row.innerHTML='<span style="color:'+col+'">'+escHtml(p.name)+'</span><span>'+status+'</span>';
+    sbEl.appendChild(row);
+  });
+}
+
+document.getElementById('btn-match-end-ok').addEventListener('click',()=>{
+  AS.matchId=null; AS.matchEnded=false; AS_matchRunning=false;
+  if(AS.lobbyId) { arenaShowView('arena-lobby-room'); }
+  else { arenaShowView('arena-lobby-browser'); }
+});
+
+document.getElementById('btn-forfeit').addEventListener('click',async()=>{
+  if(!AS.matchId||AS.matchEnded) return;
+  // Mark self as dead/disconnected and force end from server perspective
+  await rtdb.ref(`arenaMatches/${AS.matchId}/players/${AS.myId}`).update({alive:false,forfeited:true});
+  toast('You forfeited the match.','error');
+});
+
+// ── Hook into showPage ────────────────────────────────────────
+const _origShowPage=showPage;
+showPage=function(id){
+  _origShowPage(id);
+  if(id==='arena'){
+    arenaShowView('arena-lobby-browser');
+    listenToPublicLobbies();
+  } else {
+    if(AS.publicListener){AS.publicListener();AS.publicListener=null;}
+  }
+};
 </script>
 </body>
 </html>
