@@ -486,7 +486,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .lobby-wager-info{font-size:.82rem;color:var(--gold);}
 .lobby-waiting-msg{font-size:.82rem;color:var(--text-3);font-style:italic;}
 /* match */
-.arena-canvas{display:block;width:100%;max-width:700px;margin:0 auto;border:2px solid var(--border);border-radius:var(--r);cursor:crosshair;touch-action:none;}
+.arena-canvas{display:block;width:100%;max-width:700px;aspect-ratio:1/1;margin:0 auto;border:2px solid var(--border);border-radius:var(--r);cursor:crosshair;touch-action:none;}
 .arena-hud{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;gap:8px;max-width:700px;margin:0 auto 6px;}
 .hud-left{display:flex;align-items:center;gap:8px;}
 .hud-hp{display:flex;align-items:center;gap:6px;font-size:.8rem;}
@@ -552,6 +552,19 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   .lobby-teams{flex-direction:column;}
   /* leaderboard */
   .lb-tabs{flex-wrap:wrap;gap:6px;}
+  .lb-row{padding:10px 12px;gap:8px;}
+  .lb-rank{font-size:.9rem;min-width:26px;}
+  .lb-username{font-size:.82rem;word-break:break-all;}
+  .lb-sub{font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
+  .lb-value{font-size:.78rem;white-space:nowrap;flex-shrink:0;}
+  .leaderboard-list{gap:6px;}
+  /* history */
+  .history-row{padding:10px 12px;}
+  .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
+  .history-partner{font-size:.72rem;}
+  .history-date{font-size:.65rem;}
+  .history-items-list{gap:3px;}
+  .history-item-chip{font-size:.65rem;padding:2px 6px;}
   /* arena lobby */
   .arena-actions{flex-direction:column;align-items:stretch;}
   .arena-join-row{width:100%;}
@@ -2694,20 +2707,20 @@ function spawnParticles(){
 // ============================================================
 
 const ARENA = {
-  TILE: 32,
+  TILE: 48,
   COLS: 71,
   ROWS: 71,
   TIEBREAKER_COLS: 31,
   TIEBREAKER_ROWS: 31,
-  VISION: 110,
-  PLAYER_R: 10,
-  ATTACK_R: 28,
+  VISION: 140,
+  PLAYER_R: 12,
+  ATTACK_R: 34,
   ATTACK_DURATION: 200,
   HP_MAX: 100,
-  SPEED: 2.2,
+  SPEED: 3.0,
   LIVES: 3,
   LAST_PLAYER_COUNTDOWN: 60,
-  EXIT_R: 18,
+  EXIT_R: 22,
   TEAM_COLORS: ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4'],
 };
 
@@ -3098,10 +3111,39 @@ function initMatch(data) {
   const canvas = document.getElementById('arena-canvas');
   AS.canvas = canvas;
   AS.ctx = canvas.getContext('2d');
+
+  // Canvas is viewport-sized (not full maze) — camera pans over the maze
+  // Use the actual rendered CSS size for crisp pixels
+  const rect = canvas.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const vw = Math.round((rect.width  || 480) * dpr);
+  const vh = Math.round((rect.height || 480) * dpr);
+  canvas.width  = vw;
+  canvas.height = vh;
+  AS.viewW = vw;
+  AS.viewH = vh;
+
+  // Pre-render maze walls to an offscreen canvas — only done once
   const cols = AS.isTiebreaker ? ARENA.TIEBREAKER_COLS : ARENA.COLS;
   const rows = AS.isTiebreaker ? ARENA.TIEBREAKER_ROWS : ARENA.ROWS;
-  canvas.width = cols * ARENA.TILE;
-  canvas.height = rows * ARENA.TILE;
+  const T = ARENA.TILE;
+  AS.mazeCanvas = document.createElement('canvas');
+  AS.mazeCanvas.width  = cols * T;
+  AS.mazeCanvas.height = rows * T;
+  const mctx = AS.mazeCanvas.getContext('2d');
+  mctx.fillStyle = '#0a0a12';
+  mctx.fillRect(0, 0, AS.mazeCanvas.width, AS.mazeCanvas.height);
+  for(let r = 0; r < AS.maze.length; r++){
+    for(let c2 = 0; c2 < AS.maze[r].length; c2++){
+      if(AS.maze[r][c2] === 1){
+        mctx.fillStyle = '#1e1b4b';
+        mctx.fillRect(c2*T, r*T, T, T);
+        mctx.strokeStyle = '#312e81';
+        mctx.lineWidth = 1;
+        mctx.strokeRect(c2*T, r*T, T, T);
+      }
+    }
+  }
 
   AS.keys = {};
   window.addEventListener('keydown', arenaKeyDown);
@@ -3440,55 +3482,54 @@ function moveMe(dt){
 
 function renderMaze(){
   const ctx=AS.ctx, canvas=AS.canvas;
-
-  // Use spectate target as camera center if spectating
   const viewTarget = AS.isSpectating && AS.spectateTarget
     ? AS.players[AS.spectateTarget]
     : AS.players[AS.myId];
-  if(!viewTarget) return;
+  if(!viewTarget || !AS.mazeCanvas) return;
 
-  const T=ARENA.TILE;
-  const W=canvas.width, H=canvas.height;
-  const camX=viewTarget.x-W/2, camY=viewTarget.y-H/2;
+  const W = AS.viewW || canvas.width;
+  const H = AS.viewH || canvas.height;
+  const T = ARENA.TILE;
+
+  // Camera: player centered
+  const camX = Math.round(viewTarget.x - W/2);
+  const camY = Math.round(viewTarget.y - H/2);
+
+  // 1) Blit only the visible slice of the pre-rendered maze — O(1) instead of O(tiles)
+  ctx.fillStyle = '#0a0a12';
+  ctx.fillRect(0, 0, W, H);
+  const srcX = Math.max(0, camX);
+  const srcY = Math.max(0, camY);
+  const srcW = Math.min(AS.mazeCanvas.width  - srcX, W);
+  const srcH = Math.min(AS.mazeCanvas.height - srcY, H);
+  const dstX = Math.max(0, -camX);
+  const dstY = Math.max(0, -camY);
+  if(srcW > 0 && srcH > 0)
+    ctx.drawImage(AS.mazeCanvas, srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
 
   ctx.save();
-  ctx.fillStyle='#0a0a12';
-  ctx.fillRect(0,0,W,H);
-  ctx.translate(-camX,-camY);
+  ctx.translate(-camX, -camY);
 
-  // Maze walls
-  for(let r=0;r<AS.maze.length;r++){
-    for(let c=0;c<AS.maze[r].length;c++){
-      if(AS.maze[r][c]===1){
-        ctx.fillStyle='#1e1b4b';
-        ctx.fillRect(c*T,r*T,T,T);
-        ctx.strokeStyle='#312e81';
-        ctx.lineWidth=1;
-        ctx.strokeRect(c*T,r*T,T,T);
-      }
-    }
-  }
-
-  // Exit portal (visible when close)
+  // 2) Exit portal
   if(AS.exitPos){
-    const distToExit=Math.hypot(viewTarget.x-AS.exitPos.x,viewTarget.y-AS.exitPos.y);
-    if(distToExit<ARENA.VISION*1.4){
-      const glow=ctx.createRadialGradient(AS.exitPos.x,AS.exitPos.y,2,AS.exitPos.x,AS.exitPos.y,ARENA.EXIT_R);
-      glow.addColorStop(0,'#22c55ecc');
-      glow.addColorStop(1,'#22c55e00');
+    const distToExit = Math.hypot(viewTarget.x-AS.exitPos.x, viewTarget.y-AS.exitPos.y);
+    if(distToExit < ARENA.VISION*1.4){
+      const glow = ctx.createRadialGradient(AS.exitPos.x,AS.exitPos.y,2,AS.exitPos.x,AS.exitPos.y,ARENA.EXIT_R);
+      glow.addColorStop(0,'#22c55ecc'); glow.addColorStop(1,'#22c55e00');
       ctx.beginPath(); ctx.arc(AS.exitPos.x,AS.exitPos.y,ARENA.EXIT_R,0,Math.PI*2);
       ctx.fillStyle=glow; ctx.fill();
       ctx.strokeStyle='#22c55e'; ctx.lineWidth=3; ctx.stroke();
-      ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.fillText('EXIT',AS.exitPos.x,AS.exitPos.y);
       ctx.textBaseline='alphabetic';
     }
   }
 
-  // Other players
+  // 3) Other players (only within vision)
   Object.values(AS.players).forEach(p=>{
     if(p.uid===viewTarget.uid||p.eliminated) return;
-    const dist=Math.hypot(p.x-viewTarget.x,p.y-viewTarget.y);
+    const dist=Math.hypot(p.x-viewTarget.x, p.y-viewTarget.y);
     if(dist>ARENA.VISION*1.5) return;
     const col=ARENA.TEAM_COLORS[p.team]||'#fff';
     ctx.beginPath(); ctx.arc(p.x,p.y,ARENA.PLAYER_R,0,Math.PI*2);
@@ -3500,14 +3541,13 @@ function renderMaze(){
     ctx.fillStyle='#1a1a2e'; ctx.fillRect(p.x-16,p.y-ARENA.PLAYER_R-16,32,4);
     ctx.fillStyle=hpPct>0.5?'#22c55e':hpPct>0.25?'#f59e0b':'#ef4444';
     ctx.fillRect(p.x-16,p.y-ARENA.PLAYER_R-16,32*hpPct,4);
-    // Lives dots
     for(let l=0;l<(p.lives||0);l++){
       ctx.beginPath(); ctx.arc(p.x-8+l*8,p.y+ARENA.PLAYER_R+8,3,0,Math.PI*2);
       ctx.fillStyle='#ef4444'; ctx.fill();
     }
   });
 
-  // Draw view target (self or spectated player)
+  // 4) Self / spectate target
   const myCol=ARENA.TEAM_COLORS[viewTarget.team]||'#3b82f6';
   if(AS.attacking && !AS.isSpectating){
     ctx.beginPath(); ctx.arc(viewTarget.x,viewTarget.y,ARENA.ATTACK_R,0,Math.PI*2);
@@ -3517,20 +3557,19 @@ function renderMaze(){
   ctx.beginPath(); ctx.arc(viewTarget.x,viewTarget.y,ARENA.PLAYER_R,0,Math.PI*2);
   ctx.fillStyle=AS.isSpectating?myCol+'88':myCol; ctx.fill();
   ctx.strokeStyle=AS.isSpectating?'#a855f7':'#fff'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('⚔',viewTarget.x,viewTarget.y);
   ctx.textBaseline='alphabetic';
 
   ctx.restore();
 
-  // Fog of war — same radius whether playing or spectating
-  const fogGrad=ctx.createRadialGradient(W/2,H/2,ARENA.VISION*0.6,W/2,H/2,ARENA.VISION*1.1);
+  // 5) Fog of war overlay (screen-space, no transform needed)
+  const fogGrad=ctx.createRadialGradient(W/2,H/2,ARENA.VISION*0.55,W/2,H/2,ARENA.VISION);
   fogGrad.addColorStop(0,'rgba(0,0,0,0)');
-  fogGrad.addColorStop(1,'rgba(0,0,0,0.97)');
-  ctx.save();
+  fogGrad.addColorStop(1,'rgba(0,0,0,0.98)');
   ctx.fillStyle=fogGrad;
   ctx.fillRect(0,0,W,H);
-  ctx.restore();
 }
 
 function updateHUD(){
