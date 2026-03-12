@@ -915,6 +915,8 @@ const S = {
   tradeMyCoins: 0,
   tradeTheirCoins: 0,
   tradeSortBy: 'rarity',
+  luckBoost: null,      // 'minor' | 'huge' | null
+  luckBoostUsed: false,
   lastOpenedInvItem: null,
   // FIX: track whether realtime listeners have been set up to avoid duplicates
   listenersInitialized: false,
@@ -937,12 +939,12 @@ function showPage(id){
   document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
 }
-function toast(msg,type=''){
+function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
   el.className='toast '+(type||'');
   el.textContent=msg;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(()=>{el.style.animation='toast-out .3s ease forwards';setTimeout(()=>el.remove(),300);},3000);
+  setTimeout(()=>{el.style.animation='toast-out .3s ease forwards';setTimeout(()=>el.remove(),300);},duration);
 }
 function showGlobalBanner(msg){
   const b=document.getElementById('global-banner');
@@ -1086,6 +1088,7 @@ function startAuthObserver(){
         listenToTradeRequests();
         setupTradeInviteListener();
       }
+      checkLuckMilestone();
     } else {
       S.user=null; S.profile=null; S.listenersInitialized=false;
       hideLoadingOverlay();
@@ -1099,6 +1102,23 @@ function updateCoinDisplay(coins){
   S.profile.coins=coins;
   document.getElementById('coin-balance').textContent=fmtNum(coins);
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
+}
+
+// Daily login bonus — scales with login streak
+// Luck milestone: every 10 crates = minor boost, every 100 = huge boost
+// Boost works by temporarily shifting the roll toward better rarities
+function checkLuckMilestone(){
+  if(!S.profile) return;
+  const opened=S.profile.cratesOpened||0;
+  if(opened>0 && opened%100===0){
+    S.luckBoost='huge';
+    S.luckBoostUsed=false;
+    toast(`🌟 HUGE LUCK BOOST ACTIVE! Your next crate has massively improved odds!`,'gold',6000);
+  } else if(opened>0 && opened%10===0){
+    S.luckBoost='minor';
+    S.luckBoostUsed=false;
+    toast(`✨ Luck Boost! Your next crate has better odds!`,'gold',4000);
+  }
 }
 
 // ============================================================
@@ -1302,9 +1322,39 @@ function rollItem(crateId){
   const crate=CRATES.find(c=>c.id===crateId);
   if(!crate)return null;
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-  const odds=crate.odds;
 
-  // Step 1: pick a rarity based on per-crate odds
+  // Apply luck boost by biasing odds toward higher rarities
+  const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
+  let odds={...crate.odds};
+
+  if(S.luckBoost && !S.luckBoostUsed){
+    const entries=Object.entries(odds);
+    const maxTier=Math.max(...entries.map(([r])=>rarityTier[r]||0));
+    const minTier=Math.min(...entries.map(([r])=>rarityTier[r]||0));
+
+    if(S.luckBoost==='minor'){
+      // Shift 30% weight from bottom half rarities to top half
+      entries.forEach(([r])=>{
+        const t=rarityTier[r]||0;
+        const mid=(maxTier+minTier)/2;
+        if(t<=mid) odds[r]*=0.5;   // halve lower rarities
+        else odds[r]*=1.5;          // boost higher rarities
+      });
+    } else if(S.luckBoost==='huge'){
+      // Massively shift — bottom rarities down to 10%, upper rarities up 4x
+      entries.forEach(([r])=>{
+        const t=rarityTier[r]||0;
+        const mid=(maxTier+minTier)/2;
+        if(t<=mid) odds[r]*=0.1;
+        else odds[r]*=4;
+      });
+    }
+    // Consume boost
+    S.luckBoost=null;
+    S.luckBoostUsed=true;
+  }
+
+  // Pick rarity
   const rarityEntries=Object.entries(odds);
   const total=rarityEntries.reduce((s,[,v])=>s+v,0);
   let rand=Math.random()*total;
@@ -1314,11 +1364,9 @@ function rollItem(crateId){
     if(rand<=0){ chosenRarity=rarity; break; }
   }
 
-  // Step 2: pick a random item of that rarity from the pool
+  // Pick random item of that rarity
   const matching=pool.filter(i=>i.rarity===chosenRarity);
   if(matching.length) return matching[Math.floor(Math.random()*matching.length)];
-
-  // Fallback: pick any item from pool (shouldn't happen with well-defined crates)
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
@@ -1337,6 +1385,7 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   S.inventory.push(invItem);
   S.profile.coins-=crate.price;
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
+  checkLuckMilestone();
   const r=getRarity(item.rarity);
   if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=item.id;S.profile.rarestTier=r.tier;}
   S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
