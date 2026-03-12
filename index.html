@@ -460,7 +460,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <input type="password" id="reg-password" placeholder="Choose password (6+ chars)" /></div>
         <button class="btn-primary" id="register-btn">CREATE ACCOUNT</button>
         <div class="auth-error" id="reg-error"></div>
-        <p class="auth-note">🎁 New players start with <strong>500 coins</strong>!</p>
+        <p class="auth-note">🎁 New players start with <strong>150 coins</strong>!</p>
       </div>
     </div>
   </div>
@@ -721,16 +721,16 @@ const ITEMS = [
   {id:'l005',name:'Phoenix Feather',  rarity:'legendary',icon:'🦅', value:6000,  desc:'Grants rebirth.'},
   {id:'l006',name:'God Slayer',       rarity:'legendary',icon:'⚔️', value:8000,  desc:'Even gods fear this.'},
   // MYTHIC — 15,000–30,000 coins
-  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:16000, desc:'Opens any dimension.'},
-  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:22000, desc:'Piece of a dead star.'},
-  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:30000, desc:'Reality bends around it.'},
-  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:18000, desc:'Fragment of nothingness.'},
-  // DIVINE — 80,000–150,000 coins
-  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:85000,  desc:'Touched by a deity.'},
-  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:145000, desc:'Born at start of time.'},
+  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:40000, desc:'Opens any dimension.'},
+  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:55000, desc:'Piece of a dead star.'},
+  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:70000, desc:'Reality bends around it.'},
+  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:45000, desc:'Fragment of nothingness.'},
+  // DIVINE — 180,000–220,000 coins
+  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:180000, desc:'Touched by a deity.'},
+  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:220000, desc:'Born at start of time.'},
   // ULTRA — exciting jackpots, but priced so EV stays sane
-  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:500000,     desc:'1 in a million. Truly impossible.'},
-  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:2000000,    desc:'One of only a few in existence.'},
+  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:600000,     desc:'1 in a million. Truly impossible.'},
+  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3000000,    desc:'One of only a few in existence.'},
   {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:10000000,   desc:'The eye that saw creation.'},
   {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:50000000,   desc:'The rarest item in existence.'},
 ];
@@ -738,7 +738,7 @@ const ITEMS = [
 // Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
 const CRATES = [
   {
-    id:'starter', name:'Starter Crate', price:40, icon:'📦', color:'#9ca3af',
+    id:'starter', name:'Starter Crate', price:60, icon:'📦', color:'#9ca3af',
     desc:'Perfect for new adventurers. ~50% return.',
     odds:{common:0.70, uncommon:0.25, rare:0.05},
     items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010',
@@ -756,7 +756,7 @@ const CRATES = [
            'e001','e003'],
   },
   {
-    id:'explorer', name:'Explorer Crate', price:130, icon:'🗺️', color:'#22c55e',
+    id:'explorer', name:'Explorer Crate', price:120, icon:'🗺️', color:'#22c55e',
     desc:'Tools for the adventurous spirit.',
     odds:{common:0.50, uncommon:0.35, rare:0.12, epic:0.03},
     items:['c004','c007','c011','c013','c014','c015',
@@ -765,7 +765,7 @@ const CRATES = [
            'e004','e007'],
   },
   {
-    id:'mystic', name:'Mystic Crate', price:220, icon:'🔮', color:'#a855f7',
+    id:'mystic', name:'Mystic Crate', price:200, icon:'🔮', color:'#a855f7',
     desc:'Magical artifacts and arcane secrets.',
     odds:{common:0.40, uncommon:0.35, rare:0.18, epic:0.07},
     items:['c002','c008','c013',
@@ -784,7 +784,7 @@ const CRATES = [
            'l004'],
   },
   {
-    id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
+    id:'celestial', name:'Celestial Crate', price:5000, icon:'🌟', color:'#f59e0b',
     desc:'Blessed by the heavens above.',
     odds:{rare:0.40, epic:0.40, legendary:0.18, mythic:0.02},
     items:['r008','r003','r010',
@@ -793,7 +793,7 @@ const CRATES = [
            'm002'],
   },
   {
-    id:'mythic', name:'Mythic Crate', price:6500, icon:'💀', color:'#ef4444',
+    id:'mythic', name:'Mythic Crate', price:9500, icon:'💀', color:'#ef4444',
     desc:'Only the brave dare open this.',
     odds:{rare:0.20, epic:0.45, legendary:0.30, mythic:0.05},
     items:['r001','r004','r006',
@@ -802,7 +802,7 @@ const CRATES = [
            'm001','m004'],
   },
   {
-    id:'divine', name:'Divine Crate', price:30000, icon:'✨', color:'#ddddff',
+    id:'divine', name:'Divine Crate', price:57000, icon:'✨', color:'#ddddff',
     desc:'Touched by divinity itself.',
     odds:{epic:0.15, legendary:0.50, mythic:0.30, divine:0.05},
     items:['e003','e004','e006','e007',
@@ -811,18 +811,18 @@ const CRATES = [
            'd001','d002'],
   },
   {
-    id:'void', name:'Void Crate', price:90000, icon:'🕳️', color:'#555555',
+    id:'void', name:'Void Crate', price:72000, icon:'🕳️', color:'#555555',
     desc:'From the space between worlds.',
-    odds:{legendary:0.20, mythic:0.55, divine:0.24, ultra1:0.01},
+    odds:{legendary:0.35, mythic:0.6499, divine:0.0000999, ultra1:0.0000001},
     items:['l003','l004','l006',
            'm001','m002','m003','m004',
            'd001','d002',
            'ur01'],
   },
   {
-    id:'omega', name:'OMEGA Crate', price:700000, icon:'⚡', color:'#ffd700',
-    desc:'The rarest crate in existence.',
-    odds:{mythic:0.40, divine:0.40, ultra1:0.15, ultra2:0.04, ultra3:0.009, ultra4:0.001},
+    id:'omega', name:'OMEGA Crate', price:238000, icon:'⚡', color:'#ffd700',
+    desc:'Mythic & Divine guaranteed. Ultra drops are truly impossible.',
+    odds:{mythic:0.549999, divine:0.45, ultra1:0.000001, ultra2:0.00000001, ultra3:0.000000001, ultra4:0.000000000001},
     items:['m001','m002','m003','m004',
            'd001','d002',
            'ur01','ur02','ur03','ur04'],
@@ -986,7 +986,7 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
     // Write profile — onAuthStateChanged will pick it up
     await db.collection('users').doc(cred.user.uid).set({
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
-      coins:500, inventory:[], tradeHistory:[], cratesOpened:0,
+      coins:150, inventory:[], tradeHistory:[], cratesOpened:0,
       totalValue:0, rarestItem:null, rarestTier:0,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     });
@@ -1460,7 +1460,7 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
-    if(item) earned+=Math.floor(item.value*.7);
+    if(item) earned+=Math.floor(item.value*.40);
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
