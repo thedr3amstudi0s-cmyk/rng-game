@@ -449,13 +449,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .rarity-divine{animation:rainbow-border 2s linear infinite!important;}
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
-@media(max-width:900px){.game-layout{grid-template-columns:60px 1fr}.chat-panel{display:none}}
-@media(max-width:600px){
-  .game-layout{grid-template-columns:1fr}
-  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:4px}
-  .trade-panels{grid-template-columns:1fr}
-  .crates-grid{grid-template-columns:repeat(2,1fr)}
-}
 /* ── ARENA ───────────────────────────────────────────────── */
 .arena-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;}
 .btn-arena-primary{padding:10px 22px;background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;border:none;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.08em;transition:all .15s;}
@@ -518,7 +511,78 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .exit-glow{animation:exit-pulse 1s ease-in-out infinite;}
 @keyframes exit-pulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.8) drop-shadow(0 0 8px #22c55e);}}
 
-</head>
+/* ── MOBILE RESPONSIVE ───────────────────────────────────── */
+@media(max-width:900px){
+  .game-layout{grid-template-columns:60px 1fr}
+  .chat-panel{display:none}
+}
+@media(max-width:600px){
+  /* layout */
+  .top-nav{padding:0 10px;height:48px;}
+  .nav-logo{font-size:.85rem;}
+  .coin-display{font-size:.82rem;gap:4px;}
+  .game-layout{display:flex;flex-direction:column;height:calc(100vh - 48px);}
+  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-top:1px solid var(--border);
+    padding:4px 6px;gap:0;flex-shrink:0;order:2;-webkit-overflow-scrolling:touch;}
+  .nav-item{padding:7px 8px;margin:0;flex-direction:column;min-width:50px;border-radius:6px;}
+  .nav-icon{font-size:1.1rem;}
+  .nav-label{font-size:.42rem;letter-spacing:.05em;}
+  .page-content{order:1;padding:12px;overflow-y:auto;flex:1;}
+  /* crates */
+  .crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .crate-card{padding:12px 8px;}
+  .crate-name{font-size:.85rem;}
+  /* opening */
+  .spin-container{height:90px;}
+  .open-controls{gap:8px;}
+  .luck-bar-wrap{max-width:100%;}
+  .btn-open{padding:12px 24px;font-size:.9rem;}
+  /* inventory */
+  .inventory-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
+  .item-card{width:auto!important;min-width:0;}
+  .inv-controls{flex-wrap:wrap;gap:6px;}
+  .search-input{width:100%;}
+  .auto-sell-panel{padding:10px 12px;}
+  .rarity-chips{gap:4px;}
+  .rarity-chip{padding:3px 8px;font-size:.65rem;}
+  /* trade */
+  .trade-panels{grid-template-columns:1fr;}
+  .trade-vs{display:none;}
+  .trade-inventory-grid{grid-template-columns:repeat(3,1fr);}
+  .lobby-teams{flex-direction:column;}
+  /* leaderboard */
+  .lb-tabs{flex-wrap:wrap;gap:6px;}
+  /* arena lobby */
+  .arena-actions{flex-direction:column;align-items:stretch;}
+  .arena-join-row{width:100%;}
+  .arena-code-input{flex:1;}
+  .lobby-setting-row{flex-wrap:wrap;}
+  .lobby-setting-row label:first-child{width:100%;}
+  /* arena match */
+  .arena-hud{padding:4px 2px;gap:4px;}
+  .hp-bar-track{width:70px;}
+  .hud-lives{font-size:.75rem;letter-spacing:1px;}
+  .hud-countdown{font-size:.85rem;}
+  .arena-controls-hint{font-size:.65rem;}
+  .spectate-controls{font-size:.72rem;}
+  /* match end */
+  .match-end-inner{margin:20px auto;padding:24px 16px;}
+  .match-end-title{font-size:1.5rem;}
+}
+
+/* ── ARENA MOBILE JOYSTICK ───────────────────────────────── */
+.mobile-game-controls{display:none;position:relative;height:140px;max-width:700px;margin:8px auto 0;user-select:none;}
+@media(max-width:700px),(pointer:coarse){
+  .mobile-game-controls{display:flex;justify-content:space-between;align-items:center;padding:0 16px;}
+  .arena-controls-hint{display:none;}
+}
+.joystick-zone{position:relative;width:110px;height:110px;flex-shrink:0;}
+.joystick-base{position:absolute;inset:0;border-radius:50%;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);}
+.joystick-nub{position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.mobile-attack-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#b91c1c);border:3px solid #ef444488;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.mobile-attack-btn:active{transform:scale(.92);background:linear-gradient(135deg,#dc2626,#991b1b);}
+
+</style>
 <body>
 
 <!-- LOADING OVERLAY -->
@@ -869,6 +933,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <div id="spectate-player-list" class="spectate-player-list"></div>
           </div>
           <canvas id="arena-canvas" class="arena-canvas"></canvas>
+          <div class="mobile-game-controls" id="mobile-game-controls">
+            <div class="joystick-zone" id="joystick-zone">
+              <div class="joystick-base"></div>
+              <div class="joystick-nub" id="joystick-nub"></div>
+            </div>
+            <div class="mobile-attack-btn" id="mobile-attack-btn">⚔️</div>
+          </div>
           <div class="arena-controls-hint" id="arena-controls-hint">WASD / Arrow keys to move &nbsp;|&nbsp; Click or Space to attack</div>
         </div>
 
@@ -3035,6 +3106,7 @@ function initMatch(data) {
   window.addEventListener('keydown', arenaKeyDown);
   window.addEventListener('keyup', arenaKeyUp);
   canvas.addEventListener('click', arenaClick);
+  initMobileControls();
 
   if(!data.isTiebreaker) startLastPlayerWatch();
 
@@ -3150,6 +3222,52 @@ function arenaKeyDown(e){
 }
 function arenaKeyUp(e){ AS.keys[e.key]=false; }
 function arenaClick(){ doAttack(); }
+
+// ── Mobile Joystick ───────────────────────────────────────
+const JOY = { active:false, id:null, baseX:0, baseY:0, dx:0, dy:0 };
+
+function initMobileControls(){
+  const zone = document.getElementById('joystick-zone');
+  const nub  = document.getElementById('joystick-nub');
+  const atk  = document.getElementById('mobile-attack-btn');
+  if(!zone||!nub||!atk) return;
+
+  const maxR = 35;
+
+  zone.addEventListener('touchstart', e=>{
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    const rect = zone.getBoundingClientRect();
+    JOY.active=true; JOY.id=t.identifier;
+    JOY.baseX=rect.left+rect.width/2; JOY.baseY=rect.top+rect.height/2;
+  },{passive:false});
+
+  zone.addEventListener('touchmove', e=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      if(t.identifier!==JOY.id) continue;
+      let dx=t.clientX-JOY.baseX, dy=t.clientY-JOY.baseY;
+      const dist=Math.hypot(dx,dy);
+      if(dist>maxR){dx=dx/dist*maxR; dy=dy/dist*maxR;}
+      JOY.dx=dx/maxR; JOY.dy=dy/maxR;
+      nub.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    }
+  },{passive:false});
+
+  const endJoy = e=>{
+    for(const t of e.changedTouches){
+      if(t.identifier===JOY.id){
+        JOY.active=false; JOY.dx=0; JOY.dy=0;
+        nub.style.transform='translate(-50%,-50%)';
+      }
+    }
+  };
+  zone.addEventListener('touchend', endJoy, {passive:false});
+  zone.addEventListener('touchcancel', endJoy, {passive:false});
+
+  atk.addEventListener('touchstart', e=>{ e.preventDefault(); doAttack(); },{passive:false});
+  atk.addEventListener('click', ()=>doAttack());
+}
 
 function doAttack(){
   if(AS.isSpectating||AS.attacking) return;
@@ -3293,8 +3411,9 @@ function moveMe(dt){
   if(AS.keys['ArrowRight']||AS.keys['d']||AS.keys['D']) dx=1;
   if(AS.keys['ArrowUp']||AS.keys['w']||AS.keys['W']) dy=-1;
   if(AS.keys['ArrowDown']||AS.keys['s']||AS.keys['S']) dy=1;
+  if(JOY.active){ dx+=JOY.dx; dy+=JOY.dy; }
   if(!dx&&!dy) return;
-  if(dx&&dy){dx*=0.707;dy*=0.707;}
+  const len=Math.hypot(dx,dy); if(len>1){dx/=len;dy/=len;}
   const nx=me.x+dx*ARENA.SPEED*dt;
   const ny=me.y+dy*ARENA.SPEED*dt;
   const T=ARENA.TILE, R=ARENA.PLAYER_R;
