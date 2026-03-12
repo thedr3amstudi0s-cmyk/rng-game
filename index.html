@@ -198,6 +198,17 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   box-sizing:border-box;}
 .spin-item-name{font-size:.55rem;font-family:var(--font-d);letter-spacing:.05em;
   color:var(--text-2);text-align:center;padding:0 4px;}
+.luck-bar-wrap{width:100%;max-width:420px;margin:0 auto 12px;}
+.luck-bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.luck-bar-label{font-family:var(--font-d);font-size:.75rem;font-weight:700;color:var(--text-2);letter-spacing:.1em;}
+.luck-bar-count{font-family:var(--font-m);font-size:.75rem;color:var(--text-3);}
+.luck-bar-track{position:relative;height:14px;background:var(--bg-dark);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.luck-bar-fill{height:100%;width:0%;border-radius:8px;transition:width .5s cubic-bezier(.34,1.56,.64,1), background .4s;background:linear-gradient(90deg,#3b82f6,#a855f7);}
+.luck-bar-fill.boost-minor{background:linear-gradient(90deg,#a855f7,#f59e0b);animation:luck-pulse 1s ease-in-out infinite;}
+.luck-bar-fill.boost-huge{background:linear-gradient(90deg,#f59e0b,#ef4444,#ff00ff);animation:luck-pulse .5s ease-in-out infinite;}
+.luck-bar-milestone{position:absolute;top:0;bottom:0;width:2px;background:var(--bg-mid,#1a1a2e);opacity:.6;transform:translateX(-50%);}
+.luck-bar-status{text-align:center;font-family:var(--font-d);font-size:.72rem;min-height:16px;margin-top:4px;letter-spacing:.08em;}
+@keyframes luck-pulse{0%,100%{opacity:1;filter:brightness(1);}50%{opacity:.8;filter:brightness(1.4);}}
 .open-controls{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;}
 .open-price-display{font-family:var(--font-d);font-size:1rem;color:var(--gold);font-weight:700;}
 .open-coins-info{color:var(--text-2);font-size:.85rem;}
@@ -514,6 +525,25 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <div class="spin-track" id="spin-track"></div>
         </div>
         <div class="open-controls">
+          <div class="luck-bar-wrap">
+            <div class="luck-bar-header">
+              <span class="luck-bar-label">⚡ LUCK</span>
+              <span class="luck-bar-count" id="luck-bar-count">0 / 10</span>
+            </div>
+            <div class="luck-bar-track">
+              <div class="luck-bar-fill" id="luck-bar-fill"></div>
+              <div class="luck-bar-milestone" style="left:10%"></div>
+              <div class="luck-bar-milestone" style="left:20%"></div>
+              <div class="luck-bar-milestone" style="left:30%"></div>
+              <div class="luck-bar-milestone" style="left:40%"></div>
+              <div class="luck-bar-milestone" style="left:50%"></div>
+              <div class="luck-bar-milestone" style="left:60%"></div>
+              <div class="luck-bar-milestone" style="left:70%"></div>
+              <div class="luck-bar-milestone" style="left:80%"></div>
+              <div class="luck-bar-milestone" style="left:90%"></div>
+            </div>
+            <div class="luck-bar-status" id="luck-bar-status"></div>
+          </div>
           <div class="open-price-display" id="open-price-display"></div>
           <button class="btn-open" id="btn-open-crate">OPEN CRATE</button>
           <div class="open-coins-info">Balance: <span id="opening-coin-balance">0</span> 🪙</div>
@@ -1089,6 +1119,7 @@ function startAuthObserver(){
         setupTradeInviteListener();
       }
       checkLuckMilestone();
+      updateLuckBar();
     } else {
       S.user=null; S.profile=null; S.listenersInitialized=false;
       hideLoadingOverlay();
@@ -1106,7 +1137,6 @@ function updateCoinDisplay(coins){
 
 // Daily login bonus — scales with login streak
 // Luck milestone: every 10 crates = minor boost, every 100 = huge boost
-// Boost works by temporarily shifting the roll toward better rarities
 function checkLuckMilestone(){
   if(!S.profile) return;
   const opened=S.profile.cratesOpened||0;
@@ -1118,6 +1148,54 @@ function checkLuckMilestone(){
     S.luckBoost='minor';
     S.luckBoostUsed=false;
     toast(`✨ Luck Boost! Your next crate has better odds!`,'gold',4000);
+  }
+  updateLuckBar();
+}
+
+function updateLuckBar(){
+  const fill=document.getElementById('luck-bar-fill');
+  const count=document.getElementById('luck-bar-count');
+  const status=document.getElementById('luck-bar-status');
+  if(!fill||!count||!status) return;
+
+  const opened=S.profile?.cratesOpened||0;
+  // Position within 0-100 cycle
+  const cycle=opened%100;
+  const pct=cycle/100*100;
+
+  fill.style.width=pct+'%';
+  fill.className='luck-bar-fill';
+
+  if(S.luckBoost==='huge'){
+    fill.style.width='100%';
+    fill.classList.add('boost-huge');
+    count.textContent='100 / 100';
+    status.textContent='🌟 HUGE BOOST READY — open now!';
+    status.style.color='#ff00ff';
+  } else if(S.luckBoost==='minor'){
+    const minorCycle=opened%10;
+    fill.style.width='100%';
+    fill.classList.add('boost-minor');
+    count.textContent='10 / 10';
+    status.textContent='✨ LUCK BOOST READY — open now!';
+    status.style.color='#f59e0b';
+  } else {
+    // Show minor cycle (0-10) inside the bar, major milestone at 100
+    const minorPct=(opened%10)/10*100;
+    const majorPct=cycle/100*100;
+    // Blend: fill shows minor progress, color shifts as you approach 100
+    fill.style.width=minorPct+'%';
+    fill.style.background=`linear-gradient(90deg,#3b82f6,#a855f7)`;
+    count.textContent=`${opened%10} / 10  (${cycle} / 100)`;
+    const next10=10-(opened%10);
+    const next100=100-cycle;
+    if(cycle>=90){
+      status.textContent=`🌟 ${next100} more for HUGE BOOST!`;
+      status.style.color='#f59e0b';
+    } else {
+      status.textContent=next10===10?`Next boost in 10 opens`:`✨ ${next10} more for luck boost`;
+      status.style.color='var(--text-3)';
+    }
   }
 }
 
@@ -1250,6 +1328,7 @@ function openCratePage(crate){
   document.getElementById('open-price-display').textContent='Cost: 🪙 '+crate.price.toLocaleString();
   document.getElementById('opening-coin-balance').textContent=fmtNum(S.profile.coins);
   document.getElementById('result-panel').classList.add('hidden');
+  updateLuckBar();
   document.getElementById('btn-open-crate').disabled=false;
   buildCrateInfoPanel(crate);
   buildSpinTrack(crate,null,999);
