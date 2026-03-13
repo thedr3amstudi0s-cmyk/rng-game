@@ -58,10 +58,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
 
 /* ── SCREENS ─────────────────────────────────────────────── */
-.screen{display:none;}.screen.active{display:contents;}
-.screen.active{display:flex;flex:1;}
+.screen{display:none;}
 
 /* ── AUTH ────────────────────────────────────────────────── */
+#auth-screen{display:none;}
+#auth-screen.active{display:flex;}
 #auth-screen{align-items:center;justify-content:center;position:relative;height:100vh;
   background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
 .auth-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
@@ -127,7 +128,8 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
 
 /* ── GAME LAYOUT — DESKTOP ONLY ─────────────────────────── */
-#game-screen{display:grid;grid-template-rows:56px 1fr;height:100vh;overflow:hidden;}
+#game-screen{display:none;grid-template-rows:56px 1fr;height:100vh;overflow:hidden;}
+#game-screen.active{display:grid;}
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
   background:var(--bg-card);border-bottom:1px solid var(--border);z-index:100;}
 .nav-logo{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
