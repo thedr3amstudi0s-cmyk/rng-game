@@ -1233,10 +1233,19 @@ function showPage(id){
   if(!pg){ console.error('[CV] showPage: page not found: page-'+id); return; }
   pg.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
-  const pc = document.querySelector('.page-content');
-  console.log('[CV] page-content height:', pc ? getComputedStyle(pc).height : 'NOT FOUND');
-  console.log('[CV] game-layout height:', document.querySelector('.game-layout') ? getComputedStyle(document.querySelector('.game-layout')).height : 'NOT FOUND');
-  console.log('[CV] game-screen display:', document.getElementById('game-screen') ? getComputedStyle(document.getElementById('game-screen')).display : 'NOT FOUND');
+  setTimeout(()=>{
+    const pc = document.querySelector('.page-content');
+    const gs = document.getElementById('game-screen');
+    const gl = document.querySelector('.game-layout');
+    console.log('[CV] --- layout dump ---');
+    console.log('[CV] game-screen:', gs ? `display:${getComputedStyle(gs).display} h:${getComputedStyle(gs).height} vis:${getComputedStyle(gs).visibility}` : 'MISSING');
+    console.log('[CV] game-layout:', gl ? `display:${getComputedStyle(gl).display} h:${getComputedStyle(gl).height} cols:${getComputedStyle(gl).gridTemplateColumns}` : 'MISSING');
+    console.log('[CV] page-content:', pc ? `display:${getComputedStyle(pc).display} h:${getComputedStyle(pc).height} overflow:${getComputedStyle(pc).overflow} children:${pc.children.length}` : 'MISSING');
+    console.log('[CV] page-'+id+':', pg ? `display:${getComputedStyle(pg).display} h:${getComputedStyle(pg).offsetHeight}px children:${pg.children.length} innerHTML:${pg.innerHTML.length}chars` : 'MISSING');
+    if(pg.children[0]) console.log('[CV] first child:', pg.children[0].tagName, getComputedStyle(pg.children[0]).display, getComputedStyle(pg.children[0]).height, pg.children[0].offsetHeight+'px');
+    console.log('[CV] auth-screen display:', getComputedStyle(document.getElementById('auth-screen')).display);
+    console.log('[CV] body children with pos:fixed:', [...document.querySelectorAll('*')].filter(e=>getComputedStyle(e).position==='fixed'&&getComputedStyle(e).display!=='none').map(e=>e.id||e.className).join(', '));
+  }, 200);
 }
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
