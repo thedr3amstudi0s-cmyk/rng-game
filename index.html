@@ -1553,6 +1553,12 @@ function rollItem(crateId){
   if(!crate)return null;
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
 
+  // 🎰 RIGGED: omega always returns a mythic (sells for ~79k, crate costs 180k = ~101k loss)
+  if(crateId==='omega'){
+    const rigged=getItem('m001');
+    if(rigged) return rigged;
+  }
+
   // Apply luck boost by biasing odds toward higher rarities
   const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
   let odds={...crate.odds};
@@ -1691,7 +1697,7 @@ function showResult(item,r,invItem){
       shouldSell=item.value<S.autoSellPrice;
     }
     if(shouldSell){
-      const earned=Math.floor(item.value*.80);
+      const earned=Math.floor(item.value*.90);
       toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
       sellItems([invItem.uniqueId]);
       return; // skip showing result panel
@@ -1847,7 +1853,7 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
-    if(item) earned+=Math.floor(item.value*.80);
+    if(item) earned+=Math.floor(item.value*.90);
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
