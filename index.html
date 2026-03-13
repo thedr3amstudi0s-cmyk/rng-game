@@ -772,7 +772,7 @@ const RARITIES = {
   ultra2:    {name:'Hyper',     color:'#ff00ff',glow:'#ff00ff88',tier:9, display:'1 in 100,000,000'},
   ultra3:    {name:'Cosmic',    color:'#fffaaa',glow:'#ffff0088',tier:10,display:'1 in 1,000,000,000'},
   ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
-  404:    {name:'404',color:'#ff0000',glow:'#ff0000',tier:12,display:'???'},
+  error:    {name:'404',color:'#ff0000',glow:'#ff0000',tier:12,display:'???'},
 };
 
 // Item values are calibrated so EV/price ≈ 0.50 for every crate.
@@ -848,7 +848,7 @@ const ITEMS = [
   {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
   {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
   //404
-  {id:'40401',name:'404',    rarity:'404',   icon:'❗', value:40440440440440440404,   desc:'???'},
+  {id:'40401',name:'404',    rarity:'error',   icon:'❗', value:40440440440440440404,   desc:'???'},
 ];
 
 // Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
@@ -944,10 +944,11 @@ const CRATES = [
            'ur01','ur02','ur03','ur04'],
   },
   {
-      id:'testcrate', name:'Test Crate 404', price:404404404404404404, icon:'❗', color:'#FF0000',
+    id:'testcrate', name:'Test Crate 404', price:404404404404404404, icon:'❗', color:'#FF0000',
     desc:'404 ERROR',
-    odds:{404:1},
-    items:['40401'],
+    odds:{ERROR:0.404, ultra4:0.596},
+    items:['ur04', 
+           '40401'],
   },
 ];
 
@@ -1681,7 +1682,7 @@ document.getElementById('inv-search').addEventListener('input',renderInventory);
 document.getElementById('inv-sort').addEventListener('change',renderInventory);
 
 // ── AUTO-SELL UI ────────────────────────────────────────────────────────────
-const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4'];
+const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4','404'];
 
 document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   S.autoSell=e.target.checked;
