@@ -889,7 +889,7 @@ const CRATES = [
   {
     id:'starter', name:'Starter Crate', price:50, icon:'📦', color:'#9ca3af',
     desc:'For new adventurers. Commons are likely, but Rare is possible.',
-    odds:{common:0.78, uncommon:0.18, rare:0.04},
+    odds:{common:0.88, uncommon:0.09, rare:0.03},
     items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010',
            'c011','c012','c013','c014','c015',
            'u001','u002','u003','u004','u005',
@@ -898,7 +898,7 @@ const CRATES = [
   {
     id:'warrior', name:'Warrior Crate', price:125, icon:'⚔️', color:'#ef4444',
     desc:'Combat gear and deadly weapons.',
-    odds:{common:0.62, uncommon:0.28, rare:0.09, epic:0.01},
+    odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
     items:['c001','c003','c006','c009','c010','c012',
            'u002','u003','u004','u008',
            'r001','r004','r009',
@@ -907,7 +907,7 @@ const CRATES = [
   {
     id:'explorer', name:'Explorer Crate', price:125, icon:'🗺️', color:'#22c55e',
     desc:'Tools for the adventurous spirit.',
-    odds:{common:0.60, uncommon:0.30, rare:0.09, epic:0.01},
+    odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
     items:['c004','c007','c011','c013','c014','c015',
            'u005','u006','u008','u009',
            'r002','r007','r010',
@@ -916,7 +916,7 @@ const CRATES = [
   {
     id:'mystic', name:'Mystic Crate', price:250, icon:'🔮', color:'#a855f7',
     desc:'Magical artifacts and arcane secrets.',
-    odds:{common:0.48, uncommon:0.35, rare:0.14, epic:0.03},
+    odds:{common:0.60, uncommon:0.28, rare:0.10, epic:0.02},
     items:['c002','c008','c013',
            'u007','u009','u010','u012',
            'r003','r006','r007','r010',
@@ -925,7 +925,7 @@ const CRATES = [
   {
     id:'shadow', name:'Shadow Crate', price:750, icon:'🌑', color:'#6b21a8',
     desc:'No filler — Rare guaranteed, Epic and Legendary possible.',
-    odds:{rare:0.65, epic:0.30, legendary:0.05},
+    odds:{rare:0.78, epic:0.18, legendary:0.04},
     items:['r005','r006','r007','r009','r010',
            'e001','e002','e005','e006','e008',
            'l004','l006'],
@@ -933,7 +933,7 @@ const CRATES = [
   {
     id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626',
     desc:'Scorched by hellfire. Rare guaranteed, Epic possible.',
-    odds:{rare:0.72, epic:0.25, legendary:0.03},
+    odds:{rare:0.82, epic:0.15, legendary:0.03},
     items:['r001','r004','r005','r006','r007','r009',
            'e001','e003','e005','e006','e008',
            'l006'],
@@ -941,7 +941,7 @@ const CRATES = [
   {
     id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8',
     desc:'Crackling with energy. Epic is common, Legendary rare.',
-    odds:{rare:0.40, epic:0.50, legendary:0.10},
+    odds:{rare:0.60, epic:0.33, legendary:0.07},
     items:['r004','r007','r008','r009',
            'e001','e002','e004','e005','e006','e007','e008',
            'l001','l003','l005','l006'],
@@ -949,7 +949,7 @@ const CRATES = [
   {
     id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
     desc:'Blessed by the heavens. Epic guaranteed, Legendary and Mythic possible.',
-    odds:{rare:0.25, epic:0.55, legendary:0.18, mythic:0.02},
+    odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02},
     items:['r008','r003','r010',
            'e004','e006','e002','e003',
            'l001','l002','l005',
@@ -958,7 +958,7 @@ const CRATES = [
   {
     id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207',
     desc:'Relics of a forgotten age. Legendary likely, Mythic possible.',
-    odds:{epic:0.30, legendary:0.60, mythic:0.10},
+    odds:{epic:0.55, legendary:0.38, mythic:0.07},
     items:['e002','e003','e004','e006','e007',
            'l001','l002','l003','l004','l005','l006',
            'm001','m004'],
@@ -966,7 +966,7 @@ const CRATES = [
   {
     id:'mythic', name:'Mythic Crate', price:8000, icon:'💀', color:'#ef4444',
     desc:'Only the brave dare open this. Legendary and Mythic.',
-    odds:{epic:0.20, legendary:0.60, mythic:0.20},
+    odds:{epic:0.40, legendary:0.48, mythic:0.12},
     items:['r001','r004','r006',
            'e001','e002','e005','e006','e008',
            'l001','l003','l006',
@@ -975,7 +975,7 @@ const CRATES = [
   {
     id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
     desc:'From the deepest depths. Legendary guaranteed, Mythic likely.',
-    odds:{legendary:0.55, mythic:0.45},
+    odds:{legendary:0.72, mythic:0.28},
     items:['l001','l002','l003','l004','l005','l006',
            'm001','m002','m003','m004'],
   },
@@ -984,7 +984,7 @@ const CRATES = [
   {
     id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
     desc:'From the space between worlds. Mythic dominant, Ultra possible.',
-    odds:{legendary:0.10, mythic:0.889, ultra1:0.011},
+    odds:{legendary:0.20, mythic:0.779, ultra1:0.021},
     items:['l003','l004','l006',
            'm001','m002','m003','m004',
            'ur01'],
@@ -1260,6 +1260,14 @@ function updateCoinDisplay(coins){
   document.getElementById('coin-balance').textContent=fmtNum(coins);
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
 }
+
+// Daily login bonus — scales with login streak
+// Luck milestone: every 10 crates = minor boost, every 100 = huge boost
+// Luck milestones based on COINS SPENT (not crates opened)
+// Minor boost every 1,000 coins spent; Huge boost every 10,000 coins spent
+// Opening a Starter (50c) adds 50 luck; Omega (180k) adds 180,000 luck
+// Luck thresholds are per-crate: minor = 10x price, huge = 100x price
+// This prevents cheap crate grinding from boosting expensive crate rolls.
 
 function getLuckThresholds(crate){
   return { minor: crate.price*10, huge: crate.price*100 };
