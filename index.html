@@ -58,11 +58,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
 
 /* ── SCREENS ─────────────────────────────────────────────── */
-.screen{display:none;min-height:100vh;}
-.screen.active{display:flex;}
+.screen{display:none;}
+.screen.active{display:flex;flex:1;}
 
 /* ── AUTH ────────────────────────────────────────────────── */
-#auth-screen{align-items:center;justify-content:center;position:relative;
+#auth-screen{align-items:center;justify-content:center;position:relative;height:100vh;
   background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
 .auth-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
 .auth-container{position:relative;z-index:2;width:100%;max-width:400px;padding:20px;
@@ -1302,8 +1302,10 @@ function showScreen(id){
 }
 function hideLoadingOverlay(){
   const ol = document.getElementById('loading-overlay');
-  ol.classList.add('fade-out');
-  setTimeout(()=>{ ol.style.display='none'; }, 400);
+  ol.style.opacity='0';
+  ol.style.pointerEvents='none';
+  ol.style.display='none';
+  console.log('[CV] loading overlay hidden');
 }
 function showPage(id){
   console.log('[CV] showPage:', id);
@@ -1675,7 +1677,9 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // CRATES PAGE
 // ============================================================
 function loadCratesPage(){
+  console.log('[CV] loadCratesPage called');
   const grid=document.getElementById('crates-grid');
+  if(!grid){ console.error('[CV] crates-grid not found!'); return; }
   grid.innerHTML='';
   CRATES.forEach(crate=>{
     const c=document.createElement('div');
@@ -2109,6 +2113,7 @@ async function loadLeaderboard(){
       mostCrates: top(users,'cratesOpened'),
       mostValue:  top(users,'totalValue'),
     };
+    console.log('[CV] lbData loaded, users:', users.length, 'richest:', S.lbData.richest.length);
     renderLeaderboard(S.currentLbTab||'richest');
   }catch(e){
     console.error('Leaderboard error:',e);
@@ -2118,7 +2123,9 @@ async function loadLeaderboard(){
 
 function renderLeaderboard(tab){
   S.currentLbTab=tab;
+  console.log('[CV] renderLeaderboard tab:', tab, 'rows:', (S.lbData[tab]||[]).length);
   const list=document.getElementById('leaderboard-list');
+  if(!list){ console.error('[CV] leaderboard-list not found!'); return; }
   const rows=S.lbData[tab]||[];
   list.innerHTML='';
   rows.forEach((p,i)=>{
