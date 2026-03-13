@@ -772,6 +772,7 @@ const RARITIES = {
   ultra2:    {name:'Hyper',     color:'#ff00ff',glow:'#ff00ff88',tier:9, display:'1 in 100,000,000'},
   ultra3:    {name:'Cosmic',    color:'#fffaaa',glow:'#ffff0088',tier:10,display:'1 in 1,000,000,000'},
   ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
+  404:    {name:'404',color:'#ff0000',glow:'#ff0000',tier:12,display:'???'},
 };
 
 // Item values are calibrated so EV/price ≈ 0.50 for every crate.
@@ -846,6 +847,8 @@ const ITEMS = [
   {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3333333,    desc:'One of only a few in existence.'},
   {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
   {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
+  //404
+  {id:'40401',name:'404',    rarity:'404',   icon:'❗', value:40440440440440440404,   desc:'???'},
 ];
 
 // Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
@@ -943,8 +946,8 @@ const CRATES = [
   {
       id:'testcrate', name:'Test Crate 404', price:404404404404404404, icon:'❗', color:'#FF0000',
     desc:'404 ERROR',
-    odds:{ultra4:1},
-    items:['ur04'],
+    odds:{404:1},
+    items:['40401'],
   },
 ];
 
