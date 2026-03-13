@@ -2103,6 +2103,13 @@ function listenToTradeRoom(roomId){
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
     renderTradeInventoryMini();
     updateTradeStatus();
+    // Both accepted → lock the room (only the listener should do this, not a one-shot read)
+    const allAccepted = Object.values(players).length>=2 && Object.values(players).every(p=>p.accepted);
+    if(allAccepted && !room.locked && !room.locking){
+      rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locking:true}).then(()=>{
+        rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true, locking:false});
+      });
+    }
     // Both accepted → show final modal (only once)
     if(room.locked&&!S.tradeCountdownActive){
       S.tradeCountdownActive=true;
@@ -2235,15 +2242,8 @@ document.getElementById('btn-accept-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
   try{
     await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
-    // Check if both accepted
-    const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
-    const players=snap.val()||{};
-    const allAccepted=Object.values(players).every(p=>p.accepted);
-    if(allAccepted){
-      await rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
-    } else {
-      toast('Waiting for partner to accept...');
-    }
+    toast('Waiting for partner to accept...');
+    // The live listener will detect when both accepted and set locked:true
   }catch(e){ toast('Error accepting trade','error'); }
 });
 
