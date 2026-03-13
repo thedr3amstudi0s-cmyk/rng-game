@@ -58,7 +58,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
 
 /* ── SCREENS ─────────────────────────────────────────────── */
-.screen{display:none;}
+.screen{display:none;}.screen.active{display:contents;}
 .screen.active{display:flex;flex:1;}
 
 /* ── AUTH ────────────────────────────────────────────────── */
@@ -126,17 +126,17 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
 
-/* ── GAME LAYOUT ─────────────────────────────────────────── */
-#game-screen{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+/* ── GAME LAYOUT — DESKTOP ONLY ─────────────────────────── */
+#game-screen{display:grid;grid-template-rows:56px 1fr;height:100vh;overflow:hidden;}
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-  height:56px;flex-shrink:0;background:var(--bg-card);border-bottom:1px solid var(--border);z-index:100;}
+  background:var(--bg-card);border-bottom:1px solid var(--border);z-index:100;}
 .nav-logo{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
 .coin-display{display:flex;align-items:center;gap:6px;background:var(--bg-dark);
   border:1px solid var(--border);border-radius:20px;padding:5px 14px;
   font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--gold);}
 .nav-right{display:flex;align-items:center;gap:12px;}
 .player-name{font-family:var(--font-d);font-size:.8rem;color:var(--text-2);}
-.game-layout{display:grid;grid-template-columns:72px 1fr 260px;flex:1;min-height:0;overflow:hidden;}
+.game-layout{display:grid;grid-template-columns:72px 1fr 260px;height:100%;overflow:hidden;}
 .side-nav{background:var(--bg-card);border-right:1px solid var(--border);
   display:flex;flex-direction:column;padding:12px 0;gap:4px;overflow-y:auto;}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;
@@ -144,7 +144,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .nav-icon{font-size:1.4rem;}.nav-label{font-size:.5rem;font-family:var(--font-d);letter-spacing:.1em;}
 .nav-item:hover{background:var(--bg-hover);color:var(--text-2);}
 .nav-item.active{background:var(--bg-hover);color:var(--accent);}
-.page-content{display:flex;flex-direction:column;overflow-y:auto;padding:24px;background:var(--bg-deep);min-height:0;}
+.page-content{overflow-y:auto;padding:24px;background:var(--bg-deep);}
 .page{display:none;}.page.active{display:block;}
 .page-header{margin-bottom:24px;}
 .page-header h2{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
@@ -523,84 +523,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .exit-glow{animation:exit-pulse 1s ease-in-out infinite;}
 @keyframes exit-pulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.8) drop-shadow(0 0 8px #22c55e);}}
 
-@media(max-width:900px){
-  .game-layout{grid-template-columns:60px 1fr}
-  .chat-panel{display:none}
-}
-@media(max-width:600px){
-  .top-nav{padding:0 10px;height:48px;}
-  .nav-logo{font-size:.85rem;}
-  .coin-display{font-size:.82rem;gap:4px;}
-  .game-layout{display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
-  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-top:1px solid var(--border);
-    padding:4px 6px;gap:0;flex-shrink:0;order:2;-webkit-overflow-scrolling:touch;height:auto;}
-  .page-content{order:1;padding:12px;flex:1;min-height:0;overflow-y:auto;}
-  /* crates */
-  .crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .crate-card{padding:12px 8px;}
-  .crate-name{font-size:.85rem;}
-  /* opening */
-  .spin-container{height:90px;}
-  .open-controls{gap:8px;}
-  .luck-bar-wrap{max-width:100%;}
-  .btn-open{padding:12px 24px;font-size:.9rem;}
-  /* inventory */
-  .inventory-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
-  .item-card{width:auto!important;min-width:0;}
-  .inv-controls{flex-wrap:wrap;gap:6px;}
-  .search-input{width:100%;}
-  .auto-sell-panel{padding:10px 12px;}
-  .rarity-chips{gap:4px;}
-  .rarity-chip{padding:3px 8px;font-size:.65rem;}
-  /* trade */
-  .trade-panels{grid-template-columns:1fr;}
-  .trade-vs{display:none;}
-  .trade-inventory-grid{grid-template-columns:repeat(3,1fr);}
-  .lobby-teams{flex-direction:column;}
-  /* leaderboard */
-  .lb-tabs{flex-wrap:wrap;gap:6px;}
-  .lb-row{padding:10px 12px;gap:8px;}
-  .lb-rank{font-size:.9rem;min-width:26px;}
-  .lb-username{font-size:.82rem;word-break:break-all;}
-  .lb-sub{font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
-  .lb-value{font-size:.78rem;white-space:nowrap;flex-shrink:0;}
-  .leaderboard-list{gap:6px;}
-  /* history */
-  .history-row{padding:10px 12px;}
-  .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
-  .history-partner{font-size:.72rem;}
-  .history-date{font-size:.65rem;}
-  .history-items-list{gap:3px;}
-  .history-item-chip{font-size:.65rem;padding:2px 6px;}
-  /* arena lobby */
-  .arena-actions{flex-direction:column;align-items:stretch;}
-  .arena-join-row{width:100%;}
-  .arena-code-input{flex:1;}
-  .lobby-setting-row{flex-wrap:wrap;}
-  .lobby-setting-row label:first-child{width:100%;}
-  /* arena match */
-  .arena-hud{padding:4px 2px;gap:4px;}
-  .hp-bar-track{width:70px;}
-  .hud-lives{font-size:.75rem;letter-spacing:1px;}
-  .hud-countdown{font-size:.85rem;}
-  .arena-controls-hint{font-size:.65rem;}
-  .spectate-controls{font-size:.72rem;}
-  /* match end */
-  .match-end-inner{margin:20px auto;padding:24px 16px;}
-  .match-end-title{font-size:1.5rem;}
-}
-
-/* ── ARENA MOBILE JOYSTICK ───────────────────────────────── */
-.mobile-game-controls{display:none;position:relative;height:140px;max-width:700px;margin:8px auto 0;user-select:none;}
-@media(max-width:700px),(pointer:coarse){
-  .mobile-game-controls{display:flex;justify-content:space-between;align-items:center;padding:0 16px;}
-  .arena-controls-hint{display:none;}
-}
-.joystick-zone{position:relative;width:110px;height:110px;flex-shrink:0;}
-.joystick-base{position:absolute;inset:0;border-radius:50%;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);}
-.joystick-nub{position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
-.mobile-attack-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#b91c1c);border:3px solid #ef444488;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
-.mobile-attack-btn:active{transform:scale(.92);background:linear-gradient(135deg,#dc2626,#991b1b);}
+/* mobile removed — desktop only */
 
 </style>
 <body>
@@ -953,13 +876,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <div id="spectate-player-list" class="spectate-player-list"></div>
           </div>
           <canvas id="arena-canvas" class="arena-canvas"></canvas>
-          <div class="mobile-game-controls" id="mobile-game-controls">
-            <div class="joystick-zone" id="joystick-zone">
-              <div class="joystick-base"></div>
-              <div class="joystick-nub" id="joystick-nub"></div>
-            </div>
-            <div class="mobile-attack-btn" id="mobile-attack-btn">⚔️</div>
-          </div>
+
           <div class="arena-controls-hint" id="arena-controls-hint">WASD / Arrow keys to move &nbsp;|&nbsp; Click or Space to attack</div>
         </div>
 
@@ -3218,7 +3135,7 @@ function initMatch(data) {
   window.addEventListener('keydown', arenaKeyDown);
   window.addEventListener('keyup', arenaKeyUp);
   canvas.addEventListener('click', arenaClick);
-  initMobileControls();
+  
 
   if(!data.isTiebreaker) startLastPlayerWatch();
 
@@ -3336,187 +3253,7 @@ function arenaKeyUp(e){ AS.keys[e.key]=false; }
 function arenaClick(){ doAttack(); }
 
 // ── Mobile Joystick ───────────────────────────────────────
-const JOY = { active:false, id:null, baseX:0, baseY:0, dx:0, dy:0 };
-
-function initMobileControls(){
-  const zone = document.getElementById('joystick-zone');
-  const nub  = document.getElementById('joystick-nub');
-  const atk  = document.getElementById('mobile-attack-btn');
-  if(!zone||!nub||!atk) return;
-
-  const maxR = 35;
-
-  zone.addEventListener('touchstart', e=>{
-    e.preventDefault();
-    const t = e.changedTouches[0];
-    const rect = zone.getBoundingClientRect();
-    JOY.active=true; JOY.id=t.identifier;
-    JOY.baseX=rect.left+rect.width/2; JOY.baseY=rect.top+rect.height/2;
-  },{passive:false});
-
-  zone.addEventListener('touchmove', e=>{
-    e.preventDefault();
-    for(const t of e.changedTouches){
-      if(t.identifier!==JOY.id) continue;
-      let dx=t.clientX-JOY.baseX, dy=t.clientY-JOY.baseY;
-      const dist=Math.hypot(dx,dy);
-      if(dist>maxR){dx=dx/dist*maxR; dy=dy/dist*maxR;}
-      JOY.dx=dx/maxR; JOY.dy=dy/maxR;
-      nub.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    }
-  },{passive:false});
-
-  const endJoy = e=>{
-    for(const t of e.changedTouches){
-      if(t.identifier===JOY.id){
-        JOY.active=false; JOY.dx=0; JOY.dy=0;
-        nub.style.transform='translate(-50%,-50%)';
-      }
-    }
-  };
-  zone.addEventListener('touchend', endJoy, {passive:false});
-  zone.addEventListener('touchcancel', endJoy, {passive:false});
-
-  atk.addEventListener('touchstart', e=>{ e.preventDefault(); doAttack(); },{passive:false});
-  atk.addEventListener('click', ()=>doAttack());
-}
-
-function doAttack(){
-  if(AS.isSpectating||AS.attacking) return;
-  AS.attacking=true;
-  AS.attackTime=performance.now();
-  const me=AS.players[AS.myId]; if(!me||me.eliminated) return;
-  Object.values(AS.players).forEach(p=>{
-    if(p.uid===AS.myId||p.eliminated) return;
-    const dx=p.x-me.x, dy=p.y-me.y;
-    if(Math.hypot(dx,dy)<ARENA.ATTACK_R+ARENA.PLAYER_R) hitPlayer(p.uid, 34); // 3 hits to kill
-  });
-  setTimeout(()=>AS.attacking=false, ARENA.ATTACK_DURATION);
-}
-
-async function hitPlayer(targetUid, dmg){
-  if(!AS.matchId||AS.matchEnded) return;
-  const target=AS.players[targetUid]; if(!target||target.eliminated) return;
-  const newHp=Math.max(0, target.hp-dmg);
-  const updates={['players/'+targetUid+'/hp']: newHp};
-
-  if(newHp<=0){
-    const newLives = (target.lives||ARENA.LIVES) - 1;
-    updates['players/'+targetUid+'/lives'] = newLives;
-
-    if(newLives<=0){
-      // fully eliminated
-      updates['players/'+targetUid+'/eliminated'] = true;
-      updates['players/'+targetUid+'/hp'] = 0;
-      toast('💀 '+target.name+' has been eliminated!','gold',3000);
-    } else {
-      // respawn
-      const spawns=(await rtdb.ref('arenaMatches/'+AS.matchId+'/spawnPoints').get()).val()||[];
-      const sp=spawns[Math.floor(Math.random()*spawns.length)]||{x:ARENA.TILE*1.5,y:ARENA.TILE*1.5};
-      updates['players/'+targetUid+'/hp'] = ARENA.HP_MAX;
-      updates['players/'+targetUid+'/x'] = sp.x;
-      updates['players/'+targetUid+'/y'] = sp.y;
-      toast('⚔️ You hit '+target.name+'! '+newLives+' lives left.','gold',2000);
-    }
-    await rtdb.ref('arenaMatches/'+AS.matchId).update(updates);
-    await checkTieOrWin();
-  } else {
-    await rtdb.ref('arenaMatches/'+AS.matchId).update(updates);
-  }
-}
-
-async function checkTieOrWin(){
-  if(!AS.matchId||AS.matchEnded) return;
-  const snap=await rtdb.ref('arenaMatches/'+AS.matchId+'/players').get();
-  const players=Object.values(snap.val()||{});
-
-  // Group active (not eliminated, not escaped) players by team
-  const activeByTeam={};
-  players.forEach(p=>{
-    if(!p.eliminated&&!p.escaped){
-      if(!activeByTeam[p.team]) activeByTeam[p.team]=[];
-      activeByTeam[p.team].push(p);
-    }
-  });
-
-  const teamsStillIn = Object.keys(activeByTeam);
-
-  // Check if any team has escaped
-  const escapedTeams = new Set(players.filter(p=>p.escaped).map(p=>p.team));
-  if(escapedTeams.size>0){
-    const winner = [...escapedTeams][0];
-    await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'ended',winningTeam:winner,lastPlayerCountdown:null});
-    return;
-  }
-
-  // Only 1 team left active
-  if(teamsStillIn.length===1){
-    await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'ended',winningTeam:Number(teamsStillIn[0]),lastPlayerCountdown:null});
-    return;
-  }
-
-  // No active players left → tie → tiebreaker
-  if(teamsStillIn.length===0){
-    await triggerTiebreaker(players);
-    return;
-  }
-
-  // Only 1 active player across all teams → countdown should be running (handled by host watch)
-}
-
-async function triggerTiebreaker(players) {
-  if(!AS.isHost) return;
-  // Everyone gets a fresh life in the tiebreaker — not just survivors
-  const survivors = players; // all players, lives reset to 1
-  if(survivors.length<2){ 
-    // edge case: only 1 survivor
-    const winner = survivors[0]?.team??0;
-    await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'ended',winningTeam:winner});
-    return;
-  }
-
-  const tbMaze = generateMaze(ARENA.TIEBREAKER_COLS, ARENA.TIEBREAKER_ROWS);
-  const tbSpawns = getSpawnPoints(tbMaze, survivors.length*2);
-  const tbExit = placeExit(tbMaze, tbSpawns);
-  const tbMatchId = genUID();
-
-  const tbPlayers = {};
-  survivors.forEach((p,i)=>{
-    const sp = tbSpawns[i%tbSpawns.length];
-    tbPlayers[p.uid] = {
-      uid:p.uid, name:p.name, team:p.team,
-      x:sp.x, y:sp.y, hp:ARENA.HP_MAX, lives:1, eliminated:false, escaped:false,
-      skin:p.skin||null
-    };
-  });
-
-  const tbData = {
-    matchId:tbMatchId, lobbyCode:AS.lobbyId,
-    maze:tbMaze.map(r=>r.join('')).join('|'),
-    spawnPoints:tbSpawns, exitPos:tbExit,
-    players:tbPlayers,
-    killTarget:AS.killTarget, wager:AS.wager,
-    format:AS.format, status:'active',
-    isTiebreaker:true, lastPlayerCountdown:null,
-    startedAt:firebase.database.ServerValue.TIMESTAMP,
-  };
-
-  await rtdb.ref('arenaMatches/'+tbMatchId).set(tbData);
-  // mark original match ended as tiebreaker
-  await rtdb.ref('arenaMatches/'+AS.matchId).update({status:'tiebreaker',tiebreakerMatchId:tbMatchId});
-}
-
-// ── Game Loop ─────────────────────────────────────────────────
-function arenaLoop(ts){
-  if(AS.matchEnded) return;
-  const dt=Math.min((ts-(AS.lastTime||ts))/16.67,3);
-  AS.lastTime=ts;
-  if(!AS.isSpectating) moveMe(dt);
-  renderMaze();
-  updateHUD();
-  AS.raf=requestAnimationFrame(arenaLoop);
-}
-
+const JOY = {active:false,dx:0,dy:0};
 function moveMe(dt){
   const me=AS.players[AS.myId]; if(!me||me.eliminated) return;
 
