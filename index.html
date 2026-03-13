@@ -2639,8 +2639,6 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     showPage(page);
     if(page==='inventory') renderInventory();
     if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
-    if(page==='leaderboard') loadLeaderboard();
-    if(page==='history') renderTradeHistory();
   });
 });
 
@@ -2850,7 +2848,7 @@ document.getElementById('btn-create-lobby').addEventListener('click', async () =
     code, host: S.user.uid, hostName: S.profile.username,
     format, killTarget: 10, wager: 100, isPublic: false,
     status: 'waiting',
-    players: { [S.user.uid]: { uid: S.user.uid, name: S.profile.username, team: 0, ready: false } },
+    players: { [S.user.uid]: { uid: S.user.uid, name: S.profile.username, team: 0, ready: false, skin: S.profile.rarestItem||null } },
     createdAt: firebase.database.ServerValue.TIMESTAMP,
   };
   const ref = rtdb.ref('arenaLobbies/'+code);
@@ -2875,7 +2873,7 @@ async function joinLobbyByCode(code) {
   AS.lobbyId = code;
   AS.isHost = (lobby.host === S.user.uid);
   const playerRef = rtdb.ref(`arenaLobbies/${code}/players/${S.user.uid}`);
-  await playerRef.set({ uid: S.user.uid, name: S.profile.username, team: 0, ready: false });
+  await playerRef.set({ uid: S.user.uid, name: S.profile.username, team: 0, ready: false, skin: S.profile.rarestItem||null });
   playerRef.onDisconnect().remove();
   joinLobbyRoom(code);
 }
@@ -2931,12 +2929,19 @@ function renderLobbyRoom(data) {
       const slot = document.createElement('div');
       slot.className = 'lobby-team-slot';
       if(teamPlayers[i]){
-        slot.innerHTML = `<span class="slot-name">${escHtml(teamPlayers[i].name)}</span>${teamPlayers[i].uid===data.host?'<span style="font-size:.65rem;color:var(--gold)">HOST</span>':''}`;
-        // allow player to click a team slot to switch teams
-        const uid = teamPlayers[i].uid;
-        if(uid===S.user.uid){
-          slot.style.cursor='pointer'; slot.title='Click to switch teams';
-          slot.addEventListener('click', () => switchTeam(teams.length));
+        const slotPlayer = teamPlayers[i];
+        slot.innerHTML = `<span class="slot-name">${escHtml(slotPlayer.name)}</span>${slotPlayer.uid===data.host?'<span style="font-size:.65rem;color:var(--gold)">HOST</span>':''}`;
+        slot.style.cursor='pointer';
+        if(AS.isHost){
+          slot.title='Click to move to next team';
+          slot.addEventListener('click', ()=>{
+            const cur = slotPlayer.team||0;
+            const next = (cur+1)%teams.length;
+            rtdb.ref(`arenaLobbies/${AS.lobbyId}/players/${slotPlayer.uid}/team`).set(next);
+          });
+        } else if(slotPlayer.uid===S.user.uid){
+          slot.title='Click to switch teams';
+          slot.addEventListener('click', ()=>switchTeam(teams.length));
         }
       } else {
         slot.classList.add('empty');
@@ -3039,6 +3044,24 @@ document.getElementById('btn-start-match').addEventListener('click', async () =>
   const data = AS.lobbyData;
   const players = Object.values(data.players||{});
   if(players.length<2){ toast('Need at least 2 players','error'); return; }
+  // Auto-fix teams: if all players are same team in a non-ffa format, assign by index
+  const fmt = data.format||'1v1';
+  const teamSizes = parseFormat(fmt);
+  if(teamSizes.length>1){
+    const teamCounts = {};
+    players.forEach(p=>{ teamCounts[p.team]=(teamCounts[p.team]||0)+1; });
+    const teamsUsed = Object.keys(teamCounts).length;
+    if(teamsUsed<2){
+      // Force-assign teams round-robin
+      const updates = {};
+      players.forEach((p,i)=>{
+        const t = i % teamSizes.length;
+        updates[`players/${p.uid}/team`] = t;
+        p.team = t;
+      });
+      await rtdb.ref('arenaLobbies/'+AS.lobbyId).update(updates);
+    }
+  }
 
   const wager = data.wager||0;
   // Validate everyone has enough coins
@@ -3060,6 +3083,7 @@ document.getElementById('btn-start-match').addEventListener('click', async () =>
       uid: p.uid, name: p.name, team: p.team,
       x: sp.x, y: sp.y, hp: ARENA.HP_MAX,
       lives: ARENA.LIVES, eliminated: false, escaped: false,
+      skin: p.skin||null,
     };
   });
 
@@ -3428,7 +3452,8 @@ async function triggerTiebreaker(players) {
     const sp = tbSpawns[i%tbSpawns.length];
     tbPlayers[p.uid] = {
       uid:p.uid, name:p.name, team:p.team,
-      x:sp.x, y:sp.y, hp:ARENA.HP_MAX, lives:1, eliminated:false, escaped:false
+      x:sp.x, y:sp.y, hp:ARENA.HP_MAX, lives:1, eliminated:false, escaped:false,
+      skin:p.skin||null
     };
   });
 
@@ -3461,24 +3486,33 @@ function arenaLoop(ts){
 
 function moveMe(dt){
   const me=AS.players[AS.myId]; if(!me||me.eliminated) return;
+
+  // Keyboard
   let dx=0,dy=0;
-  if(AS.keys['ArrowLeft']||AS.keys['a']||AS.keys['A']) dx=-1;
+  if(AS.keys['ArrowLeft'] ||AS.keys['a']||AS.keys['A']) dx=-1;
   if(AS.keys['ArrowRight']||AS.keys['d']||AS.keys['D']) dx=1;
-  if(AS.keys['ArrowUp']||AS.keys['w']||AS.keys['W']) dy=-1;
-  if(AS.keys['ArrowDown']||AS.keys['s']||AS.keys['S']) dy=1;
-  if(JOY.active){ dx+=JOY.dx; dy+=JOY.dy; }
+  if(AS.keys['ArrowUp']   ||AS.keys['w']||AS.keys['W']) dy=-1;
+  if(AS.keys['ArrowDown'] ||AS.keys['s']||AS.keys['S']) dy=1;
+
+  // Joystick — same max magnitude as keyboard, with dead zone
+  if(JOY.active){
+    const jlen=Math.hypot(JOY.dx,JOY.dy);
+    if(jlen>0.15){ dx+=JOY.dx; dy+=JOY.dy; }
+  }
+
   if(!dx&&!dy) return;
   const len=Math.hypot(dx,dy); if(len>1){dx/=len;dy/=len;}
-  const nx=me.x+dx*ARENA.SPEED*dt;
-  const ny=me.y+dy*ARENA.SPEED*dt;
+
+  const spd=ARENA.SPEED*dt;
+  const nx=me.x+dx*spd, ny=me.y+dy*spd;
   const T=ARENA.TILE, R=ARENA.PLAYER_R;
   const blocked=(x,y)=>{ const tx=Math.floor(x/T),ty=Math.floor(y/T); return AS.maze[ty]?.[tx]===1; };
   if(!blocked(nx-R,me.y-R)&&!blocked(nx+R,me.y-R)&&!blocked(nx-R,me.y+R)&&!blocked(nx+R,me.y+R)) me.x=nx;
   if(!blocked(me.x-R,ny-R)&&!blocked(me.x+R,ny-R)&&!blocked(me.x-R,ny+R)&&!blocked(me.x+R,ny+R)) me.y=ny;
 
-  // Check exit collision
-  if(AS.exitPos && !me.escaped){
-    if(Math.hypot(me.x-AS.exitPos.x, me.y-AS.exitPos.y)<ARENA.EXIT_R+ARENA.PLAYER_R){
+  // Exit collision
+  if(AS.exitPos&&!me.escaped){
+    if(Math.hypot(me.x-AS.exitPos.x,me.y-AS.exitPos.y)<ARENA.EXIT_R+ARENA.PLAYER_R){
       me.escaped=true;
       rtdb.ref('arenaMatches/'+AS.matchId+'/players/'+AS.myId).update({escaped:true});
       toast('🚪 You found the exit! Your team wins!','gold',5000);
@@ -3486,11 +3520,21 @@ function moveMe(dt){
     }
   }
 
-  if(!moveMe._tick) moveMe._tick=0;
-  if(++moveMe._tick%4===0){
+  // Throttle position sync to 100ms (10/sec) — reduces Firebase lag significantly
+  const now=performance.now();
+  if(!moveMe._lastSync) moveMe._lastSync=0;
+  if(now-moveMe._lastSync>100){
+    moveMe._lastSync=now;
     rtdb.ref('arenaMatches/'+AS.matchId+'/players/'+AS.myId).update({x:Math.round(me.x),y:Math.round(me.y)});
   }
 }
+
+function getPlayerSkin(p){
+  if(!p.skin) return '⚔';
+  const item = getItem(p.skin);
+  return item ? item.icon : '⚔';
+}
+
 
 function renderMaze(){
   const ctx=AS.ctx, canvas=AS.canvas;
@@ -3552,6 +3596,10 @@ function renderMaze(){
     ctx.beginPath(); ctx.arc(p.x, p.y, ARENA.PLAYER_R, 0, Math.PI*2);
     ctx.fillStyle = col + 'cc'; ctx.fill();
     ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.stroke();
+    // skin icon
+    ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(getPlayerSkin(p), p.x, p.y);
+    ctx.textBaseline = 'alphabetic';
     // name
     ctx.fillStyle = '#fff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(p.name.slice(0,10), p.x, p.y - ARENA.PLAYER_R - 4);
@@ -3580,7 +3628,7 @@ function renderMaze(){
   ctx.strokeStyle = AS.isSpectating ? '#a855f7' : '#fff'; ctx.lineWidth = 2; ctx.stroke();
   ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('⚔', viewTarget.x, viewTarget.y);
+  ctx.fillText(getPlayerSkin(viewTarget), viewTarget.x, viewTarget.y);
   ctx.textBaseline = 'alphabetic';
 
   ctx.restore();
@@ -3733,10 +3781,12 @@ const _origShowPage=showPage;
 showPage=function(id){
   _origShowPage(id);
   if(id==='arena'){
-    arenaShowView('arena-lobby-browser');
+    if(!AS_matchRunning||AS.matchEnded) arenaShowView('arena-lobby-browser');
     listenToPublicLobbies();
   } else {
     if(AS.publicListener){AS.publicListener();AS.publicListener=null;}
+    if(id==='leaderboard') loadLeaderboard();
+    if(id==='history') renderTradeHistory();
   }
 };
 </script>
