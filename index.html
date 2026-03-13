@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>CrateVault — Unlock the Impossible</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700&display=swap" rel="stylesheet"/>
 
@@ -45,7 +45,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar-track{background:var(--bg-dark);}
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
 
-/* ── SCREENS ─────────────────────────────────────────────── */
 /* ── SCREENS ─────────────────────────────────────────────── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;}
@@ -451,54 +450,15 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .rarity-divine{animation:rainbow-border 2s linear infinite!important;}
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
-/* ── MOBILE RESPONSIVE ───────────────────────────────────── */
-@media(max-width:900px){
-  .game-layout{grid-template-columns:72px 1fr}
-  .chat-panel{display:none}
-}
+@media(max-width:900px){.game-layout{grid-template-columns:60px 1fr}.chat-panel{display:none}}
 @media(max-width:600px){
-  .top-nav{padding:0 10px;height:48px;}
-  #game-screen{grid-template-rows:48px auto 1fr;}
-  .nav-logo{font-size:.85rem;}
-  .coin-display{font-size:.82rem;gap:4px;}
-  .game-layout{grid-template-columns:60px 1fr;}
-  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);
-    padding:4px 6px;gap:0;height:auto;}
-  .nav-item{padding:7px 8px;margin:0;flex-direction:column;min-width:50px;border-radius:6px;}
-  .nav-icon{font-size:1.1rem;}
-  .nav-label{font-size:.42rem;letter-spacing:.05em;}
-  .page-content{padding:12px;}
-  .crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .crate-card{padding:12px 8px;}
-  .crate-name{font-size:.85rem;}
-  .spin-container{height:90px;}
-  .open-controls{gap:8px;}
-  .luck-bar-wrap{max-width:100%;}
-  .btn-open{padding:12px 24px;font-size:.9rem;}
-  .inventory-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
-  .item-card{width:auto!important;min-width:0;}
-  .inv-controls{flex-wrap:wrap;gap:6px;}
-  .search-input{width:100%;}
-  .auto-sell-panel{padding:10px 12px;}
-  .rarity-chips{gap:4px;}
-  .rarity-chip{padding:3px 8px;font-size:.65rem;}
-  .trade-panels{grid-template-columns:1fr;}
-  .trade-vs{display:none;}
-  .trade-inventory-grid{grid-template-columns:repeat(3,1fr);}
-  .lobby-teams{flex-direction:column;}
-  .lb-tabs{flex-wrap:wrap;gap:6px;}
-  .lb-row{padding:10px 12px;gap:8px;}
-  .lb-username{font-size:.82rem;}
-  .history-row{padding:10px 12px;}
-  .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
-  .arena-actions{flex-direction:column;align-items:stretch;}
-  .arena-hud{padding:4px 2px;gap:4px;}
-  .hp-bar-track{width:70px;}
-  .match-end-inner{margin:20px auto;padding:24px 16px;}
-  .match-end-title{font-size:1.5rem;}
+  .game-layout{grid-template-columns:1fr}
+  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:4px}
+  .trade-panels{grid-template-columns:1fr}
+  .crates-grid{grid-template-columns:repeat(2,1fr)}
 }
-
 </style>
+</head>
 <body>
 
 <!-- LOADING OVERLAY -->
@@ -744,6 +704,36 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
       </section>
 
+      <!-- LEADERBOARD -->
+      <section class="page" id="page-leaderboard">
+        <div class="page-header"><h2>LEADERBOARDS</h2></div>
+        <div class="lb-tabs">
+          <button class="lb-tab active" data-lb="richest">💰 Richest</button>
+          <button class="lb-tab" data-lb="mostCrates">📦 Most Crates</button>
+          <button class="lb-tab" data-lb="mostValue">💎 Top Value</button>
+        </div>
+        <div class="leaderboard-list" id="leaderboard-list"></div>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="page" id="page-history">
+        <div class="page-header"><h2>TRADE HISTORY</h2></div>
+        <div class="history-list" id="history-list"></div>
+      </section>
+
+    </main>
+
+    <aside class="chat-panel">
+      <div class="chat-header">💬 GLOBAL CHAT</div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Type message..." maxlength="200"/>
+        <button id="chat-send">SEND</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
 <!-- TOOLTIP -->
 <div class="item-tooltip hidden" id="item-tooltip">
   <div class="tooltip-icon" id="tt-icon"></div>
@@ -783,6 +773,7 @@ const RARITIES = {
   ultra2:    {name:'Hyper',     color:'#ff00ff',glow:'#ff00ff88',tier:9, display:'1 in 100,000,000'},
   ultra3:    {name:'Cosmic',    color:'#fffaaa',glow:'#ffff0088',tier:10,display:'1 in 1,000,000,000'},
   ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
+  error:    {name:'404',color:'#ff0000',glow:'#ff0000',tier:12,display:'???'},
 };
 
 // Item values are calibrated so EV/price ≈ 0.50 for every crate.
@@ -857,6 +848,8 @@ const ITEMS = [
   {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3333333,    desc:'One of only a few in existence.'},
   {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
   {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
+  //404
+  {id:'40401',name:'404',    rarity:'error',   icon:'❗', value:40440440440440440404,   desc:'???'},
 ];
 
 // Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
@@ -951,6 +944,13 @@ const CRATES = [
            'd001','d002',
            'ur01','ur02','ur03','ur04'],
   },
+  {
+    id:'testcrate', name:'Test Crate 404', price:404404404404404404, icon:'❗', color:'#FF0000',
+    desc:'404 ERROR',
+    odds:{ERROR:0.404, ultra4:0.596},
+    items:['ur04', 
+           '40401'],
+  },
 ];
 
 function getItem(id){return ITEMS.find(i=>i.id===id);}
@@ -1032,13 +1032,12 @@ const S = {
 // ============================================================
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
+  document.getElementById(id).classList.add('active');
 }
 function hideLoadingOverlay(){
   const ol = document.getElementById('loading-overlay');
-  ol.style.opacity='0';
-  ol.style.pointerEvents='none';
-  ol.style.display='none';
+  ol.classList.add('fade-out');
+  setTimeout(()=>{ ol.style.display='none'; }, 400);
 }
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1443,7 +1442,7 @@ function buildCrateInfoPanel(crate){
   const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
   const grouped={};
   crateItems.forEach(item=>{ if(!grouped[item.rarity])grouped[item.rarity]=[]; grouped[item.rarity].push(item); });
-  const order=['ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
+  const order=['404','ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
   panel.innerHTML=`
     <div style="flex:1">
       <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div>
@@ -1585,7 +1584,7 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   updateCoinDisplay(S.profile.coins);
   showResult(item,r,invItem);
   // Ultra rare announcement
-  if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
+  if(['ultra1','ultra2','ultra3','ultra4','404','divine','mythic'].includes(item.rarity)){
     setTimeout(()=>showUltraOverlay(item),800);
     const desc=r.display?`(${r.display})`:'';
     const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name} ${desc}!`;
@@ -1684,7 +1683,7 @@ document.getElementById('inv-search').addEventListener('input',renderInventory);
 document.getElementById('inv-sort').addEventListener('change',renderInventory);
 
 // ── AUTO-SELL UI ────────────────────────────────────────────────────────────
-const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4'];
+const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4','404'];
 
 document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   S.autoSell=e.target.checked;
@@ -1817,8 +1816,7 @@ async function sellItems(uniqueIds){
 // LEADERBOARD
 // ============================================================
 async function loadLeaderboard(){
-  const list = document.getElementById('leaderboard-list');
-  list.innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
+  document.getElementById('leaderboard-list').innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
   try{
     const [r1,r2,r3]=await Promise.all([
       db.collection('users').orderBy('coins','desc').limit(10).get(),
@@ -1831,17 +1829,13 @@ async function loadLeaderboard(){
       return{...u,rarestItemName:rItem?rItem.name:'None',rarestItemIcon:rItem?rItem.icon:'—'};
     });
     S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
-    renderLeaderboard(S.currentLbTab||'richest');
-  }catch(e){
-    list.innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard. Make sure Firestore indexes are created.</div>';
-    console.error('Leaderboard error:',e);
-  }
+    renderLeaderboard(S.currentLbTab);
+  }catch(e){ document.getElementById('leaderboard-list').innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard.</div>'; }
 }
 
 function renderLeaderboard(tab){
   S.currentLbTab=tab;
   const list=document.getElementById('leaderboard-list');
-  if(!list){ console.error('[CV] leaderboard-list not found!'); return; }
   const rows=S.lbData[tab]||[];
   list.innerHTML='';
   rows.forEach((p,i)=>{
@@ -1875,10 +1869,7 @@ document.querySelectorAll('.lb-tab').forEach(tab=>{
 // ============================================================
 function renderTradeHistory(){
   const list=document.getElementById('history-list');
-  if(!S.profile){
-    list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">Sign in to see your trade history.</div>';
-    return;
-  }
+  if(!S.profile){ list.innerHTML='<div style="color:var(--text-3);font-style:italic">Loading...</div>'; return; }
   const history=[...(S.profile.tradeHistory||[])].reverse();
   list.innerHTML='';
   if(!history.length){
@@ -2043,12 +2034,6 @@ function listenToTradeRoom(roomId){
       S.tradeCountdownActive=true;
       showFinalModal(S.tradeMyItems,S.tradeTheirItems);
     }
-    // Both finalAccepted → execute trade (only the first player whose listener fires handles it)
-    const allFinal = Object.values(players).length>=2 && Object.values(players).every(p=>p.finalAccepted);
-    if(allFinal && !room.completed && !room.executing && !S.tradeExecuting){
-      S.tradeExecuting=true;
-      executeTrade();
-    }
     if(room.completed){
       handleTradeComplete(room);
     }
@@ -2208,14 +2193,18 @@ document.querySelectorAll('.trade-sort-btn').forEach(btn=>{
   });
 });
 
+// FIX: btn-final-accept used S.tradeCountdownActive check incorrectly — now just checks if button is enabled
 document.getElementById('btn-final-accept').addEventListener('click',async()=>{
   const btn=document.getElementById('btn-final-accept');
   if(btn.disabled||btn.classList.contains('disabled'))return;
   if(!S.tradeRoomId)return;
   btn.disabled=true; btn.textContent='Waiting for partner...';
   try{
-    // Just write our finalAccepted — the tradeRoomListener will detect when both are true and call executeTrade()
-    await rtdb.ref('tradeRooms/'+S.tradeRoomId+'/players/'+S.user.uid).update({finalAccepted:true});
+    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({finalAccepted:true});
+    const snap=await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players`).get();
+    const players=snap.val()||{};
+    const allFinal=Object.values(players).every(p=>p.finalAccepted);
+    if(allFinal){ await executeTrade(); }
   }catch(e){ toast('Error finalizing trade','error'); btn.disabled=false; btn.textContent='FINAL ACCEPT'; }
 });
 
@@ -2229,8 +2218,6 @@ document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
 async function executeTrade(){
   if(!S.tradeRoomId||!S.tradePartnerUid)return;
   try{
-    // Mark room completed in RTDB first — prevents double execution if both listeners fire
-    await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({executing:true});
     // Re-read agreed terms from RTDB at execution time
     const roomSnap=await rtdb.ref('tradeRooms/'+S.tradeRoomId).get();
     const room=roomSnap.val();
@@ -2363,7 +2350,7 @@ function updateTradeStatus(){
 function resetTradeState(){
   if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
   S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
-  S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false; S.tradeExecuting=false;
+  S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false;
   S.tradeMyCoins=0; S.tradeTheirCoins=0;
   const coinInput=document.getElementById('trade-coin-input');
   if(coinInput) coinInput.value='';
@@ -2461,7 +2448,6 @@ function spawnParticles(){
     spawnParticles();
   }
 })();
-
 </script>
 </body>
 </html>
