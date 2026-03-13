@@ -1583,7 +1583,7 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   updateCoinDisplay(S.profile.coins);
   showResult(item,r,invItem);
   // Ultra rare announcement
-  if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
+  if(['ultra1','ultra2','ultra3','ultra4','404','divine','mythic'].includes(item.rarity)){
     setTimeout(()=>showUltraOverlay(item),800);
     const desc=r.display?`(${r.display})`:'';
     const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name} ${desc}!`;
