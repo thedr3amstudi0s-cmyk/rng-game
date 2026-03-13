@@ -128,8 +128,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
 
 /* ── GAME LAYOUT — DESKTOP ONLY ─────────────────────────── */
-#game-screen{display:none;grid-template-rows:56px 1fr;height:100vh;overflow:hidden;}
+#game-screen{display:none;grid-template-rows:56px auto 1fr;height:100vh;overflow:hidden;}
 #game-screen.active{display:grid;}
+.global-banner{grid-row:2;}
+.game-layout{grid-row:3;}
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
   background:var(--bg-card);border-bottom:1px solid var(--border);z-index:100;}
 .nav-logo{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
@@ -138,7 +140,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--gold);}
 .nav-right{display:flex;align-items:center;gap:12px;}
 .player-name{font-family:var(--font-d);font-size:.8rem;color:var(--text-2);}
-.game-layout{display:grid;grid-template-columns:72px 1fr 260px;height:100%;overflow:hidden;}
+.game-layout{display:grid;grid-template-columns:72px 1fr 260px;overflow:hidden;}
 .side-nav{background:var(--bg-card);border-right:1px solid var(--border);
   display:flex;flex-direction:column;padding:12px 0;gap:4px;overflow-y:auto;}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;
