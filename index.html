@@ -12,7 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>9
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <style>
 :root {
@@ -923,15 +923,45 @@ const CRATES = [
   },
   {
     id:'shadow', name:'Shadow Crate', price:750, icon:'🌑', color:'#6b21a8',
-    desc:'Dark and mysterious contents.',
-    odds:{common:0.30, uncommon:0.25, rare:0.25, epic:0.18, legendary:0.02},
-    items:['c005','c009',
-           'u011','u012',
-           'r005','r006','r009',
-           'e001','e005','e008',
-           'l004'],
+    desc:'Dark and mysterious contents. No filler — Rare or better guaranteed.',
+    odds:{rare:0.55, epic:0.38, legendary:0.07},
+    items:['r005','r006','r007','r009','r010',
+           'e001','e002','e005','e006','e008',
+           'l004','l006'],
   },
   {
+    id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626',
+    desc:'Scorched by hellfire. Rare guaranteed, Epic likely.',
+    odds:{rare:0.60, epic:0.37, legendary:0.03},
+    items:['r001','r004','r005','r006','r007','r009',
+           'e001','e003','e005','e006','e008',
+           'l006'],
+  },
+  {
+    id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8',
+    desc:'Crackling with energy. Epic drops are common here.',
+    odds:{rare:0.30, epic:0.55, legendary:0.15},
+    items:['r004','r007','r008','r009',
+           'e001','e002','e004','e005','e006','e007','e008',
+           'l001','l003','l005','l006'],
+  },
+  {
+  {
+    id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626',
+    desc:'Scorched by hellfire. Rare guaranteed, Epic very likely.',
+    odds:{rare:0.60, epic:0.37, legendary:0.03},
+    items:['r001','r004','r005','r006','r007','r009',
+           'e001','e003','e005','e006','e008',
+           'l006'],
+  },
+  {
+    id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8',
+    desc:'Crackling with energy. Epic drops are common here.',
+    odds:{rare:0.30, epic:0.55, legendary:0.15},
+    items:['r004','r007','r008','r009',
+           'e001','e002','e004','e005','e006','e007','e008',
+           'l001','l003','l005','l006'],
+  },
     id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
     desc:'Blessed by the heavens above.',
     odds:{rare:0.40, epic:0.40, legendary:0.18, mythic:0.02},
@@ -950,6 +980,36 @@ const CRATES = [
            'm001','m004'],
   },
   {
+    id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207',
+    desc:'Relics from a forgotten age. Legendary is within reach.',
+    odds:{epic:0.40, legendary:0.52, mythic:0.08},
+    items:['e002','e003','e004','e006','e007',
+           'l001','l002','l003','l004','l005','l006',
+           'm001','m004'],
+  },
+  {
+    id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
+    desc:'From the deepest depths. Legendary guaranteed, Mythic possible.',
+    odds:{legendary:0.60, mythic:0.40},
+    items:['l001','l002','l003','l004','l005','l006',
+           'm001','m002','m003','m004'],
+  },
+  {
+  {
+    id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207',
+    desc:'Relics from a forgotten age. Legendary is within reach.',
+    odds:{epic:0.40, legendary:0.52, mythic:0.08},
+    items:['e002','e003','e004','e006','e007',
+           'l001','l002','l003','l004','l005','l006',
+           'm001','m004'],
+  },
+  {
+    id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
+    desc:'From the deepest depths. Legendary guaranteed, Mythic possible.',
+    odds:{legendary:0.60, mythic:0.40},
+    items:['l001','l002','l003','l004','l005','l006',
+           'm001','m002','m003','m004'],
+  },
     id:'divine', name:'Divine Crate', price:40000, icon:'✨', color:'#ddddff',
     desc:'Touched by divinity itself.',
     odds:{epic:0.15, legendary:0.50, mythic:0.30, divine:0.05},
@@ -959,6 +1019,20 @@ const CRATES = [
            'd001','d002'],
   },
   {
+    id:'celestial_void', name:'Celestial Void Crate', price:65000, icon:'🌌', color:'#7c3aed',
+    desc:'Where the divine meets nothingness. Mythic guaranteed.',
+    odds:{mythic:0.70, divine:0.30},
+    items:['m001','m002','m003','m004',
+           'd001','d002'],
+  },
+  {
+  {
+    id:'celestial_void', name:'Celestial Void Crate', price:65000, icon:'🌌', color:'#7c3aed',
+    desc:'Where the divine meets nothingness. Mythic guaranteed.',
+    odds:{mythic:0.70, divine:0.30},
+    items:['m001','m002','m003','m004',
+           'd001','d002'],
+  },
     id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
     desc:'From the space between worlds.',
     odds:{legendary:0.35, mythic:0.6499, divine:0.0000999, ultra1:0.0000001},
@@ -1583,11 +1657,13 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   document.getElementById('result-panel').classList.add('hidden');
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
+  // Deduct coins immediately before spin starts
+  S.profile.coins-=crate.price;
+  updateCoinDisplay(S.profile.coins);
   await animateSpin(crate,item);
   // Save to Firestore
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
   S.inventory.push(invItem);
-  S.profile.coins-=crate.price;
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
   if(!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate={};
   S.profile.luckCoinsPerCrate[crate.id]=(S.profile.luckCoinsPerCrate[crate.id]||0)+crate.price;
@@ -1606,7 +1682,6 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
       totalValue:S.profile.totalValue,
     });
   }catch(e){ toast('Save error: '+e.message,'error'); }
-  updateCoinDisplay(S.profile.coins);
   showResult(item,r,invItem);
   // Ultra rare announcement
   if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
@@ -1664,7 +1739,7 @@ function showResult(item,r,invItem){
       shouldSell=item.value<S.autoSellPrice;
     }
     if(shouldSell){
-      const earned=Math.floor(item.value);
+      const earned=Math.floor(item.value*.90);
       toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
       sellItems([invItem.uniqueId]);
       return; // skip showing result panel
@@ -1820,7 +1895,7 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
-    if(item) earned+=Math.floor(item.value);
+    if(item) earned+=Math.floor(item.value*.90);
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
