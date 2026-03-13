@@ -546,6 +546,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <div class="coin-display"><span>🪙</span><span id="coin-balance">0</span></div>
     <div class="nav-right">
       <span class="player-name" id="nav-username">—</span>
+      <button class="btn-ghost hidden" id="admin-refresh-btn" style="border-color:#ef4444;color:#ef4444" title="Force refresh all clients">⚡ REFRESH ALL</button>
       <button class="btn-ghost" id="logout-btn">EXIT</button>
     </div>
   </header>
@@ -988,6 +989,13 @@ const CRATES = [
            'd001','d002'],
   },
   {
+    id:'celestial_void', name:'Celestial Void Crate', price:65000, icon:'🌌', color:'#7c3aed',
+    desc:'Where the divine meets nothingness. Mythic and Divine only.',
+    odds:{mythic:0.60, divine:0.40},
+    items:['m001','m002','m003','m004',
+           'd001','d002'],
+  },
+  {
     id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
     desc:'From the space between worlds. Divine common, Ultra possible.',
     odds:{mythic:0.20, divine:0.799, ultra1:0.001},
@@ -1237,6 +1245,10 @@ function startAuthObserver(){
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       document.getElementById('nav-username').textContent=S.profile.username;
+      // Show admin button for admin user
+      if(S.profile.username==='Dreamcrusher'){
+        document.getElementById('admin-refresh-btn').classList.remove('hidden');
+      }
       updateCoinDisplay(S.profile.coins);
       // FIX: Only initialize realtime listeners once to avoid duplicate handlers
       if(!S.listenersInitialized){
@@ -2487,6 +2499,23 @@ function spawnParticles(){
 // ============================================================
 // BOOT
 // ============================================================
+// Admin force-refresh button
+document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
+  const btn = document.getElementById('admin-refresh-btn');
+  btn.disabled = true;
+  btn.textContent = 'Refreshing...';
+  try{
+    await rtdb.ref('admin/forceRefresh').set({
+      ts: firebase.database.ServerValue.TIMESTAMP,
+      by: S.profile?.username || 'admin',
+    });
+    toast('Force refresh sent to all clients!','success');
+  }catch(e){
+    toast('Error: '+e.message,'error');
+  }
+  setTimeout(()=>{ btn.disabled=false; btn.textContent='⚡ REFRESH ALL'; }, 2000);
+});
+
 (function boot(){
   const cfg = {
     apiKey:            "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
@@ -2506,6 +2535,18 @@ function spawnParticles(){
       if(document.visibilityState==='visible' && S.user && S.presenceRef){
         S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
       }
+    });
+    // Admin force-refresh: listen for reload signal on RTDB
+    const refreshRef = rtdb.ref('admin/forceRefresh');
+    let lastRefreshTs = 0;
+    refreshRef.on('value', snap=>{
+      const val = snap.val();
+      if(!val || !val.ts) return;
+      // Only reload if this is a NEW signal (not one from before we loaded)
+      if(val.ts > lastRefreshTs && lastRefreshTs !== 0){
+        setTimeout(()=>location.reload(), 500);
+      }
+      lastRefreshTs = val.ts;
     });
     // Particles shown after auth observer fires for non-logged-in state
   }catch(e){
