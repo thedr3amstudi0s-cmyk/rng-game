@@ -9,6 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700&display=swap" rel="stylesheet"/>
 
 <!-- Firebase SDKs -->
+<script>
+console.log('[CV] HTML parsing started');
+document.addEventListener('DOMContentLoaded', ()=>{
+  console.log('[CV] DOMContentLoaded fired');
+  console.log('[CV] #game-screen exists:', !!document.getElementById('game-screen'));
+  console.log('[CV] #auth-screen exists:', !!document.getElementById('auth-screen'));
+  console.log('[CV] .page-content exists:', !!document.querySelector('.page-content'));
+  console.log('[CV] game-screen computed display:', getComputedStyle(document.getElementById('game-screen')).display);
+  console.log('[CV] game-screen computed height:', getComputedStyle(document.getElementById('game-screen')).height);
+});
+window.addEventListener('error', e => console.error('[CV] GLOBAL ERROR:', e.message, e.filename, e.lineno));
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -1279,8 +1291,14 @@ const S = {
 // UTILITY
 // ============================================================
 function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  console.log('[CV] showScreen:', id);
+  const screens = document.querySelectorAll('.screen');
+  console.log('[CV] screens found:', screens.length);
+  screens.forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(!el){ console.error('[CV] showScreen: element not found:', id); return; }
+  el.classList.add('active');
+  console.log('[CV] showScreen done, el display:', getComputedStyle(el).display, 'height:', getComputedStyle(el).height);
 }
 function hideLoadingOverlay(){
   const ol = document.getElementById('loading-overlay');
@@ -1288,9 +1306,16 @@ function hideLoadingOverlay(){
   setTimeout(()=>{ ol.style.display='none'; }, 400);
 }
 function showPage(id){
+  console.log('[CV] showPage:', id);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id)?.classList.add('active');
+  const pg = document.getElementById('page-'+id);
+  if(!pg){ console.error('[CV] showPage: page not found: page-'+id); return; }
+  pg.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+  const pc = document.querySelector('.page-content');
+  console.log('[CV] page-content height:', pc ? getComputedStyle(pc).height : 'NOT FOUND');
+  console.log('[CV] game-layout height:', document.querySelector('.game-layout') ? getComputedStyle(document.querySelector('.game-layout')).height : 'NOT FOUND');
+  console.log('[CV] game-screen display:', document.getElementById('game-screen') ? getComputedStyle(document.getElementById('game-screen')).display : 'NOT FOUND');
 }
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
@@ -1411,10 +1436,12 @@ function startAuthObserver(){
     if(user){
       S.user=user;
       // Show game immediately — don't wait for profile
+      console.log('[CV] Auth: user logged in, showing game screen');
       showScreen('game-screen');
       hideLoadingOverlay();
       loadCratesPage();
       showPage('crates');
+      console.log('[CV] Auth: showPage crates done');
       // Reset auth button states
       const lb=document.getElementById('login-btn');
       const rb=document.getElementById('register-btn');
@@ -2064,7 +2091,9 @@ async function sellItems(uniqueIds){
 // LEADERBOARD
 // ============================================================
 async function loadLeaderboard(){
+  console.log('[CV] loadLeaderboard called, profile:', !!S.profile, 'user:', !!S.user);
   const list = document.getElementById('leaderboard-list');
+  if(!list){ console.error('[CV] leaderboard-list element not found!'); return; }
   list.innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
   try{
     // Fetch all users and sort client-side — avoids Firestore composite index requirement
@@ -2122,7 +2151,9 @@ document.querySelectorAll('.lb-tab').forEach(tab=>{
 // TRADE HISTORY
 // ============================================================
 function renderTradeHistory(){
+  console.log('[CV] renderTradeHistory called, profile:', !!S.profile, 'history length:', S.profile?.tradeHistory?.length);
   const list=document.getElementById('history-list');
+  if(!list){ console.error('[CV] history-list element not found!'); return; }
   if(!S.profile){
     list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">Sign in to see your trade history.</div>';
     return;
