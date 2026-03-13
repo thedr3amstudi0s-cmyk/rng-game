@@ -527,7 +527,66 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .exit-glow{animation:exit-pulse 1s ease-in-out infinite;}
 @keyframes exit-pulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.8) drop-shadow(0 0 8px #22c55e);}}
 
-/* mobile removed — desktop only */
+
+/* ── MOBILE RESPONSIVE ───────────────────────────────────── */
+@media(max-width:900px){
+  .game-layout{grid-template-columns:72px 1fr}
+  .chat-panel{display:none}
+}
+@media(max-width:600px){
+  .top-nav{padding:0 10px;height:48px;}
+  #game-screen{grid-template-rows:48px auto 1fr;}
+  .nav-logo{font-size:.85rem;}
+  .coin-display{font-size:.82rem;gap:4px;}
+  .game-layout{grid-template-columns:60px 1fr;}
+  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);
+    padding:4px 6px;gap:0;height:auto;}
+  .nav-item{padding:7px 8px;margin:0;flex-direction:column;min-width:50px;border-radius:6px;}
+  .nav-icon{font-size:1.1rem;}
+  .nav-label{font-size:.42rem;letter-spacing:.05em;}
+  .page-content{padding:12px;}
+  .crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .crate-card{padding:12px 8px;}
+  .crate-name{font-size:.85rem;}
+  .spin-container{height:90px;}
+  .open-controls{gap:8px;}
+  .luck-bar-wrap{max-width:100%;}
+  .btn-open{padding:12px 24px;font-size:.9rem;}
+  .inventory-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
+  .item-card{width:auto!important;min-width:0;}
+  .inv-controls{flex-wrap:wrap;gap:6px;}
+  .search-input{width:100%;}
+  .auto-sell-panel{padding:10px 12px;}
+  .rarity-chips{gap:4px;}
+  .rarity-chip{padding:3px 8px;font-size:.65rem;}
+  .trade-panels{grid-template-columns:1fr;}
+  .trade-vs{display:none;}
+  .trade-inventory-grid{grid-template-columns:repeat(3,1fr);}
+  .lobby-teams{flex-direction:column;}
+  .lb-tabs{flex-wrap:wrap;gap:6px;}
+  .lb-row{padding:10px 12px;gap:8px;}
+  .lb-username{font-size:.82rem;}
+  .history-row{padding:10px 12px;}
+  .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
+  .arena-actions{flex-direction:column;align-items:stretch;}
+  .arena-hud{padding:4px 2px;gap:4px;}
+  .hp-bar-track{width:70px;}
+  .match-end-inner{margin:20px auto;padding:24px 16px;}
+  .match-end-title{font-size:1.5rem;}
+}
+
+/* ── ARENA JOYSTICK ──────────────────────────────────────── */
+.mobile-game-controls{display:none;position:relative;height:140px;max-width:700px;margin:8px auto 0;user-select:none;}
+@media(max-width:700px),(pointer:coarse){
+  .mobile-game-controls{display:flex;justify-content:space-between;align-items:center;padding:0 16px;}
+  .arena-controls-hint{display:none;}
+}
+.joystick-zone{position:relative;width:110px;height:110px;flex-shrink:0;}
+.joystick-base{position:absolute;inset:0;border-radius:50%;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);}
+.joystick-nub{position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.mobile-attack-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#b91c1c);border:3px solid #ef444488;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.mobile-attack-btn:active{transform:scale(.92);background:linear-gradient(135deg,#dc2626,#991b1b);}
+
 
 </style>
 <body>
@@ -881,6 +940,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
           <canvas id="arena-canvas" class="arena-canvas"></canvas>
 
+          <div class="mobile-game-controls" id="mobile-game-controls">
+            <div class="joystick-zone" id="joystick-zone">
+              <div class="joystick-base"></div>
+              <div class="joystick-nub" id="joystick-nub"></div>
+            </div>
+            <div class="mobile-attack-btn" id="mobile-attack-btn">⚔️</div>
+          </div>
           <div class="arena-controls-hint" id="arena-controls-hint">WASD / Arrow keys to move &nbsp;|&nbsp; Click or Space to attack</div>
         </div>
 
@@ -1237,17 +1303,17 @@ function showPage(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
   setTimeout(()=>{
     const pc = document.querySelector('.page-content');
-    const gs = document.getElementById('game-screen');
-    const gl = document.querySelector('.game-layout');
-    console.log('[CV] --- layout dump ---');
-    console.log('[CV] game-screen:', gs ? `display:${getComputedStyle(gs).display} h:${getComputedStyle(gs).height} vis:${getComputedStyle(gs).visibility}` : 'MISSING');
-    console.log('[CV] game-layout:', gl ? `display:${getComputedStyle(gl).display} h:${getComputedStyle(gl).height} cols:${getComputedStyle(gl).gridTemplateColumns}` : 'MISSING');
-    console.log('[CV] page-content:', pc ? `display:${getComputedStyle(pc).display} h:${getComputedStyle(pc).height} overflow:${getComputedStyle(pc).overflow} children:${pc.children.length}` : 'MISSING');
-    console.log('[CV] page-'+id+':', pg ? `display:${getComputedStyle(pg).display} h:${getComputedStyle(pg).offsetHeight}px children:${pg.children.length} innerHTML:${pg.innerHTML.length}chars` : 'MISSING');
-    if(pg.children[0]) console.log('[CV] first child:', pg.children[0].tagName, getComputedStyle(pg.children[0]).display, getComputedStyle(pg.children[0]).height, pg.children[0].offsetHeight+'px');
-    console.log('[CV] auth-screen display:', getComputedStyle(document.getElementById('auth-screen')).display);
-    console.log('[CV] body children with pos:fixed:', [...document.querySelectorAll('*')].filter(e=>getComputedStyle(e).position==='fixed'&&getComputedStyle(e).display!=='none').map(e=>e.id||e.className).join(', '));
-  }, 200);
+    const r = pc.getBoundingClientRect();
+    const pgr = pg.getBoundingClientRect();
+    console.log('[CV] page-content rect:', Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height));
+    console.log('[CV] page rect:', Math.round(pgr.left),Math.round(pgr.top),Math.round(pgr.width),Math.round(pgr.height));
+    const el = document.elementFromPoint(r.left+r.width/2, r.top+50);
+    console.log('[CV] element at content center:', el ? (el.id||el.className||el.tagName) : 'none');
+    if(pg.children[0]){
+      const cr = pg.children[0].getBoundingClientRect();
+      console.log('[CV] first child rect:', Math.round(cr.left),Math.round(cr.top),Math.round(cr.width),Math.round(cr.height));
+    }
+  }, 300);
 }
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
@@ -3145,6 +3211,7 @@ function initMatch(data) {
   }
 
   AS.keys = {};
+  initMobileControls();
   window.addEventListener('keydown', arenaKeyDown);
   window.addEventListener('keyup', arenaKeyUp);
   canvas.addEventListener('click', arenaClick);
@@ -3267,6 +3334,50 @@ function arenaClick(){ doAttack(); }
 
 // ── Mobile Joystick ───────────────────────────────────────
 const JOY = {active:false,dx:0,dy:0};
+const JOY = {active:false,dx:0,dy:0,id:null};
+
+function initMobileControls(){
+  const zone = document.getElementById('joystick-zone');
+  const nub  = document.getElementById('joystick-nub');
+  const atk  = document.getElementById('mobile-attack-btn');
+  if(!zone||!nub) return;
+  function onStart(e){
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    const r = zone.getBoundingClientRect();
+    JOY.active=true; JOY.id=t.identifier;
+    JOY.baseX=r.left+r.width/2; JOY.baseY=r.top+r.height/2;
+    JOY.dx=0; JOY.dy=0;
+  }
+  function onMove(e){
+    e.preventDefault();
+    if(!JOY.active) return;
+    let t=null;
+    for(let i=0;i<e.changedTouches.length;i++) if(e.changedTouches[i].identifier===JOY.id){t=e.changedTouches[i];break;}
+    if(!t) return;
+    const maxR=45;
+    let dx=t.clientX-JOY.baseX, dy=t.clientY-JOY.baseY;
+    const len=Math.hypot(dx,dy);
+    if(len>maxR){dx=dx/len*maxR;dy=dy/len*maxR;}
+    JOY.dx=dx/maxR; JOY.dy=dy/maxR;
+    nub.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+  }
+  function onEnd(e){
+    let found=false;
+    for(let i=0;i<e.changedTouches.length;i++) if(e.changedTouches[i].identifier===JOY.id){found=true;break;}
+    if(!found) return;
+    JOY.active=false; JOY.dx=0; JOY.dy=0;
+    nub.style.transform='translate(-50%,-50%)';
+  }
+  zone.addEventListener('touchstart',onStart,{passive:false});
+  window.addEventListener('touchmove',onMove,{passive:false});
+  window.addEventListener('touchend',onEnd,{passive:false});
+  if(atk){
+    atk.addEventListener('touchstart',e=>{e.preventDefault();AS.keys[' ']=true;},{passive:false});
+    atk.addEventListener('touchend',e=>{e.preventDefault();AS.keys[' ']=false;},{passive:false});
+  }
+}
+
 function moveMe(dt){
   const me=AS.players[AS.myId]; if(!me||me.eliminated) return;
 
