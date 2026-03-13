@@ -1441,7 +1441,7 @@ function buildCrateInfoPanel(crate){
   const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
   const grouped={};
   crateItems.forEach(item=>{ if(!grouped[item.rarity])grouped[item.rarity]=[]; grouped[item.rarity].push(item); });
-  const order=['ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
+  const order=['404','ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
   panel.innerHTML=`
     <div style="flex:1">
       <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div>
