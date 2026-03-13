@@ -12,7 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>9
 
 <style>
 :root {
@@ -1664,7 +1664,7 @@ function showResult(item,r,invItem){
       shouldSell=item.value<S.autoSellPrice;
     }
     if(shouldSell){
-      const earned=Math.floor(item.value*.90);
+      const earned=Math.floor(item.value);
       toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
       sellItems([invItem.uniqueId]);
       return; // skip showing result panel
