@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=dfevice-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>CrateVault — Unlock the Impossible</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -2018,57 +2018,64 @@ function showIncomingTradeModal(fromUid,fromUsername){
   setTimeout(()=>{ if(document.body.contains(modal)) modal.remove(); },30000);
 }
 
-async function createTradeRoom(partnerUid, partnerUsername){
-  const roomId = genUID();
-  S.tradeRoomId = roomId;
-  S.tradePartnerUid = partnerUid;
-  
-  S.tradeCountdownActive = false;
-  S.tradeExecuting = false;
-  
-  S.tradeMyItems = [];
-  S.tradeTheirItems = [];
-  S.tradeMyAccepted = false;
-  S.tradeTheirAccepted = false;
-  S.tradeMyCoins = 0;
-  S.tradeTheirCoins = 0;
-  
+async function createTradeRoom(partnerUid,partnerUsername){
+  const roomId=genUID();
+  S.tradeRoomId=roomId;
+  S.tradePartnerUid=partnerUid;
+  S.tradeMyItems=[];
+  S.tradeTheirItems=[];
+  S.tradeMyAccepted=false;
+  S.tradeTheirAccepted=false;
+  S.tradeCountdownActive=false;
+  S.tradeExecuting=false;
+  S.tradeMyCoins=0;
+  S.tradeTheirCoins=0;
+  const room={
+    roomId,
+    players:{
+      [S.user.uid]:{uid:S.user.uid,username:S.profile.username,items:[],accepted:false,finalAccepted:false},
+      [partnerUid]:{uid:partnerUid,username:partnerUsername,items:[],accepted:false,finalAccepted:false},
+    },
+    locked:false,createdAt:firebase.database.ServerValue.TIMESTAMP,
+  };
+  await rtdb.ref('tradeRooms/'+roomId).set(room);
+  // Notify partner
+  await rtdb.ref('tradeInvites/'+partnerUid).push({roomId,fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
+  listenToTradeRoom(roomId);
+  showPage('trade');
+  document.getElementById('trade-room').classList.remove('hidden');
+  document.getElementById('trade-you-name').textContent=S.profile.username;
+  document.getElementById('trade-them-name').textContent=partnerUsername;
+  renderTradeInventoryMini();
+  toast('Trade room created!','success');
 }
 
 // FIX: partner receives invite via this listener (was incorrectly a standalone function called again from boot)
 function setupTradeInviteListener(){
-  if(!S.user) return;
-  
+  if(!S.user)return;
   rtdb.ref('tradeInvites/'+S.user.uid).on('child_added',snap=>{
-    const inv = snap.val(); 
-    if(!inv) return;
+    const inv=snap.val(); if(!inv)return;
     snap.ref.remove();
-
-    S.tradeRoomId = inv.roomId;
-    S.tradePartnerUid = inv.fromUid;
-
-    // ←←← THESE ARE THE TWO LINES YOU NEEDED
-    S.tradeCountdownActive = false;
-    S.tradeExecuting = false;
-
-    // Reset everything else (your original code)
-    S.tradeMyItems = [];
-    S.tradeTheirItems = [];
-    S.tradeMyAccepted = false;
-    S.tradeTheirAccepted = false;
-    S.tradeMyCoins = 0;
-    S.tradeTheirCoins = 0;
-
+    S.tradeRoomId=inv.roomId;
+    S.tradePartnerUid=inv.fromUid;
+    S.tradeMyItems=[];
+    S.tradeTheirItems=[];
+    S.tradeMyAccepted=false;
+    S.tradeTheirAccepted=false;
+    S.tradeCountdownActive=false;
+    S.tradeExecuting=false;
+    S.tradeMyCoins=0;
+    S.tradeTheirCoins=0;
     listenToTradeRoom(inv.roomId);
     showPage('trade');
     document.getElementById('trade-room').classList.remove('hidden');
-    document.getElementById('trade-you-name').textContent = S.profile?.username || 'You';
-    document.getElementById('trade-them-name').textContent = inv.fromUsername;
+    document.getElementById('trade-you-name').textContent=S.profile?.username||'You';
+    document.getElementById('trade-them-name').textContent=inv.fromUsername;
     renderTradeInventoryMini();
     toast('Joined trade room with '+inv.fromUsername+'!','success');
   });
 }
-  
+
 let tradeRoomListener=null;
 function listenToTradeRoom(roomId){
   if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
