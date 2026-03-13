@@ -119,13 +119,14 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
   height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);
   z-index:100;flex-shrink:0;}
+.game-layout{display:grid;grid-template-columns:72px 1fr 260px;height:calc(100vh - 56px);overflow:hidden;}
+.page-content{overflow-y:auto;padding:24px;background:var(--bg-deep);min-height:0;}
 .nav-logo{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
 .coin-display{display:flex;align-items:center;gap:6px;background:var(--bg-dark);
   border:1px solid var(--border);border-radius:20px;padding:5px 14px;
   font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--gold);}
 .nav-right{display:flex;align-items:center;gap:12px;}
 .player-name{font-family:var(--font-d);font-size:.8rem;color:var(--text-2);}
-.game-layout{display:grid;grid-template-columns:72px 1fr 260px;flex:1;overflow:hidden;}
 .side-nav{background:var(--bg-card);border-right:1px solid var(--border);
   display:flex;flex-direction:column;padding:12px 0;gap:4px;overflow-y:auto;}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;
@@ -528,7 +529,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   .nav-item{padding:7px 8px;margin:0;flex-direction:column;min-width:50px;border-radius:6px;}
   .nav-icon{font-size:1.1rem;}
   .nav-label{font-size:.42rem;letter-spacing:.05em;}
-  .page-content{order:1;padding:12px;overflow-y:auto;flex:1;}
+  .page-content{order:1;padding:12px;overflow-y:auto;flex:1;min-height:0;}
   /* crates */
   .crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
   .crate-card{padding:12px 8px;}
