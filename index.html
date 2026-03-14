@@ -1364,7 +1364,7 @@ function setupPresence(){
     // Re-register presence every time Firebase reports (re)connection
     rtdb.ref('.info/connected').on('value', snap=>{
       if(!snap.val()) return; // disconnected — onDisconnect handles cleanup
-      const data={uid, username:S.profile.username, online:true, ts:firebase.database.ServerValue.TIMESTAMP};
+      const data={uid, username:S.profile.username, online:true, ts:firebase.database.ServerValue.TIMESTAMP, tradeRoomId:S.tradeRoomId||null};
       ref.set(data);
       ref.onDisconnect().remove();
     });
@@ -1377,6 +1377,11 @@ function setupPresence(){
     }, 30000);
 
   }catch(e){ console.warn('Presence unavailable:',e.message); }
+}
+
+function updatePresenceTradeStatus(roomId){
+  if(!S.presenceRef) return;
+  S.presenceRef.update({tradeRoomId: roomId||null});
 }
 
 async function leavePresence(){
@@ -1980,20 +1985,31 @@ function listenToTradeRequests(){
 function renderOnlinePlayers(){
   const list=document.getElementById('online-players-list');
   list.innerHTML='';
+  // If YOU are already in a trade, show a notice instead of player list
+  if(S.tradeRoomId){
+    list.innerHTML='<div class="no-players" style="color:var(--gold)">⚔️ You are currently in a trade.</div>';
+    return;
+  }
   if(!S.onlinePlayers.length){list.innerHTML='<div class="no-players">No other players online</div>';return;}
   S.onlinePlayers.forEach(p=>{
+    const inTrade=!!p.tradeRoomId;
     const chip=document.createElement('div');
     chip.className='online-player-chip';
+    chip.style.opacity=inTrade?'0.5':'1';
     chip.innerHTML=`<div class="online-dot"></div>
       <span class="online-player-name">${escHtml(p.username)}</span>
-      <button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`;
-    chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
+      ${inTrade
+        ? '<span style="font-size:.65rem;font-family:var(--font-d);color:var(--text-3);padding:4px 10px">IN TRADE</span>'
+        : `<button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`
+      }`;
+    if(!inTrade) chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
     list.appendChild(chip);
   });
 }
 
 async function sendTradeRequest(toUid,toUsername){
   if(!S.user||!S.profile)return;
+  if(S.tradeRoomId){ toast('You are already in a trade!','error'); return; }
   try{
     await rtdb.ref('tradeRequests/'+toUid).push({
       fromUid:S.user.uid,fromUsername:S.profile.username,
@@ -2004,6 +2020,7 @@ async function sendTradeRequest(toUid,toUsername){
 }
 
 function showIncomingTradeModal(fromUid,fromUsername){
+  if(S.tradeRoomId){ return; } // already in a trade — silently ignore
   document.querySelectorAll('.incoming-trade-modal').forEach(e=>e.remove());
   const modal=document.createElement('div');
   modal.className='incoming-trade-modal';
@@ -2042,6 +2059,7 @@ async function createTradeRoom(partnerUid,partnerUsername){
   // Notify partner
   await rtdb.ref('tradeInvites/'+partnerUid).push({roomId,fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
   listenToTradeRoom(roomId);
+  updatePresenceTradeStatus(roomId);
   showPage('trade');
   document.getElementById('trade-room').classList.remove('hidden');
   document.getElementById('trade-you-name').textContent=S.profile.username;
@@ -2067,6 +2085,7 @@ function setupTradeInviteListener(){
     S.tradeMyCoins=0;
     S.tradeTheirCoins=0;
     listenToTradeRoom(inv.roomId);
+    updatePresenceTradeStatus(inv.roomId);
     showPage('trade');
     document.getElementById('trade-room').classList.remove('hidden');
     document.getElementById('trade-you-name').textContent=S.profile?.username||'You';
@@ -2449,6 +2468,7 @@ function resetTradeState(){
   document.getElementById('trade-room').classList.add('hidden');
   document.getElementById('trade-final-modal').classList.add('hidden');
   document.getElementById('trade-message').textContent='';
+  updatePresenceTradeStatus(null);
 }
 
 // ============================================================
