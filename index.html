@@ -2103,15 +2103,13 @@ function listenToTradeRoom(roomId){
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
     renderTradeInventoryMini();
     updateTradeStatus();
-    // Both accepted → lock the room (only the listener should do this, not a one-shot read)
+    // Both accepted → lock room. Only run if not already locked/locking.
     const allAccepted = Object.values(players).length>=2 && Object.values(players).every(p=>p.accepted);
-    if(allAccepted && !room.locked && !room.locking){
-      rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locking:true}).then(()=>{
-        rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true, locking:false});
-      });
+    if(allAccepted && !room.locked){
+      rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
     }
-    // Both accepted → show final modal (only once)
-    if(room.locked&&!S.tradeCountdownActive){
+    // room.locked → show final modal exactly once per trade session
+    if(room.locked && !S.tradeCountdownActive){
       S.tradeCountdownActive=true;
       showFinalModal(S.tradeMyItems,S.tradeTheirItems);
     }
@@ -2380,7 +2378,10 @@ async function handleTradeComplete(room){
 }
 
 // FIX: showFinalModal - countdown properly enables the button and doesn't use wrong element ID
+let _finalModalCd=null;
 function showFinalModal(myItems,theirItems){
+  // Clear any previous countdown interval to prevent double-firing
+  if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
   const modal=document.getElementById('trade-final-modal');
   const theirName=document.getElementById('trade-them-name').textContent;
   const iList=(items,coins)=>{
@@ -2394,24 +2395,32 @@ function showFinalModal(myItems,theirItems){
      <div><strong style="color:var(--gold)">${escHtml(theirName)} gives:</strong><br>${iList(theirItems,S.tradeTheirCoins)}</div>`;
   modal.classList.remove('hidden');
   const btn=document.getElementById('btn-final-accept');
-  const numEl=document.getElementById('countdown-num');
   const cdDisplay=modal.querySelector('.countdown-display');
   // Reset button state
   btn.disabled=true;
   btn.className='btn-final-accept disabled';
   btn.textContent='FINAL ACCEPT';
   let count=5;
-  numEl.textContent=count;
-  cdDisplay.innerHTML=`Final accept available in <span id="countdown-num">${count}</span>s...`;
-  const cd=setInterval(()=>{
+  // Write count directly into a plain element — no innerHTML rewrites during countdown
+  cdDisplay.textContent='';
+  const prefix=document.createTextNode('Final accept available in ');
+  const numSpan=document.createElement('span');
+  numSpan.style.color='var(--gold)';
+  numSpan.style.fontSize='1.4rem';
+  numSpan.style.fontWeight='900';
+  numSpan.textContent=count;
+  const suffix=document.createTextNode('s...');
+  cdDisplay.appendChild(prefix);
+  cdDisplay.appendChild(numSpan);
+  cdDisplay.appendChild(suffix);
+  _finalModalCd=setInterval(()=>{
     count--;
-    const n=document.getElementById('countdown-num');
-    if(n) n.textContent=count;
+    numSpan.textContent=count;
     if(count<=0){
-      clearInterval(cd);
+      clearInterval(_finalModalCd); _finalModalCd=null;
       btn.disabled=false;
       btn.className='btn-final-accept';
-      if(cdDisplay) cdDisplay.innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
+      cdDisplay.innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
     }
   },1000);
 }
@@ -2426,6 +2435,7 @@ function updateTradeStatus(){
 }
 
 function resetTradeState(){
+  if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
   if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
   S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
   S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false; S.tradeExecuting=false;
