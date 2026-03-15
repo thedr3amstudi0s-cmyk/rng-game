@@ -2849,17 +2849,17 @@ function update(){
     return;
   }
 
-  // Generate more platforms above
+  // Generate more platforms above the player/camera
   const viewTop = p.y - canvas.height;
   if(viewTop - TILE*5 < -G.genTop + p.startY){
     const newTop = G.genTop + canvas.height*2;
     const newPlats = makePlatforms(G.genTop, newTop);
     // Offset by startY (since world Y 0 = start)
-    G.platforms.push(...newPlats.map(pl=>({...pl, y: pl.y - p.startY + p.startY})));
+    G.platforms.push(...newPlats.map(pl=>({...pl, y: pl.y - p.startY - p.startY})));
     G.genTop = newTop;
   }
 
-  // Remove platforms far below camera
+  // Remove da platforms far below camera
   const camBottom = p.y + canvas.height * 1.5;
   G.platforms = G.platforms.filter(pl => pl.y < camBottom);
 
@@ -2867,7 +2867,7 @@ function update(){
   const targetCamY = p.y - canvas.height * 0.55;
   G.camera.y += (targetCamY - G.camera.y) * 0.12;
 
-  // Coins earned = height tiles above start
+  // Coins earned = height tiles above start (per specific # of tiles)
 const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
 
 if(heightTiles >= 50) G.coins = 500;
