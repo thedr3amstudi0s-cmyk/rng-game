@@ -7,29 +7,26 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700&display=swap" rel="stylesheet"/>
-
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <style>
 :root {
-  --bg-deep:    #050810;
-  --bg-dark:    #0a0e1a;
-  --bg-card:    #0f1424;
-  --bg-card2:   #141928;
-  --bg-hover:   #1a2035;
-  --border:     #1e2840;
-  --border-b:   #2a3555;
-  --accent:     #4f8ef7;
-  --accent-g:   #4f8ef744;
-  --text-1:     #e8eaf6;
-  --text-2:     #8b93b8;
-  --text-3:     #4a5270;
-  --gold:       #f59e0b;
-  --gold-g:     #f59e0b44;
+  --bg-deep: #050810;
+  --bg-dark: #0a0e1a;
+  --bg-card: #0f1424;
+  --bg-card2: #141928;
+  --bg-hover: #1a2035;
+  --border: #1e2840;
+  --border-b: #2a3555;
+  --accent: #4f8ef7;
+  --accent-g: #4f8ef744;
+  --text-1: #e8eaf6;
+  --text-2: #8b93b8;
+  --text-3: #4a5270;
+  --gold: #f59e0b;
+  --gold-g: #f59e0b44;
   --font-d: 'Orbitron', sans-serif;
   --font-u: 'Rajdhani', sans-serif;
   --font-m: 'Space Mono', monospace;
@@ -44,93 +41,55 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:var(--bg-dark);}
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
-
-/* ── SCREENS ─────────────────────────────────────────────── */
-/* ── SCREENS ─────────────────────────────────────────────── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;}
-
-/* ── AUTH ────────────────────────────────────────────────── */
-#auth-screen{align-items:center;justify-content:center;position:relative;
-  background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
+#auth-screen{align-items:center;justify-content:center;position:relative;background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
 .auth-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
-.auth-container{position:relative;z-index:2;width:100%;max-width:400px;padding:20px;
-  display:flex;flex-direction:column;align-items:center;gap:32px;}
+.auth-container{position:relative;z-index:2;width:100%;max-width:400px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:32px;}
 .auth-logo{text-align:center;}
 .logo-icon{font-size:3rem;animation:pulse-glow 2s infinite;}
 .logo-text{font-family:var(--font-d);font-size:2.5rem;font-weight:900;letter-spacing:.1em;}
 .logo-text span{color:var(--accent);}
 .logo-sub{color:var(--text-2);font-size:.875rem;letter-spacing:.3em;text-transform:uppercase;margin-top:4px;}
-.auth-card{width:100%;background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--rl);padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
-.auth-tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--bg-dark);
-  border-radius:var(--r);padding:3px;}
-.auth-tab{flex:1;padding:8px;border-radius:6px;font-family:var(--font-d);font-size:.75rem;
-  font-weight:700;letter-spacing:.1em;color:var(--text-2);transition:var(--t);}
+.auth-card{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.auth-tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--bg-dark);border-radius:var(--r);padding:3px;}
+.auth-tab{flex:1;padding:8px;border-radius:6px;font-family:var(--font-d);font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--text-2);transition:var(--t);}
 .auth-tab.active{background:var(--accent);color:#fff;box-shadow:0 0 20px var(--accent-g);}
 .auth-form{display:flex;flex-direction:column;gap:16px;}
 .form-group{display:flex;flex-direction:column;gap:6px;}
 .form-group label{font-size:.7rem;font-family:var(--font-d);letter-spacing:.15em;color:var(--text-2);}
-.form-group input{background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);
-  padding:12px 14px;font-size:1rem;color:var(--text-1);transition:var(--t);}
+.form-group input{background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:1rem;color:var(--text-1);transition:var(--t);}
 .form-group input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-g);}
 .auth-error{color:#ef4444;font-size:.85rem;min-height:20px;}
 .auth-note{color:var(--text-2);font-size:.85rem;text-align:center;}
 .auth-note strong{color:var(--gold);}
-
-/* ── BUTTONS ─────────────────────────────────────────────── */
-.btn-primary{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;
-  padding:13px 24px;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;
-  font-weight:700;letter-spacing:.1em;transition:var(--t);
-  box-shadow:0 4px 20px var(--accent-g);width:100%;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;padding:13px 24px;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.1em;transition:var(--t);box-shadow:0 4px 20px var(--accent-g);width:100%;}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 30px var(--accent-g);}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.btn-ghost{background:transparent;border:1px solid var(--border-b);color:var(--text-2);
-  padding:7px 14px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;
-  letter-spacing:.1em;transition:var(--t);}
+.btn-ghost{background:transparent;border:1px solid var(--border-b);color:var(--text-2);padding:7px 14px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;transition:var(--t);}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-.btn-open{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;
-  padding:16px 48px;border-radius:var(--r);font-family:var(--font-d);font-size:1.1rem;
-  font-weight:900;letter-spacing:.15em;transition:var(--t);
-  box-shadow:0 4px 30px rgba(245,158,11,.4);position:relative;overflow:hidden;}
-.btn-open::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
-  background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.1) 50%,transparent 60%);
-  transform:translateX(-100%) rotate(45deg);transition:.6s;}
+.btn-open{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;padding:16px 48px;border-radius:var(--r);font-family:var(--font-d);font-size:1.1rem;font-weight:900;letter-spacing:.15em;transition:var(--t);box-shadow:0 4px 30px rgba(245,158,11,.4);position:relative;overflow:hidden;}
+.btn-open::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.1) 50%,transparent 60%);transform:translateX(-100%) rotate(45deg);transition:.6s;}
 .btn-open:hover::before{transform:translateX(100%) rotate(45deg);}
 .btn-open:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(245,158,11,.6);}
 .btn-open:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-.btn-back{background:transparent;border:1px solid var(--border-b);color:var(--text-2);
-  padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;
-  letter-spacing:.05em;transition:var(--t);}
+.btn-back{background:transparent;border:1px solid var(--border-b);color:var(--text-2);padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;letter-spacing:.05em;transition:var(--t);}
 .btn-back:hover{border-color:var(--accent);color:var(--accent);}
-
-/* ── LOADING OVERLAY ─────────────────────────────────────── */
-#loading-overlay{position:fixed;inset:0;background:var(--bg-deep);z-index:9999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
-  transition:opacity .4s ease;}
+#loading-overlay{position:fixed;inset:0;background:var(--bg-deep);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s ease;}
 #loading-overlay.fade-out{opacity:0;pointer-events:none;}
 .loading-logo{font-family:var(--font-d);font-size:2rem;font-weight:900;letter-spacing:.2em;color:var(--accent);}
-.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);
-  border-radius:50%;animation:spin .8s linear infinite;}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
-
-/* ── GAME LAYOUT ─────────────────────────────────────────── */
 #game-screen{flex-direction:column;height:100vh;overflow:hidden;}
-.top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-  height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);
-  z-index:100;flex-shrink:0;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);z-index:100;flex-shrink:0;}
 .nav-logo{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
-.coin-display{display:flex;align-items:center;gap:6px;background:var(--bg-dark);
-  border:1px solid var(--border);border-radius:20px;padding:5px 14px;
-  font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--gold);}
+.coin-display{display:flex;align-items:center;gap:6px;background:var(--bg-dark);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--gold);}
 .nav-right{display:flex;align-items:center;gap:12px;}
 .player-name{font-family:var(--font-d);font-size:.8rem;color:var(--text-2);}
 .game-layout{display:grid;grid-template-columns:72px 1fr 260px;flex:1;overflow:hidden;}
-.side-nav{background:var(--bg-card);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;padding:12px 0;gap:4px;overflow-y:auto;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;
-  padding:12px 4px;border-radius:var(--r);margin:0 6px;color:var(--text-3);transition:var(--t);}
+.side-nav{background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 0;gap:4px;overflow-y:auto;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 4px;border-radius:var(--r);margin:0 6px;color:var(--text-3);transition:var(--t);}
 .nav-icon{font-size:1.4rem;}.nav-label{font-size:.5rem;font-family:var(--font-d);letter-spacing:.1em;}
 .nav-item:hover{background:var(--bg-hover);color:var(--text-2);}
 .nav-item.active{background:var(--bg-hover);color:var(--accent);}
@@ -141,67 +100,39 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .page-header{margin-bottom:24px;}
 .page-header h2{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
 .page-header p{color:var(--text-2);font-size:.9rem;margin-top:4px;}
-
-/* ── CHAT ────────────────────────────────────────────────── */
-.chat-panel{background:var(--bg-card);border-left:1px solid var(--border);
-  display:flex;flex-direction:column;overflow:hidden;}
-.chat-header{padding:14px 16px;border-bottom:1px solid var(--border);
-  font-family:var(--font-d);font-size:.75rem;letter-spacing:.1em;color:var(--text-2);flex-shrink:0;}
+.chat-panel{background:var(--bg-card);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.chat-header{padding:14px 16px;border-bottom:1px solid var(--border);font-family:var(--font-d);font-size:.75rem;letter-spacing:.1em;color:var(--text-2);flex-shrink:0;}
 .chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
 .chat-msg{font-size:.85rem;line-height:1.4;}
 .chat-msg-user{color:var(--accent);font-weight:600;}
 .chat-msg-system{color:var(--gold);font-style:italic;}
 .chat-msg-announce{color:#ff00ff;font-weight:700;}
 .chat-input-row{display:flex;gap:8px;padding:10px;border-top:1px solid var(--border);flex-shrink:0;}
-.chat-input-row input{flex:1;background:var(--bg-dark);border:1px solid var(--border);
-  border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
+.chat-input-row input{flex:1;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
 .chat-input-row input:focus{border-color:var(--accent);}
-.chat-input-row button{background:var(--accent);color:#fff;padding:8px 14px;
-  border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
-  letter-spacing:.1em;transition:var(--t);}
+.chat-input-row button{background:var(--accent);color:#fff;padding:8px 14px;border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;letter-spacing:.1em;transition:var(--t);}
 .chat-input-row button:hover{background:#6ba3ff;}
-
-/* ── CRATES PAGE ─────────────────────────────────────────── */
 .crates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
-.crate-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);
-  padding:20px 16px;text-align:center;cursor:pointer;transition:var(--t);
-  position:relative;overflow:hidden;}
-.crate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--cc,var(--accent));opacity:.7;}
-.crate-card:hover{transform:translateY(-4px);border-color:var(--cc,var(--accent));
-  box-shadow:0 8px 30px rgba(0,0,0,.4),0 0 20px var(--cg,var(--accent-g));}
+.crate-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:20px 16px;text-align:center;cursor:pointer;transition:var(--t);position:relative;overflow:hidden;}
+.crate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc,var(--accent));opacity:.7;}
+.crate-card:hover{transform:translateY(-4px);border-color:var(--cc,var(--accent));box-shadow:0 8px 30px rgba(0,0,0,.4),0 0 20px var(--cg,var(--accent-g));}
 .crate-emoji{font-size:2.5rem;margin-bottom:10px;display:block;}
 .crate-name{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.08em;margin-bottom:6px;}
 .crate-desc{font-size:.75rem;color:var(--text-2);margin-bottom:12px;line-height:1.3;}
-.crate-price{display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark);
-  border:1px solid var(--border);border-radius:20px;padding:4px 12px;
-  font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--gold);}
-
-/* ── CRATE OPENING ───────────────────────────────────────── */
+.crate-price{display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--gold);}
 .crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
 .crate-open-header h2{font-family:var(--font-d);font-size:1.3rem;font-weight:900;letter-spacing:.15em;}
-.crate-info-panel{background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--rl);padding:16px 20px;margin-bottom:28px;display:flex;gap:20px;flex-wrap:wrap;}
+.crate-info-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px;margin-bottom:28px;display:flex;gap:20px;flex-wrap:wrap;}
 .crate-info-items{display:flex;flex-wrap:wrap;gap:8px;flex:1;}
-.crate-item-pill{display:inline-flex;align-items:center;gap:5px;background:var(--bg-dark);
-  border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:.78rem;}
-.spin-container{position:relative;width:100%;height:120px;overflow:hidden;
-  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:24px;}
-.spin-indicator{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
-  width:2px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);z-index:10;pointer-events:none;}
+.crate-item-pill{display:inline-flex;align-items:center;gap:5px;background:var(--bg-dark);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:.78rem;}
+.spin-container{position:relative;width:100%;height:120px;overflow:hidden;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:24px;}
+.spin-indicator{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:2px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);z-index:10;pointer-events:none;}
 .spin-indicator::before,.spin-indicator::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;}
-.spin-indicator::before{top:-1px;border-left:8px solid transparent;border-right:8px solid transparent;
-  border-top:10px solid var(--accent);margin-left:-7px;}
-.spin-indicator::after{bottom:-1px;border-left:8px solid transparent;border-right:8px solid transparent;
-  border-bottom:10px solid var(--accent);margin-left:-7px;}
-.spin-track{display:flex;align-items:center;height:100%;position:absolute;left:0;
-  will-change:transform;gap:0;padding:0;}
-.spin-item{width:108px;height:108px;flex-shrink:0;background:var(--bg-card2);
-  border:2px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:4px;font-size:1.8rem;
-  box-sizing:border-box;}
-.spin-item-name{font-size:.55rem;font-family:var(--font-d);letter-spacing:.05em;
-  color:var(--text-2);text-align:center;padding:0 4px;}
+.spin-indicator::before{top:-1px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid var(--accent);margin-left:-7px;}
+.spin-indicator::after{bottom:-1px;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:10px solid var(--accent);margin-left:-7px;}
+.spin-track{display:flex;align-items:center;height:100%;position:absolute;left:0;will-change:transform;gap:0;padding:0;}
+.spin-item{width:108px;height:108px;flex-shrink:0;background:var(--bg-card2);border:2px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:1.8rem;box-sizing:border-box;}
+.spin-item-name{font-size:.55rem;font-family:var(--font-d);letter-spacing:.05em;color:var(--text-2);text-align:center;padding:0 4px;}
 .luck-bar-wrap{width:100%;max-width:420px;margin:0 auto 12px;}
 .luck-bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
 .luck-bar-label{font-family:var(--font-d);font-size:.75rem;font-weight:700;color:var(--text-2);letter-spacing:.1em;}
@@ -216,35 +147,26 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .open-controls{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;}
 .open-price-display{font-family:var(--font-d);font-size:1rem;color:var(--gold);font-weight:700;}
 .open-coins-info{color:var(--text-2);font-size:.85rem;}
-.result-panel{background:var(--bg-card);border:2px solid var(--rc,var(--accent));
-  border-radius:var(--rl);padding:32px;text-align:center;
-  box-shadow:0 0 40px var(--rg,var(--accent-g));animation:result-appear .5s ease;}
+.result-panel{background:var(--bg-card);border:2px solid var(--rc,var(--accent));border-radius:var(--rl);padding:32px;text-align:center;box-shadow:0 0 40px var(--rg,var(--accent-g));animation:result-appear .5s ease;}
 @keyframes result-appear{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 .result-inner{display:flex;flex-direction:column;align-items:center;gap:12px;}
 .result-icon{font-size:5rem;animation:float 3s infinite ease-in-out;}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .result-name{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
-.result-rarity{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.2em;
-  padding:4px 16px;border-radius:20px;border:1px solid currentColor;}
+.result-rarity{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.2em;padding:4px 16px;border-radius:20px;border:1px solid currentColor;}
 .result-value{color:var(--gold);font-family:var(--font-d);font-size:.9rem;}
 .result-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
-.btn-keep,.btn-sell-result,.btn-open-again{padding:10px 20px;border-radius:var(--r);
-  font-family:var(--font-d);font-size:.75rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+.btn-keep,.btn-sell-result,.btn-open-again{padding:10px 20px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
 .btn-keep{background:var(--accent);color:#fff;}
 .btn-sell-result{background:var(--bg-dark);border:1px solid var(--gold);color:var(--gold);}
 .btn-open-again{background:var(--bg-dark);border:1px solid var(--border-b);color:var(--text-2);}
 .btn-keep:hover{box-shadow:0 0 20px var(--accent-g);}
 .btn-sell-result:hover{background:var(--gold);color:#000;}
 .btn-open-again:hover{border-color:var(--text-2);color:var(--text-1);}
-
-/* ── INVENTORY ───────────────────────────────────────────── */
 .inv-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.search-input,.sort-select{background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
+.search-input,.sort-select{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
 .search-input{flex:1;min-width:160px;}.search-input:focus,.sort-select:focus{border-color:var(--accent);}
-.btn-sell-selected{background:var(--bg-card);border:1px solid var(--gold);color:var(--gold);
-  padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;
-  font-weight:700;letter-spacing:.08em;transition:var(--t);white-space:nowrap;}
+.btn-sell-selected{background:var(--bg-card);border:1px solid var(--gold);color:var(--gold);padding:8px 16px;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;letter-spacing:.08em;transition:var(--t);white-space:nowrap;}
 .btn-sell-selected:hover{background:var(--gold);color:#000;}
 .auto-sell-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:12px 16px;margin-bottom:14px;}
 .auto-sell-header{display:flex;align-items:center;gap:10px;margin-bottom:0;}
@@ -269,37 +191,26 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .auto-sell-price-input{width:110px;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-1);padding:4px 8px;border-radius:6px;font-family:var(--font-m);font-size:.82rem;}
 .inv-stats{display:flex;gap:16px;margin:12px 0 16px;color:var(--text-2);font-size:.85rem;}
 .inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
-.item-card{background:var(--bg-card);border:2px solid var(--ic,var(--border));
-  border-radius:var(--r);padding:10px 6px;text-align:center;cursor:pointer;
-  transition:var(--t);position:relative;user-select:none;}
+.item-card{background:var(--bg-card);border:2px solid var(--ic,var(--border));border-radius:var(--r);padding:10px 6px;text-align:center;cursor:pointer;transition:var(--t);position:relative;user-select:none;}
 .item-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px var(--ig,transparent);}
 .item-card.selected{background:var(--bg-hover);box-shadow:0 0 0 2px var(--accent);}
 .item-icon{font-size:2rem;display:block;margin-bottom:4px;}
 .item-name{font-size:.6rem;font-family:var(--font-d);letter-spacing:.04em;color:var(--text-2);line-height:1.2;}
 .item-value-small{font-size:.6rem;color:var(--gold);margin-top:2px;font-family:var(--font-m);}
-
-/* ── TRADE ───────────────────────────────────────────────── */
-.trade-players-panel{background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--rl);padding:16px 20px;margin-bottom:20px;}
-.trade-players-panel h3{font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;
-  color:var(--text-2);margin-bottom:12px;}
+.trade-players-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px;margin-bottom:20px;}
+.trade-players-panel h3{font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px;}
 .online-players-list{display:flex;flex-wrap:wrap;gap:8px;}
 .no-players{color:var(--text-3);font-size:.85rem;font-style:italic;}
-.online-player-chip{display:flex;align-items:center;gap:8px;background:var(--bg-dark);
-  border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.85rem;transition:var(--t);}
+.online-player-chip{display:flex;align-items:center;gap:8px;background:var(--bg-dark);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.85rem;transition:var(--t);}
 .online-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0;}
 .online-player-name{font-family:var(--font-d);font-size:.7rem;letter-spacing:.05em;}
-.btn-trade-request{background:var(--accent);color:#fff;padding:4px 12px;border-radius:12px;
-  font-family:var(--font-d);font-size:.65rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+.btn-trade-request{background:var(--accent);color:#fff;padding:4px 12px;border-radius:12px;font-family:var(--font-d);font-size:.65rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
 .btn-trade-request:hover{background:#6ba3ff;}
 .trade-room{display:flex;flex-direction:column;gap:16px;}
-.trade-warning-banner{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);
-  border-radius:var(--r);padding:10px 16px;color:var(--gold);font-size:.85rem;text-align:center;}
+.trade-warning-banner{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:var(--r);padding:10px 16px;color:var(--gold);font-size:.85rem;text-align:center;}
 .trade-panels{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;}
 .trade-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
-.trade-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);
-  font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);
-  display:flex;justify-content:space-between;align-items:center;}
+.trade-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);display:flex;justify-content:space-between;align-items:center;}
 .trade-player-label{color:var(--accent);}
 .trade-items-zone{min-height:130px;padding:12px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;}
 .trade-empty-hint{color:var(--text-3);font-size:.8rem;font-style:italic;}
@@ -309,56 +220,33 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .trade-sort-btn{padding:3px 10px;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-3);border-radius:6px;cursor:pointer;font-size:.72rem;font-family:var(--font-d);}
 .trade-sort-btn.active{border-color:var(--accent);color:var(--accent);}
 .trade-sort-btn:hover{border-color:var(--text-2);color:var(--text-2);}
-.trade-status-you,.trade-status-them{padding:8px 16px;border-top:1px solid var(--border);
-  font-family:var(--font-d);font-size:.7rem;letter-spacing:.08em;text-align:center;}
-.trade-vs{display:flex;align-items:center;justify-content:center;font-family:var(--font-d);
-  font-size:1.2rem;font-weight:900;color:var(--text-3);padding-top:40px;}
-.trade-inv-section h4{font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;
-  color:var(--text-2);margin-bottom:10px;}
-.trade-inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
-  gap:6px;max-height:240px;overflow-y:auto;}
+.trade-status-you,.trade-status-them{padding:8px 16px;border-top:1px solid var(--border);font-family:var(--font-d);font-size:.7rem;letter-spacing:.08em;text-align:center;}
+.trade-vs{display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:1.2rem;font-weight:900;color:var(--text-3);padding-top:40px;}
+.trade-inv-section h4{font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px;}
+.trade-inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;max-height:240px;overflow-y:auto;}
 .trade-controls{display:flex;gap:12px;}
-.btn-accept-trade{flex:1;padding:13px;background:linear-gradient(135deg,#22c55e,#16a34a);
-  color:#fff;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;
-  letter-spacing:.1em;transition:var(--t);box-shadow:0 4px 20px rgba(34,197,94,.3);}
+.btn-accept-trade{flex:1;padding:13px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.1em;transition:var(--t);box-shadow:0 4px 20px rgba(34,197,94,.3);}
 .btn-accept-trade:hover{box-shadow:0 8px 30px rgba(34,197,94,.5);transform:translateY(-1px);}
-.btn-cancel-trade{flex:1;padding:13px;background:var(--bg-dark);border:1px solid #ef4444;
-  color:#ef4444;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;
-  font-weight:700;letter-spacing:.1em;transition:var(--t);}
+.btn-cancel-trade{flex:1;padding:13px;background:var(--bg-dark);border:1px solid #ef4444;color:#ef4444;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.1em;transition:var(--t);}
 .btn-cancel-trade:hover{background:#ef4444;color:#fff;}
 .trade-message{padding:10px;font-size:.85rem;color:var(--gold);text-align:center;min-height:20px;}
-
-/* ── FINAL TRADE MODAL ───────────────────────────────────── */
-.trade-final-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);
-  display:flex;align-items:center;justify-content:center;z-index:1000;}
-.trade-final-inner{background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);
-  padding:32px;max-width:480px;width:90%;text-align:center;
-  box-shadow:0 0 60px var(--gold-g);display:flex;flex-direction:column;gap:16px;}
+.trade-final-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.trade-final-inner{background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);padding:32px;max-width:480px;width:90%;text-align:center;box-shadow:0 0 60px var(--gold-g);display:flex;flex-direction:column;gap:16px;}
 .trade-final-inner h3{font-family:var(--font-d);font-size:1.2rem;color:var(--gold);letter-spacing:.1em;}
-.final-trade-summary{background:var(--bg-dark);border:1px solid var(--border);
-  border-radius:var(--r);padding:16px;font-size:.85rem;color:var(--text-2);text-align:left;}
+.final-trade-summary{background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:16px;font-size:.85rem;color:var(--text-2);text-align:left;}
 .countdown-display{font-family:var(--font-d);font-size:.9rem;color:var(--text-2);letter-spacing:.08em;}
 #countdown-num{color:var(--gold);font-size:1.4rem;font-weight:900;}
-.btn-final-accept{padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;
-  border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;font-weight:700;
-  letter-spacing:.1em;transition:var(--t);}
+.btn-final-accept{padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;font-weight:700;letter-spacing:.1em;transition:var(--t);}
 .btn-final-accept.disabled{opacity:.3;cursor:not-allowed;}
 .btn-final-accept:not(.disabled):hover{box-shadow:0 0 30px rgba(34,197,94,.5);}
-.btn-cancel-final{padding:10px;background:transparent;border:1px solid var(--border-b);
-  color:var(--text-2);border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;
-  letter-spacing:.08em;transition:var(--t);}
+.btn-cancel-final{padding:10px;background:transparent;border:1px solid var(--border-b);color:var(--text-2);border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;letter-spacing:.08em;transition:var(--t);}
 .btn-cancel-final:hover{border-color:#ef4444;color:#ef4444;}
-
-/* ── LEADERBOARD ─────────────────────────────────────────── */
 .lb-tabs{display:flex;gap:6px;margin-bottom:20px;}
-.lb-tab{padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
-  letter-spacing:.08em;color:var(--text-2);transition:var(--t);}
+.lb-tab{padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--text-2);transition:var(--t);}
 .lb-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .lb-tab:hover:not(.active){border-color:var(--accent);color:var(--accent);}
 .leaderboard-list{display:flex;flex-direction:column;gap:8px;}
-.lb-row{display:flex;align-items:center;gap:14px;background:var(--bg-card);
-  border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;transition:var(--t);}
+.lb-row{display:flex;align-items:center;gap:14px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;transition:var(--t);}
 .lb-row:hover{border-color:var(--border-b);}
 .lb-rank{font-family:var(--font-d);font-size:1.1rem;font-weight:900;min-width:32px;text-align:center;}
 .lb-rank-1{color:var(--gold);}.lb-rank-2{color:#c0c0c0;}.lb-rank-3{color:#cd7f32;}
@@ -366,8 +254,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .lb-username{font-family:var(--font-d);font-size:.9rem;font-weight:700;letter-spacing:.05em;}
 .lb-sub{color:var(--text-2);font-size:.78rem;margin-top:2px;}
 .lb-value{font-family:var(--font-m);font-size:.9rem;color:var(--gold);font-weight:700;}
-
-/* ── TRADE HISTORY ───────────────────────────────────────── */
 .history-list{display:flex;flex-direction:column;gap:10px;}
 .history-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;}
 .history-header{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.8rem;}
@@ -376,164 +262,69 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .history-items-label{color:var(--text-3);font-size:.7rem;margin-bottom:3px;}
 .history-items-list{display:flex;gap:4px;flex-wrap:wrap;}
 .history-item-chip{padding:3px 8px;border-radius:12px;border:1px solid;font-size:.7rem;}
-
-/* ── GLOBAL BANNER ───────────────────────────────────────── */
-.global-banner{position:fixed;top:56px;left:0;right:0;z-index:500;
-  background:linear-gradient(135deg,#7c3aed,#4f8ef7);padding:10px 20px;text-align:center;
-  font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.08em;color:#fff;
-  animation:banner-slide .4s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.global-banner{position:fixed;top:56px;left:0;right:0;z-index:500;background:linear-gradient(135deg,#7c3aed,#4f8ef7);padding:10px 20px;text-align:center;font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.08em;color:#fff;animation:banner-slide .4s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 @keyframes banner-slide{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
-
-/* ── TOOLTIP ─────────────────────────────────────────────── */
-.item-tooltip{position:fixed;z-index:900;background:var(--bg-card);border:1px solid var(--border-b);
-  border-radius:var(--r);padding:12px 14px;min-width:160px;max-width:220px;
-  pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+.item-tooltip{position:fixed;z-index:900;background:var(--bg-card);border:1px solid var(--border-b);border-radius:var(--r);padding:12px 14px;min-width:160px;max-width:220px;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.5);}
 .tooltip-icon{font-size:2rem;text-align:center;margin-bottom:6px;}
 .tooltip-name{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.05em;text-align:center;margin-bottom:4px;}
 .tooltip-rarity{font-size:.7rem;font-family:var(--font-d);text-align:center;letter-spacing:.1em;margin-bottom:6px;}
 .tooltip-desc{font-size:.78rem;color:var(--text-2);text-align:center;margin-bottom:6px;}
 .tooltip-value{font-family:var(--font-m);font-size:.75rem;color:var(--gold);text-align:center;}
-
-/* ── TOASTS ──────────────────────────────────────────────── */
 #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--bg-card);border:1px solid var(--border-b);border-left:3px solid var(--accent);
-  border-radius:var(--r);padding:12px 16px;min-width:220px;font-size:.85rem;color:var(--text-1);
-  animation:toast-in .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.toast{background:var(--bg-card);border:1px solid var(--border-b);border-left:3px solid var(--accent);border-radius:var(--r);padding:12px 16px;min-width:220px;font-size:.85rem;color:var(--text-1);animation:toast-in .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .toast.success{border-left-color:#22c55e;}.toast.error{border-left-color:#ef4444;}.toast.gold{border-left-color:var(--gold);}
 @keyframes toast-in{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
-
-/* ── ULTRA OVERLAY ───────────────────────────────────────── */
-.ultra-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;
-  display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .5s ease;}
+.ultra-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .5s ease;}
 @keyframes ultra-fade-in{from{opacity:0}to{opacity:1}}
 .ultra-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;}
-.ultra-rays{position:absolute;width:600px;height:600px;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.05) 10deg,transparent 20deg);
-  animation:rays-spin 4s linear infinite;border-radius:50%;pointer-events:none;}
+.ultra-rays{position:absolute;width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.05) 10deg,transparent 20deg);animation:rays-spin 4s linear infinite;border-radius:50%;pointer-events:none;}
 @keyframes rays-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 .ultra-icon{font-size:7rem;animation:ultra-pulse 1s infinite alternate;position:relative;z-index:1;}
 @keyframes ultra-pulse{from{transform:scale(1)}to{transform:scale(1.1);filter:brightness(1.3)}}
-.ultra-text{font-family:var(--font-d);font-size:3rem;font-weight:900;letter-spacing:.2em;
-  background:linear-gradient(90deg,#ff00ff,#00ffff,#ffd700,#ff00ff);background-size:300% 100%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:rainbow-shift 2s linear infinite;}
+.ultra-text{font-family:var(--font-d);font-size:3rem;font-weight:900;letter-spacing:.2em;background:linear-gradient(90deg,#ff00ff,#00ffff,#ffd700,#ff00ff);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbow-shift 2s linear infinite;}
 @keyframes rainbow-shift{to{background-position:300% 0}}
 .ultra-sub{color:var(--text-2);font-family:var(--font-d);font-size:1rem;letter-spacing:.1em;}
-.btn-ultra-close{background:linear-gradient(135deg,#ff00ff,#00ffff);color:#000;
-  padding:14px 40px;border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;
-  font-weight:900;letter-spacing:.15em;transition:var(--t);}
+.btn-ultra-close{background:linear-gradient(135deg,#ff00ff,#00ffff);color:#000;padding:14px 40px;border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;font-weight:900;letter-spacing:.15em;transition:var(--t);}
 .btn-ultra-close:hover{transform:scale(1.05);}
-
-/* ── INCOMING TRADE ──────────────────────────────────────── */
-.incoming-trade-modal{position:fixed;bottom:80px;right:24px;background:var(--bg-card);
-  border:1px solid var(--accent);border-radius:var(--rl);padding:16px 20px;z-index:800;
-  max-width:280px;box-shadow:0 0 30px var(--accent-g);animation:toast-in .3s ease;}
+.incoming-trade-modal{position:fixed;bottom:80px;right:24px;background:var(--bg-card);border:1px solid var(--accent);border-radius:var(--rl);padding:16px 20px;z-index:800;max-width:280px;box-shadow:0 0 30px var(--accent-g);animation:toast-in .3s ease;}
 .incoming-trade-modal h4{font-family:var(--font-d);font-size:.8rem;color:var(--accent);margin-bottom:8px;}
 .incoming-trade-modal p{font-size:.85rem;color:var(--text-2);margin-bottom:12px;}
 .incoming-trade-btns{display:flex;gap:8px;}
-.btn-atr{flex:1;padding:8px;background:#22c55e;color:#fff;border-radius:var(--r);
-  font-family:var(--font-d);font-size:.7rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
-.btn-dtr{flex:1;padding:8px;background:var(--bg-dark);border:1px solid #ef4444;color:#ef4444;
-  border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
-  letter-spacing:.08em;transition:var(--t);}
-
-/* ── ANIMATIONS ──────────────────────────────────────────── */
+.btn-atr{flex:1;padding:8px;background:#22c55e;color:#fff;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+.btn-dtr{flex:1;padding:8px;background:var(--bg-dark);border:1px solid #ef4444;color:#ef4444;border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
+#page-bugreport .bug-form textarea{width:100%;height:180px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px;color:var(--text-1);font-family:var(--font-m);resize:vertical;font-size:1rem;}
+#page-bugreport .bug-form button{margin-top:16px;}
 @keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 8px var(--accent))}50%{filter:drop-shadow(0 0 20px var(--accent))}}
-@keyframes rainbow-border{
-  0%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}
-  16%{border-color:#ff7700;box-shadow:0 0 20px #ff770044}
-  33%{border-color:#ffff00;box-shadow:0 0 20px #ffff0044}
-  50%{border-color:#00ff00;box-shadow:0 0 20px #00ff0044}
-  66%{border-color:#0000ff;box-shadow:0 0 20px #0000ff44}
-  83%{border-color:#8b00ff;box-shadow:0 0 20px #8b00ff44}
-  100%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}
-}
+@keyframes rainbow-border{0%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}16%{border-color:#ff7700;box-shadow:0 0 20px #ff770044}33%{border-color:#ffff00;box-shadow:0 0 20px #ffff0044}50%{border-color:#00ff00;box-shadow:0 0 20px #00ff0044}66%{border-color:#0000ff;box-shadow:0 0 20px #0000ff44}83%{border-color:#8b00ff;box-shadow:0 0 20px #8b00ff44}100%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}}
 .rarity-divine{animation:rainbow-border 2s linear infinite!important;}
-
-/* ── RESPONSIVE ──────────────────────────────────────────── */
-/* ── MOBILE RESPONSIVE ───────────────────────────────────── */
-@media(max-width:900px){
-  .game-layout{grid-template-columns:72px 1fr}
-  .chat-panel{display:none}
-}
-@media(max-width:600px){
-  .top-nav{padding:0 10px;height:48px;}
-  #game-screen{grid-template-rows:48px auto 1fr;}
-  .nav-logo{font-size:.85rem;}
-  .coin-display{font-size:.82rem;gap:4px;}
-  .game-layout{grid-template-columns:60px 1fr;}
-  .side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);
-    padding:4px 6px;gap:0;height:auto;}
-  .nav-item{padding:7px 8px;margin:0;flex-direction:column;min-width:50px;border-radius:6px;}
-  .nav-icon{font-size:1.1rem;}
-  .nav-label{font-size:.42rem;letter-spacing:.05em;}
-  .page-content{padding:12px;}
-  .crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .crate-card{padding:12px 8px;}
-  .crate-name{font-size:.85rem;}
-  .spin-container{height:90px;}
-  .open-controls{gap:8px;}
-  .luck-bar-wrap{max-width:100%;}
-  .btn-open{padding:12px 24px;font-size:.9rem;}
-  .inventory-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
-  .item-card{width:auto!important;min-width:0;}
-  .inv-controls{flex-wrap:wrap;gap:6px;}
-  .search-input{width:100%;}
-  .auto-sell-panel{padding:10px 12px;}
-  .rarity-chips{gap:4px;}
-  .rarity-chip{padding:3px 8px;font-size:.65rem;}
-  .trade-panels{grid-template-columns:1fr;}
-  .trade-vs{display:none;}
-  .trade-inventory-grid{grid-template-columns:repeat(3,1fr);}
-  .lb-tabs{flex-wrap:wrap;gap:6px;}
-  .lb-row{padding:10px 12px;gap:8px;}
-  .lb-username{font-size:.82rem;}
-  .history-row{padding:10px 12px;}
-  .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
-}
-
-
-/* ── PLATFORMER ──────────────────────────────────────────── */
+@media(max-width:900px){.game-layout{grid-template-columns:72px 1fr}.chat-panel{display:none}}
+@media(max-width:600px){.top-nav{padding:0 10px;height:48px;}#game-screen{grid-template-rows:48px auto 1fr;}.nav-logo{font-size:.85rem;}.coin-display{font-size:.82rem;gap:4px;}.game-layout{grid-template-columns:60px 1fr;}.side-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:4px 6px;gap:0;height:auto;}.nav-item{padding:7px 8px;margin:0;flex-direction:column;min-width:50px;border-radius:6px;}.nav-icon{font-size:1.1rem;}.nav-label{font-size:.42rem;letter-spacing:.05em;}.page-content{padding:12px;}.crates-grid{grid-template-columns:repeat(2,1fr);gap:8px;}.crate-card{padding:12px 8px;}.crate-name{font-size:.85rem;}.spin-container{height:90px;}.open-controls{gap:8px;}.luck-bar-wrap{max-width:100%;}.btn-open{padding:12px 24px;font-size:.9rem;}.inventory-grid{grid-template-columns:repeat(3,1fr);gap:8px;}.item-card{width:auto!important;min-width:0;}.inv-controls{flex-wrap:wrap;gap:6px;}.search-input{width:100%;}.auto-sell-panel{padding:10px 12px;}.rarity-chips{gap:4px;}.rarity-chip{padding:3px 8px;font-size:.65rem;}.trade-panels{grid-template-columns:1fr;}.trade-vs{display:none;}.trade-inventory-grid{grid-template-columns:repeat(3,1fr);}.lb-tabs{flex-wrap:wrap;gap:6px;}.lb-row{padding:10px 12px;gap:8px;}.lb-username{font-size:.82rem;}.history-row{padding:10px 12px;}.history-header{flex-direction:column;gap:2px;align-items:flex-start;}}
 #page-platformer{display:none;height:100%;flex-direction:column;gap:0;padding:0!important;}
 #page-platformer.active{display:flex;}
-.plat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
-  background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0;}
+.plat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0;}
 .plat-title{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
 .plat-stats{display:flex;gap:16px;font-family:var(--font-d);font-size:.75rem;font-weight:700;}
 .plat-stat{display:flex;align-items:center;gap:5px;}
 .plat-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;min-height:0;min-height:300px;}
 #plat-canvas{display:block;image-rendering:pixelated;}
-.plat-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;background:rgba(0,0,0,.8);z-index:10;}
+.plat-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.8);z-index:10;}
 .plat-overlay.hidden{display:none!important;}
-.plat-overlay-title{font-family:var(--font-d);font-size:2rem;font-weight:900;letter-spacing:.2em;
-  color:var(--accent);margin-bottom:8px;text-shadow:0 0 30px var(--accent);}
+.plat-overlay-title{font-family:var(--font-d);font-size:2rem;font-weight:900;letter-spacing:.2em;color:var(--accent);margin-bottom:8px;text-shadow:0 0 30px var(--accent);}
 .plat-overlay-sub{color:var(--text-2);font-size:.9rem;margin-bottom:24px;font-family:var(--font-d);letter-spacing:.1em;}
 .plat-overlay-score{font-family:var(--font-d);font-size:1.1rem;color:var(--gold);margin-bottom:20px;}
-.btn-plat-start{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;
-  padding:14px 40px;border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;
-  font-weight:900;letter-spacing:.15em;transition:var(--t);border:none;cursor:pointer;}
+.btn-plat-start{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;padding:14px 40px;border-radius:var(--r);font-family:var(--font-d);font-size:.9rem;font-weight:900;letter-spacing:.15em;transition:var(--t);border:none;cursor:pointer;}
 .btn-plat-start:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--accent-g);}
-.btn-plat-cashout{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;
-  padding:8px 20px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;
-  font-weight:900;letter-spacing:.1em;border:none;cursor:pointer;transition:var(--t);
-  box-shadow:0 4px 20px rgba(245,158,11,.4);}
+.btn-plat-cashout{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;padding:8px 20px;border-radius:var(--r);font-family:var(--font-d);font-size:.75rem;font-weight:900;letter-spacing:.1em;border:none;cursor:pointer;transition:var(--t);box-shadow:0 4px 20px rgba(245,158,11,.4);}
 .btn-plat-cashout:hover{transform:translateY(-1px);box-shadow:0 6px 25px rgba(245,158,11,.6);}
-.plat-controls-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
-  font-family:var(--font-d);font-size:.6rem;letter-spacing:.1em;color:var(--text-3);white-space:nowrap;}
+.plat-controls-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-family:var(--font-d);font-size:.6rem;letter-spacing:.1em;color:var(--text-3);white-space:nowrap;}
 </style>
 <body>
-
-<!-- LOADING OVERLAY -->
 <div id="loading-overlay">
   <div class="loading-logo">⚡ CRATEVAULT</div>
   <div class="loading-spinner"></div>
   <div class="loading-text">CONNECTING TO THE VAULT...</div>
 </div>
-
-<!-- AUTH SCREEN -->
 <div id="auth-screen" class="screen">
   <div class="auth-particles" id="auth-particles"></div>
   <div class="auth-container">
@@ -548,20 +339,15 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <button class="auth-tab" data-tab="register">REGISTER</button>
       </div>
       <div class="auth-form" id="login-form">
-        <div class="form-group"><label>EMAIL</label>
-          <input type="email" id="login-email" placeholder="Enter email" /></div>
-        <div class="form-group"><label>PASSWORD</label>
-          <input type="password" id="login-password" placeholder="Enter password" /></div>
+        <div class="form-group"><label>EMAIL</label><input type="email" id="login-email" placeholder="Enter email" /></div>
+        <div class="form-group"><label>PASSWORD</label><input type="password" id="login-password" placeholder="Enter password" /></div>
         <button class="btn-primary" id="login-btn">ENTER THE VAULT</button>
         <div class="auth-error" id="login-error"></div>
       </div>
       <div class="auth-form hidden" id="register-form">
-        <div class="form-group"><label>USERNAME</label>
-          <input type="text" id="reg-username" placeholder="Choose username (3-20 chars)" /></div>
-        <div class="form-group"><label>EMAIL</label>
-          <input type="email" id="reg-email" placeholder="Enter email" /></div>
-        <div class="form-group"><label>PASSWORD</label>
-          <input type="password" id="reg-password" placeholder="Choose password (6+ chars)" /></div>
+        <div class="form-group"><label>USERNAME</label><input type="text" id="reg-username" placeholder="Choose username (3-20 chars)" /></div>
+        <div class="form-group"><label>EMAIL</label><input type="email" id="reg-email" placeholder="Enter email" /></div>
+        <div class="form-group"><label>PASSWORD</label><input type="password" id="reg-password" placeholder="Choose password (6+ chars)" /></div>
         <button class="btn-primary" id="register-btn">CREATE ACCOUNT</button>
         <div class="auth-error" id="reg-error"></div>
         <p class="auth-note">🎁 New players start with <strong>400 coins</strong>!</p>
@@ -569,8 +355,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     </div>
   </div>
 </div>
-
-<!-- MAIN GAME -->
 <div id="game-screen" class="screen">
   <header class="top-nav">
     <div class="nav-logo">⚡ CRATEVAULT</div>
@@ -581,9 +365,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="btn-ghost" id="logout-btn">EXIT</button>
     </div>
   </header>
-
   <div id="global-banner" class="global-banner hidden"></div>
-
   <div class="game-layout">
     <nav class="side-nav">
       <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
@@ -592,17 +374,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
       <button class="nav-item" data-page="platformer"><span class="nav-icon">🧗</span><span class="nav-label">CLIMB</span></button>
+      <button class="nav-item" data-page="bugreport"><span class="nav-icon">📝</span><span class="nav-label">BUGS</span></button>
     </nav>
-
     <main class="page-content">
-
-      <!-- CRATES -->
       <section class="page active" id="page-crates">
         <div class="page-header"><h2>CRATE SHOP</h2><p>Roll for rare items. Fortune favors the bold.</p></div>
         <div class="crates-grid" id="crates-grid"></div>
       </section>
-
-      <!-- CRATE OPENING -->
       <section class="page" id="page-opening">
         <div class="crate-open-header">
           <button class="btn-back" id="back-from-opening">← BACK</button>
@@ -651,8 +429,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
       </section>
-
-      <!-- INVENTORY -->
       <section class="page" id="page-inventory">
         <div class="page-header">
           <h2>INVENTORY</h2>
@@ -708,8 +484,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="inv-stats"><span id="inv-count">0 items</span><span id="inv-total-value">Total: 0 🪙</span></div>
         <div class="inventory-grid" id="inventory-grid"></div>
       </section>
-
-      <!-- TRADE -->
       <section class="page" id="page-trade">
         <div class="page-header"><h2>TRADING</h2><p>⚠️ Always double-check items before finalizing a trade.</p></div>
         <div class="trade-players-panel">
@@ -758,7 +532,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
           <div class="trade-message" id="trade-message"></div>
         </div>
-        <!-- FINAL MODAL lives inside page-trade so it's always accessible -->
         <div class="trade-final-modal hidden" id="trade-final-modal">
           <div class="trade-final-inner">
             <h3>⚠️ FINAL CONFIRMATION</h3>
@@ -770,8 +543,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
       </section>
-
-      <!-- LEADERBOARD -->
       <section class="page" id="page-leaderboard">
         <div class="page-header"><h2>LEADERBOARDS</h2></div>
         <div class="lb-tabs">
@@ -781,13 +552,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
         <div class="leaderboard-list" id="leaderboard-list"></div>
       </section>
-
-      <!-- HISTORY -->
       <section class="page" id="page-history">
         <div class="page-header"><h2>TRADE HISTORY</h2></div>
         <div class="history-list" id="history-list"></div>
       </section>
-      <!-- PLATFORMER -->
       <section class="page" id="page-platformer">
         <div class="plat-header">
           <span class="plat-title">🧗 VAULT CLIMBER</span>
@@ -809,9 +577,15 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <div class="plat-controls-hint">WASD / ARROWS — MOVE · W/SPACE — JUMP (ONE JUMP ONLY — NO CATCHING YOURSELF)</div>
         </div>
       </section>
-
+      <section class="page" id="page-bugreport">
+        <div class="page-header"><h2>BUG REPORT</h2><p>Tell us what went wrong. We read every report and fix fast!</p></div>
+        <div class="bug-form" style="max-width:520px;margin:0 auto;">
+          <textarea id="bug-text" placeholder="Describe the bug in detail (e.g. 'Platformer jumps don't register on mobile' or 'Particles appear at bottom of screen')"></textarea>
+          <button class="btn-primary" id="send-bug-btn">SEND REPORT TO DEV TEAM</button>
+          <p style="margin-top:12px;font-size:.75rem;color:var(--text-3);text-align:center;">All reports go straight to the vault devs via Firebase.</p>
+        </div>
+      </section>
     </main>
-
     <aside class="chat-panel">
       <div class="chat-header">💬 GLOBAL CHAT</div>
       <div class="chat-messages" id="chat-messages"></div>
@@ -822,8 +596,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     </aside>
   </div>
 </div>
-
-<!-- TOOLTIP -->
 <div class="item-tooltip hidden" id="item-tooltip">
   <div class="tooltip-icon" id="tt-icon"></div>
   <div class="tooltip-name" id="tt-name"></div>
@@ -831,11 +603,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   <div class="tooltip-desc" id="tt-desc"></div>
   <div class="tooltip-value" id="tt-value"></div>
 </div>
-
-<!-- TOASTS -->
 <div id="toast-container"></div>
-
-<!-- ULTRA OVERLAY -->
 <div class="ultra-overlay hidden" id="ultra-overlay">
   <div class="ultra-inner">
     <div class="ultra-rays"></div>
@@ -845,214 +613,101 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <button class="btn-ultra-close" id="btn-ultra-close">INCREDIBLE!</button>
   </div>
 </div>
-
 <script>
 // ============================================================
 // GAME DATA
 // ============================================================
 const RARITIES = {
-  common:    {name:'Common',    color:'#9ca3af',glow:'#9ca3af44',tier:1},
-  uncommon:  {name:'Uncommon',  color:'#22c55e',glow:'#22c55e44',tier:2},
-  rare:      {name:'Rare',      color:'#3b82f6',glow:'#3b82f644',tier:3},
-  epic:      {name:'Epic',      color:'#a855f7',glow:'#a855f744',tier:4},
+  common: {name:'Common', color:'#9ca3af',glow:'#9ca3af44',tier:1},
+  uncommon: {name:'Uncommon', color:'#22c55e',glow:'#22c55e44',tier:2},
+  rare: {name:'Rare', color:'#3b82f6',glow:'#3b82f644',tier:3},
+  epic: {name:'Epic', color:'#a855f7',glow:'#a855f744',tier:4},
   legendary: {name:'Legendary', color:'#f59e0b',glow:'#f59e0b44',tier:5},
-  mythic:    {name:'Mythic',    color:'#ef4444',glow:'#ef444444',tier:6},
-  divine:    {name:'Divine',    color:'#ddddff',glow:'#aaaaff44',tier:7},
-  ultra1:    {name:'Ultra',     color:'#00ffff',glow:'#00ffff88',tier:8, display:'1 in 1,000,000'},
-  ultra2:    {name:'Hyper',     color:'#ff00ff',glow:'#ff00ff88',tier:9, display:'1 in 100,000,000'},
-  ultra3:    {name:'Cosmic',    color:'#fffaaa',glow:'#ffff0088',tier:10,display:'1 in 1,000,000,000'},
-  ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
+  mythic: {name:'Mythic', color:'#ef4444',glow:'#ef444444',tier:6},
+  divine: {name:'Divine', color:'#ddddff',glow:'#aaaaff44',tier:7},
+  ultra1: {name:'Ultra', color:'#00ffff',glow:'#00ffff88',tier:8, display:'1 in 1,000,000'},
+  ultra2: {name:'Hyper', color:'#ff00ff',glow:'#ff00ff88',tier:9, display:'1 in 100,000,000'},
+  ultra3: {name:'Cosmic', color:'#fffaaa',glow:'#ffff0088',tier:10,display:'1 in 1,000,000,000'},
+  ultra4: {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
 };
-
-// Item values are calibrated so EV/price ≈ 0.50 for every crate.
-// Sell price = 70% of value. Ultra items are jackpots — exciting but not game-breaking.
 const ITEMS = [
-  // COMMON — value ~50 (sells for ~30)
-  {id:'c001',name:'Rusty Coin',       rarity:'common',   icon:'🪙', value:48,  desc:'A worn tarnished coin.'},
-  {id:'c002',name:'Wooden Shield',    rarity:'common',   icon:'🛡️', value:52,  desc:'Basic wooden protection.'},
-  {id:'c003',name:'Old Dagger',       rarity:'common',   icon:'🗡️', value:50,  desc:'Dull but functional.'},
-  {id:'c004',name:'Bread Loaf',       rarity:'common',   icon:'🍞', value:46,  desc:'Surprisingly filling.'},
-  {id:'c005',name:'Pebble',           rarity:'common',   icon:'🪨', value:44,  desc:'Just a rock. Or is it?'},
-  {id:'c006',name:'Leather Boots',    rarity:'common',   icon:'👢', value:54,  desc:'Well-worn travel boots.'},
-  {id:'c007',name:'Hemp Rope',        rarity:'common',   icon:'🧵', value:48,  desc:'Always useful.'},
-  {id:'c008',name:'Candle',           rarity:'common',   icon:'🕯️', value:44,  desc:'Lights the darkest caves.'},
-  {id:'c009',name:'Cloth Bandage',    rarity:'common',   icon:'🩹', value:48,  desc:'Stops minor bleeding.'},
-  {id:'c010',name:'Wooden Bow',       rarity:'common',   icon:'🏹', value:54,  desc:'Simple but effective.'},
-  {id:'c011',name:'Fishing Rod',      rarity:'common',   icon:'🎣', value:50,  desc:'For the patient angler.'},
-  {id:'c012',name:'Iron Nail',        rarity:'common',   icon:'📌', value:44,  desc:'Holds things together.'},
-  {id:'c013',name:'Empty Bottle',     rarity:'common',   icon:'🍶', value:46,  desc:'Could hold anything.'},
-  {id:'c014',name:'Wool Hat',         rarity:'common',   icon:'🎩', value:50,  desc:'Keeps your head warm.'},
-  {id:'c015',name:'Tin Cup',          rarity:'common',   icon:'🫙', value:46,  desc:'Dented but drinkable.'},
-  // UNCOMMON — value ~108 (sells for ~65, profit on Starter)
-  {id:'u001',name:'Silver Ring',      rarity:'uncommon', icon:'💍', value:100, desc:'A simple silver band.'},
-  {id:'u002',name:'Steel Sword',      rarity:'uncommon', icon:'⚔️', value:115, desc:'Sharper than most.'},
-  {id:'u003',name:'Iron Helm',        rarity:'uncommon', icon:'⛑️', value:105, desc:'Solid iron headgear.'},
-  {id:'u004',name:'Potion of Speed',  rarity:'uncommon', icon:'🧪', value:118, desc:'Fleet-footed formula.'},
-  {id:'u005',name:'Copper Key',       rarity:'uncommon', icon:'🗝️', value:98,  desc:'Opens many doors.'},
-  {id:'u006',name:'Map Fragment',     rarity:'uncommon', icon:'🗺️', value:105, desc:'Part of a larger secret.'},
-  {id:'u007',name:'Storm Scroll',     rarity:'uncommon', icon:'📜', value:115, desc:'Contains weather magic.'},
-  {id:'u008',name:'Fox Pelt',         rarity:'uncommon', icon:'🦊', value:102, desc:'Warm and valuable fur.'},
-  {id:'u009',name:'Magic Compass',    rarity:'uncommon', icon:'🧭', value:110, desc:'Points toward treasure.'},
-  {id:'u010',name:'Blue Crystal',     rarity:'uncommon', icon:'💎', value:120, desc:'Faintly glowing gem.'},
-  {id:'u011',name:'Shadow Cloak',     rarity:'uncommon', icon:'🧥', value:115, desc:'Hard to see in.'},
-  {id:'u012',name:'Bone Charm',       rarity:'uncommon', icon:'🦴', value:100, desc:'Provides minor warding.'},
-  // RARE — value ~300 (sells for ~180, profit on Warrior)
-  {id:'r001',name:'Enchanted Blade',  rarity:'rare',     icon:'🔷', value:285, desc:'Hums with arcane energy.'},
-  {id:'r002',name:'Dragon Scale',     rarity:'rare',     icon:'🐉', value:315, desc:'Impervious to flame.'},
-  {id:'r003',name:'Mana Crystal',     rarity:'rare',     icon:'🔮', value:295, desc:'Crystallized magic.'},
-  {id:'r004',name:'Thunder Gauntlet', rarity:'rare',     icon:'⚡', value:320, desc:'Channels lightning.'},
-  {id:'r005',name:'Phantom Mask',     rarity:'rare',     icon:'👻', value:295, desc:'Face of the unseen.'},
-  {id:'r006',name:'Arcane Tome',      rarity:'rare',     icon:'📖', value:325, desc:'Ancient spellbook.'},
-  {id:'r007',name:'Vortex Staff',     rarity:'rare',     icon:'🌀', value:300, desc:'Creates small storms.'},
-  {id:'r008',name:'Ice Crown',        rarity:'rare',     icon:'👑', value:330, desc:'Freezes the mind.'},
-  {id:'r009',name:'Fire Emblem',      rarity:'rare',     icon:'🔥', value:305, desc:'Smoldering with power.'},
-  {id:'r010',name:'Moon Amulet',      rarity:'rare',     icon:'🌙', value:290, desc:'Grants lunar vision.'},
-  // EPIC — value ~2,333 (sells for ~1,400, profit on Shadow)
-  {id:'e001',name:'Void Blade',       rarity:'epic',     icon:'🌑', value:2200, desc:'Cuts through reality.'},
-  {id:'e002',name:'Soul Gem',         rarity:'epic',     icon:'💜', value:2350, desc:'Contains a trapped soul.'},
-  {id:'e003',name:'Titan Armor',      rarity:'epic',     icon:'🛡️', value:2500, desc:'Forged by giants.'},
-  {id:'e004',name:'Celestial Bow',    rarity:'epic',     icon:'🌟', value:2250, desc:'Arrows pierce stars.'},
-  {id:'e005',name:'Chaos Orb',        rarity:'epic',     icon:'🌪️', value:2500, desc:'Unpredictable power.'},
-  {id:'e006',name:'Phantom Crown',    rarity:'epic',     icon:'👑', value:2400, desc:'Ruler of shadows.'},
-  {id:'e007',name:'Elder Wand',       rarity:'epic',     icon:'🪄', value:2350, desc:'Mastery over death.'},
-  {id:'e008',name:'Abyssal Ring',     rarity:'epic',     icon:'🖤', value:2200, desc:'Power from the deep.'},
-  // LEGENDARY — value ~9,167 (sells for ~5,500, profit on Celestial)
-  {id:'l001',name:'Sunforged Sword',  rarity:'legendary',icon:'☀️', value:8500,  desc:'Blazing with solar power.'},
-  {id:'l002',name:'Moonweave Robe',   rarity:'legendary',icon:'🌕', value:9000,  desc:'Woven from moonlight.'},
-  {id:'l003',name:'Storm Trident',    rarity:'legendary',icon:'🔱', value:9500,  desc:'Commands the seas.'},
+  {id:'c001',name:'Rusty Coin', rarity:'common', icon:'🪙', value:48, desc:'A worn tarnished coin.'},
+  {id:'c002',name:'Wooden Shield', rarity:'common', icon:'🛡️', value:52, desc:'Basic wooden protection.'},
+  {id:'c003',name:'Old Dagger', rarity:'common', icon:'🗡️', value:50, desc:'Dull but functional.'},
+  {id:'c004',name:'Bread Loaf', rarity:'common', icon:'🍞', value:46, desc:'Surprisingly filling.'},
+  {id:'c005',name:'Pebble', rarity:'common', icon:'🪨', value:44, desc:'Just a rock. Or is it?'},
+  {id:'c006',name:'Leather Boots', rarity:'common', icon:'👢', value:54, desc:'Well-worn travel boots.'},
+  {id:'c007',name:'Hemp Rope', rarity:'common', icon:'🧵', value:48, desc:'Always useful.'},
+  {id:'c008',name:'Candle', rarity:'common', icon:'🕯️', value:44, desc:'Lights the darkest caves.'},
+  {id:'c009',name:'Cloth Bandage', rarity:'common', icon:'🩹', value:48, desc:'Stops minor bleeding.'},
+  {id:'c010',name:'Wooden Bow', rarity:'common', icon:'🏹', value:54, desc:'Simple but effective.'},
+  {id:'c011',name:'Fishing Rod', rarity:'common', icon:'🎣', value:50, desc:'For the patient angler.'},
+  {id:'c012',name:'Iron Nail', rarity:'common', icon:'📌', value:44, desc:'Holds things together.'},
+  {id:'c013',name:'Empty Bottle', rarity:'common', icon:'🍶', value:46, desc:'Could hold anything.'},
+  {id:'c014',name:'Wool Hat', rarity:'common', icon:'🎩', value:50, desc:'Keeps your head warm.'},
+  {id:'c015',name:'Tin Cup', rarity:'common', icon:'🫙', value:46, desc:'Dented but drinkable.'},
+  {id:'u001',name:'Silver Ring', rarity:'uncommon', icon:'💍', value:100, desc:'A simple silver band.'},
+  {id:'u002',name:'Steel Sword', rarity:'uncommon', icon:'⚔️', value:115, desc:'Sharper than most.'},
+  {id:'u003',name:'Iron Helm', rarity:'uncommon', icon:'⛑️', value:105, desc:'Solid iron headgear.'},
+  {id:'u004',name:'Potion of Speed', rarity:'uncommon', icon:'🧪', value:118, desc:'Fleet-footed formula.'},
+  {id:'u005',name:'Copper Key', rarity:'uncommon', icon:'🗝️', value:98, desc:'Opens many doors.'},
+  {id:'u006',name:'Map Fragment', rarity:'uncommon', icon:'🗺️', value:105, desc:'Part of a larger secret.'},
+  {id:'u007',name:'Storm Scroll', rarity:'uncommon', icon:'📜', value:115, desc:'Contains weather magic.'},
+  {id:'u008',name:'Fox Pelt', rarity:'uncommon', icon:'🦊', value:102, desc:'Warm and valuable fur.'},
+  {id:'u009',name:'Magic Compass', rarity:'uncommon', icon:'🧭', value:110, desc:'Points toward treasure.'},
+  {id:'u010',name:'Blue Crystal', rarity:'uncommon', icon:'💎', value:120, desc:'Faintly glowing gem.'},
+  {id:'u011',name:'Shadow Cloak', rarity:'uncommon', icon:'🧥', value:115, desc:'Hard to see in.'},
+  {id:'u012',name:'Bone Charm', rarity:'uncommon', icon:'🦴', value:100, desc:'Provides minor warding.'},
+  {id:'r001',name:'Enchanted Blade', rarity:'rare', icon:'🔷', value:285, desc:'Hums with arcane energy.'},
+  {id:'r002',name:'Dragon Scale', rarity:'rare', icon:'🐉', value:315, desc:'Impervious to flame.'},
+  {id:'r003',name:'Mana Crystal', rarity:'rare', icon:'🔮', value:295, desc:'Crystallized magic.'},
+  {id:'r004',name:'Thunder Gauntlet', rarity:'rare', icon:'⚡', value:320, desc:'Channels lightning.'},
+  {id:'r005',name:'Phantom Mask', rarity:'rare', icon:'👻', value:295, desc:'Face of the unseen.'},
+  {id:'r006',name:'Arcane Tome', rarity:'rare', icon:'📖', value:325, desc:'Ancient spellbook.'},
+  {id:'r007',name:'Vortex Staff', rarity:'rare', icon:'🌀', value:300, desc:'Creates small storms.'},
+  {id:'r008',name:'Ice Crown', rarity:'rare', icon:'👑', value:330, desc:'Freezes the mind.'},
+  {id:'r009',name:'Fire Emblem', rarity:'rare', icon:'🔥', value:305, desc:'Smoldering with power.'},
+  {id:'r010',name:'Moon Amulet', rarity:'rare', icon:'🌙', value:290, desc:'Grants lunar vision.'},
+  {id:'e001',name:'Void Blade', rarity:'epic', icon:'🌑', value:2200, desc:'Cuts through reality.'},
+  {id:'e002',name:'Soul Gem', rarity:'epic', icon:'💜', value:2350, desc:'Contains a trapped soul.'},
+  {id:'e003',name:'Titan Armor', rarity:'epic', icon:'🛡️', value:2500, desc:'Forged by giants.'},
+  {id:'e004',name:'Celestial Bow', rarity:'epic', icon:'🌟', value:2250, desc:'Arrows pierce stars.'},
+  {id:'e005',name:'Chaos Orb', rarity:'epic', icon:'🌪️', value:2500, desc:'Unpredictable power.'},
+  {id:'e006',name:'Phantom Crown', rarity:'epic', icon:'👑', value:2400, desc:'Ruler of shadows.'},
+  {id:'e007',name:'Elder Wand', rarity:'epic', icon:'🪄', value:2350, desc:'Mastery over death.'},
+  {id:'e008',name:'Abyssal Ring', rarity:'epic', icon:'🖤', value:2200, desc:'Power from the deep.'},
+  {id:'l001',name:'Sunforged Sword', rarity:'legendary',icon:'☀️', value:8500, desc:'Blazing with solar power.'},
+  {id:'l002',name:'Moonweave Robe', rarity:'legendary',icon:'🌕', value:9000, desc:'Woven from moonlight.'},
+  {id:'l003',name:'Storm Trident', rarity:'legendary',icon:'🔱', value:9500, desc:'Commands the seas.'},
   {id:'l004',name:'Infinity Gauntlet',rarity:'legendary',icon:'✊', value:10000, desc:'Controls reality.'},
-  {id:'l005',name:'Phoenix Feather',  rarity:'legendary',icon:'🦅', value:9000,  desc:'Grants rebirth.'},
-  {id:'l006',name:'God Slayer',       rarity:'legendary',icon:'⚔️', value:10500, desc:'Even gods fear this.'},
-  // MYTHIC — value ~91,667 (sells for ~55,000, big profit on Mythic crate 8k)
-  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:88000,  desc:'Opens any dimension.'},
-  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:92000,  desc:'Piece of a dead star.'},
-  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:96000,  desc:'Reality bends around it.'},
-  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:90000,  desc:'Fragment of nothingness.'},
-  // DIVINE — value ~216,667 (sells for ~130,000)
-  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:210000, desc:'Touched by a deity.'},
-  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:225000, desc:'Born at start of time.'},
-  // ULTRA
-  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:666667,     desc:'1 in a million. Truly impossible.'},
-  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3333333,    desc:'One of only a few in existence.'},
-  {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
-  {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
+  {id:'l005',name:'Phoenix Feather', rarity:'legendary',icon:'🦅', value:9000, desc:'Grants rebirth.'},
+  {id:'l006',name:'God Slayer', rarity:'legendary',icon:'⚔️', value:10500, desc:'Even gods fear this.'},
+  {id:'m001',name:'Universe Key', rarity:'mythic', icon:'🗝️', value:88000, desc:'Opens any dimension.'},
+  {id:'m002',name:'Star Fragment', rarity:'mythic', icon:'⭐', value:92000, desc:'Piece of a dead star.'},
+  {id:'m003',name:'Reality Shard', rarity:'mythic', icon:'💫', value:96000, desc:'Reality bends around it.'},
+  {id:'m004',name:'Void Crystal', rarity:'mythic', icon:'🔲', value:90000, desc:'Fragment of nothingness.'},
+  {id:'d001',name:'Divine Relic', rarity:'divine', icon:'✨', value:210000, desc:'Touched by a deity.'},
+  {id:'d002',name:'Creation Orb', rarity:'divine', icon:'🌈', value:225000, desc:'Born at start of time.'},
+  {id:'ur01',name:'OMEGA SHARD', rarity:'ultra1', icon:'💠', value:666667, desc:'1 in a million. Truly impossible.'},
+  {id:'ur02',name:'NEXUS CORE', rarity:'ultra2', icon:'🔵', value:3333333, desc:'One of only a few in existence.'},
+  {id:'ur03',name:'PRIMORDIAL EYE', rarity:'ultra3', icon:'👁️', value:11666667, desc:'The eye that saw creation.'},
+  {id:'ur04',name:'ABSOLUTE ZERO', rarity:'ultra4', icon:'❄️', value:58333333, desc:'The rarest item in existence.'},
 ];
-
-// Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
 const CRATES = [
-  {
-    id:'starter', name:'Starter Crate', price:50, icon:'📦', color:'#9ca3af',
-    desc:'For new adventurers. Commons are likely, but Rare is possible.',
-    odds:{common:0.88, uncommon:0.09, rare:0.03},
-    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010',
-           'c011','c012','c013','c014','c015',
-           'u001','u002','u003','u004','u005',
-           'r001','r002'],
-  },
-  {
-    id:'warrior', name:'Warrior Crate', price:125, icon:'⚔️', color:'#ef4444',
-    desc:'Combat gear and deadly weapons.',
-    odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-    items:['c001','c003','c006','c009','c010','c012',
-           'u002','u003','u004','u008',
-           'r001','r004','r009',
-           'e001','e003'],
-  },
-  {
-    id:'explorer', name:'Explorer Crate', price:125, icon:'🗺️', color:'#22c55e',
-    desc:'Tools for the adventurous spirit.',
-    odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-    items:['c004','c007','c011','c013','c014','c015',
-           'u005','u006','u008','u009',
-           'r002','r007','r010',
-           'e004','e007'],
-  },
-  {
-    id:'mystic', name:'Mystic Crate', price:250, icon:'🔮', color:'#a855f7',
-    desc:'Magical artifacts and arcane secrets.',
-    odds:{common:0.60, uncommon:0.28, rare:0.10, epic:0.02},
-    items:['c002','c008','c013',
-           'u007','u009','u010','u012',
-           'r003','r006','r007','r010',
-           'e002','e004','e007'],
-  },
-  {
-    id:'shadow', name:'Shadow Crate', price:750, icon:'🌑', color:'#6b21a8',
-    desc:'No filler — Rare guaranteed, Epic and Legendary possible.',
-    odds:{rare:0.78, epic:0.18, legendary:0.04},
-    items:['r005','r006','r007','r009','r010',
-           'e001','e002','e005','e006','e008',
-           'l004','l006'],
-  },
-  {
-    id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626',
-    desc:'Scorched by hellfire. Rare guaranteed, Epic possible.',
-    odds:{rare:0.82, epic:0.15, legendary:0.03},
-    items:['r001','r004','r005','r006','r007','r009',
-           'e001','e003','e005','e006','e008',
-           'l006'],
-  },
-  {
-    id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8',
-    desc:'Crackling with energy. Epic is common, Legendary rare.',
-    odds:{rare:0.60, epic:0.33, legendary:0.07},
-    items:['r004','r007','r008','r009',
-           'e001','e002','e004','e005','e006','e007','e008',
-           'l001','l003','l005','l006'],
-  },
-  {
-    id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
-    desc:'Blessed by the heavens. Epic guaranteed, Legendary and Mythic possible.',
-    odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02},
-    items:['r008','r003','r010',
-           'e004','e006','e002','e003',
-           'l001','l002','l005',
-           'm002'],
-  },
-  {
-    id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207',
-    desc:'Relics of a forgotten age. Legendary likely, Mythic possible.',
-    odds:{epic:0.55, legendary:0.38, mythic:0.07},
-    items:['e002','e003','e004','e006','e007',
-           'l001','l002','l003','l004','l005','l006',
-           'm001','m004'],
-  },
-  {
-    id:'mythic', name:'Mythic Crate', price:8000, icon:'💀', color:'#ef4444',
-    desc:'Only the brave dare open this. Legendary and Mythic.',
-    odds:{epic:0.40, legendary:0.48, mythic:0.12},
-    items:['r001','r004','r006',
-           'e001','e002','e005','e006','e008',
-           'l001','l003','l006',
-           'm001','m004'],
-  },
-  {
-    id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
-    desc:'From the deepest depths. Legendary guaranteed, Mythic likely.',
-    odds:{legendary:0.72, mythic:0.28},
-    items:['l001','l002','l003','l004','l005','l006',
-           'm001','m002','m003','m004'],
-  },
-
-
-  {
-    id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
-    desc:'From the space between worlds. Mythic dominant, Ultra possible.',
-    odds:{legendary:0.20, mythic:0.779, ultra1:0.021},
-    items:['l003','l004','l006',
-           'm001','m002','m003','m004',
-           'ur01'],
-  },
-  {
-    id:'omega', name:'OMEGA Crate', price:180000, icon:'⚡', color:'#ffd700',
-    desc:'The only crate with Divine drops. Ultra odds are astronomical.',
-    odds:{divine:0.9499, ultra1:0.0499, ultra2:0.0001, ultra3:0.000009, ultra4:0.000001},
-    items:['m001','m002','m003','m004',
-           'd001','d002',
-           'ur01','ur02','ur03','ur04'],
-  },
+  {id:'starter', name:'Starter Crate', price:50, icon:'📦', color:'#9ca3af', desc:'For new adventurers. Commons are likely, but Rare is possible.', odds:{common:0.88, uncommon:0.09, rare:0.03}, items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015','u001','u002','u003','u004','u005','r001','r002']},
+  {id:'warrior', name:'Warrior Crate', price:125, icon:'⚔️', color:'#ef4444', desc:'Combat gear and deadly weapons.', odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005}, items:['c001','c003','c006','c009','c010','c012','u002','u003','u004','u008','r001','r004','r009','e001','e003']},
+  {id:'explorer', name:'Explorer Crate', price:125, icon:'🗺️', color:'#22c55e', desc:'Tools for the adventurous spirit.', odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005}, items:['c004','c007','c011','c013','c014','c015','u005','u006','u008','u009','r002','r007','r010','e004','e007']},
+  {id:'mystic', name:'Mystic Crate', price:250, icon:'🔮', color:'#a855f7', desc:'Magical artifacts and arcane secrets.', odds:{common:0.60, uncommon:0.28, rare:0.10, epic:0.02}, items:['c002','c008','c013','u007','u009','u010','u012','r003','r006','r007','r010','e002','e004','e007']},
+  {id:'shadow', name:'Shadow Crate', price:750, icon:'🌑', color:'#6b21a8', desc:'No filler — Rare guaranteed, Epic and Legendary possible.', odds:{rare:0.78, epic:0.18, legendary:0.04}, items:['r005','r006','r007','r009','r010','e001','e002','e005','e006','e008','l004','l006']},
+  {id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626', desc:'Scorched by hellfire. Rare guaranteed, Epic possible.', odds:{rare:0.82, epic:0.15, legendary:0.03}, items:['r001','r004','r005','r006','r007','r009','e001','e003','e005','e006','e008','l006']},
+  {id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8', desc:'Crackling with energy. Epic is common, Legendary rare.', odds:{rare:0.60, epic:0.33, legendary:0.07}, items:['r004','r007','r008','r009','e001','e002','e004','e005','e006','e007','e008','l001','l003','l005','l006']},
+  {id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b', desc:'Blessed by the heavens. Epic guaranteed, Legendary and Mythic possible.', odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02}, items:['r008','r003','r010','e004','e006','e002','e003','l001','l002','l005','m002']},
+  {id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207', desc:'Relics of a forgotten age. Legendary likely, Mythic possible.', odds:{epic:0.55, legendary:0.38, mythic:0.07}, items:['e002','e003','e004','e006','e007','l001','l002','l003','l004','l005','l006','m001','m004']},
+  {id:'mythic', name:'Mythic Crate', price:8000, icon:'💀', color:'#ef4444', desc:'Only the brave dare open this. Legendary and Mythic.', odds:{epic:0.40, legendary:0.48, mythic:0.12}, items:['r001','r004','r006','e001','e002','e005','e006','e008','l001','l003','l006','m001','m004']},
+  {id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af', desc:'From the deepest depths. Legendary guaranteed, Mythic likely.', odds:{legendary:0.72, mythic:0.28}, items:['l001','l002','l003','l004','l005','l006','m001','m002','m003','m004']},
+  {id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555', desc:'From the space between worlds. Mythic dominant, Ultra possible.', odds:{legendary:0.20, mythic:0.779, ultra1:0.021}, items:['l003','l004','l006','m001','m002','m003','m004','ur01']},
+  {id:'omega', name:'OMEGA Crate', price:180000, icon:'⚡', color:'#ffd700', desc:'The only crate with Divine drops. Ultra odds are astronomical.', odds:{divine:0.9499, ultra1:0.0499, ultra2:0.0001, ultra3:0.000009, ultra4:0.000001}, items:['m001','m002','m003','m004','d001','d002','ur01','ur02','ur03','ur04']},
 ];
-
 function getItem(id){return ITEMS.find(i=>i.id===id);}
 function getRarity(k){return RARITIES[k]||RARITIES.common;}
 function fmtNum(n){
@@ -1063,14 +718,13 @@ function fmtNum(n){
   return String(Math.floor(n));
 }
 function rarityOdds(k, crateOdds){
-  // If called with crate-specific odds, use those
   const pct = crateOdds ? crateOdds[k] : null;
   if(pct == null) {
     const r=RARITIES[k]; if(!r)return'';
     if(r.display)return r.display;
     return'—';
   }
-  if(RARITIES[k]?.display) return RARITIES[k].display; // ultra tiers always show display
+  if(RARITIES[k]?.display) return RARITIES[k].display;
   const p=pct*100;
   if(p>=1)return p.toFixed(0)+'%';
   if(p>=.1)return p.toFixed(1)+'%';
@@ -1078,20 +732,17 @@ function rarityOdds(k, crateOdds){
   return'1 in '+Math.round(1/pct).toLocaleString();
 }
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
-
 // ============================================================
 // FIREBASE INIT
 // ============================================================
 let db, auth, rtdb;
-
 function initFirebase(cfg){
   if(firebase.apps.length) firebase.apps.forEach(a=>a.delete());
   firebase.initializeApp(cfg);
-  auth  = firebase.auth();
-  db    = firebase.firestore();
-  rtdb  = firebase.database();
+  auth = firebase.auth();
+  db = firebase.firestore();
+  rtdb = firebase.database();
 }
-
 // ============================================================
 // STATE
 // ============================================================
@@ -1116,17 +767,15 @@ const S = {
   tradeMyCoins: 0,
   tradeTheirCoins: 0,
   tradeSortBy: 'rarity',
-  luckBoost: null,      // 'minor' | 'huge' | null
+  luckBoost: null,
   luckBoostUsed: false,
   autoSell: false,
   autoSellMode: 'rarity',
   autoSellRarity: 'common',
   autoSellPrice: 0,
   lastOpenedInvItem: null,
-  // FIX: track whether realtime listeners have been set up to avoid duplicates
   listenersInitialized: false,
 };
-
 // ============================================================
 // UTILITY
 // ============================================================
@@ -1157,7 +806,6 @@ function showGlobalBanner(msg){
   b.textContent=msg; b.classList.remove('hidden');
   setTimeout(()=>b.classList.add('hidden'),8000);
 }
-
 // ============================================================
 // AUTH TABS
 // ============================================================
@@ -1169,14 +817,11 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
     document.getElementById('register-form').classList.toggle('hidden',tab.dataset.tab!=='register');
   });
 });
-
-// Enter key on login fields
 ['login-email','login-password'].forEach(id=>{
   document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('login-btn').click(); });
 });
-
 // ============================================================
-// LOGIN — FIX: no polling loop, just sign in and let observer handle it
+// LOGIN
 // ============================================================
 document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
@@ -1188,13 +833,11 @@ document.getElementById('login-btn').addEventListener('click',async()=>{
   btn.disabled=true; btn.textContent='LOADING...';
   try{
     await auth.signInWithEmailAndPassword(email,pass);
-    // onAuthStateChanged handles the rest
   }catch(e){
     err.textContent=friendlyAuthError(e.code)||'Login failed. Check your details.';
     btn.disabled=false; btn.textContent='ENTER THE VAULT';
   }
 });
-
 // ============================================================
 // REGISTER
 // ============================================================
@@ -1210,7 +853,6 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
   if(!pass||pass.length<6){err.textContent='Password must be at least 6 characters.';return;}
   btn.disabled=true; btn.textContent='CREATING...';
   try{
-    // Check username first, then create auth
     const snap=await db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get();
     if(!snap.empty){
       err.textContent='Username already taken.';
@@ -1218,7 +860,6 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
       return;
     }
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    // Write profile — onAuthStateChanged will pick it up
     await db.collection('users').doc(cred.user.uid).set({
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
       coins:400, inventory:[], tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
@@ -1230,14 +871,12 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
     btn.disabled=false; btn.textContent='CREATE ACCOUNT';
   }
 });
-
 document.getElementById('logout-btn').addEventListener('click',async()=>{
   await leavePresence();
   S.listenersInitialized=false;
   await auth.signOut();
   toast('Logged out.');
 });
-
 function friendlyAuthError(code){
   const map={
     'auth/user-not-found':'No account with that email.',
@@ -1253,27 +892,21 @@ function friendlyAuthError(code){
   };
   return map[code]||'';
 }
-
 // ============================================================
 // AUTH STATE OBSERVER
-// FIX: Show game screen immediately, load profile in background
-// FIX: Only set up realtime listeners once per session
 // ============================================================
 function startAuthObserver(){
   auth.onAuthStateChanged(async user=>{
     if(user){
       S.user=user;
-      // Show game immediately — don't wait for profile
       showScreen('game-screen');
       hideLoadingOverlay();
       loadCratesPage();
       showPage('crates');
-      // Reset auth button states
       const lb=document.getElementById('login-btn');
       const rb=document.getElementById('register-btn');
       if(lb){lb.disabled=false;lb.textContent='ENTER THE VAULT';}
       if(rb){rb.disabled=false;rb.textContent='CREATE ACCOUNT';}
-      // Load profile — retry a few times for new registrations
       let doc=null;
       for(let i=0;i<5;i++){
         try{ doc=await db.collection('users').doc(user.uid).get(); }catch(e){ break; }
@@ -1284,12 +917,10 @@ function startAuthObserver(){
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       document.getElementById('nav-username').textContent=S.profile.username;
-      // Show admin button for admin user
       if(S.profile.username==='Dreamcrusher'){
         document.getElementById('admin-refresh-btn').classList.remove('hidden');
       }
       updateCoinDisplay(S.profile.coins);
-      // FIX: Only initialize realtime listeners once to avoid duplicate handlers
       if(!S.listenersInitialized){
         S.listenersInitialized=true;
         setupPresence();
@@ -1308,25 +939,14 @@ function startAuthObserver(){
     }
   });
 }
-
 function updateCoinDisplay(coins){
   S.profile.coins=coins;
   document.getElementById('coin-balance').textContent=fmtNum(coins);
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
 }
-
-// Daily login bonus — scales with login streak
-// Luck milestone: every 10 crates = minor boost, every 100 = huge boost
-// Luck milestones based on COINS SPENT (not crates opened)
-// Minor boost every 1,000 coins spent; Huge boost every 10,000 coins spent
-// Opening a Starter (50c) adds 50 luck; Omega (180k) adds 180,000 luck
-// Luck thresholds are per-crate: minor = 10x price, huge = 100x price
-// This prevents cheap crate grinding from boosting expensive crate rolls.
-
 function getLuckThresholds(crate){
   return { minor: crate.price*10, huge: crate.price*100 };
 }
-
 function checkLuckMilestone(crate){
   if(!S.profile||!crate) return;
   const perCrate=S.profile.luckCoinsPerCrate||{};
@@ -1346,13 +966,11 @@ function checkLuckMilestone(crate){
   }
   updateLuckBar(crate);
 }
-
 function updateLuckBar(crate){
   const fill=document.getElementById('luck-bar-fill');
   const count=document.getElementById('luck-bar-count');
   const status=document.getElementById('luck-bar-status');
   if(!fill||!count||!status) return;
-
   if(!crate){
     fill.style.width='0%';
     fill.className='luck-bar-fill';
@@ -1361,12 +979,10 @@ function updateLuckBar(crate){
     status.style.color='var(--text-3)';
     return;
   }
-
   const {minor,huge}=getLuckThresholds(crate);
   const perCrate=S.profile?.luckCoinsPerCrate||{};
   const total=perCrate[crate.id]||0;
   const boostActive=S.luckBoost && S.luckBoostCrate===crate.id;
-
   if(boostActive && S.luckBoost==='huge'){
     fill.style.width='100%';
     fill.className='luck-bar-fill boost-huge';
@@ -1383,17 +999,14 @@ function updateLuckBar(crate){
     status.style.color='#f59e0b';
     return;
   }
-
   const minorProgress=total%minor;
   const hugeProgress=total%huge;
   const minorPct=minorProgress/minor*100;
   const hugeRatio=hugeProgress/huge;
-
   fill.style.width=minorPct+'%';
   fill.className='luck-bar-fill';
   fill.style.background='linear-gradient(90deg,#3b82f6,'+(hugeRatio>0.7?'#f59e0b':'#a855f7')+')';
-
-  count.textContent='🪙 '+fmtNum(minorProgress)+' / '+fmtNum(minor)+'  ('+fmtNum(hugeProgress)+' / '+fmtNum(huge)+' for 🌟)';
+  count.textContent='🪙 '+fmtNum(minorProgress)+' / '+fmtNum(minor)+' ('+fmtNum(hugeProgress)+' / '+fmtNum(huge)+' for 🌟)';
   const toMinor=minor-minorProgress;
   const toHuge=huge-hugeProgress;
   if(hugeRatio>=0.9){
@@ -1404,7 +1017,6 @@ function updateLuckBar(crate){
     status.style.color='var(--text-3)';
   }
 }
-
 // ============================================================
 // REALTIME PRESENCE
 // ============================================================
@@ -1414,55 +1026,44 @@ function setupPresence(){
     const uid=S.user.uid;
     const ref=rtdb.ref('presence/'+uid);
     S.presenceRef=ref;
-
-    // Re-register presence every time Firebase reports (re)connection
     rtdb.ref('.info/connected').on('value', snap=>{
-      if(!snap.val()) return; // disconnected — onDisconnect handles cleanup
+      if(!snap.val()) return;
       const data={uid, username:S.profile.username, online:true, ts:firebase.database.ServerValue.TIMESTAMP, tradeRoomId:S.tradeRoomId||null};
       ref.set(data);
       ref.onDisconnect().remove();
     });
-
-    // Heartbeat: rewrite presence every 30s to prove we're alive
     if(S.presenceHeartbeat) clearInterval(S.presenceHeartbeat);
     S.presenceHeartbeat = setInterval(()=>{
       if(!S.user||!S.presenceRef) return;
       S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP});
     }, 30000);
-
   }catch(e){ console.warn('Presence unavailable:',e.message); }
 }
-
 function updatePresenceTradeStatus(roomId){
   if(!S.presenceRef) return;
   S.presenceRef.update({tradeRoomId: roomId||null});
 }
-
 async function leavePresence(){
   try{
     if(S.presenceHeartbeat){ clearInterval(S.presenceHeartbeat); S.presenceHeartbeat=null; }
     if(S.presenceRef){ await S.presenceRef.remove(); S.presenceRef=null; }
-    rtdb.ref('.info/connected').off(); // detach reconnect listener
+    rtdb.ref('.info/connected').off();
   }catch(e){}
 }
-
 function listenToPresence(){
   try{
     rtdb.ref('presence').on('value',snap=>{
       const data=snap.val()||{};
-      // Filter out stale entries (no heartbeat in 90s)
       const now=Date.now();
       S.onlinePlayers=Object.values(data).filter(p=>{
         if(p.uid===S.user?.uid) return false;
-        if(p.ts && (now - p.ts) > 90000) return false; // stale
+        if(p.ts && (now - p.ts) > 90000) return false;
         return true;
       });
-      // Always update the trade page list, even if it's not visible right now
       renderOnlinePlayers();
     });
   }catch(e){ console.warn('Presence listen unavailable:',e.message); }
 }
-
 // ============================================================
 // CHAT
 // ============================================================
@@ -1474,10 +1075,8 @@ function listenToChat(){
     });
   }catch(e){ console.warn('Chat unavailable:',e.message); }
 }
-
 document.getElementById('chat-send').addEventListener('click',sendChat);
 document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
-
 async function sendChat(){
   const input=document.getElementById('chat-input');
   const text=input.value.trim().slice(0,200);
@@ -1490,7 +1089,6 @@ async function sendChat(){
     });
   }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
 }
-
 function appendChatMessage(username,text,isSystem=false,cls=''){
   const msgs=document.getElementById('chat-messages');
   const el=document.createElement('div');
@@ -1503,9 +1101,7 @@ function appendChatMessage(username,text,isSystem=false,cls=''){
   msgs.scrollTop=msgs.scrollHeight;
   while(msgs.children.length>100) msgs.removeChild(msgs.firstChild);
 }
-
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
 // ============================================================
 // CRATES PAGE
 // ============================================================
@@ -1522,14 +1118,12 @@ function loadCratesPage(){
       <div class="crate-desc">${crate.desc}</div>
       <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
     c.addEventListener('click',()=>{
-      // FIX: Guard — don't allow opening if profile not loaded yet
       if(!S.profile){ toast('Still loading your profile, please wait...'); return; }
       openCratePage(crate);
     });
     grid.appendChild(c);
   });
 }
-
 // ============================================================
 // CRATE OPENING
 // ============================================================
@@ -1544,9 +1138,7 @@ function openCratePage(crate){
   buildSpinTrack(crate,null,999);
   showPage('opening');
 }
-
 document.getElementById('back-from-opening').addEventListener('click',()=>showPage('crates'));
-
 function buildCrateInfoPanel(crate){
   const panel=document.getElementById('crate-info-panel');
   const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
@@ -1578,7 +1170,6 @@ function buildCrateInfoPanel(crate){
       itemsEl.appendChild(pill);
     });
   });
-  // Show odds for each rarity tier present in this crate's odds table
   order.filter(r=>crate.odds[r]!=null).forEach(rar=>{
     const r=getRarity(rar);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
@@ -1589,12 +1180,10 @@ function buildCrateInfoPanel(crate){
     oddsEl.appendChild(row);
   });
 }
-
 function buildSpinTrack(crate, winningItem, landIdx){
   const track=document.getElementById('spin-track');
   track.innerHTML=''; track.style.transform='translateX(0)'; track.style.transition='none';
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-  // Generate 60 items; place winning item exactly at landIdx
   for(let i=0;i<60;i++){
     const item=(winningItem && i===landIdx) ? winningItem : pool[Math.floor(Math.random()*pool.length)];
     const r=getRarity(item.rarity);
@@ -1606,37 +1195,28 @@ function buildSpinTrack(crate, winningItem, landIdx){
     track.appendChild(el);
   }
 }
-
 function rollItem(crateId){
   const crate=CRATES.find(c=>c.id===crateId);
   if(!crate)return null;
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-
-  // 🎰 RIGGED: omega always returns a mythic (sells for ~79k, crate costs 180k = ~101k loss)
   if(crateId==='omega'){
     const rigged=getItem('m001');
     if(rigged) return rigged;
   }
-
-  // Apply luck boost by biasing odds toward higher rarities
   const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
   let odds={...crate.odds};
-
   if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate===crateId){
     const entries=Object.entries(odds);
     const maxTier=Math.max(...entries.map(([r])=>rarityTier[r]||0));
     const minTier=Math.min(...entries.map(([r])=>rarityTier[r]||0));
-
     if(S.luckBoost==='minor'){
-      // Shift 30% weight from bottom half rarities to top half
       entries.forEach(([r])=>{
         const t=rarityTier[r]||0;
         const mid=(maxTier+minTier)/2;
-        if(t<=mid) odds[r]*=0.5;   // halve lower rarities
-        else odds[r]*=1.5;          // boost higher rarities
+        if(t<=mid) odds[r]*=0.5;
+        else odds[r]*=1.5;
       });
     } else if(S.luckBoost==='huge'){
-      // Massively shift — bottom rarities down to 10%, upper rarities up 4x
       entries.forEach(([r])=>{
         const t=rarityTier[r]||0;
         const mid=(maxTier+minTier)/2;
@@ -1644,12 +1224,9 @@ function rollItem(crateId){
         else odds[r]*=4;
       });
     }
-    // Consume boost
     S.luckBoost=null;
     S.luckBoostUsed=true;
   }
-
-  // Pick rarity
   const rarityEntries=Object.entries(odds);
   const total=rarityEntries.reduce((s,[,v])=>s+v,0);
   let rand=Math.random()*total;
@@ -1658,13 +1235,10 @@ function rollItem(crateId){
     rand-=weight;
     if(rand<=0){ chosenRarity=rarity; break; }
   }
-
-  // Pick random item of that rarity
   const matching=pool.filter(i=>i.rarity===chosenRarity);
   if(matching.length) return matching[Math.floor(Math.random()*matching.length)];
   return pool[Math.floor(Math.random()*pool.length)];
 }
-
 document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const crate=S.currentCrate;
   if(!crate||!S.user||!S.profile)return;
@@ -1674,11 +1248,9 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   document.getElementById('result-panel').classList.add('hidden');
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
-  // Deduct coins immediately before spin starts
   S.profile.coins-=crate.price;
   updateCoinDisplay(S.profile.coins);
   await animateSpin(crate,item);
-  // Save to Firestore
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
   S.inventory.push(invItem);
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
@@ -1700,7 +1272,6 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
     });
   }catch(e){ toast('Save error: '+e.message,'error'); }
   showResult(item,r,invItem);
-  // Ultra rare announcement
   if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
     setTimeout(()=>showUltraOverlay(item),800);
     const desc=r.display?`(${r.display})`:'';
@@ -1712,20 +1283,15 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   }
   btn.disabled=false;
 });
-
 function animateSpin(crate,winningItem){
   return new Promise(resolve=>{
-    const iW=108; // exactly matches .spin-item width
-    // Land somewhere in the middle-right of the track for a convincing spin
+    const iW=108;
     const landIdx=40+Math.floor(Math.random()*6);
     buildSpinTrack(crate,winningItem,landIdx);
     const track=document.getElementById('spin-track');
     const containerW=document.getElementById('spin-container').offsetWidth;
-    // Center of item at landIdx = landIdx*iW + iW/2
-    // We want that to align with the indicator at containerW/2
-    // So: translateX = containerW/2 - (landIdx*iW + iW/2)
     const targetX = containerW/2 - (landIdx*iW + iW/2);
-    void track.offsetWidth; // Force reflow before transition
+    void track.offsetWidth;
     track.style.transition='transform 4s cubic-bezier(0.08,0,0.06,1)';
     track.style.transform=`translateX(${targetX}px)`;
     setTimeout(()=>{
@@ -1741,11 +1307,8 @@ function animateSpin(crate,winningItem){
     },4100);
   });
 }
-
 function showResult(item,r,invItem){
   S.lastOpenedInvItem=invItem;
-
-  // Auto-sell check
   if(S.autoSell){
     let shouldSell=false;
     if(S.autoSellMode==='rarity'){
@@ -1759,7 +1322,7 @@ function showResult(item,r,invItem){
       const earned=Math.floor(item.value*.90);
       toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
       sellItems([invItem.uniqueId]);
-      return; // skip showing result panel
+      return;
     }
   }
   const col=r.color==='#ffffff'?'#aaa':r.color;
@@ -1775,33 +1338,26 @@ function showResult(item,r,invItem){
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
   panel.classList.remove('hidden');
 }
-
 document.getElementById('btn-keep-item').addEventListener('click',()=>{
   document.getElementById('result-panel').classList.add('hidden');
   toast('Item kept!','success');
 });
-
 document.getElementById('btn-sell-result').addEventListener('click',async()=>{
   const invItem=S.lastOpenedInvItem;
   if(!invItem)return;
   await sellItems([invItem.uniqueId]);
   document.getElementById('result-panel').classList.add('hidden');
 });
-
 document.getElementById('btn-open-again').addEventListener('click',()=>{
   document.getElementById('result-panel').classList.add('hidden');
   document.getElementById('btn-open-crate').click();
 });
-
 // ============================================================
 // INVENTORY
 // ============================================================
 document.getElementById('inv-search').addEventListener('input',renderInventory);
 document.getElementById('inv-sort').addEventListener('change',renderInventory);
-
-// ── AUTO-SELL UI ────────────────────────────────────────────────────────────
 const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4'];
-
 document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   S.autoSell=e.target.checked;
   const status=document.getElementById('auto-sell-status');
@@ -1810,9 +1366,7 @@ document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   status.className=S.autoSell?'auto-sell-on':'auto-sell-off';
   config.style.display=S.autoSell?'flex':'none';
 });
-// Start with config hidden
 document.getElementById('auto-sell-config').style.display='none';
-
 document.querySelectorAll('input[name="auto-sell-mode"]').forEach(radio=>{
   radio.addEventListener('change',e=>{
     S.autoSellMode=e.target.value;
@@ -1820,7 +1374,6 @@ document.querySelectorAll('input[name="auto-sell-mode"]').forEach(radio=>{
     document.getElementById('auto-sell-price-row').classList.toggle('hidden',e.target.value!=='price');
   });
 });
-
 document.querySelectorAll('.rarity-chip').forEach(chip=>{
   chip.addEventListener('click',()=>{
     document.querySelectorAll('.rarity-chip').forEach(c=>c.classList.remove('active'));
@@ -1828,11 +1381,9 @@ document.querySelectorAll('.rarity-chip').forEach(chip=>{
     S.autoSellRarity=chip.dataset.rarity;
   });
 });
-
 document.getElementById('auto-sell-price-input').addEventListener('input',e=>{
   S.autoSellPrice=parseInt(e.target.value)||0;
 });
-
 function renderInventory(){
   const grid=document.getElementById('inventory-grid');
   const search=document.getElementById('inv-search').value.toLowerCase();
@@ -1842,8 +1393,8 @@ function renderInventory(){
   items.sort((a,b)=>{
     const ia=getItem(a.itemId),ib=getItem(b.itemId); if(!ia||!ib)return 0;
     if(sort==='rarity') return (getRarity(ib.rarity).tier||0)-(getRarity(ia.rarity).tier||0);
-    if(sort==='value')  return ib.value-ia.value;
-    if(sort==='name')   return ia.name.localeCompare(ib.name);
+    if(sort==='value') return ib.value-ia.value;
+    if(sort==='name') return ia.name.localeCompare(ib.name);
     return 0;
   });
   grid.innerHTML='';
@@ -1856,7 +1407,6 @@ function renderInventory(){
   document.getElementById('inv-count').textContent=S.inventory.length+' items';
   document.getElementById('inv-total-value').textContent='Total: '+fmtNum(total)+' 🪙';
 }
-
 function makeItemCard(inv,container,selectable=false){
   const item=getItem(inv.itemId); if(!item)return null;
   const r=getRarity(item.rarity);
@@ -1884,7 +1434,6 @@ function makeItemCard(inv,container,selectable=false){
   container.appendChild(card);
   return card;
 }
-
 function showTip(e,item,r){
   const tt=document.getElementById('item-tooltip');
   const col=r.color==='#ffffff'?'#aaa':r.color;
@@ -1898,14 +1447,12 @@ function showTip(e,item,r){
   tt.style.left=Math.min(e.clientX+12,window.innerWidth-240)+'px';
   tt.style.top=Math.min(e.clientY+12,window.innerHeight-200)+'px';
 }
-
 document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
   const ids=[...S.selectedItems];
   if(!ids.length){toast('Select items to sell first.');return;}
   await sellItems(ids);
   S.selectedItems.clear();
 });
-
 async function sellItems(uniqueIds){
   let earned=0;
   for(const uid of uniqueIds){
@@ -1928,7 +1475,6 @@ async function sellItems(uniqueIds){
   toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
   if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
-
 // ============================================================
 // LEADERBOARD
 // ============================================================
@@ -1953,7 +1499,6 @@ async function loadLeaderboard(){
     console.error('Leaderboard error:',e);
   }
 }
-
 function renderLeaderboard(tab){
   S.currentLbTab=tab;
   const list=document.getElementById('leaderboard-list');
@@ -1966,9 +1511,9 @@ function renderLeaderboard(tab){
     const rc=i===0?'lb-rank-1':i===1?'lb-rank-2':i===2?'lb-rank-3':'';
     const rl=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
     let val='';
-    if(tab==='richest')    val='🪙 '+fmtNum(p.coins||0);
+    if(tab==='richest') val='🪙 '+fmtNum(p.coins||0);
     if(tab==='mostCrates') val=(p.cratesOpened||0).toLocaleString()+' crates';
-    if(tab==='mostValue')  val='🪙 '+fmtNum(p.totalValue||0);
+    if(tab==='mostValue') val='🪙 '+fmtNum(p.totalValue||0);
     row.innerHTML=`<div class="lb-rank ${rc}">${rl}</div>
       <div class="lb-info"><div class="lb-username">${escHtml(p.username)}</div>
         <div class="lb-sub">Rarest: ${p.rarestItemIcon} ${escHtml(p.rarestItemName)}</div></div>
@@ -1977,7 +1522,6 @@ function renderLeaderboard(tab){
   });
   if(!rows.length) list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">No data yet.</div>';
 }
-
 document.querySelectorAll('.lb-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
@@ -1985,7 +1529,6 @@ document.querySelectorAll('.lb-tab').forEach(tab=>{
     renderLeaderboard(tab.dataset.lb);
   });
 });
-
 // ============================================================
 // TRADE HISTORY
 // ============================================================
@@ -2019,7 +1562,6 @@ function renderTradeHistory(){
     list.appendChild(row);
   });
 }
-
 // ============================================================
 // TRADE SYSTEM
 // ============================================================
@@ -2030,16 +1572,13 @@ function listenToTradeRequests(){
     const req=snap.val();
     if(!req)return;
     snap.ref.remove();
-    // Ignore requests that were queued before we logged in
     if(req.ts && req.ts < loginTime - 5000) return;
     showIncomingTradeModal(req.fromUid,req.fromUsername);
   });
 }
-
 function renderOnlinePlayers(){
   const list=document.getElementById('online-players-list');
   list.innerHTML='';
-  // If YOU are already in a trade, show a notice instead of player list
   if(S.tradeRoomId){
     list.innerHTML='<div class="no-players" style="color:var(--gold)">⚔️ You are currently in a trade.</div>';
     return;
@@ -2060,7 +1599,6 @@ function renderOnlinePlayers(){
     list.appendChild(chip);
   });
 }
-
 async function sendTradeRequest(toUid,toUsername){
   if(!S.user||!S.profile)return;
   if(S.tradeRoomId){ toast('You are already in a trade!','error'); return; }
@@ -2072,9 +1610,8 @@ async function sendTradeRequest(toUid,toUsername){
     toast('Trade request sent to '+toUsername+'!');
   }catch(e){ toast('Failed to send trade request','error'); }
 }
-
 function showIncomingTradeModal(fromUid,fromUsername){
-  if(S.tradeRoomId){ return; } // already in a trade — silently ignore
+  if(S.tradeRoomId){ return; }
   document.querySelectorAll('.incoming-trade-modal').forEach(e=>e.remove());
   const modal=document.createElement('div');
   modal.className='incoming-trade-modal';
@@ -2088,7 +1625,6 @@ function showIncomingTradeModal(fromUid,fromUsername){
   modal.querySelector('.btn-dtr').addEventListener('click',()=>{ modal.remove(); toast('Trade declined.'); });
   setTimeout(()=>{ if(document.body.contains(modal)) modal.remove(); },30000);
 }
-
 async function createTradeRoom(partnerUid,partnerUsername){
   const roomId=genUID();
   S.tradeRoomId=roomId;
@@ -2110,7 +1646,6 @@ async function createTradeRoom(partnerUid,partnerUsername){
     locked:false,createdAt:firebase.database.ServerValue.TIMESTAMP,
   };
   await rtdb.ref('tradeRooms/'+roomId).set(room);
-  // Notify partner
   await rtdb.ref('tradeInvites/'+partnerUid).push({roomId,fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
   listenToTradeRoom(roomId);
   updatePresenceTradeStatus(roomId);
@@ -2121,8 +1656,6 @@ async function createTradeRoom(partnerUid,partnerUsername){
   renderTradeInventoryMini();
   toast('Trade room created!','success');
 }
-
-// FIX: partner receives invite via this listener (was incorrectly a standalone function called again from boot)
 function setupTradeInviteListener(){
   if(!S.user)return;
   rtdb.ref('tradeInvites/'+S.user.uid).on('child_added',snap=>{
@@ -2148,7 +1681,6 @@ function setupTradeInviteListener(){
     toast('Joined trade room with '+inv.fromUsername+'!','success');
   });
 }
-
 let tradeRoomListener=null;
 function listenToTradeRoom(roomId){
   if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
@@ -2176,17 +1708,14 @@ function listenToTradeRoom(roomId){
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
     renderTradeInventoryMini();
     updateTradeStatus();
-    // Both accepted → lock room. Only run if not already locked/locking.
     const allAccepted = Object.values(players).length>=2 && Object.values(players).every(p=>p.accepted);
     if(allAccepted && !room.locked){
       rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
     }
-    // room.locked → show final modal exactly once per trade session
     if(room.locked && !S.tradeCountdownActive){
       S.tradeCountdownActive=true;
       showFinalModal(S.tradeMyItems,S.tradeTheirItems);
     }
-    // Both finalAccepted → execute trade (only the first player whose listener fires handles it)
     const allFinal = Object.values(players).length>=2 && Object.values(players).every(p=>p.finalAccepted);
     if(allFinal && !room.completed && !room.executing && !S.tradeExecuting){
       S.tradeExecuting=true;
@@ -2199,7 +1728,6 @@ function listenToTradeRoom(roomId){
   ref.on('value',handler);
   tradeRoomListener=()=>ref.off('value',handler);
 }
-
 function renderTradeItems(containerId,items,isYours){
   const el=document.getElementById(containerId);
   el.innerHTML='';
@@ -2222,13 +1750,11 @@ function renderTradeItems(containerId,items,isYours){
     el.appendChild(card);
   });
 }
-
 function renderTradeInventoryMini(){
   const grid=document.getElementById('trade-inventory-mini');
   grid.innerHTML='';
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
   const rarityOrder={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
-
   let items=[...S.inventory];
   if(S.tradeSortBy==='rarity'){
     items.sort((a,b)=>{
@@ -2246,7 +1772,6 @@ function renderTradeInventoryMini(){
       return (ia?.name||'').localeCompare(ib?.name||'');
     });
   }
-
   items.forEach(inv=>{
     const item=getItem(inv.itemId); if(!item)return;
     const r=getRarity(item.rarity);
@@ -2263,7 +1788,6 @@ function renderTradeInventoryMini(){
     grid.appendChild(card);
   });
 }
-
 async function addToTrade(inv){
   if(!S.tradeRoomId)return;
   const item=getItem(inv.itemId); if(!item)return;
@@ -2274,7 +1798,6 @@ async function addToTrade(inv){
     await resetTradeAccepts('Item added to trade.');
   }catch(e){ toast('Error adding item','error'); }
 }
-
 async function removeFromTrade(uniqueId){
   if(!S.tradeRoomId)return;
   const myItems=S.tradeMyItems.filter(i=>i.uniqueId!==uniqueId);
@@ -2283,7 +1806,6 @@ async function removeFromTrade(uniqueId){
     await resetTradeAccepts('Item removed from trade.');
   }catch(e){ toast('Error removing item','error'); }
 }
-
 async function setTradeCoins(amount){
   if(!S.tradeRoomId)return;
   const coins=Math.max(0,Math.floor(amount)||0);
@@ -2296,7 +1818,6 @@ async function setTradeCoins(amount){
     await resetTradeAccepts(coins>0?`Offering 🪙 ${fmtNum(coins)} coins.`:'Coin offer removed.');
   }catch(e){ toast('Error setting coins','error'); }
 }
-
 async function resetTradeAccepts(message){
   if(!S.tradeRoomId)return;
   S.tradeCountdownActive=false;
@@ -2308,24 +1829,19 @@ async function resetTradeAccepts(message){
     await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.tradePartnerUid}`).update({accepted:false,finalAccepted:false});
   }catch(e){}
 }
-
 document.getElementById('btn-accept-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
   try{
     await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
     toast('Waiting for partner to accept...');
-    // The live listener will detect when both accepted and set locked:true
   }catch(e){ toast('Error accepting trade','error'); }
 });
-
 document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
   try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
   resetTradeState();
   toast('Trade cancelled.','error');
 });
-
-// Coin offer SET button
 document.getElementById('btn-set-coins').addEventListener('click',()=>{
   const val=parseInt(document.getElementById('trade-coin-input').value)||0;
   setTradeCoins(val);
@@ -2333,8 +1849,6 @@ document.getElementById('btn-set-coins').addEventListener('click',()=>{
 document.getElementById('trade-coin-input').addEventListener('keydown',e=>{
   if(e.key==='Enter') setTradeCoins(parseInt(e.target.value)||0);
 });
-
-// Sort buttons
 document.querySelectorAll('.trade-sort-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.trade-sort-btn').forEach(b=>b.classList.remove('active'));
@@ -2343,31 +1857,25 @@ document.querySelectorAll('.trade-sort-btn').forEach(btn=>{
     renderTradeInventoryMini();
   });
 });
-
 document.getElementById('btn-final-accept').addEventListener('click',async()=>{
   const btn=document.getElementById('btn-final-accept');
   if(btn.disabled||btn.classList.contains('disabled'))return;
   if(!S.tradeRoomId)return;
   btn.disabled=true; btn.textContent='Waiting for partner...';
   try{
-    // Just write our finalAccepted — the tradeRoomListener will detect when both are true and call executeTrade()
     await rtdb.ref('tradeRooms/'+S.tradeRoomId+'/players/'+S.user.uid).update({finalAccepted:true});
   }catch(e){ toast('Error finalizing trade','error'); btn.disabled=false; btn.textContent='FINAL ACCEPT'; }
 });
-
 document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
   try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
   resetTradeState();
   toast('Trade cancelled.','error');
 });
-
 async function executeTrade(){
   if(!S.tradeRoomId||!S.tradePartnerUid)return;
   try{
-    // Mark room completed in RTDB first — prevents double execution if both listeners fire
     await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({executing:true});
-    // Re-read agreed terms from RTDB at execution time
     const roomSnap=await rtdb.ref('tradeRooms/'+S.tradeRoomId).get();
     const room=roomSnap.val();
     if(!room){ toast('Trade room gone — trade cancelled.','error'); resetTradeState(); return; }
@@ -2375,8 +1883,6 @@ async function executeTrade(){
     const theirAgreedItems=(room.players?.[S.tradePartnerUid]?.items)||[];
     const myAgreedCoins=(room.players?.[S.user.uid]?.coins)||0;
     const theirAgreedCoins=(room.players?.[S.tradePartnerUid]?.coins)||0;
-
-    // Firestore transaction — reads and writes are atomic, preventing duplication
     await db.runTransaction(async tx=>{
       const myRef=db.collection('users').doc(S.user.uid);
       const theirRef=db.collection('users').doc(S.tradePartnerUid);
@@ -2387,27 +1893,22 @@ async function executeTrade(){
       let theirInv=[...theirData.inventory||[]];
       let myCoins=myData.coins||0;
       let theirCoins=theirData.coins||0;
-
-      // Validate and move my items
       for(const ti of myAgreedItems){
         const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
         if(idx===-1) throw new Error('DUPE_DETECTED: Item "'+ti.name+'" not in your inventory');
         myInv.splice(idx,1);
         theirInv.push({itemId:ti.itemId,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
       }
-      // Validate and move their items
       for(const ti of theirAgreedItems){
         const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
         if(idx===-1) throw new Error('DUPE_DETECTED: Item "'+ti.name+'" not in partner inventory');
         theirInv.splice(idx,1);
         myInv.push({itemId:ti.itemId,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
       }
-      // Validate and transfer coins
       if(myAgreedCoins>myCoins) throw new Error('Not enough coins to complete trade');
       if(theirAgreedCoins>theirCoins) throw new Error("Partner doesn't have enough coins");
       myCoins=myCoins-myAgreedCoins+theirAgreedCoins;
       theirCoins=theirCoins-theirAgreedCoins+myAgreedCoins;
-
       const ts=new Date().toISOString(); const tradeId=genUID();
       const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
       const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
@@ -2434,7 +1935,6 @@ async function executeTrade(){
     resetTradeState();
   }
 }
-
 async function handleTradeComplete(room){
   try{
     const doc=await db.collection('users').doc(S.user.uid).get();
@@ -2449,11 +1949,8 @@ async function handleTradeComplete(room){
   toast('🎉 Trade completed successfully!','success');
   if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
-
-// FIX: showFinalModal - countdown properly enables the button and doesn't use wrong element ID
 let _finalModalCd=null;
 function showFinalModal(myItems,theirItems){
-  // Clear any previous countdown interval to prevent double-firing
   if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
   const modal=document.getElementById('trade-final-modal');
   const theirName=document.getElementById('trade-them-name').textContent;
@@ -2469,12 +1966,10 @@ function showFinalModal(myItems,theirItems){
   modal.classList.remove('hidden');
   const btn=document.getElementById('btn-final-accept');
   const cdDisplay=modal.querySelector('.countdown-display');
-  // Reset button state
   btn.disabled=true;
   btn.className='btn-final-accept disabled';
   btn.textContent='FINAL ACCEPT';
   let count=5;
-  // Write count directly into a plain element — no innerHTML rewrites during countdown
   cdDisplay.textContent='';
   const prefix=document.createTextNode('Final accept available in ');
   const numSpan=document.createElement('span');
@@ -2497,7 +1992,6 @@ function showFinalModal(myItems,theirItems){
     }
   },1000);
 }
-
 function updateTradeStatus(){
   const you=document.getElementById('trade-status-you');
   const them=document.getElementById('trade-status-them');
@@ -2506,7 +2000,6 @@ function updateTradeStatus(){
   them.textContent=S.tradeTheirAccepted?'✓ ACCEPTED':'— Pending';
   them.style.color=S.tradeTheirAccepted?'#22c55e':'var(--text-3)';
 }
-
 function resetTradeState(){
   if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
   if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
@@ -2524,7 +2017,6 @@ function resetTradeState(){
   document.getElementById('trade-message').textContent='';
   updatePresenceTradeStatus(null);
 }
-
 // ============================================================
 // NAV
 // ============================================================
@@ -2540,7 +2032,6 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     else stopPlatformer();
   });
 });
-
 function renderTradeUI(){
   document.getElementById('trade-room').classList.remove('hidden');
   renderTradeItems('trade-items-you',S.tradeMyItems,true);
@@ -2548,7 +2039,6 @@ function renderTradeUI(){
   renderTradeInventoryMini();
   updateTradeStatus();
 }
-
 // ============================================================
 // ULTRA OVERLAY
 // ============================================================
@@ -2562,7 +2052,6 @@ function showUltraOverlay(item){
 document.getElementById('btn-ultra-close').addEventListener('click',()=>{
   document.getElementById('ultra-overlay').classList.add('hidden');
 });
-
 // ============================================================
 // PARTICLES
 // ============================================================
@@ -2580,624 +2069,84 @@ function spawnParticles(){
     c.appendChild(p);
   }
 }
-
 // ============================================================
-// BOOT
+// NEW: BUG REPORT
 // ============================================================
-// Admin force-refresh button
-document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
-  const btn = document.getElementById('admin-refresh-btn');
-  btn.disabled = true;
-  btn.textContent = 'Refreshing...';
+document.getElementById('send-bug-btn').addEventListener('click',async()=>{
+  const txt=document.getElementById('bug-text').value.trim();
+  if(!txt || !S.user){ toast('Please describe the bug first!','error'); return; }
   try{
-    await rtdb.ref('admin/forceRefresh').set({
-      ts: firebase.database.ServerValue.TIMESTAMP,
-      by: S.profile?.username || 'admin',
+    await rtdb.ref('bugreports').push({
+      uid:S.user.uid,
+      username:S.profile.username,
+      text:txt,
+      ts:firebase.database.ServerValue.TIMESTAMP
     });
-    toast('Force refresh sent to all clients!','success');
-  }catch(e){
-    toast('Error: '+e.message,'error');
-  }
-  setTimeout(()=>{ btn.disabled=false; btn.textContent='⚡ REFRESH ALL'; }, 2000);
+    toast('✅ Bug report sent to the dev team!','gold',4000);
+    document.getElementById('bug-text').value='';
+  }catch(e){ toast('Failed to send report','error'); }
 });
-
-
 // ============================================================
-// ============================================================
-// VAULT RUNNER — Only Up Edition
-// ============================================================
+// PLATFORMER (fixed version)
 (function(){
-
-// ── Constants ─────────────────────────────────────────────────
-const TILE = 48;
-const GRAVITY = 0.45;
-const JUMP = -12.5;
-const SPEED = 4.0;
-const COINS_PER_TILE = 8; // coins earned per tile height climbed
-const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
+const GRAVITY = 0.5;
+const JUMP_VEL = -13.5;
+const SPEED = 4.5;
 const ACCENT = '#4f8ef7';
 const GOLD = '#f59e0b';
-
-// ── State ──────────────────────────────────────────────────────
-let canvas, ctx, animId, gameActive = false;
-let keys = {}, touchLeft = false, touchRight = false, touchJump = false;
-let G = {};
-let otherPlayers = {}; // uid -> {x, y, username, color}
-let presenceInterval = null;
 const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00ffff','#ff6b6b','#ffd700'];
 
-// ── Platform generation ─────────────────────────────────────────
-// Generates platforms going UP infinitely. Y is world coords (higher = further up).
-// We render with camera following player. World Y=0 is start, positive Y = higher.
-function makePlatforms(fromY, toY){
-  const plats = [];
-  // Starting floor
-  if(fromY <= 0){
-    plats.push({x:-200, y:0, w:800, h:20, type:'ground'});
-  }
-  // Procedural platforms going up
-  let y = Math.max(fromY, TILE*2);
-  const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
-  while(y < toY){
-    const x = -100 + rng()*600;
-    const w = 60 + rng()*140;
-    const gapUp = TILE*1.2 + rng()*TILE*2.5;
-    plats.push({x, y, w, h:14, type: rng()<0.12?'crumble':rng()<0.08?'bounce':'normal',
-      crumbling:false, crumbleTimer:0});
-    y += gapUp;
-  }
-  return plats;
-}
-
-function mulberry32(a){
-  return function(){
-    a|=0; a=a+0x6D2B79F5|0;
-    let t=Math.imul(a^a>>>15,1|a);
-    t=t+Math.imul(t^t>>>7,61|t)^t;
-    return((t^t>>>14)>>>0)/4294967296;
-  };
-}
-
-// ── Init ────────────────────────────────────────────────────────
-function startGame(){
-  canvas = document.getElementById('plat-canvas');
-  ctx = canvas.getContext('2d');
-  resizeCanvas();
-
-  G = {
-    player: {
-      x: 180, y: 60, // world coords
-      vx: 0, vy: 0,
-      w: 28, h: 36,
-      onGround: false, jumps: 0,
-      facing: 1, alive: true,
-      highestY: 0, // highest Y reached (world)
-      startY: 0,
-    },
-    camera: {y: 0}, // camera world Y (bottom of view)
-    platforms: [],
-    genTop: 0, // how high we've generated
-    particles: [],
-    coins: 0, // earned coins (for display)
-    startTime: Date.now(),
-    pulseTick: 0,
-  };
-
-  // Generate initial chunk
-  G.platforms = makePlatforms(0, canvas.height * 3);
-  G.genTop = canvas.height * 3;
-
-  document.getElementById('plat-overlay').classList.add('hidden');
-  document.getElementById('plat-cashout-btn').style.display = 'flex';
-  updateHUD();
-
-  startPresenceSync();
-
-  if(animId) cancelAnimationFrame(animId);
-  animId = requestAnimationFrame(loop);
-  gameActive = true;
-}
-
-function resizeCanvas(){
-  const wrap = canvas.parentElement;
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
-}
-
-// ── Presence (other players) ────────────────────────────────────
-function startPresenceSync(){
-  if(!window.rtdb || !window.S?.user) return;
-  stopPresenceSync();
-  const uid = S.user.uid;
-  const colorIdx = uid.charCodeAt(0) % PLAYER_COLORS.length;
-  const myColor = PLAYER_COLORS[colorIdx];
-
-  // Write my position every 150ms
-  presenceInterval = setInterval(()=>{
-    if(!gameActive || !G.player?.alive) return;
-    const heightTiles = Math.floor(G.player.highestY / TILE);
-    rtdb.ref('platformer/' + uid).set({
-      uid, username: S.profile?.username || '?',
-      x: Math.round(G.player.x),
-      y: Math.round(G.player.y),
-      highestY: G.player.highestY,
-      color: myColor,
-      ts: firebase.database.ServerValue.TIMESTAMP,
-    });
-  }, 150);
-
-  // Listen to others
-  rtdb.ref('platformer').on('value', snap => {
-    const data = snap.val() || {};
-    otherPlayers = {};
-    const now = Date.now();
-    for(const [id, p] of Object.entries(data)){
-      if(id === uid) continue;
-      if(p.ts && now - p.ts > 5000) continue; // stale
-      otherPlayers[id] = p;
-    }
-  });
-}
-
-function stopPresenceSync(){
-  if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
-  if(window.rtdb && window.S?.user){
-    rtdb.ref('platformer/' + S.user.uid).remove();
-    rtdb.ref('platformer').off();
-  }
-  otherPlayers = {};
-}
-
-// ── Input ────────────────────────────────────────────────────────
-function onKey(e, down){
-  keys[e.code] = down;
-  if(down && (e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space')) tryJump(e);
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
-}
-
-function tryJump(e){
-  if(!gameActive || !G.player?.alive) return;
-  if(G.player.jumps < 1){ // only ONE jump — no catching yourself
-    G.player.vy = JUMP;
-    G.player.jumps++;
-    G.player.onGround = false;
-    spawnParticles(G.player.x + G.player.w/2, G.player.y, 5, ACCENT);
-    if(e) e.preventDefault();
-  }
-}
-
-window.addEventListener('keydown', e => onKey(e, true));
-window.addEventListener('keyup',   e => onKey(e, false));
-window.addEventListener('resize',  () => { if(canvas) resizeCanvas(); });
-
-// ── Physics ────────────────────────────────────────────────────
-function update(){
-  if(!G.player?.alive) return;
-  const p = G.player;
-
-  // Horizontal
-  const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
-  const right = keys['ArrowRight']||keys['KeyD']||touchRight;
-  if(left){ p.vx = -SPEED; p.facing=-1; }
-  else if(right){ p.vx = SPEED; p.facing=1; }
-  else p.vx *= 0.7;
-
-  // Gravity — always falls, no air control for jump extension
-  p.vy += GRAVITY;
-  if(p.vy > 18) p.vy = 18;
-
-  p.x += p.vx;
-  p.y += p.vy;
-  p.onGround = false;
-
-  // Platform collision (only resolve landing on top — no catching from sides/below)
-  for(const pl of G.platforms){
-    if(pl.x > p.x + p.w + 4 || pl.x + pl.w < p.x - 4) continue;
-    const prevBottom = p.y - p.vy + p.h;
-    const curBottom  = p.y + p.h;
-    if(prevBottom <= pl.y + 2 && curBottom >= pl.y && p.vy > 0){
-      // Landing
-      if(pl.type === 'crumble'){
-        pl.crumbling = true;
-      } else if(pl.type === 'bounce'){
-        p.vy = JUMP * 1.3;
-        p.jumps = 0;
-        spawnParticles(p.x+p.w/2, p.y+p.h, 8, '#22c55e');
-        continue;
-      }
-      p.y = pl.y - p.h;
-      p.vy = 0; p.onGround = true; p.jumps = 0;
-    }
-  }
-
-  // Crumble timers
-  for(const pl of G.platforms){
-    if(pl.crumbling){
-      pl.crumbleTimer = (pl.crumbleTimer||0) + 1;
-      if(pl.crumbleTimer > 20){
-        pl.gone = true;
-        spawnParticles(pl.x+pl.w/2, pl.y+pl.h/2, 6, '#6b21a8');
-      }
-    }
-  }
-  G.platforms = G.platforms.filter(pl => !pl.gone);
-
-  // Track highest point (world Y — higher number = higher up)
-  if(p.y > p.highestY) p.highestY = p.y; // wait — Y increases downward in canvas
-  // Actually: world Y=0 is ground, UP is negative canvas Y.
-  // Let's track as height above start: heightAboveStart = start_y - current_y
-  const heightAbove = p.startY - p.y;
-  if(heightAbove > (p.maxHeight||0)){
-    p.maxHeight = heightAbove;
-  }
-
-  // Fell below start = died
-  if(p.y > p.startY + 300){
-    die();
-    return;
-  }
-
-  // Generate more platforms above
-  const viewTop = p.y - canvas.height;
-  if(viewTop - TILE*5 < -G.genTop + p.startY){
-    const newTop = G.genTop + canvas.height*2;
-    const newPlats = makePlatforms(G.genTop, newTop);
-    // Offset by startY (since world Y 0 = start)
-    G.platforms.push(...newPlats.map(pl=>({...pl, y: pl.y - p.startY + p.startY})));
-    G.genTop = newTop;
-  }
-
-  // Remove platforms far below camera
-  const camBottom = p.y + canvas.height * 1.5;
-  G.platforms = G.platforms.filter(pl => pl.y < camBottom);
-
-  // Camera: keep player in upper 40% of screen
-  const targetCamY = p.y - canvas.height * 0.55;
-  G.camera.y += (targetCamY - G.camera.y) * 0.12;
-
-  // Coins earned = height tiles above start
-  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-  G.coins = heightTiles * COINS_PER_TILE;
-
-  updateHUD();
-}
-
-function die(){
-  if(!G.player.alive) return;
-  G.player.alive = false;
-  spawnParticles(G.player.x+G.player.w/2, G.player.y+G.player.h/2, 20, ACCENT, 5);
-  setTimeout(()=>{ showEndScreen(false); }, 1200);
-}
-
-function cashOut(){
-  if(!G.player?.alive || !gameActive) return;
-  G.player.alive = false;
-  showEndScreen(true);
-}
-
-function showEndScreen(cashed){
-  gameActive = false;
-  cancelAnimationFrame(animId);
-  stopPresenceSync();
-  document.getElementById('plat-cashout-btn').style.display = 'none';
-
-  const earned = G.coins || 0;
-  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
-
-  // Award coins to player
-  if(cashed && earned > 0 && window.S?.user && window.db){
-    S.profile.coins = (S.profile.coins||0) + earned;
-    db.collection('users').doc(S.user.uid).update({
-      coins: firebase.firestore.FieldValue.increment(earned),
-    }).then(()=>{
-      updateCoinDisplay(S.profile.coins);
-      toast('💰 +' + fmtNum(earned) + ' coins earned!', 'gold', 4000);
-    });
-  }
-
-  const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
-  overlay.querySelector('.plat-overlay-sub').textContent =
-    'HEIGHT: ' + heightTiles + ' tiles  ·  ' + (cashed ? 'COINS AWARDED' : 'NO REWARD — FELL TOO FAR');
-  document.getElementById('plat-final-score').textContent =
-    cashed ? '🪙 +' + fmtNum(earned) + ' coins added to your balance!' : '🪙 0 coins (you fell)';
-  document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
-  overlay.classList.remove('hidden');
-}
-
-function updateHUD(){
-  const heightTiles = G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE)) : 0;
-  document.getElementById('plat-score').textContent = fmtNum ? fmtNum(G.coins||0) : (G.coins||0);
-  document.getElementById('plat-lives').textContent = heightTiles + ' tiles';
-  document.getElementById('plat-level').textContent = Object.keys(otherPlayers).length;
-}
-
-// ── Particles ───────────────────────────────────────────────────
-function spawnParticles(x, y, n, col, spread=3){
-  for(let i=0;i<n;i++){
-    G.particles.push({x, y,
-      vx:(Math.random()-0.5)*spread*2, vy:(Math.random()-1.5)*spread,
-      life:1, decay:0.035+Math.random()*0.04, r:3+Math.random()*4, col});
-  }
-}
-
-// ── Draw ────────────────────────────────────────────────────────
-function draw(){
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0,0,W,H);
-
-  // Sky gradient — changes color as you climb
-  const heightAbove = G.player ? Math.max(0, G.player.startY - G.player.y) : 0;
-  const skyT = Math.min(heightAbove / 2000, 1);
-  const sky = ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0, lerpColor('#000005','#0a0020',skyT));
-  sky.addColorStop(1, lerpColor('#050810','#020015',skyT));
-  ctx.fillStyle = sky;
-  ctx.fillRect(0,0,W,H);
-
-  // Stars
-  G.pulseTick = (G.pulseTick||0)+1;
-  for(let i=0;i<80;i++){
-    const sx = (i*137.508 + 50) % W;
-    const sy = (i*97.3 + 20) % H;
-    const bright = 0.3 + Math.sin(G.pulseTick*0.02 + i)*0.3;
-    ctx.fillStyle = `rgba(255,255,255,${bright})`;
-    ctx.fillRect(sx,sy,1,1);
-  }
-
-  // Camera transform
-  const camOffY = -G.camera.y;
-  ctx.save();
-  ctx.translate(W/2 - 200, camOffY); // center world horizontally
-
-  // Draw platforms
-  for(const pl of G.platforms){
-    if(pl.y + pl.h < G.camera.y - 50) continue;
-    if(pl.y > G.camera.y + H + 50) continue;
-    const alpha = pl.crumbling ? Math.max(0, 1-(pl.crumbleTimer||0)/20) : 1;
-    ctx.globalAlpha = alpha;
-    if(pl.type === 'ground'){
-      ctx.fillStyle = '#0f1424';
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#4f8ef7';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-    } else if(pl.type === 'bounce'){
-      ctx.fillStyle = '#164020';
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#22c55e';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-      ctx.fillStyle = '#22c55e88';
-      ctx.font = '10px sans-serif'; ctx.textAlign='center';
-      ctx.fillText('↑↑', pl.x+pl.w/2, pl.y-2);
-    } else if(pl.type === 'crumble'){
-      ctx.fillStyle = '#2a1520';
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#6b21a8';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-    } else {
-      const ci = Math.abs(Math.floor(pl.y/200)) % PLATFORM_COLORS.length;
-      ctx.fillStyle = PLATFORM_COLORS[ci];
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#2a3555';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  // Height markers
-  for(let t = 0; t <= 300; t += 10){
-    const markerY = G.player ? G.player.startY - t*TILE : -t*TILE;
-    if(markerY < G.camera.y - 60 || markerY > G.camera.y + H + 10) continue;
-    ctx.save();
-    ctx.globalAlpha = 0.18;
-    ctx.strokeStyle = ACCENT;
-    ctx.setLineDash([4,8]);
-    ctx.beginPath(); ctx.moveTo(-300, markerY); ctx.lineTo(900, markerY); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = ACCENT;
-    ctx.font = '10px "Orbitron",sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(t + ' tiles', -10, markerY - 3);
-    ctx.restore();
-  }
-
-  // Other players (ghost style — no collision)
-  for(const [uid, op] of Object.entries(otherPlayers)){
-    ctx.save();
-    ctx.globalAlpha = 0.45;
-    const col = op.color || '#ffffff';
-    ctx.fillStyle = col;
-    ctx.fillRect(op.x - 14, op.y - 18, 28, 36);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fillRect(op.x - 10, op.y - 14, 20, 12);
-    ctx.fillStyle = col;
-    ctx.font = '9px "Orbitron",sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(op.username || '?', op.x, op.y - 22);
-    ctx.globalAlpha = 1;
-    ctx.restore();
-  }
-
-  // Player
-  if(G.player?.alive){
-    const p = G.player;
-    ctx.save();
-    ctx.translate(p.x + p.w/2, p.y + p.h/2);
-    ctx.scale(p.facing, 1);
-    const hw = p.w/2, hh = p.h/2;
-    // Glow
-    ctx.shadowBlur = 16; ctx.shadowColor = ACCENT;
-    ctx.fillStyle = ACCENT;
-    ctx.fillRect(-hw, -hh, p.w, p.h);
-    ctx.shadowBlur = 0;
-    // Visor
-    ctx.fillStyle = '#0a0e1a';
-    ctx.fillRect(-hw+4, -hh+4, p.w-8, p.h*0.38);
-    // Eyes
-    ctx.fillStyle = '#e8eaf6';
-    ctx.fillRect(-hw+7, -hh+7, 5,5);
-    ctx.fillRect(hw-12, -hh+7, 5,5);
-    ctx.fillStyle='#000';
-    ctx.fillRect(-hw+8, -hh+8, 3,3);
-    ctx.fillRect(hw-11, -hh+8, 3,3);
-    ctx.restore();
-  }
-
-  // Particles
-  for(let i=G.particles.length-1;i>=0;i--){
-    const pt=G.particles[i];
-    pt.x+=pt.vx; pt.y+=pt.vy; pt.vy+=0.12; pt.life-=pt.decay;
-    if(pt.life<=0){G.particles.splice(i,1);continue;}
-    ctx.save(); ctx.globalAlpha=pt.life;
-    ctx.fillStyle=pt.col;
-    ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r*pt.life,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
-
-  ctx.restore(); // camera
-
-  // Fell overlay
-  if(G.player && !G.player.alive){
-    ctx.fillStyle='rgba(239,68,68,0.25)';
-    ctx.fillRect(0,0,W,H);
-  }
-}
-
-function lerpColor(a,b,t){
-  const ah=parseInt(a.slice(1),16), bh=parseInt(b.slice(1),16);
-  const ar=(ah>>16)&255,ag=(ah>>8)&255,ab=ah&255;
-  const br=(bh>>16)&255,bg=(bh>>8)&255,bb=bh&255;
-  const r=Math.round(ar+(br-ar)*t),g=Math.round(ag+(bg-ag)*t),bl=Math.round(ab+(bb-ab)*t);
-  return '#'+(r<<16|g<<8|bl).toString(16).padStart(6,'0');
-}
-
-// ── Loop ─────────────────────────────────────────────────────────
-function loop(){
-  if(!gameActive) return;
-  animId = requestAnimationFrame(loop);
-  update();
-  draw();
-}
-
-// ── Public API ────────────────────────────────────────────────────
-window.initPlatformerPage = function(){
-  canvas = document.getElementById('plat-canvas');
-  if(!canvas) return;
-  resizeCanvas();
-  const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = 'VAULT CLIMBER';
-  overlay.querySelector('.plat-overlay-sub').textContent = 'CLIMB AS HIGH AS YOU CAN · CASH OUT ANYTIME · FALL = NOTHING';
-  document.getElementById('btn-plat-start').textContent = '▶ PLAY';
-  document.getElementById('plat-cashout-btn').style.display = 'none';
-  overlay.classList.remove('hidden');
-};
-
-window.stopPlatformer = function(){
-  if(gameActive){ gameActive=false; cancelAnimationFrame(animId); animId=null; }
-  stopPresenceSync();
-};
-
-window.platCashOut = function(){ cashOut(); };
-
-document.getElementById('btn-plat-start').addEventListener('click', startGame);
-
-})();
-
-// ============================================================
-// VAULT CLIMBER — Only Up Edition
-// ============================================================
-(function(){
-
-// ── Constants ──────────────────────────────────────────────────
-const GRAVITY  = 0.5;
-const JUMP_VEL = -13;
-const SPEED    = 4.5;
-const ACCENT   = '#4f8ef7';
-const GOLD     = '#f59e0b';
-const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00ffff','#ff6b6b','#ffd700'];
-
-// Reward platforms: every N platforms = coin reward
-const REWARD_EVERY = 5; // every 5th platform has a coin bag
-const REWARD_COINS = [10, 25, 50, 100, 250, 500, 1000]; // coins for platforms 5,10,15,20,25,30,35...
-
-// ── State ──────────────────────────────────────────────────────
 let canvas, ctx, animId = null, gameActive = false;
 let keys = {};
 let G = {};
 let otherPlayers = {};
 let presenceInterval = null;
 
-// ── Seeded RNG ─────────────────────────────────────────────────
 function mkRng(seed){
   let s = seed|0;
   return ()=>{ s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; };
 }
 
-// ── Platform generation ────────────────────────────────────────
-// Coordinate system: canvas Y, origin at top-left, UPWARD = decreasing Y.
-// Ground = large Y. Platforms are generated with worldY = negative numbers going up.
-// We use a "world" where Y:0 = spawn, negative Y = higher up.
-// Canvas renders: screenY = worldY - camera.worldY + canvas.height/2
-
 function generatePlatforms(fromIndex, count){
   const plats = [];
   const rng = mkRng(fromIndex * 7919);
-  let worldY = -(fromIndex * 110); // each platform roughly 110px apart vertically
-
+  let worldY = -(fromIndex * 110);
   for(let i = 0; i < count; i++){
     const idx = fromIndex + i;
-    const w   = 80 + rng() * 160;
-    const x   = -50 + rng() * 400;
+    const shrink = Math.max(0.35, 1 - idx / 280);
+    const w = Math.floor((80 + rng() * 160) * shrink);
+    const x = -50 + rng() * 400;
     const gap = 90 + rng() * 80;
     worldY -= gap;
-
-    const isReward = (idx + 1) % REWARD_EVERY === 0;
-    const rewardTier = Math.floor((idx + 1) / REWARD_EVERY) - 1;
-    const coins = isReward ? (REWARD_COINS[Math.min(rewardTier, REWARD_COINS.length-1)]) : 0;
-
+    const isReward = (idx + 1) % 5 === 0;
+    const rewardTier = Math.floor((idx + 1) / 5) - 1;
+    const coins = isReward ? [10,25,50,100,250,500,1000][Math.min(rewardTier,6)] : 0;
     const typeRoll = rng();
-    const type = typeRoll < 0.10 ? 'crumble' : typeRoll < 0.17 ? 'bounce' : 'normal';
-
+    const type = typeRoll < 0.09 ? 'crumble' : typeRoll < 0.16 ? 'bounce' : 'normal';
     plats.push({
       x, worldY, w, h: 14, type,
-      idx,
-      coins,           // reward coins when touched (0 = no reward)
-      coinTaken: false,
+      idx, coins, coinTaken: false,
       crumbling: false, crumbleTimer: 0, gone: false,
     });
   }
   return plats;
 }
 
-// ── Start ──────────────────────────────────────────────────────
 function startGame(){
   canvas = document.getElementById('plat-canvas');
   ctx = canvas.getContext('2d');
   resizeCanvas();
-
-  // Ground platform
   const ground = {x: -300, worldY: 20, w: 1000, h: 40, type: 'ground', idx: -1, coins: 0, coinTaken: true};
-
   G = {
-    player: {
-      x: 200,        // world X
-      worldY: -10,   // world Y (0 = ground top, negative = above ground)
-      vx: 0, vy: 0,
-      w: 26, h: 34,
-      onGround: false, jumps: 0,
-      alive: true, facing: 1,
-      maxHeight: 0,  // max worldY reached (most negative = highest)
-    },
-    camera: { worldY: 0 }, // camera tracks worldY of player
-    platforms: [ground, ...generatePlatforms(0, 40)],
-    nextGenIdx: 40,
+    player: { x:200, worldY:-10, vx:0, vy:0, w:26, h:34, onGround:false, jumps:0, alive:true, facing:1, maxHeight:0 },
+    camera: { worldY: 0 },
+    platforms: [ground, ...generatePlatforms(0, 45)],
+    nextGenIdx: 45,
     particles: [],
-    earnedCoins: 0,  // coins collected this run
+    earnedCoins: 0,
     pulseTick: 0,
     deathTimer: 0,
   };
-
   document.getElementById('plat-overlay').classList.add('hidden');
   document.getElementById('plat-cashout-btn').style.display = 'flex';
   updateHUD();
@@ -3209,26 +2158,17 @@ function startGame(){
 
 function resizeCanvas(){
   const wrap = canvas.parentElement;
-  canvas.width  = wrap.clientWidth  || 400;
+  canvas.width = wrap.clientWidth || 400;
   canvas.height = wrap.clientHeight || 500;
 }
 
-// ── Coordinate helpers ─────────────────────────────────────────
-// worldY to screenY: lower worldY (more negative) = higher on screen
-function toScreenY(worldY){
-  return canvas.height * 0.6 + (worldY - G.camera.worldY);
-}
-function toWorldY(screenY){
-  return screenY - canvas.height * 0.6 + G.camera.worldY;
-}
+function toScreenY(worldY){ return canvas.height * 0.6 + (worldY - G.camera.worldY); }
 
-// ── Presence ───────────────────────────────────────────────────
 function startPresenceSync(){
   if(!window.rtdb || !window.S?.user) return;
   stopPresenceSync();
   const uid = S.user.uid;
   const col = PLAYER_COLORS[uid.charCodeAt(0) % PLAYER_COLORS.length];
-
   presenceInterval = setInterval(()=>{
     if(!gameActive || !G.player?.alive) return;
     rtdb.ref('platformer2/' + uid).set({
@@ -3240,7 +2180,6 @@ function startPresenceSync(){
       ts: firebase.database.ServerValue.TIMESTAMP,
     });
   }, 150);
-
   rtdb.ref('platformer2').on('value', snap => {
     const data = snap.val() || {};
     otherPlayers = {};
@@ -3252,7 +2191,6 @@ function startPresenceSync(){
     }
   });
 }
-
 function stopPresenceSync(){
   if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
   if(window.rtdb && window.S?.user){
@@ -3262,7 +2200,6 @@ function stopPresenceSync(){
   otherPlayers = {};
 }
 
-// ── Input ──────────────────────────────────────────────────────
 function onKey(e, dn){
   keys[e.code] = dn;
   if(dn && ['ArrowUp','KeyW','Space'].includes(e.code)) doJump();
@@ -3275,129 +2212,80 @@ function doJump(){
     p.vy = JUMP_VEL;
     p.jumps++;
     p.onGround = false;
-    spawnParts(p.x + p.w/2, toScreenY(p.worldY + p.h), 5, ACCENT);
+    spawnParts(p.x + p.w/2, toScreenY(p.worldY + p.h), 6, ACCENT);
   }
 }
-window.addEventListener('keydown', e => onKey(e, true));
-window.addEventListener('keyup',   e => onKey(e, false));
-window.addEventListener('resize',  ()=>{ if(canvas && gameActive) resizeCanvas(); });
 
-// ── Physics ────────────────────────────────────────────────────
 function update(){
-  if(!G.player.alive){
-    G.deathTimer++;
-    if(G.deathTimer > 80) showEndScreen(false);
-    return;
-  }
+  if(!G.player.alive){ G.deathTimer++; if(G.deathTimer > 80) showEndScreen(false); return; }
   const p = G.player;
   G.pulseTick++;
-
-  // Horizontal
-  const goLeft  = keys['ArrowLeft'] || keys['KeyA'];
+  const goLeft = keys['ArrowLeft'] || keys['KeyA'];
   const goRight = keys['ArrowRight']|| keys['KeyD'];
-  if(goLeft){  p.vx = -SPEED; p.facing = -1; }
-  else if(goRight){ p.vx = SPEED;  p.facing =  1; }
+  if(goLeft){ p.vx = -SPEED; p.facing = -1; }
+  else if(goRight){ p.vx = SPEED; p.facing = 1; }
   else p.vx *= 0.72;
-
-  // Gravity
   p.vy = Math.min(p.vy + GRAVITY, 20);
-
-  // Move
-  p.x      += p.vx;
+  p.x += p.vx;
   p.worldY += p.vy;
   p.onGround = false;
 
-  // Platform collision — only land on top (no wall/ceiling catches)
   for(const pl of G.platforms){
     if(pl.gone) continue;
     if(p.x + p.w < pl.x - 2 || p.x > pl.x + pl.w + 2) continue;
-
-    const pPrevBottom = p.worldY - p.vy + p.h; // bottom before this frame's move
-    const pCurBottom  = p.worldY + p.h;
-    const platTop     = pl.worldY;
-
+    const pPrevBottom = p.worldY - p.vy + p.h;
+    const pCurBottom = p.worldY + p.h;
+    const platTop = pl.worldY;
     if(p.vy > 0 && pPrevBottom <= platTop + 2 && pCurBottom >= platTop){
       if(pl.type === 'bounce'){
         p.vy = JUMP_VEL * 1.4;
         p.jumps = 0;
-        spawnParts(p.x+p.w/2, toScreenY(platTop), 8, '#22c55e');
+        spawnParts(p.x+p.w/2, toScreenY(platTop), 9, '#22c55e');
       } else {
         p.worldY = platTop - p.h;
         p.vy = 0;
         p.onGround = true;
         p.jumps = 0;
-        if(pl.type === 'crumble' && !pl.crumbling){
-          pl.crumbling = true;
-        }
+        if(pl.type === 'crumble' && !pl.crumbling) pl.crumbling = true;
       }
-      // Collect reward
       if(!pl.coinTaken && pl.coins > 0){
         pl.coinTaken = true;
         G.earnedCoins += pl.coins;
-        spawnParts(p.x+p.w/2, toScreenY(platTop)-10, 12, GOLD, 5);
-        showCoinPop('+' + pl.coins + ' 🪙', p.x, platTop);
+        spawnParts(p.x+p.w/2, toScreenY(platTop)-12, 14, GOLD, 5);
         updateHUD();
       }
     }
   }
 
-  // Crumble
   G.platforms.forEach(pl => {
-    if(pl.crumbling){
-      pl.crumbleTimer++;
-      if(pl.crumbleTimer > 18){
-        pl.gone = true;
-        spawnParts(pl.x+pl.w/2, toScreenY(pl.worldY), 8, '#6b21a8', 4);
-      }
-    }
+    if(pl.crumbling){ pl.crumbleTimer++; if(pl.crumbleTimer > 18) pl.gone = true; }
   });
   G.platforms = G.platforms.filter(pl => !pl.gone);
 
-  // Track highest
   if(p.worldY < p.maxHeight) p.maxHeight = p.worldY;
-
-  // Clamp X to world bounds
   if(p.x < -200) p.x = -200;
   if(p.x + p.w > 700) p.x = 700 - p.w;
+  if(p.worldY > 80){ p.alive = false; G.deathTimer = 0; spawnParts(p.x+p.w/2, toScreenY(p.worldY), 22, ACCENT, 7); return; }
 
-  // Death: fell below ground
-  if(p.worldY > 80){
-    p.alive = false;
-    G.deathTimer = 0;
-    spawnParts(p.x+p.w/2, toScreenY(p.worldY), 20, ACCENT, 6);
-    return;
-  }
-
-  // Camera: smoothly follow player upward
   const targetCamY = p.worldY + canvas.height * 0.15;
   G.camera.worldY += (targetCamY - G.camera.worldY) * 0.1;
 
-  // Generate more platforms ahead
   const topVisible = G.camera.worldY - canvas.height;
-  const topGenned  = -(G.nextGenIdx * 110);
+  const topGenned = -(G.nextGenIdx * 110);
   if(topVisible < topGenned + canvas.height * 2){
-    const newPlats = generatePlatforms(G.nextGenIdx, 20);
+    const newPlats = generatePlatforms(G.nextGenIdx, 22);
     G.platforms.push(...newPlats);
-    G.nextGenIdx += 20;
+    G.nextGenIdx += 22;
   }
-
-  // Remove platforms far below view
-  G.platforms = G.platforms.filter(pl => toScreenY(pl.worldY) < canvas.height + 200);
-
+  G.platforms = G.platforms.filter(pl => toScreenY(pl.worldY) < canvas.height + 220);
   updateHUD();
 }
 
-// ── Coin pop text ──────────────────────────────────────────────
 let coinPops = [];
-function showCoinPop(text, wx, wy){
-  coinPops.push({ text, x: wx, worldY: wy, life: 1.5, vy: -1.2 });
-}
-
-// ── Particles ──────────────────────────────────────────────────
 function spawnParts(sx, sy, n, col, spd=3){
   for(let i=0;i<n;i++){
     G.particles.push({
-      sx, sy: sy,        // screen coords
+      sx, sy,
       vx:(Math.random()-.5)*spd*2,
       vy:(Math.random()-1.2)*spd,
       life:1, decay:.04+Math.random()*.04,
@@ -3406,12 +2294,9 @@ function spawnParts(sx, sy, n, col, spd=3){
   }
 }
 
-// ── Draw ───────────────────────────────────────────────────────
 function draw(){
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
-
-  // Sky — darkens/purples as you climb
   const heightAbove = Math.max(0, -G.player.worldY);
   const t = Math.min(heightAbove / 3000, 1);
   const sky = ctx.createLinearGradient(0,0,0,H);
@@ -3419,62 +2304,34 @@ function draw(){
   sky.addColorStop(1, lerpCol('#050810','#020015',t));
   ctx.fillStyle = sky; ctx.fillRect(0,0,W,H);
 
-  // Stars
   for(let i=0;i<70;i++){
     const sx = (i*137.5)%W, sy = (i*79.3)%H;
     const br = .2+Math.sin(G.pulseTick*.02+i)*.2;
     ctx.fillStyle=`rgba(255,255,255,${br})`; ctx.fillRect(sx,sy,1,1);
   }
 
-  // World offset: draw everything at screenX = worldX + W*0.4
   const offX = W * 0.4;
-
-  // Height markers
-  for(let t2=0;t2<=500;t2+=REWARD_EVERY){
-    const sy = toScreenY(-(t2*110));
-    if(sy < -20 || sy > H+20) continue;
-    ctx.save();
-    ctx.globalAlpha = .12;
-    ctx.strokeStyle = GOLD; ctx.setLineDash([4,8]);
-    ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(W,sy); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.globalAlpha = .55;
-    const tier = Math.floor(t2 / REWARD_EVERY);
-    const reward = tier > 0 ? REWARD_COINS[Math.min(tier-1, REWARD_COINS.length-1)] : 0;
-    if(reward > 0){
-      ctx.fillStyle = GOLD;
-      ctx.font = '9px "Orbitron",sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText('🪙 +'+reward, W-8, sy-3);
-    }
-    ctx.restore();
-  }
-
-  // Platforms
   for(const pl of G.platforms){
     const sy = toScreenY(pl.worldY);
     if(sy < -40 || sy > H+40) continue;
     const sx = pl.x + offX;
     const alpha = pl.crumbling ? Math.max(0, 1-(pl.crumbleTimer/18)) : 1;
     ctx.save(); ctx.globalAlpha = alpha;
-
-    if(pl.type === 'ground'){
+    if(pl.type==='ground'){
       ctx.fillStyle = '#0f1424'; ctx.fillRect(sx, sy, pl.w, pl.h);
-      ctx.fillStyle = ACCENT;   ctx.fillRect(sx, sy, pl.w, 3);
-    } else if(pl.type === 'bounce'){
+      ctx.fillStyle = ACCENT; ctx.fillRect(sx, sy, pl.w, 3);
+    } else if(pl.type==='bounce'){
       ctx.fillStyle = '#143020'; ctx.fillRect(sx, sy, pl.w, pl.h);
       ctx.fillStyle = '#22c55e'; ctx.fillRect(sx, sy, pl.w, 3);
       ctx.fillStyle = '#22c55e88'; ctx.font='10px sans-serif'; ctx.textAlign='center';
       ctx.fillText('↑', sx+pl.w/2, sy-2);
-    } else if(pl.type === 'crumble'){
+    } else if(pl.type==='crumble'){
       ctx.fillStyle = '#200a28'; ctx.fillRect(sx, sy, pl.w, pl.h);
       ctx.fillStyle = '#6b21a8'; ctx.fillRect(sx, sy, pl.w, 3);
     } else {
       ctx.fillStyle = '#1e2840'; ctx.fillRect(sx, sy, pl.w, pl.h);
       ctx.fillStyle = '#2a3555'; ctx.fillRect(sx, sy, pl.w, 3);
     }
-
-    // Reward coin bag on platform
     if(!pl.coinTaken && pl.coins > 0){
       const bob = Math.sin(G.pulseTick*0.06 + pl.idx)*3;
       ctx.shadowBlur=10; ctx.shadowColor=GOLD;
@@ -3488,7 +2345,6 @@ function draw(){
     ctx.restore();
   }
 
-  // Other players (ghost)
   for(const [,op] of Object.entries(otherPlayers)){
     const sy = toScreenY(op.worldY);
     const sx = (op.x||200) + offX;
@@ -3502,33 +2358,28 @@ function draw(){
     ctx.restore();
   }
 
-  // Player
   const p = G.player;
   if(p.alive || G.deathTimer < 30){
     const sy = toScreenY(p.worldY);
     const sx = p.x + offX;
-    const flash = !p.alive;
-    if(!flash){
-      ctx.save();
-      ctx.translate(sx + p.w/2, sy + p.h/2);
-      ctx.scale(p.facing, 1);
-      ctx.shadowBlur=14; ctx.shadowColor=ACCENT;
-      ctx.fillStyle=ACCENT;
-      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-      ctx.shadowBlur=0;
-      ctx.fillStyle='#0a0e1a';
-      ctx.fillRect(-p.w/2+3,-p.h/2+3,p.w-6,p.h*0.36);
-      ctx.fillStyle='#e8eaf6';
-      ctx.fillRect(-p.w/2+6,-p.h/2+6,5,5);
-      ctx.fillRect(p.w/2-11,-p.h/2+6,5,5);
-      ctx.fillStyle='#000';
-      ctx.fillRect(-p.w/2+7,-p.h/2+7,3,3);
-      ctx.fillRect(p.w/2-10,-p.h/2+7,3,3);
-      ctx.restore();
-    }
+    ctx.save();
+    ctx.translate(sx + p.w/2, sy + p.h/2);
+    ctx.scale(p.facing, 1);
+    ctx.shadowBlur=14; ctx.shadowColor=ACCENT;
+    ctx.fillStyle=ACCENT;
+    ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    ctx.shadowBlur=0;
+    ctx.fillStyle='#0a0e1a';
+    ctx.fillRect(-p.w/2+3,-p.h/2+3,p.w-6,p.h*0.36);
+    ctx.fillStyle='#e8eaf6';
+    ctx.fillRect(-p.w/2+6,-p.h/2+6,5,5);
+    ctx.fillRect(p.w/2-11,-p.h/2+6,5,5);
+    ctx.fillStyle='#000';
+    ctx.fillRect(-p.w/2+7,-p.h/2+7,3,3);
+    ctx.fillRect(p.w/2-10,-p.h/2+7,3,3);
+    ctx.restore();
   }
 
-  // Coin pops
   coinPops = coinPops.filter(cp=>{
     cp.worldY += cp.vy;
     cp.life -= 0.03;
@@ -3545,7 +2396,6 @@ function draw(){
     return true;
   });
 
-  // Particles (screen space)
   G.particles = G.particles.filter(pt=>{
     pt.sx+=pt.vx; pt.sy+=pt.vy; pt.vy+=0.15; pt.life-=pt.decay;
     if(pt.life<=0) return false;
@@ -3556,123 +2406,32 @@ function draw(){
     return true;
   });
 
-  // Death flash
   if(!p.alive){
     ctx.fillStyle=`rgba(239,68,68,${Math.min(G.deathTimer/60,.35)})`;
     ctx.fillRect(0,0,W,H);
   }
-
-  // Mobile controls
-  drawMobileControls();
 }
 
-// ── Mobile controls overlay ────────────────────────────────────
-function drawMobileControls(){
-  if(!isMobile()) return;
-  const W=canvas.width, H=canvas.height;
-  const btnS=64, pad=16;
-  const by=H-btnS-pad;
-
-  // Left / Right
-  ctx.save();
-  ctx.globalAlpha=0.35;
-  ctx.fillStyle='#fff'; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
-
-  // Left btn
-  ctx.beginPath(); ctx.roundRect(pad, by, btnS, btnS, 10); ctx.fill();
-  ctx.globalAlpha=0.8; ctx.fillStyle='#000';
-  ctx.font='bold 24px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('◀', pad+btnS/2, by+btnS/2);
-
-  // Right btn
-  ctx.globalAlpha=0.35; ctx.fillStyle='#fff';
-  ctx.beginPath(); ctx.roundRect(pad*2+btnS, by, btnS, btnS, 10); ctx.fill();
-  ctx.globalAlpha=0.8; ctx.fillStyle='#000';
-  ctx.fillText('▶', pad*2+btnS+btnS/2, by+btnS/2);
-
-  // Jump btn (right side)
-  ctx.globalAlpha=0.35; ctx.fillStyle=ACCENT;
-  ctx.beginPath(); ctx.roundRect(W-pad-btnS, by, btnS, btnS, 10); ctx.fill();
-  ctx.globalAlpha=0.9; ctx.fillStyle='#fff';
-  ctx.fillText('▲', W-pad-btnS/2, by+btnS/2);
-
-  // Cash out btn (right side, above jump)
-  ctx.globalAlpha=0.35; ctx.fillStyle=GOLD;
-  ctx.beginPath(); ctx.roundRect(W-pad-btnS, by-btnS-pad, btnS, btnS, 10); ctx.fill();
-  ctx.globalAlpha=0.9; ctx.fillStyle='#000';
-  ctx.font='bold 10px "Orbitron",sans-serif';
-  ctx.fillText('CASH', W-pad-btnS/2, by-btnS-pad+btnS/2-6);
-  ctx.fillText('OUT', W-pad-btnS/2, by-btnS-pad+btnS/2+8);
-
-  ctx.restore();
-  // Store hit areas for touch handler
-  canvas._mobileHit = {
-    btnS, pad,
-    left:  {x:pad,            y:by,             w:btnS, h:btnS},
-    right: {x:pad*2+btnS,     y:by,             w:btnS, h:btnS},
-    jump:  {x:W-pad-btnS,     y:by,             w:btnS, h:btnS},
-    cash:  {x:W-pad-btnS,     y:by-btnS-pad,    w:btnS, h:btnS},
-  };
+function lerpCol(a,b,t){
+  const ah=parseInt(a.slice(1),16), bh=parseInt(b.slice(1),16);
+  const ar=(ah>>16)&255, ag=(ah>>8)&255, ab=ah&255;
+  const br=(bh>>16)&255, bg=(bh>>8)&255, bb=bh&255;
+  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
+  return '#'+(((r<<16)|(g<<8)|bl)>>>0).toString(16).padStart(6,'0');
 }
 
-function isMobile(){
-  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+function loop(){
+  if(!gameActive) return;
+  animId = requestAnimationFrame(loop);
+  update();
+  draw();
 }
 
-// Touch handling
-function setupTouch(){
-  if(!canvas) return;
-  const pressed = new Set();
-
-  function hitTest(hm, tx, ty){
-    if(!hm) return null;
-    for(const [name, r] of Object.entries(hm)){
-      if(typeof r==='object' && r.x!=null){
-        if(tx>=r.x && tx<=r.x+r.w && ty>=r.y && ty<=r.y+r.h) return name;
-      }
-    }
-    return null;
-  }
-  function applyTouches(e){
-    const rect=canvas.getBoundingClientRect();
-    const hm=canvas._mobileHit;
-    pressed.clear();
-    for(const t of e.touches){
-      const tx=t.clientX-rect.left, ty=t.clientY-rect.top;
-      const hit=hitTest(hm,tx,ty);
-      if(hit) pressed.add(hit);
-    }
-    keys['ArrowLeft']  = pressed.has('left');
-    keys['ArrowRight'] = pressed.has('right');
-    if(pressed.has('jump')){ doJump(); }
-    if(pressed.has('cash') && gameActive){ cashOut(); }
-    e.preventDefault();
-  }
-  canvas.addEventListener('touchstart',  applyTouches, {passive:false});
-  canvas.addEventListener('touchmove',   applyTouches, {passive:false});
-  canvas.addEventListener('touchend',    e=>{
-    const rect=canvas.getBoundingClientRect();
-    const hm=canvas._mobileHit;
-    pressed.clear();
-    for(const t of e.touches){
-      const tx=t.clientX-rect.left, ty=t.clientY-rect.top;
-      const hit=hitTest(hm,tx,ty);
-      if(hit) pressed.add(hit);
-    }
-    keys['ArrowLeft']  = pressed.has('left');
-    keys['ArrowRight'] = pressed.has('right');
-    e.preventDefault();
-  }, {passive:false});
-}
-
-// ── HUD / End ──────────────────────────────────────────────────
 function updateHUD(){
-  if(!G.player) return;
-  const heightPx  = Math.max(0, -G.player.worldY);
-  const platforms = G.platforms.filter(p=>p.idx>=0 && p.worldY < G.player.worldY).length;
-  document.getElementById('plat-score').textContent  = window.fmtNum ? fmtNum(G.earnedCoins) : G.earnedCoins;
-  document.getElementById('plat-lives').textContent  = Math.round(heightPx/10)+'m';
-  document.getElementById('plat-level').textContent  = Object.keys(otherPlayers).length;
+  const heightPx = Math.max(0, -G.player.worldY);
+  document.getElementById('plat-score').textContent = window.fmtNum ? fmtNum(G.earnedCoins) : G.earnedCoins;
+  document.getElementById('plat-lives').textContent = Math.round(heightPx/10)+' tiles';
+  document.getElementById('plat-level').textContent = Object.keys(otherPlayers).length;
 }
 
 function cashOut(){
@@ -3686,113 +2445,75 @@ function showEndScreen(cashed){
   if(animId){ cancelAnimationFrame(animId); animId=null; }
   stopPresenceSync();
   document.getElementById('plat-cashout-btn').style.display='none';
-
   const earned = cashed ? G.earnedCoins : 0;
-  const height = Math.round(Math.max(0,-G.player.worldY)/10);
-
   if(cashed && earned > 0 && window.S?.user && window.db){
     S.profile.coins = (S.profile.coins||0) + earned;
-    db.collection('users').doc(S.user.uid).update({
-      coins: firebase.firestore.FieldValue.increment(earned),
-    }).then(()=>{
-      if(window.updateCoinDisplay) updateCoinDisplay(S.profile.coins);
-      if(window.toast) toast('💰 +'+fmtNum(earned)+' coins!','gold',4000);
-    });
+    db.collection('users').doc(S.user.uid).update({ coins: firebase.firestore.FieldValue.increment(earned) })
+      .then(()=>{ updateCoinDisplay(S.profile.coins); toast('💰 +'+fmtNum(earned)+' coins!','gold',4000); });
   }
-
   const overlay = document.getElementById('plat-overlay');
   overlay.querySelector('.plat-overlay-title').textContent = cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
-  overlay.querySelector('.plat-overlay-sub').textContent   = 'HEIGHT: '+height+'m';
-  document.getElementById('plat-final-score').textContent  =
-    cashed ? '🪙 +'+fmtNum(earned)+' added to your balance!' : '🪙 +0 coins — you fell!';
+  overlay.querySelector('.plat-overlay-sub').textContent = 'HEIGHT: '+Math.round(Math.max(0,-G.player.worldY)/10)+' tiles';
+  document.getElementById('plat-final-score').textContent = cashed ? '🪙 +'+fmtNum(earned)+' added!' : '🪙 +0 coins — you fell!';
   document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
   overlay.classList.remove('hidden');
 }
 
-function lerpCol(a,b,t){
-  const ah=parseInt(a.slice(1),16), bh=parseInt(b.slice(1),16);
-  const ar=(ah>>16)&255, ag=(ah>>8)&255, ab=ah&255;
-  const br=(bh>>16)&255, bg=(bh>>8)&255, bb=bh&255;
-  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
-  return '#'+(((r<<16)|(g<<8)|bl)>>>0).toString(16).padStart(6,'0');
-}
-
-// ── Loop ───────────────────────────────────────────────────────
-function loop(){
-  if(!gameActive) return;
-  animId = requestAnimationFrame(loop);
-  update();
-  draw();
-}
-
-// ── Public ─────────────────────────────────────────────────────
 window.initPlatformerPage = function(){
   canvas = document.getElementById('plat-canvas');
   if(!canvas) return;
   resizeCanvas();
-  setupTouch();
   const ov = document.getElementById('plat-overlay');
   ov.querySelector('.plat-overlay-title').textContent = 'VAULT CLIMBER';
-  ov.querySelector('.plat-overlay-sub').textContent   = 'LAND ON 💰 PLATFORMS · CASH OUT ANYTIME · FALL = NOTHING';
+  ov.querySelector('.plat-overlay-sub').textContent = 'PLATFORMS GET SMALLER THE HIGHER YOU GO · CASH OUT ANYTIME · FALL = NOTHING';
   document.getElementById('btn-plat-start').textContent = '▶ PLAY';
   document.getElementById('plat-cashout-btn').style.display = 'none';
   ov.classList.remove('hidden');
 };
-
 window.stopPlatformer = function(){
   if(gameActive){ gameActive=false; if(animId){ cancelAnimationFrame(animId); animId=null; } }
   stopPresenceSync();
 };
-
 window.platCashOut = cashOut;
-
 document.getElementById('btn-plat-start').addEventListener('click', startGame);
-
 })();
-
-
-
-(function boot(){
-  const cfg = {
-    apiKey:            "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
-    authDomain:        "rng-game-13854.firebaseapp.com",
-    projectId:         "rng-game-13854",
-    storageBucket:     "rng-game-13854.firebasestorage.app",
-    messagingSenderId: "60292248542",
-    appId:             "1:60292248542:web:2942a3a407dab5d51a234f",
-    measurementId:     "G-PH8Q3YGWZ3",
-    databaseURL:       "https://rng-game-13854-default-rtdb.firebaseio.com",
-  };
-  try{
-    initFirebase(cfg);
-    startAuthObserver();
-    // Re-announce presence when tab becomes visible again (e.g. alt-tab back)
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible' && S.user && S.presenceRef){
-        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
-      }
-    });
-    // Admin force-refresh: listen for reload signal on RTDB
-    const refreshRef = rtdb.ref('admin/forceRefresh');
-    let lastRefreshTs = 0;
-    refreshRef.on('value', snap=>{
-      const val = snap.val();
-      if(!val || !val.ts) return;
-      // Only reload if this is a NEW signal (not one from before we loaded)
-      if(val.ts > lastRefreshTs && lastRefreshTs !== 0){
-        setTimeout(()=>location.reload(), 500);
-      }
-      lastRefreshTs = val.ts;
-    });
-    // Particles shown after auth observer fires for non-logged-in state
-  }catch(e){
-    console.error('Firebase init error:',e);
-    hideLoadingOverlay();
-    showScreen('auth-screen');
-    spawnParticles();
-  }
-})();
-
+// ============================================================
+// BOOT
+// ============================================================
+const cfg = {
+  apiKey: "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
+  authDomain: "rng-game-13854.firebaseapp.com",
+  projectId: "rng-game-13854",
+  storageBucket: "rng-game-13854.firebasestorage.app",
+  messagingSenderId: "60292248542",
+  appId: "1:60292248542:web:2942a3a407dab5d51a234f",
+  measurementId: "G-PH8Q3YGWZ3",
+  databaseURL: "https://rng-game-13854-default-rtdb.firebaseio.com",
+};
+try{
+  initFirebase(cfg);
+  startAuthObserver();
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && S.user && S.presenceRef){
+      S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
+    }
+  });
+  const refreshRef = rtdb.ref('admin/forceRefresh');
+  let lastRefreshTs = 0;
+  refreshRef.on('value', snap=>{
+    const val = snap.val();
+    if(!val || !val.ts) return;
+    if(val.ts > lastRefreshTs && lastRefreshTs !== 0){
+      setTimeout(()=>location.reload(), 500);
+    }
+    lastRefreshTs = val.ts;
+  });
+}catch(e){
+  console.error('Firebase init error:',e);
+  hideLoadingOverlay();
+  showScreen('auth-screen');
+  spawnParticles();
+}
 </script>
 </body>
 </html>
