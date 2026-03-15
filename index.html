@@ -2769,7 +2769,7 @@ function onKey(e, down){
 
 function tryJump(e){
   if(!gameActive || !G.player?.alive) return;
-  if(G.player.jumps < 1){ // only ONE jump — no catching yourself
+  if(G.player.jumps < 5){ // only ONE jump — no catching yourself
     G.player.vy = JUMP;
     G.player.jumps++;
     G.player.onGround = false;
@@ -2850,7 +2850,7 @@ function update(){
   }
 
   // Generate more platforms above
-  const viewTop = p.y + canvas.height;
+  const viewTop = p.y - canvas.height;
   if(viewTop - TILE*5 < -G.genTop + p.startY){
     const newTop = G.genTop + canvas.height*2;
     const newPlats = makePlatforms(G.genTop, newTop);
