@@ -2856,10 +2856,22 @@ function update(){
   G.camera.y += (targetCamY - G.camera.y) * 0.12;
 
   // Coins earned = height tiles above start
-  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-  G.coins = heightTiles * COINS_PER_TILE;
+const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
+
+if(heightTiles >= 50) G.coins = 500;
+else if(heightTiles >= 40) G.coins = 300;
+else if(heightTiles >= 30) G.coins = 200;
+else if(heightTiles >= 20) G.coins = 100;
+else if(heightTiles >= 10) G.coins = 50;
+else G.coins = 0;
 
   updateHUD();
+  const btn = document.getElementById('plat-cashout-btn');
+  if(heightTiles >= 10){
+  btn.style.display = 'flex';
+  }else{
+  btn.style.display = 'none';
+  }
 }
 
 function die(){
@@ -2875,6 +2887,14 @@ function cashOut(){
   showEndScreen(true);
 }
 
+  document.addEventListener("keydown", e=>{
+  if(e.code === "Escape" && gameActive){
+    gameActive = false;
+    cancelAnimationFrame(animId);
+    document.getElementById("plat-overlay").classList.remove("hidden");
+  }
+});
+
 function showEndScreen(cashed){
   gameActive = false;
   cancelAnimationFrame(animId);
@@ -2885,7 +2905,7 @@ function showEndScreen(cashed){
   const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
 
   // Award coins to player
-  if(cashed && earned > 0 && window.S?.user && window.db){
+  if(cashed && earned >= 50 && window.S?.user && window.db){
     S.profile.coins = (S.profile.coins||0) + earned;
     db.collection('users').doc(S.user.uid).update({
       coins: firebase.firestore.FieldValue.increment(earned),
