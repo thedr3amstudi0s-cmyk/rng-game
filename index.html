@@ -2696,8 +2696,8 @@ function startGame(){
   };
 
   // Generate initial chunk
-  G.platforms = makePlatforms(0, canvas.height * -3);
-  G.genTop = canvas.height * -3;
+  G.platforms = makePlatforms(0, canvas.height * 3);
+  G.genTop = canvas.height * 3;
 
   document.getElementById('plat-overlay').classList.add('hidden');
   document.getElementById('plat-cashout-btn').style.display = 'flex';
@@ -2850,7 +2850,7 @@ function update(){
   }
 
   // Generate more platforms above
-  const viewTop = p.y - canvas.height;
+  const viewTop = p.y + canvas.height;
   if(viewTop - TILE*5 < -G.genTop + p.startY){
     const newTop = G.genTop + canvas.height*2;
     const newPlats = makePlatforms(G.genTop, newTop);
