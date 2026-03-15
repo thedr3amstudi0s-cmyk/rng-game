@@ -2631,16 +2631,16 @@ const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00fff
 // We render with camera following player. World Y=0 is start, positive Y = higher.
 function makePlatforms(fromY, toY){
   const plats = [];
-
-  // starting floor
-  if(fromY >= 0){
+  
+  // Starting floor
+  if(fromY <= 0){
     plats.push({x:-200, y:0, w:800, h:20, type:'ground'});
   }
 
-  let y = Math.min(fromY, -TILE*2);
+  let y = Math.max(fromY, TILE*2);
   const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
 
-  while(y > toY){
+  while(y < toY){
     const x = -100 + rng()*600;
     const w = 60 + rng()*140;
     const gapUp = TILE*1.2 + rng()*TILE*2.5;
@@ -2655,7 +2655,7 @@ function makePlatforms(fromY, toY){
       crumbleTimer:0
     });
 
-    y -= gapUp; // go UP instead of down
+    y += gapUp;
   }
 
   return plats;
