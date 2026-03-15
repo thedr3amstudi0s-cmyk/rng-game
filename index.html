@@ -136,7 +136,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .nav-item.active{background:var(--bg-hover);color:var(--accent);}
 .page-content{overflow-y:auto;padding:24px;background:var(--bg-deep);}
 #page-platformer{padding:0!important;}
-.page-content:has(#page-platformer.active){padding:0;overflow:hidden;display:flex;flex-direction:column;}
+.page-content:has(#page-platformer.active){padding:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;}
 .page{display:none;}.page.active{display:block;}
 .page-header{margin-bottom:24px;}
 .page-header h2{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
@@ -503,7 +503,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .plat-title{font-family:var(--font-d);font-size:1rem;font-weight:900;letter-spacing:.15em;color:var(--accent);}
 .plat-stats{display:flex;gap:16px;font-family:var(--font-d);font-size:.75rem;font-weight:700;}
 .plat-stat{display:flex;align-items:center;gap:5px;}
-.plat-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;min-height:0;}
+.plat-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;min-height:0;min-height:300px;}
 #plat-canvas{display:block;image-rendering:pixelated;}
 .plat-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;background:rgba(0,0,0,.8);z-index:10;}
@@ -3103,6 +3103,654 @@ window.platCashOut = function(){ cashOut(); };
 document.getElementById('btn-plat-start').addEventListener('click', startGame);
 
 })();
+
+// ============================================================
+// VAULT CLIMBER — Only Up Edition
+// ============================================================
+(function(){
+
+// ── Constants ──────────────────────────────────────────────────
+const GRAVITY  = 0.5;
+const JUMP_VEL = -13;
+const SPEED    = 4.5;
+const ACCENT   = '#4f8ef7';
+const GOLD     = '#f59e0b';
+const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00ffff','#ff6b6b','#ffd700'];
+
+// Reward platforms: every N platforms = coin reward
+const REWARD_EVERY = 5; // every 5th platform has a coin bag
+const REWARD_COINS = [10, 25, 50, 100, 250, 500, 1000]; // coins for platforms 5,10,15,20,25,30,35...
+
+// ── State ──────────────────────────────────────────────────────
+let canvas, ctx, animId = null, gameActive = false;
+let keys = {};
+let G = {};
+let otherPlayers = {};
+let presenceInterval = null;
+
+// ── Seeded RNG ─────────────────────────────────────────────────
+function mkRng(seed){
+  let s = seed|0;
+  return ()=>{ s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; };
+}
+
+// ── Platform generation ────────────────────────────────────────
+// Coordinate system: canvas Y, origin at top-left, UPWARD = decreasing Y.
+// Ground = large Y. Platforms are generated with worldY = negative numbers going up.
+// We use a "world" where Y:0 = spawn, negative Y = higher up.
+// Canvas renders: screenY = worldY - camera.worldY + canvas.height/2
+
+function generatePlatforms(fromIndex, count){
+  const plats = [];
+  const rng = mkRng(fromIndex * 7919);
+  let worldY = -(fromIndex * 110); // each platform roughly 110px apart vertically
+
+  for(let i = 0; i < count; i++){
+    const idx = fromIndex + i;
+    const w   = 80 + rng() * 160;
+    const x   = -50 + rng() * 400;
+    const gap = 90 + rng() * 80;
+    worldY -= gap;
+
+    const isReward = (idx + 1) % REWARD_EVERY === 0;
+    const rewardTier = Math.floor((idx + 1) / REWARD_EVERY) - 1;
+    const coins = isReward ? (REWARD_COINS[Math.min(rewardTier, REWARD_COINS.length-1)]) : 0;
+
+    const typeRoll = rng();
+    const type = typeRoll < 0.10 ? 'crumble' : typeRoll < 0.17 ? 'bounce' : 'normal';
+
+    plats.push({
+      x, worldY, w, h: 14, type,
+      idx,
+      coins,           // reward coins when touched (0 = no reward)
+      coinTaken: false,
+      crumbling: false, crumbleTimer: 0, gone: false,
+    });
+  }
+  return plats;
+}
+
+// ── Start ──────────────────────────────────────────────────────
+function startGame(){
+  canvas = document.getElementById('plat-canvas');
+  ctx = canvas.getContext('2d');
+  resizeCanvas();
+
+  // Ground platform
+  const ground = {x: -300, worldY: 20, w: 1000, h: 40, type: 'ground', idx: -1, coins: 0, coinTaken: true};
+
+  G = {
+    player: {
+      x: 200,        // world X
+      worldY: -10,   // world Y (0 = ground top, negative = above ground)
+      vx: 0, vy: 0,
+      w: 26, h: 34,
+      onGround: false, jumps: 0,
+      alive: true, facing: 1,
+      maxHeight: 0,  // max worldY reached (most negative = highest)
+    },
+    camera: { worldY: 0 }, // camera tracks worldY of player
+    platforms: [ground, ...generatePlatforms(0, 40)],
+    nextGenIdx: 40,
+    particles: [],
+    earnedCoins: 0,  // coins collected this run
+    pulseTick: 0,
+    deathTimer: 0,
+  };
+
+  document.getElementById('plat-overlay').classList.add('hidden');
+  document.getElementById('plat-cashout-btn').style.display = 'flex';
+  updateHUD();
+  startPresenceSync();
+  gameActive = true;
+  if(animId) cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(loop);
+}
+
+function resizeCanvas(){
+  const wrap = canvas.parentElement;
+  canvas.width  = wrap.clientWidth  || 400;
+  canvas.height = wrap.clientHeight || 500;
+}
+
+// ── Coordinate helpers ─────────────────────────────────────────
+// worldY to screenY: lower worldY (more negative) = higher on screen
+function toScreenY(worldY){
+  return canvas.height * 0.6 + (worldY - G.camera.worldY);
+}
+function toWorldY(screenY){
+  return screenY - canvas.height * 0.6 + G.camera.worldY;
+}
+
+// ── Presence ───────────────────────────────────────────────────
+function startPresenceSync(){
+  if(!window.rtdb || !window.S?.user) return;
+  stopPresenceSync();
+  const uid = S.user.uid;
+  const col = PLAYER_COLORS[uid.charCodeAt(0) % PLAYER_COLORS.length];
+
+  presenceInterval = setInterval(()=>{
+    if(!gameActive || !G.player?.alive) return;
+    rtdb.ref('platformer2/' + uid).set({
+      uid, username: S.profile?.username || '?',
+      x: Math.round(G.player.x),
+      worldY: Math.round(G.player.worldY),
+      color: col,
+      earned: G.earnedCoins,
+      ts: firebase.database.ServerValue.TIMESTAMP,
+    });
+  }, 150);
+
+  rtdb.ref('platformer2').on('value', snap => {
+    const data = snap.val() || {};
+    otherPlayers = {};
+    const now = Date.now();
+    for(const [id, p] of Object.entries(data)){
+      if(id === uid) continue;
+      if(p.ts && now - p.ts > 6000) continue;
+      otherPlayers[id] = p;
+    }
+  });
+}
+
+function stopPresenceSync(){
+  if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
+  if(window.rtdb && window.S?.user){
+    rtdb.ref('platformer2/' + S.user.uid).remove().catch(()=>{});
+    rtdb.ref('platformer2').off();
+  }
+  otherPlayers = {};
+}
+
+// ── Input ──────────────────────────────────────────────────────
+function onKey(e, dn){
+  keys[e.code] = dn;
+  if(dn && ['ArrowUp','KeyW','Space'].includes(e.code)) doJump();
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+}
+function doJump(){
+  if(!gameActive || !G.player?.alive) return;
+  const p = G.player;
+  if(p.onGround || p.jumps < 1){
+    p.vy = JUMP_VEL;
+    p.jumps++;
+    p.onGround = false;
+    spawnParts(p.x + p.w/2, toScreenY(p.worldY + p.h), 5, ACCENT);
+  }
+}
+window.addEventListener('keydown', e => onKey(e, true));
+window.addEventListener('keyup',   e => onKey(e, false));
+window.addEventListener('resize',  ()=>{ if(canvas && gameActive) resizeCanvas(); });
+
+// ── Physics ────────────────────────────────────────────────────
+function update(){
+  if(!G.player.alive){
+    G.deathTimer++;
+    if(G.deathTimer > 80) showEndScreen(false);
+    return;
+  }
+  const p = G.player;
+  G.pulseTick++;
+
+  // Horizontal
+  const goLeft  = keys['ArrowLeft'] || keys['KeyA'];
+  const goRight = keys['ArrowRight']|| keys['KeyD'];
+  if(goLeft){  p.vx = -SPEED; p.facing = -1; }
+  else if(goRight){ p.vx = SPEED;  p.facing =  1; }
+  else p.vx *= 0.72;
+
+  // Gravity
+  p.vy = Math.min(p.vy + GRAVITY, 20);
+
+  // Move
+  p.x      += p.vx;
+  p.worldY += p.vy;
+  p.onGround = false;
+
+  // Platform collision — only land on top (no wall/ceiling catches)
+  for(const pl of G.platforms){
+    if(pl.gone) continue;
+    if(p.x + p.w < pl.x - 2 || p.x > pl.x + pl.w + 2) continue;
+
+    const pPrevBottom = p.worldY - p.vy + p.h; // bottom before this frame's move
+    const pCurBottom  = p.worldY + p.h;
+    const platTop     = pl.worldY;
+
+    if(p.vy > 0 && pPrevBottom <= platTop + 2 && pCurBottom >= platTop){
+      if(pl.type === 'bounce'){
+        p.vy = JUMP_VEL * 1.4;
+        p.jumps = 0;
+        spawnParts(p.x+p.w/2, toScreenY(platTop), 8, '#22c55e');
+      } else {
+        p.worldY = platTop - p.h;
+        p.vy = 0;
+        p.onGround = true;
+        p.jumps = 0;
+        if(pl.type === 'crumble' && !pl.crumbling){
+          pl.crumbling = true;
+        }
+      }
+      // Collect reward
+      if(!pl.coinTaken && pl.coins > 0){
+        pl.coinTaken = true;
+        G.earnedCoins += pl.coins;
+        spawnParts(p.x+p.w/2, toScreenY(platTop)-10, 12, GOLD, 5);
+        showCoinPop('+' + pl.coins + ' 🪙', p.x, platTop);
+        updateHUD();
+      }
+    }
+  }
+
+  // Crumble
+  G.platforms.forEach(pl => {
+    if(pl.crumbling){
+      pl.crumbleTimer++;
+      if(pl.crumbleTimer > 18){
+        pl.gone = true;
+        spawnParts(pl.x+pl.w/2, toScreenY(pl.worldY), 8, '#6b21a8', 4);
+      }
+    }
+  });
+  G.platforms = G.platforms.filter(pl => !pl.gone);
+
+  // Track highest
+  if(p.worldY < p.maxHeight) p.maxHeight = p.worldY;
+
+  // Clamp X to world bounds
+  if(p.x < -200) p.x = -200;
+  if(p.x + p.w > 700) p.x = 700 - p.w;
+
+  // Death: fell below ground
+  if(p.worldY > 80){
+    p.alive = false;
+    G.deathTimer = 0;
+    spawnParts(p.x+p.w/2, toScreenY(p.worldY), 20, ACCENT, 6);
+    return;
+  }
+
+  // Camera: smoothly follow player upward
+  const targetCamY = p.worldY + canvas.height * 0.15;
+  G.camera.worldY += (targetCamY - G.camera.worldY) * 0.1;
+
+  // Generate more platforms ahead
+  const topVisible = G.camera.worldY - canvas.height;
+  const topGenned  = -(G.nextGenIdx * 110);
+  if(topVisible < topGenned + canvas.height * 2){
+    const newPlats = generatePlatforms(G.nextGenIdx, 20);
+    G.platforms.push(...newPlats);
+    G.nextGenIdx += 20;
+  }
+
+  // Remove platforms far below view
+  G.platforms = G.platforms.filter(pl => toScreenY(pl.worldY) < canvas.height + 200);
+
+  updateHUD();
+}
+
+// ── Coin pop text ──────────────────────────────────────────────
+let coinPops = [];
+function showCoinPop(text, wx, wy){
+  coinPops.push({ text, x: wx, worldY: wy, life: 1.5, vy: -1.2 });
+}
+
+// ── Particles ──────────────────────────────────────────────────
+function spawnParts(sx, sy, n, col, spd=3){
+  for(let i=0;i<n;i++){
+    G.particles.push({
+      sx, sy: sy,        // screen coords
+      vx:(Math.random()-.5)*spd*2,
+      vy:(Math.random()-1.2)*spd,
+      life:1, decay:.04+Math.random()*.04,
+      r:3+Math.random()*4, col,
+    });
+  }
+}
+
+// ── Draw ───────────────────────────────────────────────────────
+function draw(){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Sky — darkens/purples as you climb
+  const heightAbove = Math.max(0, -G.player.worldY);
+  const t = Math.min(heightAbove / 3000, 1);
+  const sky = ctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0, lerpCol('#000008','#0a0020',t));
+  sky.addColorStop(1, lerpCol('#050810','#020015',t));
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,H);
+
+  // Stars
+  for(let i=0;i<70;i++){
+    const sx = (i*137.5)%W, sy = (i*79.3)%H;
+    const br = .2+Math.sin(G.pulseTick*.02+i)*.2;
+    ctx.fillStyle=`rgba(255,255,255,${br})`; ctx.fillRect(sx,sy,1,1);
+  }
+
+  // World offset: draw everything at screenX = worldX + W*0.4
+  const offX = W * 0.4;
+
+  // Height markers
+  for(let t2=0;t2<=500;t2+=REWARD_EVERY){
+    const sy = toScreenY(-(t2*110));
+    if(sy < -20 || sy > H+20) continue;
+    ctx.save();
+    ctx.globalAlpha = .12;
+    ctx.strokeStyle = GOLD; ctx.setLineDash([4,8]);
+    ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(W,sy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = .55;
+    const tier = Math.floor(t2 / REWARD_EVERY);
+    const reward = tier > 0 ? REWARD_COINS[Math.min(tier-1, REWARD_COINS.length-1)] : 0;
+    if(reward > 0){
+      ctx.fillStyle = GOLD;
+      ctx.font = '9px "Orbitron",sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('🪙 +'+reward, W-8, sy-3);
+    }
+    ctx.restore();
+  }
+
+  // Platforms
+  for(const pl of G.platforms){
+    const sy = toScreenY(pl.worldY);
+    if(sy < -40 || sy > H+40) continue;
+    const sx = pl.x + offX;
+    const alpha = pl.crumbling ? Math.max(0, 1-(pl.crumbleTimer/18)) : 1;
+    ctx.save(); ctx.globalAlpha = alpha;
+
+    if(pl.type === 'ground'){
+      ctx.fillStyle = '#0f1424'; ctx.fillRect(sx, sy, pl.w, pl.h);
+      ctx.fillStyle = ACCENT;   ctx.fillRect(sx, sy, pl.w, 3);
+    } else if(pl.type === 'bounce'){
+      ctx.fillStyle = '#143020'; ctx.fillRect(sx, sy, pl.w, pl.h);
+      ctx.fillStyle = '#22c55e'; ctx.fillRect(sx, sy, pl.w, 3);
+      ctx.fillStyle = '#22c55e88'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('↑', sx+pl.w/2, sy-2);
+    } else if(pl.type === 'crumble'){
+      ctx.fillStyle = '#200a28'; ctx.fillRect(sx, sy, pl.w, pl.h);
+      ctx.fillStyle = '#6b21a8'; ctx.fillRect(sx, sy, pl.w, 3);
+    } else {
+      ctx.fillStyle = '#1e2840'; ctx.fillRect(sx, sy, pl.w, pl.h);
+      ctx.fillStyle = '#2a3555'; ctx.fillRect(sx, sy, pl.w, 3);
+    }
+
+    // Reward coin bag on platform
+    if(!pl.coinTaken && pl.coins > 0){
+      const bob = Math.sin(G.pulseTick*0.06 + pl.idx)*3;
+      ctx.shadowBlur=10; ctx.shadowColor=GOLD;
+      ctx.font = '18px sans-serif'; ctx.textAlign='center';
+      ctx.fillStyle=GOLD;
+      ctx.fillText('💰', sx+pl.w/2, sy-8+bob);
+      ctx.font = '8px "Orbitron",sans-serif';
+      ctx.fillStyle=GOLD; ctx.shadowBlur=0;
+      ctx.fillText('+'+pl.coins, sx+pl.w/2, sy-22+bob);
+    }
+    ctx.restore();
+  }
+
+  // Other players (ghost)
+  for(const [,op] of Object.entries(otherPlayers)){
+    const sy = toScreenY(op.worldY);
+    const sx = (op.x||200) + offX;
+    ctx.save(); ctx.globalAlpha=0.4;
+    ctx.fillStyle = op.color||'#fff';
+    ctx.fillRect(sx-13, sy-17, 26, 34);
+    ctx.globalAlpha=0.7;
+    ctx.fillStyle = op.color||'#fff';
+    ctx.font='8px "Orbitron",sans-serif'; ctx.textAlign='center';
+    ctx.fillText(op.username||'?', sx, sy-22);
+    ctx.restore();
+  }
+
+  // Player
+  const p = G.player;
+  if(p.alive || G.deathTimer < 30){
+    const sy = toScreenY(p.worldY);
+    const sx = p.x + offX;
+    const flash = !p.alive;
+    if(!flash){
+      ctx.save();
+      ctx.translate(sx + p.w/2, sy + p.h/2);
+      ctx.scale(p.facing, 1);
+      ctx.shadowBlur=14; ctx.shadowColor=ACCENT;
+      ctx.fillStyle=ACCENT;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.shadowBlur=0;
+      ctx.fillStyle='#0a0e1a';
+      ctx.fillRect(-p.w/2+3,-p.h/2+3,p.w-6,p.h*0.36);
+      ctx.fillStyle='#e8eaf6';
+      ctx.fillRect(-p.w/2+6,-p.h/2+6,5,5);
+      ctx.fillRect(p.w/2-11,-p.h/2+6,5,5);
+      ctx.fillStyle='#000';
+      ctx.fillRect(-p.w/2+7,-p.h/2+7,3,3);
+      ctx.fillRect(p.w/2-10,-p.h/2+7,3,3);
+      ctx.restore();
+    }
+  }
+
+  // Coin pops
+  coinPops = coinPops.filter(cp=>{
+    cp.worldY += cp.vy;
+    cp.life -= 0.03;
+    if(cp.life <= 0) return false;
+    const sy = toScreenY(cp.worldY);
+    const sx = cp.x + offX;
+    ctx.save();
+    ctx.globalAlpha = Math.min(cp.life, 1);
+    ctx.fillStyle = GOLD;
+    ctx.font = 'bold 13px "Orbitron",sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(cp.text, sx + 13, sy);
+    ctx.restore();
+    return true;
+  });
+
+  // Particles (screen space)
+  G.particles = G.particles.filter(pt=>{
+    pt.sx+=pt.vx; pt.sy+=pt.vy; pt.vy+=0.15; pt.life-=pt.decay;
+    if(pt.life<=0) return false;
+    ctx.save(); ctx.globalAlpha=pt.life;
+    ctx.fillStyle=pt.col;
+    ctx.beginPath(); ctx.arc(pt.sx,pt.sy,pt.r*pt.life,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    return true;
+  });
+
+  // Death flash
+  if(!p.alive){
+    ctx.fillStyle=`rgba(239,68,68,${Math.min(G.deathTimer/60,.35)})`;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // Mobile controls
+  drawMobileControls();
+}
+
+// ── Mobile controls overlay ────────────────────────────────────
+function drawMobileControls(){
+  if(!isMobile()) return;
+  const W=canvas.width, H=canvas.height;
+  const btnS=64, pad=16;
+  const by=H-btnS-pad;
+
+  // Left / Right
+  ctx.save();
+  ctx.globalAlpha=0.35;
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+
+  // Left btn
+  ctx.beginPath(); ctx.roundRect(pad, by, btnS, btnS, 10); ctx.fill();
+  ctx.globalAlpha=0.8; ctx.fillStyle='#000';
+  ctx.font='bold 24px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('◀', pad+btnS/2, by+btnS/2);
+
+  // Right btn
+  ctx.globalAlpha=0.35; ctx.fillStyle='#fff';
+  ctx.beginPath(); ctx.roundRect(pad*2+btnS, by, btnS, btnS, 10); ctx.fill();
+  ctx.globalAlpha=0.8; ctx.fillStyle='#000';
+  ctx.fillText('▶', pad*2+btnS+btnS/2, by+btnS/2);
+
+  // Jump btn (right side)
+  ctx.globalAlpha=0.35; ctx.fillStyle=ACCENT;
+  ctx.beginPath(); ctx.roundRect(W-pad-btnS, by, btnS, btnS, 10); ctx.fill();
+  ctx.globalAlpha=0.9; ctx.fillStyle='#fff';
+  ctx.fillText('▲', W-pad-btnS/2, by+btnS/2);
+
+  // Cash out btn (right side, above jump)
+  ctx.globalAlpha=0.35; ctx.fillStyle=GOLD;
+  ctx.beginPath(); ctx.roundRect(W-pad-btnS, by-btnS-pad, btnS, btnS, 10); ctx.fill();
+  ctx.globalAlpha=0.9; ctx.fillStyle='#000';
+  ctx.font='bold 10px "Orbitron",sans-serif';
+  ctx.fillText('CASH', W-pad-btnS/2, by-btnS-pad+btnS/2-6);
+  ctx.fillText('OUT', W-pad-btnS/2, by-btnS-pad+btnS/2+8);
+
+  ctx.restore();
+  // Store hit areas for touch handler
+  canvas._mobileHit = {
+    btnS, pad,
+    left:  {x:pad,            y:by,             w:btnS, h:btnS},
+    right: {x:pad*2+btnS,     y:by,             w:btnS, h:btnS},
+    jump:  {x:W-pad-btnS,     y:by,             w:btnS, h:btnS},
+    cash:  {x:W-pad-btnS,     y:by-btnS-pad,    w:btnS, h:btnS},
+  };
+}
+
+function isMobile(){
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+// Touch handling
+function setupTouch(){
+  if(!canvas) return;
+  const pressed = new Set();
+
+  function hitTest(hm, tx, ty){
+    if(!hm) return null;
+    for(const [name, r] of Object.entries(hm)){
+      if(typeof r==='object' && r.x!=null){
+        if(tx>=r.x && tx<=r.x+r.w && ty>=r.y && ty<=r.y+r.h) return name;
+      }
+    }
+    return null;
+  }
+  function applyTouches(e){
+    const rect=canvas.getBoundingClientRect();
+    const hm=canvas._mobileHit;
+    pressed.clear();
+    for(const t of e.touches){
+      const tx=t.clientX-rect.left, ty=t.clientY-rect.top;
+      const hit=hitTest(hm,tx,ty);
+      if(hit) pressed.add(hit);
+    }
+    keys['ArrowLeft']  = pressed.has('left');
+    keys['ArrowRight'] = pressed.has('right');
+    if(pressed.has('jump')){ doJump(); }
+    if(pressed.has('cash') && gameActive){ cashOut(); }
+    e.preventDefault();
+  }
+  canvas.addEventListener('touchstart',  applyTouches, {passive:false});
+  canvas.addEventListener('touchmove',   applyTouches, {passive:false});
+  canvas.addEventListener('touchend',    e=>{
+    const rect=canvas.getBoundingClientRect();
+    const hm=canvas._mobileHit;
+    pressed.clear();
+    for(const t of e.touches){
+      const tx=t.clientX-rect.left, ty=t.clientY-rect.top;
+      const hit=hitTest(hm,tx,ty);
+      if(hit) pressed.add(hit);
+    }
+    keys['ArrowLeft']  = pressed.has('left');
+    keys['ArrowRight'] = pressed.has('right');
+    e.preventDefault();
+  }, {passive:false});
+}
+
+// ── HUD / End ──────────────────────────────────────────────────
+function updateHUD(){
+  if(!G.player) return;
+  const heightPx  = Math.max(0, -G.player.worldY);
+  const platforms = G.platforms.filter(p=>p.idx>=0 && p.worldY < G.player.worldY).length;
+  document.getElementById('plat-score').textContent  = window.fmtNum ? fmtNum(G.earnedCoins) : G.earnedCoins;
+  document.getElementById('plat-lives').textContent  = Math.round(heightPx/10)+'m';
+  document.getElementById('plat-level').textContent  = Object.keys(otherPlayers).length;
+}
+
+function cashOut(){
+  if(!G.player?.alive || !gameActive) return;
+  G.player.alive = false;
+  showEndScreen(true);
+}
+
+function showEndScreen(cashed){
+  gameActive = false;
+  if(animId){ cancelAnimationFrame(animId); animId=null; }
+  stopPresenceSync();
+  document.getElementById('plat-cashout-btn').style.display='none';
+
+  const earned = cashed ? G.earnedCoins : 0;
+  const height = Math.round(Math.max(0,-G.player.worldY)/10);
+
+  if(cashed && earned > 0 && window.S?.user && window.db){
+    S.profile.coins = (S.profile.coins||0) + earned;
+    db.collection('users').doc(S.user.uid).update({
+      coins: firebase.firestore.FieldValue.increment(earned),
+    }).then(()=>{
+      if(window.updateCoinDisplay) updateCoinDisplay(S.profile.coins);
+      if(window.toast) toast('💰 +'+fmtNum(earned)+' coins!','gold',4000);
+    });
+  }
+
+  const overlay = document.getElementById('plat-overlay');
+  overlay.querySelector('.plat-overlay-title').textContent = cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
+  overlay.querySelector('.plat-overlay-sub').textContent   = 'HEIGHT: '+height+'m';
+  document.getElementById('plat-final-score').textContent  =
+    cashed ? '🪙 +'+fmtNum(earned)+' added to your balance!' : '🪙 +0 coins — you fell!';
+  document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
+  overlay.classList.remove('hidden');
+}
+
+function lerpCol(a,b,t){
+  const ah=parseInt(a.slice(1),16), bh=parseInt(b.slice(1),16);
+  const ar=(ah>>16)&255, ag=(ah>>8)&255, ab=ah&255;
+  const br=(bh>>16)&255, bg=(bh>>8)&255, bb=bh&255;
+  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
+  return '#'+(((r<<16)|(g<<8)|bl)>>>0).toString(16).padStart(6,'0');
+}
+
+// ── Loop ───────────────────────────────────────────────────────
+function loop(){
+  if(!gameActive) return;
+  animId = requestAnimationFrame(loop);
+  update();
+  draw();
+}
+
+// ── Public ─────────────────────────────────────────────────────
+window.initPlatformerPage = function(){
+  canvas = document.getElementById('plat-canvas');
+  if(!canvas) return;
+  resizeCanvas();
+  setupTouch();
+  const ov = document.getElementById('plat-overlay');
+  ov.querySelector('.plat-overlay-title').textContent = 'VAULT CLIMBER';
+  ov.querySelector('.plat-overlay-sub').textContent   = 'LAND ON 💰 PLATFORMS · CASH OUT ANYTIME · FALL = NOTHING';
+  document.getElementById('btn-plat-start').textContent = '▶ PLAY';
+  document.getElementById('plat-cashout-btn').style.display = 'none';
+  ov.classList.remove('hidden');
+};
+
+window.stopPlatformer = function(){
+  if(gameActive){ gameActive=false; if(animId){ cancelAnimationFrame(animId); animId=null; } }
+  stopPresenceSync();
+};
+
+window.platCashOut = cashOut;
+
+document.getElementById('btn-plat-start').addEventListener('click', startGame);
+
+})();
+
+
 
 (function boot(){
   const cfg = {
