@@ -2798,7 +2798,7 @@ if (heightTiles > p.highestTile) {
 }
 
 // Kill the player if they fall 50 tiles below their highest point
-if (heightTiles < p.highestTile - 50) {
+if (heightTiles < p.highestTile - 50 || p.y > p.startY + 10) {
   die();
   return;
 }
