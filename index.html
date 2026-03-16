@@ -2604,7 +2604,18 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 const TILE = 48;
 const GRAVITY = 0.45;
 const JUMP = -12.5;
-const SPEED = 4.0;
+const MAX_FRAME_MOVE = TILE * 0.8; // max 80% of a tile per frame
+
+// Apply horizontal input
+if(left){ p.vx = -SPEED; p.facing=-1; }
+else if(right){ p.vx = SPEED; p.facing=1; }
+else p.vx *= 0.7;
+
+// Clamp movement so player doesn’t “tunnel” through platforms
+if(p.vx > MAX_FRAME_MOVE) p.vx = MAX_FRAME_MOVE;
+if(p.vx < -MAX_FRAME_MOVE) p.vx = -MAX_FRAME_MOVE;
+
+p.x += p.vx;
 const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
 const ACCENT = '#ff69b4';
 const GOLD = '#f59e0b';
