@@ -2633,7 +2633,7 @@ function makePlatforms(fromY, toY){
     plats.push({x:-200, y:0, w:800, h:20, type:'ground'});
   }
 
-  let y = Math.max(fromY, TILE/2);
+  let y = Math.max(fromY, TILE*-2);
   const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
 
   while(y < toY){
