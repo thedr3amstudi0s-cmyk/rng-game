@@ -2730,40 +2730,70 @@ window.addEventListener('resize',  () => { if(canvas) resizeCanvas(); });
 
 // ── Physics ────────────────────────────────────────────────────
 function update(){
-  if(!G.player?.alive) return;
   const p = G.player;
+  if(!p) return;
 
-  // Horizontal movement
+  // --- Horizontal movement ---
   const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
   const right = keys['ArrowRight']||keys['KeyD']||touchRight;
-  if(left){ p.vx = -SPEED; p.facing=-1; }
-  else if(right){ p.vx = SPEED; p.facing=1; }
-  else p.vx *= 0.7;
+  if(p.alive){
+    if(left){ p.vx = -SPEED; p.facing=-1; }
+    else if(right){ p.vx = SPEED; p.facing=1; }
+    else p.vx *= 0.7;
 
-  // Gravity
-  p.vy += GRAVITY;
-  if(p.vy > 18) p.vy = 18;
+    // Gravity
+    p.vy += GRAVITY;
+    if(p.vy > 18) p.vy = 18;
 
-  p.x += p.vx;
-  p.y += p.vy;
-  p.onGround = false;
+    // Apply movement
+    p.x += p.vx;
+    p.y += p.vy;
+    p.onGround = false;
 
-  // Platform collisions (simplified)
-  for(const pl of G.platforms){
-    if(pl.x > p.x + p.w || pl.x + pl.w < p.x) continue;
-    const prevBottom = p.y - p.vy + p.h;
-    const curBottom  = p.y + p.h;
-    if(prevBottom <= pl.y && curBottom >= pl.y && p.vy > 0){
-      if(pl.type === 'crumble') pl.crumbling = true;
-      else if(pl.type === 'bounce'){
-        p.vy = JUMP*1.3; p.jumps=0;
-        spawnParticles(p.x+p.w/2, p.y+p.h, 8, '#22c55e');
-        continue;
+    // Platform collisions (top only)
+    for(const pl of G.platforms){
+      if(pl.x > p.x + p.w || pl.x + pl.w < p.x) continue;
+      const prevBottom = p.y - p.vy + p.h;
+      const curBottom  = p.y + p.h;
+      if(prevBottom <= pl.y && curBottom >= pl.y && p.vy > 0){
+        if(pl.type === 'crumble') pl.crumbling = true;
+        else if(pl.type === 'bounce'){
+          p.vy = JUMP*1.3; p.jumps=0;
+          spawnParticles(p.x+p.w/2, p.y+p.h, 8, '#22c55e');
+          continue;
+        }
+        p.y = pl.y - p.h;
+        p.vy = 0; p.onGround = true; p.jumps = 0;
       }
-      p.y = pl.y - p.h;
-      p.vy = 0; p.onGround = true; p.jumps = 0;
     }
   }
+
+  // --- Track highest tile reached ---
+  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
+  if(heightTiles > p.highestTile) p.highestTile = heightTiles;
+
+  // --- Death check ---
+  if(p.alive && (heightTiles < p.highestTile - 50 || p.y > 0)){
+    die();
+    return;
+  }
+
+  // --- Coins earned based on height ---
+  if(heightTiles >= 60) G.coins = 175;
+  else if(heightTiles >= 50) G.coins = 150;
+  else if(heightTiles >= 40) G.coins = 125;
+  else if(heightTiles >= 30) G.coins = 100;
+  else if(heightTiles >= 20) G.coins = 75;
+  else if(heightTiles >= 10) G.coins = 50;
+  else G.coins = 0;
+
+  // --- Update HUD ---
+  updateHUD();
+
+  // --- Camera always tracks player ---
+  const targetCamY = p.y - canvas.height * 0.55;
+  G.camera.y += (targetCamY - G.camera.y) * 0.12;
+}
 
   // DIE if fallen too far or below start
   const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
