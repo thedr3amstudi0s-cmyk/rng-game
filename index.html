@@ -2872,10 +2872,11 @@ if (viewTop - TILE * 8 < highestGenerated) {  // need platforms higher up
   // Coins earned = height tiles above start (per specific # of tiles)
 const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
 
-if(heightTiles >= 50) G.coins = 500;
-else if(heightTiles >= 40) G.coins = 300;
-else if(heightTiles >= 30) G.coins = 200;
-else if(heightTiles >= 20) G.coins = 100;
+if (heightTiles >= 60) G.coins = 175;
+else if(heightTiles >= 50) G.coins = 150;
+else if(heightTiles >= 40) G.coins = 125;
+else if(heightTiles >= 30) G.coins = 100;
+else if(heightTiles >= 20) G.coins = 75;
 else if(heightTiles >= 10) G.coins = 50;
 else G.coins = 0;
 
@@ -2888,55 +2889,67 @@ else G.coins = 0;
   }
 }
 
-function die(){
-  if(!G.player.alive) return;
+// ── CASH OUT / BACK OUT (ESC or button) ─────────────────────────────────
+let hasCashedOut = false;   // ← NEW FLAG
+
+function cashOut() {
+  if (!gameActive || !G.player?.alive || hasCashedOut) return;
+  hasCashedOut = true;
   G.player.alive = false;
-  spawnParticles(G.player.x+G.player.w/2, G.player.y+G.player.h/2, 20, ACCENT, 5);
-  setTimeout(()=>{ showEndScreen(false); }, 1200);
+  showEndScreen(true);           // true = cashed out
 }
 
-function cashOut(){
-  if(!G.player?.alive || !gameActive) return;
+// ── DEATH (only triggers if you actually fell, not if you cashed out) ──
+function die() {
+  if (hasCashedOut) return;      // ← IMPORTANT: ignore death if we cashed out
   G.player.alive = false;
-  showEndScreen(true);
+  spawnParticles(G.player.x + G.player.w/2, G.player.y + G.player.h/2, 25, ACCENT, 6);
+  setTimeout(() => showEndScreen(false), 800);
 }
 
-  document.addEventListener("keydown", e=>{
-  if(e.code === "Escape" && gameActive){
-    gameActive = false;
-    cancelAnimationFrame(animId);
-    document.getElementById("plat-overlay").classList.remove("hidden");
+// ── ESC KEY = INSTANT CASH OUT (back out safely) ───────────────────────
+document.addEventListener('keydown', e => {
+  if (e.code === 'Escape' && gameActive && G.player?.alive) {
+    e.preventDefault();
+    cashOut();
   }
 });
 
-function showEndScreen(cashed){
+function showEndScreen(cashed) {
   gameActive = false;
   cancelAnimationFrame(animId);
   stopPresenceSync();
   document.getElementById('plat-cashout-btn').style.display = 'none';
 
-  const earned = G.coins || 0;
   const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
+  const earned = cashed && heightTiles >= 10 ? G.coins : 0;
 
-  // Award coins to player
-  if(cashed && earned >= 50 && window.S?.user && window.db){
-    S.profile.coins = (S.profile.coins||0) + earned;
+  // Award coins
+  if (earned > 0 && window.S?.user && window.db) {
+    S.profile.coins = (S.profile.coins || 0) + earned;
     db.collection('users').doc(S.user.uid).update({
-      coins: firebase.firestore.FieldValue.increment(earned),
-    }).then(()=>{
+      coins: firebase.firestore.FieldValue.increment(earned)
+    }).then(() => {
       updateCoinDisplay(S.profile.coins);
-      toast('💰 +' + fmtNum(earned) + ' coins earned!', 'gold', 4000);
+      toast('💰 +' + fmtNum(earned) + ' coins!', 'gold', 5000);
     });
   }
 
   const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
-  overlay.querySelector('.plat-overlay-sub').textContent =
-    'HEIGHT: ' + heightTiles + ' tiles  ·  ' + (cashed ? 'COINS AWARDED' : 'NO REWARD — FELL TOO FAR, womp womp');
-  document.getElementById('plat-final-score').textContent =
-    cashed ? '🪙 +' + fmtNum(earned) + ' coins added to your balance!' : '🪙 0 coins (you fell)';
+  overlay.querySelector('.plat-overlay-title').textContent = 
+    cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
+  
+  overlay.querySelector('.plat-overlay-sub').textContent = 
+    `HEIGHT: ${heightTiles} tiles · ${cashed ? 'COINS AWARDED' : 'NO REWARD'}`;
+  
+  document.getElementById('plat-final-score').textContent = 
+    cashed ? `🪙 +${fmtNum(earned)} coins` : '🪙 0 coins';
+  
   document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
   overlay.classList.remove('hidden');
+
+  // Reset flag for next game
+  hasCashedOut = false;
 }
 
 function updateHUD(){
