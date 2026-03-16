@@ -806,7 +806,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <div class="plat-overlay-score" id="plat-final-score"></div>
             <button class="btn-plat-start" id="btn-plat-start">▶ PLAY</button>
           </div>
-          <div class="plat-controls-hint">WASD / ARROWS — MOVE · W/SPACE — JUMP (ONE JUMP ONLY — NO CATCHING YOURSELF)</div>
+          <div class="plat-controls-hint">WASD / ARROWS — MOVE · W/SPACE — JUMP (NO CATCHING YOURSELF)</div>
         </div>
       </section>
 
@@ -2764,7 +2764,7 @@ function onKey(e, down){
 
 function tryJump(e){
   if(!gameActive || !G.player?.alive) return;
-  if(G.player.jumps < 5){ // only ONE jump — no catching yourself
+  if(G.player.jumps < 115){ 
     G.player.vy = JUMP;
     G.player.jumps++;
     G.player.onGround = false;
