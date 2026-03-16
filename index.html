@@ -2629,7 +2629,7 @@ function makePlatforms(fromY, toY){
   const plats = [];
   
   // Starting floor
-  if(fromY <= 0){
+  if(fromY >= 0){
     plats.push({x:-200, y:0, w:800, h:20, type:'ground'});
   }
 
