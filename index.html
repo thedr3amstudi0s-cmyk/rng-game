@@ -1940,6 +1940,7 @@ async function loadLeaderboard(){
       const rItem=u.rarestItem?getItem(u.rarestItem):null;
       return{...u,rarestItemName:rItem?rItem.name:'None',rarestItemIcon:rItem?rItem.icon:'—'};
     });
+    
     S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
     renderLeaderboard(S.currentLbTab||'richest');
   }catch(e){
@@ -2783,15 +2784,24 @@ function update(){
   if(p.y > p.highestY) p.highestY = p.y; // wait — Y increases downward in canvas
   // Actually: world Y=0 is ground, UP is negative canvas Y.
   // Let's track as height above start: heightAboveStart = start_y - current_y
-  const heightAbove = p.startY - p.y;
-  if(heightAbove > (p.maxHeight||0)){
-    p.maxHeight = heightAbove;
-  }
+const heightAbove = p.startY - p.y;
+if(heightAbove > (p.maxHeight || 0)){
+  p.maxHeight = heightAbove;
+}
 
-  if (heightTiles < p.highestTile - 50) {
-    die();
-    return;
-  }
+// Calculate tile height
+const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
+
+// Track highest tile reached
+if (heightTiles > p.highestTile) {
+  p.highestTile = heightTiles;
+}
+
+// Kill player if they fall 50 tiles from their highest point
+if (heightTiles < p.highestTile - 50) {
+  die();
+  return;
+}
   
 // Generate more platforms ABOVE the player (negative Y direction)
 const highestGenerated = G.genTop; // now tracks the most negative Y we've reached
@@ -2817,12 +2827,6 @@ if (viewTop - TILE * 8 < highestGenerated) {  // need platforms higher up
   // Camera: keep player in upper 40% of screen
   const targetCamY = p.y - canvas.height * 0.55;
   G.camera.y += (targetCamY - G.camera.y) * 0.12;
-
-  // Coins earned = height tiles above start (per specific # of tiles)
-const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-if (heightTiles > p.highestTile) {
-  p.highestTile = heightTiles;
-}
   
 if (heightTiles >= 60) G.coins = 175;
 else if(heightTiles >= 50) G.coins = 150;
@@ -2872,7 +2876,6 @@ function showEndScreen(cashed) {
   cancelAnimationFrame(animId);
   document.getElementById('plat-cashout-btn').style.display = 'none';
 
-  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
   const earned = cashed && heightTiles >= 10 ? G.coins : 0;
 
   if (earned > 0) {
