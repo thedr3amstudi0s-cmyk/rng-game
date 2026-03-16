@@ -2614,10 +2614,7 @@ const GOLD = '#f59e0b';
 let canvas, ctx, animId, gameActive = false;
 let keys = {}, touchLeft = false, touchRight = false, touchJump = false;
 let G = {};
-let otherPlayers = {}; // uid -> {x, y, username, color}
-let presenceInterval = null;
-const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00ffff','#ff6b6b','#ffd700'];
-
+let worldSeed = Math.floor(Math.random()*100000000);
 
 function makePlatforms(fromY, toY){
   const plats = [];
@@ -2631,7 +2628,7 @@ function makePlatforms(fromY, toY){
     });
 
   let y = fromY;
-  const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
+  const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
 
   while(y < toY){
     const x = -100 + rng()*600;
@@ -2665,6 +2662,7 @@ function mulberry32(a){
 
 // ── Init ────────────────────────────────────────────────────────
 function startGame(){
+  worldSeed = Math.floor(Math.random()*100000000);
   canvas = document.getElementById('plat-canvas');
   ctx = canvas.getContext('2d');
   resizeCanvas();
@@ -2695,8 +2693,6 @@ function startGame(){
   document.getElementById('plat-cashout-btn').style.display = 'flex';
   updateHUD();
 
-  startPresenceSync();
-
   if(animId) cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
   gameActive = true;
@@ -2706,50 +2702,6 @@ function resizeCanvas(){
   const wrap = canvas.parentElement;
   canvas.width = wrap.clientWidth;
   canvas.height = wrap.clientHeight;
-}
-
-// ── Presence (other players) ────────────────────────────────────
-function startPresenceSync(){
-  if(!window.rtdb || !window.S?.user) return;
-  stopPresenceSync();
-  const uid = S.user.uid;
-  const colorIdx = uid.charCodeAt(0) % PLAYER_COLORS.length;
-  const myColor = PLAYER_COLORS[colorIdx];
-
-  // Write my position every 150ms
-  presenceInterval = setInterval(()=>{
-    if(!gameActive || !G.player?.alive) return;
-    const heightTiles = Math.floor(G.player.highestY / TILE);
-    rtdb.ref('platformer/' + uid).set({
-      uid, username: S.profile?.username || '?',
-      x: Math.round(G.player.x),
-      y: Math.round(G.player.y),
-      highestY: G.player.highestY,
-      color: myColor,
-      ts: firebase.database.ServerValue.TIMESTAMP,
-    });
-  }, 150);
-
-  // Listen to others
-  rtdb.ref('platformer').on('value', snap => {
-    const data = snap.val() || {};
-    otherPlayers = {};
-    const now = Date.now();
-    for(const [id, p] of Object.entries(data)){
-      if(id === uid) continue;
-      if(p.ts && now - p.ts > 5000) continue; // stale
-      otherPlayers[id] = p;
-    }
-  });
-}
-
-function stopPresenceSync(){
-  if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
-  if(window.rtdb && window.S?.user){
-    rtdb.ref('platformer/' + S.user.uid).remove();
-    rtdb.ref('platformer').off();
-  }
-  otherPlayers = {};
 }
 
 // ── Input ────────────────────────────────────────────────────────
@@ -2915,21 +2867,14 @@ document.addEventListener('keydown', e => {
 function showEndScreen(cashed) {
   gameActive = false;
   cancelAnimationFrame(animId);
-  stopPresenceSync();
   document.getElementById('plat-cashout-btn').style.display = 'none';
 
   const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
   const earned = cashed && heightTiles >= 10 ? G.coins : 0;
 
-  // Award coins
-  if (earned > 0 && window.S?.user && window.db) {
-    S.profile.coins = (S.profile.coins || 0) + earned;
-    db.collection('users').doc(S.user.uid).update({
-      coins: firebase.firestore.FieldValue.increment(earned)
-    }).then(() => {
-      updateCoinDisplay(S.profile.coins);
-      toast('💰 +' + fmtNum(earned) + ' coins!', 'gold', 5000);
-    });
+     if (earned > 0) {
+      console.log("Coins earned:", earned);
+    }
   }
 
   const overlay = document.getElementById('plat-overlay');
@@ -2953,7 +2898,7 @@ function updateHUD(){
   const heightTiles = G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE)) : 0;
   document.getElementById('plat-score').textContent = fmtNum ? fmtNum(G.coins||0) : (G.coins||0);
   document.getElementById('plat-lives').textContent = heightTiles + ' tiles';
-  document.getElementById('plat-level').textContent = Object.keys(otherPlayers).length;
+  document.getElementById('plat-level').textContent = "1";
 }
 
 // ── Particles ───────────────────────────────────────────────────
@@ -3046,23 +2991,6 @@ function draw(){
     ctx.restore();
   }
 
-  // Other players (ghost style — no collision)
-  for(const [uid, op] of Object.entries(otherPlayers)){
-    ctx.save();
-    ctx.globalAlpha = 0.45;
-    const col = op.color || '#ffffff';
-    ctx.fillStyle = col;
-    ctx.fillRect(op.x - 14, op.y - 18, 28, 36);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fillRect(op.x - 10, op.y - 14, 20, 12);
-    ctx.fillStyle = col;
-    ctx.font = '9px "Orbitron",sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(op.username || '?', op.x, op.y - 22);
-    ctx.globalAlpha = 1;
-    ctx.restore();
-  }
-
   // Player
   if(G.player?.alive){
     const p = G.player;
@@ -3139,7 +3067,6 @@ window.initPlatformerPage = function(){
 
 window.stopPlatformer = function(){
   if(gameActive){ gameActive=false; cancelAnimationFrame(animId); animId=null; }
-  stopPresenceSync();
 };
 
 window.platCashOut = function(){ cashOut(); };
