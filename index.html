@@ -2767,7 +2767,7 @@ function onKey(e, down){
 
 function tryJump(e){
   if(!gameActive || !G.player?.alive) return;
-  if(G.player.jumps < 115){ 
+  if(G.player.jumps < 2){ 
     G.player.vy = JUMP;
     G.player.jumps++;
     G.player.onGround = false;
