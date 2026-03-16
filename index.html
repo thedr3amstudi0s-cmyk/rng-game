@@ -2765,14 +2765,12 @@ function update(){
     }
   }
 
-  // Track highest tile reached
-  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-  if(heightTiles > p.highestTile) p.highestTile = heightTiles;
-
   // DIE if fallen too far or below start
+  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
   if(heightTiles < p.highestTile - 50 || p.y > 0){
-    die();
-    return;
+      // Only mark player dead if alive
+      if(p.alive) die();
+      return;
   }
 
   // Coins
@@ -2789,7 +2787,7 @@ function update(){
 
 // ── CASH OUT / BACK OUT (ESC or button) ─────────────────────────────────
 function cashOut(){
-  if(!gameActive || hasCashedOut) return;
+  if(!gameActive || hasCashedOut || !G.player.alive) return;
 
   hasCashedOut = true;
 
@@ -2798,10 +2796,9 @@ function cashOut(){
 
   console.log("Cashing out coins:", earned);
 
-  // Stop player movement
+  // Stop player movement but still allow HUD & overlays
   G.player.alive = false;
 
-  // Show end screen with earned coins
   showEndScreen(true, earned);
 }
 
