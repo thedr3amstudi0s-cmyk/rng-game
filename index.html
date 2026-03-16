@@ -2817,15 +2817,34 @@ function update() {
 }
 
 // ── Cash Out ──────────────────────────────────────────────────
-function cashOut(){
+async function cashOut(){
   if(!gameActive || hasCashedOut) return;
   hasCashedOut = true;
 
-  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y)/TILE));
+  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
   const earned = heightTiles >= 10 ? G.coins : 0;
 
-  G.player.alive=false;
-  showEndScreen(true,earned);
+  if(earned > 0){
+    // Update local profile first
+    S.profile.coins += earned;
+
+    // Update Firestore database
+    try{
+      await db.collection('users').doc(S.user.uid).update({
+        coins: firebase.firestore.FieldValue.increment(earned)
+      });
+    }catch(e){
+      toast('Save error','error');
+      return;
+    }
+
+    updateCoinDisplay(S.profile.coins);
+    toast('Cashed out 🪙 ' + fmtNum(earned) + '!', 'gold');
+  }
+
+  // Stop player movement and show end screen
+  G.player.alive = false;
+  showEndScreen(true, earned);
 }
 
 // ── Death ─────────────────────────────────────────────────────
