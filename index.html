@@ -2731,22 +2731,31 @@ function update(){
   p.y += p.vy;
   p.onGround = false;
 
-  // Platform collisions
-  for(const pl of G.platforms){
-    if(pl.x > p.x + p.w || pl.x + pl.w < p.x) continue;
-    const prevBottom = p.y - p.vy + p.h;
-    const curBottom = p.y + p.h;
-    if(prevBottom <= pl.y && curBottom >= pl.y && p.vy > 0){
-      if(pl.type==='crumble') pl.crumbling=true;
-      else if(pl.type==='bounce'){
-        p.vy = JUMP*1.3; p.jumps=0;
-        spawnParticles(p.x+p.w/2,p.y+p.h,8,'#22c55e');
-        continue;
-      }
-      p.y = pl.y - p.h;
-      p.vy = 0; p.onGround=true; p.jumps=0;
+// Platform collision — resolves landing on top
+for(const pl of G.platforms){
+    // horizontal overlap with small tolerance
+    if(p.x + p.w > pl.x + 2 && p.x < pl.x + pl.w - 2){
+        const prevBottom = p.y - p.vy + p.h;
+        const curBottom  = p.y + p.h;
+
+        // Check if player crossed platform from above
+        if(prevBottom <= pl.y && curBottom >= pl.y && p.vy >= 0){
+            // Bounce platform
+            if(pl.type === 'bounce'){
+                p.vy = JUMP*1.3;
+                p.jumps = 0;
+                spawnParticles(p.x+p.w/2, pl.y, 8, '#22c55e');
+            } else {
+                // Normal or crumble
+                p.y = pl.y - p.h;
+                p.vy = 0;
+                p.onGround = true;
+                p.jumps = 0;
+                if(pl.type === 'crumble') pl.crumbling = true;
+            }
+        }
     }
-  }
+}
 
   // Crumble timers
   for(const pl of G.platforms){
