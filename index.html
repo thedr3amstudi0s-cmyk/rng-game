@@ -2872,27 +2872,26 @@ function showEndScreen(cashed) {
   const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
   const earned = cashed && heightTiles >= 10 ? G.coins : 0;
 
-     if (earned > 0) {
-      console.log("Coins earned:", earned);
-    }
+  if (earned > 0) {
+    console.log("Coins earned:", earned);
   }
 
   const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = 
+  overlay.querySelector('.plat-overlay-title').textContent =
     cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
-  
-  overlay.querySelector('.plat-overlay-sub').textContent = 
+
+  overlay.querySelector('.plat-overlay-sub').textContent =
     `HEIGHT: ${heightTiles} tiles · ${cashed ? 'COINS AWARDED' : 'NO REWARD'}`;
-  
-  document.getElementById('plat-final-score').textContent = 
-    cashed ? `🪙 +${fmtNum(earned)} coins` : '🪙 0 coins';
-  
+
+  document.getElementById('plat-final-score').textContent =
+    cashed ? `🪙 +${earned} coins` : '🪙 0 coins';
+
   document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
   overlay.classList.remove('hidden');
 
-  // Reset flag for next game
   hasCashedOut = false;
 }
+
 
 function updateHUD(){
   const heightTiles = G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE)) : 0;
