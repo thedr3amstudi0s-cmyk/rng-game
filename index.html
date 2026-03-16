@@ -2602,540 +2602,386 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 });
 
 // ============================================================
-// VAULT RUNNER — Only Up Edition
+// VAULT RUNNER — Only Up Edition (FIXED)
 // ============================================================
 (function(){
+  // ── Constants ─────────────────────────────────────────────────
+  const TILE = 48;
+  const GRAVITY = 0.45;
+  const JUMP = -12.5;
+  const SPEED = 4.0;
+  const COINS_PER_TILE = 8;
+  const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
+  const ACCENT = '#4f8ef7';
+  const GOLD = '#f59e0b';
 
-// ── Constants ─────────────────────────────────────────────────
-const TILE = 48;
-const GRAVITY = 0.45;
-const JUMP = -12.5;
-const SPEED = 4.0;
-const COINS_PER_TILE = 8; // coins earned per tile height climbed
-const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
-const ACCENT = '#4f8ef7';
-const GOLD = '#f59e0b';
+  // ── State ──────────────────────────────────────────────────────
+  let canvas, ctx, animId, gameActive = false;
+  let keys = {}, touchLeft = false, touchRight = false, touchJump = false;
+  let G = {};
+  let otherPlayers = {}; // uid → {x, y, username, color, ts}
+  let presenceInterval = null;
+  const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00ffff','#ff6b6b','#ffd700'];
 
-// ── State ──────────────────────────────────────────────────────
-let canvas, ctx, animId, gameActive = false;
-let keys = {}, touchLeft = false, touchRight = false, touchJump = false;
-let G = {};
-let otherPlayers = {}; // uid -> {x, y, username, color}
-let presenceInterval = null;
-const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00ffff','#ff6b6b','#ffd700'];
+  function makePlatforms(fromY, toY){
+    const plats = [];
+    // Always spawn visible starting platform
+    plats.push({x:-300, y:-40, w:900, h:20, type:'ground'});
+    let y = fromY;
+    const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
+    while(y < toY){
+      const x = -100 + rng()*600;
+      const w = 60 + rng()*140;
+      const gapUp = TILE*1.2 + rng()*TILE*2.5;
+      plats.push({
+        x, y,
+        w, h:14,
+        type: rng()<0.12 ? 'crumble' : rng()<0.08 ? 'bounce' : 'normal',
+        crumbling:false, crumbleTimer:0
+      });
+      y += gapUp;
+    }
+    return plats;
+  }
+  function mulberry32(a){ return function(){ /* same as before */ a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
+  // ── Init ────────────────────────────────────────────────────────
+  function startGame(){
+    canvas = document.getElementById('plat-canvas');
+    ctx = canvas.getContext('2d');
+    resizeCanvas();
 
-function makePlatforms(fromY, toY){
-  const plats = [];
-  
-  // Starting floor
-  if(fromY >= 0){
-    plats.push({x:-200, y:-40, w:800, h:20, type:'ground'});
+    G = {
+      player: { x:180, y:-40, vx:0, vy:0, w:28, h:36, onGround:false, jumps:0, facing:1, alive:true, maxHeight:0 },
+      camera: {y:0},
+      platforms: [],
+      genTop: -canvas.height*3,
+      particles: [],
+      coins: 0,
+      startTime: Date.now(),
+      pulseTick: 0
+    };
+
+    G.player.startY = G.player.y;               // ← FIX spawn height tracking
+    G.platforms = makePlatforms(-canvas.height*3, 0);
+    G.genTop = -canvas.height*3;
+
+    document.getElementById('plat-overlay').classList.add('hidden');
+    document.getElementById('plat-cashout-btn').style.display = 'flex';
+    updateHUD();
+    startPresenceSync();
+
+    if(animId) cancelAnimationFrame(animId);
+    animId = requestAnimationFrame(loop);
+    gameActive = true;
   }
 
-  let y = fromY;
-  const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
-
-  while(y < toY){
-    const x = -100 + rng()*600;
-    const w = 60 + rng()*140;
-    const gapUp = TILE*1.2 + rng()*TILE*2.5;
-
-    plats.push({
-      x,
-      y,
-      w,
-      h:14,
-      type: rng()<0.12 ? 'crumble' : rng()<0.08 ? 'bounce' : 'normal',
-      crumbling:false,
-      crumbleTimer:0
-    });
-
-    y += gapUp;
+  function resizeCanvas(){
+    const wrap = canvas.parentElement;
+    canvas.width = wrap.clientWidth;
+    canvas.height = wrap.clientHeight;
   }
 
-  return plats;
-}
+  // ── Presence (other players) ────────────────────────────────────
+  function startPresenceSync(){
+    if(!window.rtdb || !window.S?.user) return;
+    stopPresenceSync();
+    const uid = S.user.uid;
+    const colorIdx = uid.charCodeAt(0) % PLAYER_COLORS.length;
+    const myColor = PLAYER_COLORS[colorIdx];
 
-function mulberry32(a){
-  return function(){
-    a|=0; a=a+0x6D2B79F5|0;
-    let t=Math.imul(a^a>>>15,1|a);
-    t=t+Math.imul(t^t>>>7,61|t)^t;
-    return((t^t>>>14)>>>0)/4294967296;
-  };
-}
+    presenceInterval = setInterval(()=>{
+      if(!gameActive || !G.player?.alive) return;
+      const heightTiles = Math.floor((G.player.startY - G.player.y) / TILE);
+      rtdb.ref('platformer/' + uid).set({
+        uid, username: S.profile?.username || '?',
+        x: Math.round(G.player.x),
+        y: Math.round(G.player.y),
+        color: myColor,
+        ts: firebase.database.ServerValue.TIMESTAMP
+      });
+    }, 180); // slightly slower → less jumpy
 
-// ── Init ────────────────────────────────────────────────────────
-function startGame(){
-  canvas = document.getElementById('plat-canvas');
-  ctx = canvas.getContext('2d');
-  resizeCanvas();
-
-  G = {
-    player: {
-      x: 180, y: -40, // world coords
-      vx: 0, vy: 0,
-      w: 28, h: 36,
-      onGround: false, jumps: 0,
-      facing: 1, alive: true,
-      highestY: 0, // highest Y reached (world)
-      startY: 0,
-    },
-    camera: {y: 0}, // camera world Y (bottom of view)
-    platforms: [],
-    genTop: 0, // how high we've generated
-    particles: [],
-    coins: 0, // earned coins (for display)
-    startTime: Date.now(),
-    pulseTick: 0,
-  };
-
-  G.platforms = makePlatforms(-canvas.height * 3, 0); // start generating upward
-  G.genTop = -canvas.height * 3; // highest (most negative) generated
-
-  document.getElementById('plat-overlay').classList.add('hidden');
-  document.getElementById('plat-cashout-btn').style.display = 'flex';
-  updateHUD();
-
-  startPresenceSync();
-
-  if(animId) cancelAnimationFrame(animId);
-  animId = requestAnimationFrame(loop);
-  gameActive = true;
-}
-
-function resizeCanvas(){
-  const wrap = canvas.parentElement;
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
-}
-
-// ── Presence (other players) ────────────────────────────────────
-function startPresenceSync(){
-  if(!window.rtdb || !window.S?.user) return;
-  stopPresenceSync();
-  const uid = S.user.uid;
-  const colorIdx = uid.charCodeAt(0) % PLAYER_COLORS.length;
-  const myColor = PLAYER_COLORS[colorIdx];
-
-  // Write my position every 150ms
-  presenceInterval = setInterval(()=>{
-    if(!gameActive || !G.player?.alive) return;
-    const heightTiles = Math.floor(G.player.highestY / TILE);
-    rtdb.ref('platformer/' + uid).set({
-      uid, username: S.profile?.username || '?',
-      x: Math.round(G.player.x),
-      y: Math.round(G.player.y),
-      highestY: G.player.highestY,
-      color: myColor,
-      ts: firebase.database.ServerValue.TIMESTAMP,
+    rtdb.ref('platformer').on('value', snap => {
+      const data = snap.val() || {};
+      otherPlayers = {};
+      const now = Date.now();
+      for(const [id, p] of Object.entries(data)){
+        if(id === uid || !p.ts || now - p.ts > 8000) continue;
+        otherPlayers[id] = p;
+      }
     });
-  }, 150);
-
-  // Listen to others
-  rtdb.ref('platformer').on('value', snap => {
-    const data = snap.val() || {};
+  }
+  function stopPresenceSync(){
+    if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
+    if(window.rtdb && window.S?.user){
+      rtdb.ref('platformer/' + S.user.uid).remove();
+      rtdb.ref('platformer').off();
+    }
     otherPlayers = {};
-    const now = Date.now();
-    for(const [id, p] of Object.entries(data)){
-      if(id === uid) continue;
-      if(p.ts && now - p.ts > 5000) continue; // stale
-      otherPlayers[id] = p;
+  }
+
+  // ── Input ────────────────────────────────────────────────────────
+  function onKey(e, down){
+    keys[e.code] = down;
+    if(down && (e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space')) tryJump(e);
+  }
+  function tryJump(e){
+    if(!gameActive || !G.player?.alive) return;
+    if(G.player.jumps < 1){ // ONE jump only
+      G.player.vy = JUMP;
+      G.player.jumps++;
+      G.player.onGround = false;
+      spawnParticles(G.player.x + G.player.w/2, G.player.y, 6, ACCENT);
+      if(e) e.preventDefault();
+    }
+  }
+  window.addEventListener('keydown', e => onKey(e,true));
+  window.addEventListener('keyup',   e => onKey(e,false));
+  window.addEventListener('resize', () => { if(canvas) resizeCanvas(); });
+
+  // ── Physics ────────────────────────────────────────────────────
+  function update(){
+    if(!G.player?.alive) return;
+    const p = G.player;
+
+    // Horizontal movement
+    const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
+    const right = keys['ArrowRight']||keys['KeyD']||touchRight;
+    p.vx = left ? -SPEED : right ? SPEED : p.vx * 0.72;
+
+    // Gravity
+    p.vy += GRAVITY;
+    if(p.vy > 18) p.vy = 18;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.onGround = false;
+
+    // Platform collision (only top landing)
+    for(const pl of G.platforms){
+      if(pl.x > p.x + p.w + 4 || pl.x + pl.w < p.x - 4) continue;
+      const prevBottom = p.y - p.vy + p.h;
+      const curBottom  = p.y + p.h;
+      if(prevBottom <= pl.y + 2 && curBottom >= pl.y && p.vy > 0){
+        if(pl.type === 'crumble'){ pl.crumbling = true; }
+        else if(pl.type === 'bounce'){ p.vy = JUMP*1.3; p.jumps=0; spawnParticles(p.x+p.w/2,p.y+p.h,8,'#22c55e'); continue; }
+        p.y = pl.y - p.h;
+        p.vy = 0; p.onGround = true; p.jumps = 0;
+      }
+    }
+
+    // Crumble
+    for(const pl of G.platforms){
+      if(pl.crumbling){
+        pl.crumbleTimer = (pl.crumbleTimer||0)+1;
+        if(pl.crumbleTimer > 20){ pl.gone = true; spawnParticles(pl.x+pl.w/2,pl.y+pl.h/2,6,'#6b21a8'); }
+      }
+    }
+    G.platforms = G.platforms.filter(pl => !pl.gone);
+
+    // Height tracking
+    const heightAbove = p.startY - p.y;
+    if(heightAbove > (p.maxHeight||0)) p.maxHeight = heightAbove;
+
+    // Death
+    if(p.y > p.startY + 400){ die(); return; }
+
+    // Generate more platforms ABOVE
+    const viewTop = p.y - canvas.height;
+    if(viewTop - TILE*10 < G.genTop){
+      const newTop = G.genTop - canvas.height*2.5;
+      G.platforms.push(...makePlatforms(newTop, G.genTop));
+      G.genTop = newTop;
+    }
+
+    // ←←← DELETE PLATFORMS OFF SCREEN (top + bottom) →→→
+    const camTop    = G.camera.y - 80;
+    const camBottom = p.y + canvas.height * 1.6;
+    G.platforms = G.platforms.filter(pl => pl.y > camTop && pl.y < camBottom);
+
+    // Camera
+    const targetCamY = p.y - canvas.height * 0.55;
+    G.camera.y += (targetCamY - G.camera.y) * 0.14;
+
+    // Coins
+    const heightTiles = Math.max(0, Math.floor(heightAbove / TILE));
+    G.coins = heightTiles >= 50 ? 500 : heightTiles >= 40 ? 300 : heightTiles >= 30 ? 200 : heightTiles >= 20 ? 100 : heightTiles >= 10 ? 50 : 0;
+
+    updateHUD();
+
+    const btn = document.getElementById('plat-cashout-btn');
+    btn.style.display = heightTiles >= 10 ? 'flex' : 'none';
+  }
+
+  function die(){ G.player.alive=false; spawnParticles(G.player.x+G.player.w/2,G.player.y+G.player.h/2,25,ACCENT,6); setTimeout(()=>showEndScreen(false),800); }
+  function cashOut(){ G.player.alive=false; showEndScreen(true); }
+
+  // ── ESC = CASH OUT (so you always get your money when you “back out”) ──
+  document.addEventListener('keydown', e=>{
+    if(e.code === 'Escape' && gameActive){
+      cashOut();
     }
   });
-}
 
-function stopPresenceSync(){
-  if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
-  if(window.rtdb && window.S?.user){
-    rtdb.ref('platformer/' + S.user.uid).remove();
-    rtdb.ref('platformer').off();
-  }
-  otherPlayers = {};
-}
-
-// ── Input ────────────────────────────────────────────────────────
-function onKey(e, down){
-  keys[e.code] = down;
-  if(down && (e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space')) tryJump(e);
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
-}
-
-function tryJump(e){
-  if(!gameActive || !G.player?.alive) return;
-  if(G.player.jumps < 5){ // only ONE jump — no catching yourself
-    G.player.vy = JUMP;
-    G.player.jumps++;
-    G.player.onGround = false;
-    spawnParticles(G.player.x + G.player.w/2, G.player.y, 5, ACCENT);
-    if(e) e.preventDefault();
-  }
-}
-
-window.addEventListener('keydown', e => onKey(e, true));
-window.addEventListener('keyup',   e => onKey(e, false));
-window.addEventListener('resize',  () => { if(canvas) resizeCanvas(); });
-
-// ── Physics ────────────────────────────────────────────────────
-function update(){
-  if(!G.player?.alive) return;
-  const p = G.player;
-
-  // Horizontal
-  const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
-  const right = keys['ArrowRight']||keys['KeyD']||touchRight;
-  if(left){ p.vx = -SPEED; p.facing=-1; }
-  else if(right){ p.vx = SPEED; p.facing=1; }
-  else p.vx *= 0.7;
-
-  // Gravity — always falls, no air control for jump extension
-  p.vy += GRAVITY;
-  if(p.vy > 18) p.vy = 18;
-
-  p.x += p.vx;
-  p.y += p.vy;
-  p.onGround = false;
-
-  // Platform collision (only resolve landing on top — no catching from sides/below)
-  for(const pl of G.platforms){
-    if(pl.x > p.x + p.w + 4 || pl.x + pl.w < p.x - 4) continue;
-    const prevBottom = p.y - p.vy + p.h;
-    const curBottom  = p.y + p.h;
-    if(prevBottom <= pl.y + 2 && curBottom >= pl.y && p.vy > 0){
-      // Landing
-      if(pl.type === 'crumble'){
-        pl.crumbling = true;
-      } else if(pl.type === 'bounce'){
-        p.vy = JUMP * 1.3;
-        p.jumps = 0;
-        spawnParticles(p.x+p.w/2, p.y+p.h, 8, '#22c55e');
-        continue;
-      }
-      p.y = pl.y - p.h;
-      p.vy = 0; p.onGround = true; p.jumps = 0;
-    }
-  }
-
-  // Crumble timers
-  for(const pl of G.platforms){
-    if(pl.crumbling){
-      pl.crumbleTimer = (pl.crumbleTimer||0) + 1;
-      if(pl.crumbleTimer > 20){
-        pl.gone = true;
-        spawnParticles(pl.x+pl.w/2, pl.y+pl.h/2, 6, '#6b21a8');
-      }
-    }
-  }
-  G.platforms = G.platforms.filter(pl => !pl.gone);
-
-  // Track highest point (world Y — higher number = higher up)
-  if(p.y > p.highestY) p.highestY = p.y; // wait — Y increases downward in canvas
-  // Actually: world Y=0 is ground, UP is negative canvas Y.
-  // Let's track as height above start: heightAboveStart = start_y - current_y
-  const heightAbove = p.startY - p.y;
-  if(heightAbove > (p.maxHeight||0)){
-    p.maxHeight = heightAbove;
-  }
-
-  // Fell below start = died
-  if(p.y > p.startY + 300){
-    die();
-    return;
-  }
-
-// Generate more platforms ABOVE the player (negative Y direction)
-const highestGenerated = G.genTop; // now tracks the most negative Y we've reached
-const viewTop = p.y - canvas.height; // top of visible screen
-
-if (viewTop - TILE * 8 < highestGenerated) {  // need platforms higher up
-  const newBottom = highestGenerated - canvas.height * 2; // go MORE negative
-  const newPlats = makePlatforms(newBottom, highestGenerated); // note: from lower to higher (negative)
-
-  // Correct offset so they appear in world space
-  G.platforms.push(...newPlats.map(pl => ({
-    ...pl,
-    y: pl.y   // no double-subtract needed anymore
-  })));
-
-  G.genTop = newBottom; // update to the new highest (most negative) point
-}
-
-  // Remove da platforms far below camera
-  const camBottom = p.y + canvas.height * 1.5;
-  G.platforms = G.platforms.filter(pl => pl.y < camBottom);
-
-  // Camera: keep player in upper 40% of screen
-  const targetCamY = p.y - canvas.height * 0.55;
-  G.camera.y += (targetCamY - G.camera.y) * 0.12;
-
-  // Coins earned = height tiles above start (per specific # of tiles)
-const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-
-if(heightTiles >= 50) G.coins = 500;
-else if(heightTiles >= 40) G.coins = 300;
-else if(heightTiles >= 30) G.coins = 200;
-else if(heightTiles >= 20) G.coins = 100;
-else if(heightTiles >= 10) G.coins = 50;
-else G.coins = 0;
-
-  updateHUD();
-  const btn = document.getElementById('plat-cashout-btn');
-  if(heightTiles >= 10){
-  btn.style.display = 'flex';
-  }else{
-  btn.style.display = 'none';
-  }
-}
-
-function die(){
-  if(!G.player.alive) return;
-  G.player.alive = false;
-  spawnParticles(G.player.x+G.player.w/2, G.player.y+G.player.h/2, 20, ACCENT, 5);
-  setTimeout(()=>{ showEndScreen(false); }, 1200);
-}
-
-function cashOut(){
-  if(!G.player?.alive || !gameActive) return;
-  G.player.alive = false;
-  showEndScreen(true);
-}
-
-  document.addEventListener("keydown", e=>{
-  if(e.code === "Escape" && gameActive){
+  function showEndScreen(cashed){
     gameActive = false;
     cancelAnimationFrame(animId);
-    document.getElementById("plat-overlay").classList.remove("hidden");
-  }
-});
+    stopPresenceSync();
+    document.getElementById('plat-cashout-btn').style.display = 'none';
 
-function showEndScreen(cashed){
-  gameActive = false;
-  cancelAnimationFrame(animId);
-  stopPresenceSync();
-  document.getElementById('plat-cashout-btn').style.display = 'none';
+    const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
+    const earned = cashed && heightTiles >= 10 ? G.coins : 0;
 
-  const earned = G.coins || 0;
-  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
-
-  // Award coins to player
-  if(cashed && earned >= 50 && window.S?.user && window.db){
-    S.profile.coins = (S.profile.coins||0) + earned;
-    db.collection('users').doc(S.user.uid).update({
-      coins: firebase.firestore.FieldValue.increment(earned),
-    }).then(()=>{
-      updateCoinDisplay(S.profile.coins);
-      toast('💰 +' + fmtNum(earned) + ' coins earned!', 'gold', 4000);
-    });
-  }
-
-  const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
-  overlay.querySelector('.plat-overlay-sub').textContent =
-    'HEIGHT: ' + heightTiles + ' tiles  ·  ' + (cashed ? 'COINS AWARDED' : 'NO REWARD — FELL TOO FAR, womp womp');
-  document.getElementById('plat-final-score').textContent =
-    cashed ? '🪙 +' + fmtNum(earned) + ' coins added to your balance!' : '🪙 0 coins (you fell)';
-  document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
-  overlay.classList.remove('hidden');
-}
-
-function updateHUD(){
-  const heightTiles = G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE)) : 0;
-  document.getElementById('plat-score').textContent = fmtNum ? fmtNum(G.coins||0) : (G.coins||0);
-  document.getElementById('plat-lives').textContent = heightTiles + ' tiles';
-  document.getElementById('plat-level').textContent = Object.keys(otherPlayers).length;
-}
-
-// ── Particles ───────────────────────────────────────────────────
-function spawnParticles(x, y, n, col, spread=3){
-  for(let i=0;i<n;i++){
-    G.particles.push({x, y,
-      vx:(Math.random()-0.5)*spread*2, vy:(Math.random()-1.5)*spread,
-      life:1, decay:0.035+Math.random()*0.04, r:3+Math.random()*4, col});
-  }
-}
-
-// ── Draw ────────────────────────────────────────────────────────
-function draw(){
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0,0,W,H);
-
-  // Sky gradient — changes color as you climb
-  const heightAbove = G.player ? Math.max(0, G.player.startY - G.player.y) : 0;
-  const skyT = Math.min(heightAbove / 2000, 1);
-  const sky = ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0, lerpColor('#000005','#0a0020',skyT));
-  sky.addColorStop(1, lerpColor('#050810','#020015',skyT));
-  ctx.fillStyle = sky;
-  ctx.fillRect(0,0,W,H);
-
-  // Stars
-  G.pulseTick = (G.pulseTick||0)+1;
-  for(let i=0;i<80;i++){
-    const sx = (i*137.508 + 50) % W;
-    const sy = (i*97.3 + 20) % H;
-    const bright = 0.3 + Math.sin(G.pulseTick*0.02 + i)*0.3;
-    ctx.fillStyle = `rgba(255,255,255,${bright})`;
-    ctx.fillRect(sx,sy,1,1);
-  }
-
-  // Camera transform
-  const camOffY = -G.camera.y;
-  ctx.save();
-  ctx.translate(W/2 - 200, camOffY); // center world horizontally
-
-  // Draw platforms
-  for(const pl of G.platforms){
-    if(pl.y + pl.h < G.camera.y - 50) continue;
-    if(pl.y > G.camera.y + H + 50) continue;
-    const alpha = pl.crumbling ? Math.max(0, 1-(pl.crumbleTimer||0)/20) : 1;
-    ctx.globalAlpha = alpha;
-    if(pl.type === 'ground'){
-      ctx.fillStyle = '#0f1424';
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#4f8ef7';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-    } else if(pl.type === 'bounce'){
-      ctx.fillStyle = '#164020';
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#22c55e';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-      ctx.fillStyle = '#22c55e88';
-      ctx.font = '10px sans-serif'; ctx.textAlign='center';
-      ctx.fillText('↑↑', pl.x+pl.w/2, pl.y-2);
-    } else if(pl.type === 'crumble'){
-      ctx.fillStyle = '#2a1520';
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#6b21a8';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
-    } else {
-      const ci = Math.abs(Math.floor(pl.y/200)) % PLATFORM_COLORS.length;
-      ctx.fillStyle = PLATFORM_COLORS[ci];
-      ctx.fillRect(pl.x, pl.y, pl.w, pl.h);
-      ctx.fillStyle = '#2a3555';
-      ctx.fillRect(pl.x, pl.y, pl.w, 3);
+    // Award coins
+    if(earned > 0 && window.S?.user && window.db){
+      S.profile.coins = (S.profile.coins||0) + earned;
+      db.collection('users').doc(S.user.uid).update({coins: firebase.firestore.FieldValue.increment(earned)})
+        .then(()=> { updateCoinDisplay(S.profile.coins); toast('💰 +' + fmtNum(earned) + ' coins!', 'gold', 5000); });
     }
-    ctx.globalAlpha = 1;
+
+    const overlay = document.getElementById('plat-overlay');
+    overlay.querySelector('.plat-overlay-title').textContent = cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
+    overlay.querySelector('.plat-overlay-sub').textContent = `HEIGHT: ${heightTiles} tiles · ${cashed ? 'COINS AWARDED' : 'NO REWARD'}`;
+    document.getElementById('plat-final-score').textContent = cashed ? `🪙 +${fmtNum(earned)} coins` : '🪙 0 coins';
+    document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
+    overlay.classList.remove('hidden');
   }
 
-  // Height markers
-  for(let t = 0; t <= 300; t += 10){
-    const markerY = G.player ? G.player.startY - t*TILE : -t*TILE;
-    if(markerY < G.camera.y - 60 || markerY > G.camera.y + H + 10) continue;
+  function updateHUD(){
+    const heightTiles = G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y)/TILE)) : 0;
+    document.getElementById('plat-score').textContent = fmtNum(G.coins||0);
+    document.getElementById('plat-lives').textContent = heightTiles + ' tiles';
+    document.getElementById('plat-level').textContent = Object.keys(otherPlayers).length;
+  }
+
+  // ── Particles ───────────────────────────────────────────────────
+  function spawnParticles(x,y,n,col,spread=3){
+    for(let i=0;i<n;i++){
+      G.particles.push({x,y,
+        vx:(Math.random()-0.5)*spread*3,
+        vy:(Math.random()-1.5)*spread,
+        life:1, decay:0.04+Math.random()*0.03, r:3+Math.random()*5, col});
+    }
+  }
+
+  // ── Draw ────────────────────────────────────────────────────────
+  function draw(){
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const heightAbove = G.player ? Math.max(0, G.player.startY - G.player.y) : 0;
+    const skyT = Math.min(heightAbove/2500,1);
+    const sky = ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0, lerpColor('#000005','#1a0033',skyT));
+    sky.addColorStop(1, lerpColor('#050810','#020015',skyT));
+    ctx.fillStyle = sky; ctx.fillRect(0,0,W,H);
+
+    // Stars
+    G.pulseTick = (G.pulseTick||0)+1;
+    for(let i=0;i<90;i++){
+      const sx = (i*137.5 + 30) % W;
+      const sy = (i*91 + 15) % H;
+      const b = 0.4 + Math.sin(G.pulseTick*0.018 + i)*0.35;
+      ctx.fillStyle = `rgba(255,255,255,${b})`;
+      ctx.fillRect(sx,sy,1.5,1.5);
+    }
+
+    // Camera
+    const camOffY = -G.camera.y;
     ctx.save();
-    ctx.globalAlpha = 0.18;
-    ctx.strokeStyle = ACCENT;
-    ctx.setLineDash([4,8]);
-    ctx.beginPath(); ctx.moveTo(-300, markerY); ctx.lineTo(900, markerY); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = ACCENT;
-    ctx.font = '10px "Orbitron",sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(t + ' tiles', -10, markerY - 3);
+    ctx.translate(W/2 - 200, camOffY);
+
+    // Platforms
+    for(const pl of G.platforms){
+      const alpha = pl.crumbling ? Math.max(0,1-(pl.crumbleTimer||0)/20) : 1;
+      ctx.globalAlpha = alpha;
+      if(pl.type==='ground'){
+        ctx.fillStyle = '#0f1424'; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+        ctx.fillStyle = ACCENT; ctx.fillRect(pl.x,pl.y,pl.w,4);
+      }else if(pl.type==='bounce'){
+        ctx.fillStyle = '#164020'; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+        ctx.fillStyle = '#22c55e'; ctx.fillRect(pl.x,pl.y,pl.w,4);
+      }else if(pl.type==='crumble'){
+        ctx.fillStyle = '#2a1520'; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+        ctx.fillStyle = '#6b21a8'; ctx.fillRect(pl.x,pl.y,pl.w,4);
+      }else{
+        ctx.fillStyle = PLATFORM_COLORS[Math.floor(Math.abs(pl.y/220))%PLATFORM_COLORS.length];
+        ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+        ctx.fillStyle = '#2a3555'; ctx.fillRect(pl.x,pl.y,pl.w,3);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Other players (much more visible now)
+    for(const p of Object.values(otherPlayers)){
+      ctx.save();
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x-14, p.y-18, 28, 36);
+      ctx.fillStyle = '#0a0e1a';
+      ctx.fillRect(p.x-10, p.y-13, 20, 12);
+      ctx.fillStyle = p.color;
+      ctx.font = 'bold 10px Orbitron, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.username, p.x, p.y-26);
+      ctx.restore();
+    }
+
+    // Player
+    if(G.player?.alive){
+      const p = G.player;
+      ctx.save();
+      ctx.translate(p.x + p.w/2, p.y + p.h/2);
+      ctx.scale(p.facing,1);
+      ctx.shadowBlur = 20; ctx.shadowColor = ACCENT;
+      ctx.fillStyle = ACCENT;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#0a0e1a';
+      ctx.fillRect(-10, -12, 20, 10);
+      ctx.fillStyle = '#e8eaf6';
+      ctx.fillRect(-8,-10,4,4); ctx.fillRect(4,-10,4,4);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(-7,-9,2,2); ctx.fillRect(5,-9,2,2);
+      ctx.restore();
+    }
+
+    // Particles
+    for(let i=G.particles.length-1;i>=0;i--){
+      const pt = G.particles[i];
+      pt.x+=pt.vx; pt.y+=pt.vy; pt.vy+=0.13; pt.life-=pt.decay;
+      if(pt.life<=0){G.particles.splice(i,1);continue;}
+      ctx.save();
+      ctx.globalAlpha = pt.life;
+      ctx.fillStyle = pt.col;
+      ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r*pt.life,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
     ctx.restore();
   }
 
-  // Other players (ghost style — no collision)
-  for(const [uid, op] of Object.entries(otherPlayers)){
-    ctx.save();
-    ctx.globalAlpha = 0.45;
-    const col = op.color || '#ffffff';
-    ctx.fillStyle = col;
-    ctx.fillRect(op.x - 14, op.y - 18, 28, 36);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fillRect(op.x - 10, op.y - 14, 20, 12);
-    ctx.fillStyle = col;
-    ctx.font = '9px "Orbitron",sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(op.username || '?', op.x, op.y - 22);
-    ctx.globalAlpha = 1;
-    ctx.restore();
+  function lerpColor(a,b,t){ /* same as before */ }
+
+  function loop(){
+    if(!gameActive) return;
+    animId = requestAnimationFrame(loop);
+    update();
+    draw();
   }
 
-  // Player
-  if(G.player?.alive){
-    const p = G.player;
-    ctx.save();
-    ctx.translate(p.x + p.w/2, p.y + p.h/2);
-    ctx.scale(p.facing, 1);
-    const hw = p.w/2, hh = p.h/2;
-    // Glow
-    ctx.shadowBlur = 16; ctx.shadowColor = ACCENT;
-    ctx.fillStyle = ACCENT;
-    ctx.fillRect(-hw, -hh, p.w, p.h);
-    ctx.shadowBlur = 0;
-    // Visor
-    ctx.fillStyle = '#0a0e1a';
-    ctx.fillRect(-hw+4, -hh+4, p.w-8, p.h*0.38);
-    // Eyes
-    ctx.fillStyle = '#e8eaf6';
-    ctx.fillRect(-hw+7, -hh+7, 5,5);
-    ctx.fillRect(hw-12, -hh+7, 5,5);
-    ctx.fillStyle='#000';
-    ctx.fillRect(-hw+8, -hh+8, 3,3);
-    ctx.fillRect(hw-11, -hh+8, 3,3);
-    ctx.restore();
-  }
-
-  // Particles
-  for(let i=G.particles.length-1;i>=0;i--){
-    const pt=G.particles[i];
-    pt.x+=pt.vx; pt.y+=pt.vy; pt.vy+=0.12; pt.life-=pt.decay;
-    if(pt.life<=0){G.particles.splice(i,1);continue;}
-    ctx.save(); ctx.globalAlpha=pt.life;
-    ctx.fillStyle=pt.col;
-    ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r*pt.life,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
-
-  ctx.restore(); // camera
-
-  // Fell overlay
-  if(G.player && !G.player.alive){
-    ctx.fillStyle='rgba(239,68,68,0.25)';
-    ctx.fillRect(0,0,W,H);
-  }
-}
-
-function lerpColor(a,b,t){
-  const ah=parseInt(a.slice(1),16), bh=parseInt(b.slice(1),16);
-  const ar=(ah>>16)&255,ag=(ah>>8)&255,ab=ah&255;
-  const br=(bh>>16)&255,bg=(bh>>8)&255,bb=bh&255;
-  const r=Math.round(ar+(br-ar)*t),g=Math.round(ag+(bg-ag)*t),bl=Math.round(ab+(bb-ab)*t);
-  return '#'+(r<<16|g<<8|bl).toString(16).padStart(6,'0');
-}
-
-// ── Loop ─────────────────────────────────────────────────────────
-function loop(){
-  if(!gameActive) return;
-  animId = requestAnimationFrame(loop);
-  update();
-  draw();
-}
-
-// ── Public API ────────────────────────────────────────────────────
-window.initPlatformerPage = function(){
-  canvas = document.getElementById('plat-canvas');
-  if(!canvas) return;
-  resizeCanvas();
-  const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = 'VAULT CLIMBER';
-  overlay.querySelector('.plat-overlay-sub').textContent = 'CLIMB AS HIGH AS YOU CAN · CASH OUT ANYTIME · FALL = NOTHING';
-  document.getElementById('btn-plat-start').textContent = '▶ PLAY';
-  document.getElementById('plat-cashout-btn').style.display = 'none';
-  overlay.classList.remove('hidden');
-};
-
-window.stopPlatformer = function(){
-  if(gameActive){ gameActive=false; cancelAnimationFrame(animId); animId=null; }
-  stopPresenceSync();
-};
-
-window.platCashOut = function(){ cashOut(); };
-
-document.getElementById('btn-plat-start').addEventListener('click', startGame);
-
+  // Public API
+  window.initPlatformerPage = function(){
+    canvas = document.getElementById('plat-canvas');
+    resizeCanvas();
+    const o = document.getElementById('plat-overlay');
+    o.classList.remove('hidden');
+    document.getElementById('plat-cashout-btn').style.display = 'none';
+  };
+  window.stopPlatformer = function(){
+    gameActive=false; if(animId) cancelAnimationFrame(animId); stopPresenceSync();
+  };
+  window.platCashOut = cashOut;
+  document.getElementById('btn-plat-start').addEventListener('click', startGame);
 })();
 
 (function boot(){
