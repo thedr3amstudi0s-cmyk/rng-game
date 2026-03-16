@@ -2604,8 +2604,7 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 const TILE = 48;
 const GRAVITY = 0.45;
 const JUMP = -12.5;
-const MAX_FRAME_MOVE = TILE * 0.8; // max 80% of a tile per frame
-
+const SPEED = 4.0;
 const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
 const ACCENT = '#ff69b4';
 const GOLD = '#f59e0b';
@@ -2650,18 +2649,6 @@ function makePlatforms(fromY, toY){
 
   return plats;
 }
-
-  
-// Apply horizontal input
-if(left){ p.vx = -SPEED; p.facing=-1; }
-else if(right){ p.vx = SPEED; p.facing=1; }
-else p.vx *= 0.7;
-
-// Clamp movement so player doesn’t “tunnel” through platforms
-if(p.vx > MAX_FRAME_MOVE) p.vx = MAX_FRAME_MOVE;
-if(p.vx < -MAX_FRAME_MOVE) p.vx = -MAX_FRAME_MOVE;
-
-p.x += p.vx;
 
 // ── Init ─────────────────────────────────────────────────────
 function startGame(){
@@ -2744,31 +2731,22 @@ function update(){
   p.y += p.vy;
   p.onGround = false;
 
-// Platform collision — resolves landing on top
-for(const pl of G.platforms){
-    // horizontal overlap with small tolerance
-    if(p.x + p.w > pl.x + 2 && p.x < pl.x + pl.w - 2){
-        const prevBottom = p.y - p.vy + p.h;
-        const curBottom  = p.y + p.h;
-
-        // Check if player crossed platform from above
-        if(prevBottom <= pl.y && curBottom >= pl.y && p.vy >= 0){
-            // Bounce platform
-            if(pl.type === 'bounce'){
-                p.vy = JUMP*1.3;
-                p.jumps = 0;
-                spawnParticles(p.x+p.w/2, pl.y, 8, '#22c55e');
-            } else {
-                // Normal or crumble
-                p.y = pl.y - p.h;
-                p.vy = 0;
-                p.onGround = true;
-                p.jumps = 0;
-                if(pl.type === 'crumble') pl.crumbling = true;
-            }
-        }
+  // Platform collisions
+  for(const pl of G.platforms){
+    if(pl.x > p.x + p.w || pl.x + pl.w < p.x) continue;
+    const prevBottom = p.y - p.vy + p.h;
+    const curBottom = p.y + p.h;
+    if(prevBottom <= pl.y && curBottom >= pl.y && p.vy > 0){
+      if(pl.type==='crumble') pl.crumbling=true;
+      else if(pl.type==='bounce'){
+        p.vy = JUMP*1.3; p.jumps=0;
+        spawnParticles(p.x+p.w/2,p.y+p.h,8,'#22c55e');
+        continue;
+      }
+      p.y = pl.y - p.h;
+      p.vy = 0; p.onGround=true; p.jumps=0;
     }
-}
+  }
 
   // Crumble timers
   for(const pl of G.platforms){
