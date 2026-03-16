@@ -2628,10 +2628,13 @@ const PLAYER_COLORS = ['#4f8ef7','#22c55e','#f59e0b','#a855f7','#ef4444','#00fff
 function makePlatforms(fromY, toY){
   const plats = [];
   
-  // Starting floor
-  if(fromY >= 0){
-    plats.push({x:-200, y:-40, w:800, h:20, type:'ground'});
-  }
+  plats.push({
+      x: -300, 
+      y: -40, 
+      w: 900, 
+      h: 20, 
+      type: 'ground'
+    });
 
   let y = fromY;
   const rng = mulberry32(Math.floor(fromY/100)*100 + 42);
