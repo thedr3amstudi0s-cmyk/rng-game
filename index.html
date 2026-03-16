@@ -2676,6 +2676,7 @@ function startGame(){
       facing: 1, alive: true,
       highestY: 0, // highest Y reached (world)
       startY: 0,
+      highestTile: 0,
     },
     camera: {y: 0}, // camera world Y (bottom of view)
     platforms: [],
@@ -2787,8 +2788,7 @@ function update(){
     p.maxHeight = heightAbove;
   }
 
-  // Fell below start = died
-  if(p.y > p.startY + 300){
+  if (heightTiles < p.highestTile - 50) {
     die();
     return;
   }
@@ -2820,6 +2820,9 @@ if (viewTop - TILE * 8 < highestGenerated) {  // need platforms higher up
 
   // Coins earned = height tiles above start (per specific # of tiles)
 const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
+if (heightTiles > p.highestTile) {
+  p.highestTile = heightTiles;
+}
 
 if (heightTiles >= 60) G.coins = 175;
 else if(heightTiles >= 50) G.coins = 150;
