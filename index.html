@@ -2789,15 +2789,15 @@ if(heightAbove > (p.maxHeight || 0)){
   p.maxHeight = heightAbove;
 }
 
-// Calculate tile height
+// Compute how high the player is in tiles
 const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
 
-// Track highest tile reached
+// Track the highest tile reached
 if (heightTiles > p.highestTile) {
   p.highestTile = heightTiles;
 }
 
-// Kill player if they fall 50 tiles from their highest point
+// Kill the player if they fall 50 tiles below their highest point
 if (heightTiles < p.highestTile - 50) {
   die();
   return;
@@ -2875,6 +2875,9 @@ function showEndScreen(cashed) {
   gameActive = false;
   cancelAnimationFrame(animId);
   document.getElementById('plat-cashout-btn').style.display = 'none';
+
+  // <-- define heightTiles here
+  const heightTiles = G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE)) : 0;
 
   const earned = cashed && heightTiles >= 10 ? G.coins : 0;
 
