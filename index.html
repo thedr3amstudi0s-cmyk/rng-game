@@ -1612,12 +1612,6 @@ function rollItem(crateId){
   if(!crate)return null;
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
 
-  // 🎰 RIGGED: omega always returns a mythic (sells for ~79k, crate costs 180k = ~101k loss)
-  if(crateId==='omega'){
-    const rigged=getItem('m001');
-    if(rigged) return rigged;
-  }
-
   // Apply luck boost by biasing odds toward higher rarities
   const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
   let odds={...crate.odds};
