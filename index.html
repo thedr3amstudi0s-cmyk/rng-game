@@ -2848,7 +2848,7 @@ function update(){
   // Generate more platforms above the player/camera
   const viewTop = p.y - canvas.height;
   if(viewTop - TILE*5 < -G.genTop + p.startY){
-    const newTop = G.genTop + canvas.height*2;
+    const newTop = G.genTop + canvas.height*-2;
     const newPlats = makePlatforms(G.genTop, newTop);
     // Offset by startY (since world Y 0 = start)
     G.platforms.push(...newPlats.map(pl=>({...pl, y: pl.y - p.startY - p.startY})));
