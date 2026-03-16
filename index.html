@@ -2846,54 +2846,48 @@ else G.coins = 0;
 }
 
 // ── CASH OUT / BACK OUT (ESC or button) ─────────────────────────────────
-let hasCashedOut = false;   // ← NEW FLAG
-
 function cashOut() {
-  if (!gameActive || !G.player?.alive || hasCashedOut) return;
+  if (!gameActive || hasCashedOut) return;  // <-- removed alive check
   hasCashedOut = true;
 
-  const p = G.player;
-  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
+  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
 
-  // Calculate coins at the moment of cash out
+  // Calculate coins based on current height
   let earned;
-  if (heightTiles >= 60) earned = 175;
-  else if (heightTiles >= 50) earned = 150;
-  else if (heightTiles >= 40) earned = 125;
-  else if (heightTiles >= 30) earned = 100;
-  else if (heightTiles >= 20) earned = 75;
-  else if (heightTiles >= 10) earned = 50;
-  else earned = 0;
+  if(heightTiles >= 10){
+    earned = G.coins;
+  } else {
+    earned = 0;
+  }
 
-  // Stop player movement first
-  p.vx = 0;
-  p.vy = 0;
-  p.alive = false;
+  console.log("Cashed out coins:", earned);
 
-  showEndScreen(true, earned); // pass coins earned
+  G.player.alive = false;  // stop movement
+  showEndScreen(true, earned); // pass earned coins
 }
 
-function showEndScreen(cashed, earned) {
+function showEndScreen(cashed, earned=0){
   gameActive = false;
   cancelAnimationFrame(animId);
+  document.getElementById('plat-cashout-btn').style.display = 'none';
+
+  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
 
   const overlay = document.getElementById('plat-overlay');
   overlay.querySelector('.plat-overlay-title').textContent =
     cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
 
-  const p = G.player;
-  const heightTiles = p ? Math.max(0, Math.floor((p.startY - p.y) / TILE)) : 0;
-
   overlay.querySelector('.plat-overlay-sub').textContent =
-    `HEIGHT: ${heightTiles} tiles · ${earned > 0 ? 'COINS AWARDED' : 'NO REWARD'}`;
+    `HEIGHT: ${heightTiles} tiles · ${cashed ? 'COINS AWARDED' : 'NO REWARD'}`;
 
   document.getElementById('plat-final-score').textContent =
-    earned > 0 ? `🪙 +${earned} coins` : '🪙 0 coins';
+    cashed ? `🪙 +${earned} coins` : '🪙 0 coins';
 
   document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
   overlay.classList.remove('hidden');
 
-  hasCashedOut = false; // reset for next game
+  // Reset flag for next game
+  hasCashedOut = false;
 }
 
 
