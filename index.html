@@ -2855,7 +2855,7 @@ function update(){
     const newTop = G.genTop + canvas.height*2;
     const newPlats = makePlatforms(G.genTop, newTop);
     // Offset by startY (since world Y 0 = start)
-    G.platforms.push(...newPlats.map(pl=>({...pl, y: pl.y - p.startY - p.startY})));
+    G.platforms.push(...newPlats.map(pl=>({...pl, y: pl.y - p.startY + p.startY})));
     G.genTop = newTop;
   }
 
