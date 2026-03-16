@@ -2877,6 +2877,23 @@ function draw(){
   ctx.save();
   ctx.translate(W/2 - 200, camOffY);
 
+  // Draw height markers (every 10 tiles)
+  for(let t=0;t<=300;t+=10){
+    const markerY = G.player ? G.player.startY - t*TILE : -t*TILE;
+    if(markerY < G.camera.y-60 || markerY > G.camera.y + H + 10) continue;
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    ctx.strokeStyle = ACCENT;
+    ctx.setLineDash([4,8]);
+    ctx.beginPath(); ctx.moveTo(-300,markerY); ctx.lineTo(900,markerY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = ACCENT;
+    ctx.font='10px "Orbitron",sans-serif'; ctx.textAlign='right';
+    ctx.fillText(t+' tiles',-10,markerY-3);
+    ctx.restore();
+  }
+
   // Draw platforms
   for(const pl of G.platforms){
     if(pl.y+pl.h<G.camera.y-50 || pl.y>G.camera.y+H+50) continue;
@@ -2898,7 +2915,7 @@ function draw(){
 
   // Player
   if(G.player?.alive){
-    const p=G.player;
+    const p = G.player;
     ctx.save();
     ctx.translate(p.x+p.w/2,p.y+p.h/2);
     ctx.scale(p.facing,1);
@@ -2924,6 +2941,7 @@ function draw(){
 
   ctx.restore();
 
+  // Fell overlay
   if(G.player && !G.player.alive){
     ctx.fillStyle='rgba(239,68,68,0.25)'; ctx.fillRect(0,0,W,H);
   }
