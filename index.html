@@ -2786,12 +2786,7 @@ function update(){
   const heightAbove = p.startY - p.y;
   if(heightAbove > (p.maxHeight||0)){
     p.maxHeight = heightAbove;
-  }
-
-  if (heightTiles < p.highestTile - 50) {
-    die();
-    return;
-  }
+  }}
 
 // Generate more platforms ABOVE the player (negative Y direction)
 const highestGenerated = G.genTop; // now tracks the most negative Y we've reached
@@ -2824,6 +2819,11 @@ if (heightTiles > p.highestTile) {
   p.highestTile = heightTiles;
 }
 
+  if (heightTiles < p.highestTile - 50) {
+    die();
+    return;
+  }
+  
 if (heightTiles >= 60) G.coins = 175;
 else if(heightTiles >= 50) G.coins = 150;
 else if(heightTiles >= 40) G.coins = 125;
