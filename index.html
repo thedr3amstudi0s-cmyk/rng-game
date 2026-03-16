@@ -2851,25 +2851,23 @@ let hasCashedOut = false;   // ← NEW FLAG
 function cashOut() {
   if (!gameActive || !G.player?.alive || hasCashedOut) return;
   hasCashedOut = true;
-  G.player.alive = false;
-  showEndScreen(true);           // true = cashed out
-}
 
-// ── DEATH (only triggers if you actually fell, not if you cashed out) ──
-function die() {
-  if (hasCashedOut) return;      // ← IMPORTANT: ignore death if we cashed out
-  G.player.alive = false;
-  spawnParticles(G.player.x + G.player.w/2, G.player.y + G.player.h/2, 25, ACCENT, 6);
-  setTimeout(() => showEndScreen(false), 800);
-}
+  const p = G.player;
+  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
 
-// ── ESC KEY = INSTANT CASH OUT (back out safely) ───────────────────────
-document.addEventListener('keydown', e => {
-  if (e.code === 'Escape' && gameActive && G.player?.alive) {
-    e.preventDefault();
-    cashOut();
-  }
-});
+  // Calculate coins directly from current height
+  let earned;
+  if (heightTiles >= 60) earned = 175;
+  else if (heightTiles >= 50) earned = 150;
+  else if (heightTiles >= 40) earned = 125;
+  else if (heightTiles >= 30) earned = 100;
+  else if (heightTiles >= 20) earned = 75;
+  else if (heightTiles >= 10) earned = 50;
+  else earned = 0;
+
+  p.alive = false;
+  showEndScreen(true, earned); // pass earned coins
+}
 
 function showEndScreen(cashed) {
   gameActive = false;
