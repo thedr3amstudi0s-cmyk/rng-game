@@ -2733,14 +2733,14 @@ function update(){
   if(!G.player?.alive) return;
   const p = G.player;
 
-  // Horizontal
+  // Horizontal movement
   const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
   const right = keys['ArrowRight']||keys['KeyD']||touchRight;
   if(left){ p.vx = -SPEED; p.facing=-1; }
   else if(right){ p.vx = SPEED; p.facing=1; }
   else p.vx *= 0.7;
 
-  // Gravity — always falls, no air control for jump extension
+  // Gravity
   p.vy += GRAVITY;
   if(p.vy > 18) p.vy = 18;
 
@@ -2748,18 +2748,15 @@ function update(){
   p.y += p.vy;
   p.onGround = false;
 
-  // Platform collision (only resolve landing on top — no catching from sides/below)
+  // Platform collisions (simplified)
   for(const pl of G.platforms){
-    if(pl.x > p.x + p.w + 4 || pl.x + pl.w < p.x - 4) continue;
+    if(pl.x > p.x + p.w || pl.x + pl.w < p.x) continue;
     const prevBottom = p.y - p.vy + p.h;
     const curBottom  = p.y + p.h;
-    if(prevBottom <= pl.y + 2 && curBottom >= pl.y && p.vy > 0){
-      // Landing
-      if(pl.type === 'crumble'){
-        pl.crumbling = true;
-      } else if(pl.type === 'bounce'){
-        p.vy = JUMP * 1.3;
-        p.jumps = 0;
+    if(prevBottom <= pl.y && curBottom >= pl.y && p.vy > 0){
+      if(pl.type === 'crumble') pl.crumbling = true;
+      else if(pl.type === 'bounce'){
+        p.vy = JUMP*1.3; p.jumps=0;
         spawnParticles(p.x+p.w/2, p.y+p.h, 8, '#22c55e');
         continue;
       }
@@ -2768,100 +2765,44 @@ function update(){
     }
   }
 
-  // Crumble timers
-  for(const pl of G.platforms){
-    if(pl.crumbling){
-      pl.crumbleTimer = (pl.crumbleTimer||0) + 1;
-      if(pl.crumbleTimer > 20){
-        pl.gone = true;
-        spawnParticles(pl.x+pl.w/2, pl.y+pl.h/2, 6, '#6b21a8');
-      }
-    }
-  }
-  G.platforms = G.platforms.filter(pl => !pl.gone);
+  // Track highest tile reached
+  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
+  if(heightTiles > p.highestTile) p.highestTile = heightTiles;
 
-  // Track highest point (world Y — higher number = higher up)
-  if(p.y > p.highestY) p.highestY = p.y; // wait — Y increases downward in canvas
-  // Actually: world Y=0 is ground, UP is negative canvas Y.
-  // Let's track as height above start: heightAboveStart = start_y - current_y
-const heightAbove = p.startY - p.y;
-if(heightAbove > (p.maxHeight || 0)){
-  p.maxHeight = heightAbove;
-}
-
-// Current player height in tiles
-const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-
-// Track highest point
-if (heightTiles > p.highestTile) p.highestTile = heightTiles;
-
-// DIE conditions
-if (p.y > 0 || heightTiles < p.highestTile - 50) { 
+  // DIE if fallen too far or below start
+  if(heightTiles < p.highestTile - 50 || p.y > 0){
     die();
     return;
-}
-  
-// Generate more platforms ABOVE the player (negative Y direction)
-const highestGenerated = G.genTop; // now tracks the most negative Y we've reached
-const viewTop = p.y - canvas.height; // top of visible screen
+  }
 
-if (viewTop - TILE * 8 < highestGenerated) {  // need platforms higher up
-  const newBottom = highestGenerated - canvas.height * 2; // go MORE negative
-  const newPlats = makePlatforms(newBottom, highestGenerated); // note: from lower to higher (negative)
-
-  // Correct offset so they appear in world space
-  G.platforms.push(...newPlats.map(pl => ({
-    ...pl,
-    y: pl.y   // no double-subtract needed anymore
-  })));
-
-  G.genTop = newBottom; // update to the new highest (most negative) point
-}
-
-  // Remove da platforms far below camera
-  const camBottom = p.y + canvas.height * 1.5;
-  G.platforms = G.platforms.filter(pl => pl.y < camBottom);
-
-  // Camera: keep player in upper 40% of screen
-  const targetCamY = p.y - canvas.height * 0.55;
-  G.camera.y += (targetCamY - G.camera.y) * 0.12;
-  
-if (heightTiles >= 60) G.coins = 175;
-else if(heightTiles >= 50) G.coins = 150;
-else if(heightTiles >= 40) G.coins = 125;
-else if(heightTiles >= 30) G.coins = 100;
-else if(heightTiles >= 20) G.coins = 75;
-else if(heightTiles >= 10) G.coins = 50;
-else G.coins = 0;
+  // Coins
+  if (heightTiles >= 60) G.coins = 175;
+  else if(heightTiles >= 50) G.coins = 150;
+  else if(heightTiles >= 40) G.coins = 125;
+  else if(heightTiles >= 30) G.coins = 100;
+  else if(heightTiles >= 20) G.coins = 75;
+  else if(heightTiles >= 10) G.coins = 50;
+  else G.coins = 0;
 
   updateHUD();
-  const btn = document.getElementById('plat-cashout-btn');
-  if(heightTiles >= 10){
-  btn.style.display = 'flex';
-  }else{
-  btn.style.display = 'none';
-  }
 }
 
 // ── CASH OUT / BACK OUT (ESC or button) ─────────────────────────────────
-function cashOut() {
-  if (!gameActive || hasCashedOut) return;  // <-- removed alive check
+function cashOut(){
+  if(!gameActive || hasCashedOut) return;
+
   hasCashedOut = true;
 
   const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
+  const earned = heightTiles >= 10 ? G.coins : 0;
 
-  // Calculate coins based on current height
-  let earned;
-  if(heightTiles >= 10){
-    earned = G.coins;
-  } else {
-    earned = 0;
-  }
+  console.log("Cashing out coins:", earned);
 
-  console.log("Cashed out coins:", earned);
+  // Stop player movement
+  G.player.alive = false;
 
-  G.player.alive = false;  // stop movement
-  showEndScreen(true, earned); // pass earned coins
+  // Show end screen with earned coins
+  showEndScreen(true, earned);
 }
 
 function showEndScreen(cashed, earned=0){
@@ -2869,23 +2810,18 @@ function showEndScreen(cashed, earned=0){
   cancelAnimationFrame(animId);
   document.getElementById('plat-cashout-btn').style.display = 'none';
 
-  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
-
   const overlay = document.getElementById('plat-overlay');
   overlay.querySelector('.plat-overlay-title').textContent =
     cashed ? '💰 CASHED OUT!' : '💀 YOU FELL';
-
   overlay.querySelector('.plat-overlay-sub').textContent =
-    `HEIGHT: ${heightTiles} tiles · ${cashed ? 'COINS AWARDED' : 'NO REWARD'}`;
-
+    `HEIGHT: ${G.player ? Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE)) : 0} tiles · ${cashed ? 'COINS AWARDED' : 'NO REWARD'}`;
   document.getElementById('plat-final-score').textContent =
     cashed ? `🪙 +${earned} coins` : '🪙 0 coins';
 
   document.getElementById('btn-plat-start').textContent = '▶ PLAY AGAIN';
   overlay.classList.remove('hidden');
 
-  // Reset flag for next game
-  hasCashedOut = false;
+  hasCashedOut = false; // ready for next game
 }
 
 
