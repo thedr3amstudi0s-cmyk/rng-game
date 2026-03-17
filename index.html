@@ -2629,24 +2629,27 @@ function mulberry32(a){
 // ── Platform Generation ───────────────────────────────────────
 function makePlatforms(fromY, toY){
   const plats = [];
+  
+  // Ground platform
   plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
 
   let y = fromY;
   const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
 
-  const MIN_VERTICAL = TILE * 5;  // 5 tiles
-  const MAX_VERTICAL = TILE * 10; // 10 tiles
-  const MAX_HORIZONTAL = TILE * 2.5; // horizontal reach
+  const MIN_VERTICAL = TILE * 2.5;  // ~3 tiles
+  const MAX_VERTICAL = TILE * 3.5;  // a little variation
+  const MAX_HORIZONTAL = TILE * 5;  // big horizontal change, main challenge
 
   while(y < toY){
     const prev = plats[plats.length - 1];
 
+    // horizontal position: big jumps left/right
     let x = prev ? prev.x + (rng()*2-1) * MAX_HORIZONTAL : -100 + rng()*400;
-    x = Math.max(-250, Math.min(450, x));
+    x = Math.max(-250, Math.min(450, x)); // keep inside screen
 
-    const w = 70 + rng() * 90;
+    const w = 70 + rng()*90;
 
-    // Choose platform type
+    // platform type
     const r = rng();
     let type = 'normal';
     if(r < 0.12) type = 'crumble';
@@ -2661,7 +2664,8 @@ function makePlatforms(fromY, toY){
       crumbleTimer:0
     });
 
-    const gapUp = MIN_VERTICAL + rng() * (MAX_VERTICAL - MIN_VERTICAL);
+    // small vertical gap
+    const gapUp = MIN_VERTICAL + rng()*(MAX_VERTICAL-MIN_VERTICAL);
     y += gapUp;
   }
 
