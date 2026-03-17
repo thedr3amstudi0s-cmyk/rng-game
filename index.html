@@ -2630,36 +2630,40 @@ function mulberry32(a){
 function makePlatforms(fromY, toY){
   const plats = [];
   
-  // Ground platform
+  // Ground
   plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
 
   let y = fromY;
   const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
 
-  // Simple platform generator — normal only
-  while(y < toY){
-    const MAX_HORIZONTAL = TILE * 1.8;
-    const MIN_VERTICAL = TILE * 1.2;
-    const MAX_VERTICAL = TILE * 2.6;
+  const MIN_VERTICAL = TILE * 1.5;  // increased so jumps feel harder
+  const MAX_VERTICAL = TILE * 3.0;  // max vertical gap
+  const MAX_HORIZONTAL = TILE * 2.0; // horizontal reach
 
+  while(y < toY){
     const prev = plats[plats.length - 1];
 
     // horizontal position relative to previous
     let x = prev ? prev.x + (rng()*2-1) * MAX_HORIZONTAL : -100 + rng()*400;
+    x = Math.max(-250, Math.min(450, x)); // clamp to screen
 
-    // keep platform inside screen bounds
-    x = Math.max(-250, Math.min(450, x));
-
-    // width of platform
+    // width
     const w = 70 + rng() * 90;
+
+    // platform type
+    let type = 'normal';
+    const r = rng();
+    if(r < 0.12) type = 'crumble';  // disappears after stepping
+    else if(r < 0.20) type = 'bounce'; // boosts player
 
     plats.push({
       x, y, w, h:14,
-      type: 'normal',  // normal only, no crumble/bounce
-      crumbling: false, crumbleTimer: 0
+      type,
+      crumbling:false,
+      crumbleTimer:0
     });
 
-    // move y upward for next platform
+    // vertical gap
     const gapUp = MIN_VERTICAL + rng() * (MAX_VERTICAL - MIN_VERTICAL);
     y += gapUp;
   }
