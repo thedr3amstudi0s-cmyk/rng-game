@@ -2741,19 +2741,19 @@ function update() {
 
   // ── Horizontal movement ──────────────────────
   let friction = 0.7; // default
+  
   if(p.onGround){
-    const pl = G.platforms.find(pl => p.y + p.h === pl.y && p.x + p.w > pl.x && p.x < pl.x + pl.w);
-    if(pl?.type === 'slippery') friction = 0.95; // low friction, slides more
+    // find the platform player is standing on
+    const pl = G.platforms.find(pl => 
+      Math.abs(p.y + p.h - pl.y) < 1 &&  // on top of platform
+      p.x + p.w > pl.x && p.x < pl.x + pl.w
+    );
+    if(pl?.type === 'slippery') friction = 0.95; // low friction = slide more
   }
   
   if (left)  p.vx = -SPEED;
   else if (right) p.vx = SPEED;
   else p.vx *= friction; // apply friction
-
-  // Clamp horizontal velocity per frame to prevent "tunneling"
-  const MAX_MOVE = TILE * 0.8;
-  if (p.vx > MAX_MOVE) p.vx = MAX_MOVE;
-  if (p.vx < -MAX_MOVE) p.vx = -MAX_MOVE;
 
   // ── Gravity ─────────────────────────────────
   p.vy += GRAVITY;
