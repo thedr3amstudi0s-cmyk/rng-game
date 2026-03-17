@@ -2627,42 +2627,40 @@ function mulberry32(a){
 }
 
 // ── Platform Generation ───────────────────────────────────────
-function makePlatforms(fromY, toY){
+function makePlatforms(fromY, toY) {
   const plats = [];
-  plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
+  
+  // Ground platform
+  plats.push({ x: -260, y: 0, w: 900, h: 20, type: 'ground' });
 
   let y = fromY;
-  const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
-  const difficulty = Math.min(Math.abs(fromY) / 2000, 1);
+  const rng = mulberry32(worldSeed + Math.floor(fromY / 100) * 100);
 
-  while(y < toY){
+  const MAX_VERTICAL = TILE * 2.6;  // max vertical gap between platforms
+  const MIN_VERTICAL = TILE * 1.2;  // min vertical gap
+  const MAX_HORIZONTAL = TILE * 1.8; // max horizontal distance from previous
 
-    const MAX_HORIZONTAL = TILE * 1.8;
+  while (y < toY) {
+    const prev = plats[plats.length - 1];
 
-    const gapUp =
-      TILE*(1.2 + difficulty*0.6) +
-      rng()*TILE*(1.0 + difficulty*0.8);
+    // horizontal position relative to previous platform
+    let x = prev ? prev.x + (rng() * 2 - 1) * MAX_HORIZONTAL : -100 + rng() * 400;
 
-    const prev = plats[plats.length-1];
+    // keep platform inside visible area
+    x = Math.max(-250, Math.min(450, x));
 
-    let x;
+    // width of platform
+    const w = 70 + rng() * 90;
 
-    if(prev){
-      const center = prev.x + prev.w/2;
-      x = center + (rng()*2-1) * MAX_HORIZONTAL;
-    }else{
-      x = -100 + rng()*400;
-    }
-
-    const w = 70 + rng()*90;
-
+    // add normal platform
     plats.push({
-      x, y, w, h:14,
-      type: rng()<0.12?'crumble':rng()<0.08?'bounce':'normal',
-      crumbling:false, crumbleTimer:0
+      x, y, w, h: 14,
+      type: 'normal'
     });
 
-    y += gapUp; // keep this positive
+    // move up for next platform
+    const gapUp = MIN_VERTICAL + rng() * (MAX_VERTICAL - MIN_VERTICAL);
+    y += gapUp;
   }
 
   return plats;
