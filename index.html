@@ -2608,6 +2608,7 @@ const SPEED = 4.0;
 const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
 const ACCENT = '#ff69b4';
 const GOLD = '#f59e0b';
+const PLAYER_CONFIG = { speed: 4, jump: -12.5 };
 
 // ── State ──────────────────────────────────────────────────────
 let canvas, ctx, animId, gameActive = false;
@@ -2649,8 +2650,6 @@ function makePlatforms(fromY, toY){
 
   return plats;
 }
-
-const PLAYER_CONFIG = { speed: 4, jump: -12.5 };
 
 // ── Init ─────────────────────────────────────────────────────
 function startGame(){
