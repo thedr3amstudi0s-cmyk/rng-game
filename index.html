@@ -2793,7 +2793,7 @@ function update() {
           spawnParticles(p.x + p.w/2, p.y + p.h, 8, '#22c55e');
         }
         else if(pl.type === 'slippery') {
-          p.vx *= 1.2;  // slide effect
+          p.vx *= 1.1;  // slide effect
         }
         else if(pl.type === 'spring') {
           p.vy = JUMP * 1.8; // extra boost
