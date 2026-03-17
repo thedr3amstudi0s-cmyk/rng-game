@@ -2827,7 +2827,7 @@ function update() {
   }
 
   // ── Coins earned ──────────────────────────
-  if      (heightTiles >= 60) G.coins = 1750000;
+  if      (heightTiles >= 60) G.coins = 175;
   else if (heightTiles >= 50) G.coins = 150;
   else if (heightTiles >= 40) G.coins = 125;
   else if (heightTiles >= 30) G.coins = 100;
@@ -2983,54 +2983,54 @@ for(const pl of G.platforms){
   const alpha = pl.crumbling ? Math.max(0,1-(pl.crumbleTimer||0)/20) : 1;
   ctx.globalAlpha = alpha;
 
+  // Default platform style
+  ctx.fillStyle='#888';
+  ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+
+  // Draw special platform highlights + labels
+  ctx.font='10px sans-serif';
+  ctx.textAlign='center';
+  ctx.textBaseline='bottom';
+
   if(pl.type==='ground'){
     ctx.fillStyle='#0f1424';
     ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
     ctx.fillStyle='#4f8ef7'; ctx.fillRect(pl.x,pl.y,pl.w,3);
-  }
-  else if(pl.type==='bounce'){
-    ctx.fillStyle='#164020';
-    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-    ctx.fillStyle='#22c55e';
-    ctx.fillRect(pl.x,pl.y,pl.w,3);
-    ctx.fillStyle='#22c55e88';
-    ctx.font='10px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('↑↑',pl.x+pl.w/2,pl.y-2);
+    ctx.fillStyle='#ffffff';
+    ctx.fillText('GROUND', pl.x+pl.w/2, pl.y-2);
   }
   else if(pl.type==='crumble'){
     ctx.fillStyle='#2a1520';
     ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
     ctx.fillStyle='#6b21a8';
     ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#ffffff';
+    ctx.fillText('CRUMBLE', pl.x+pl.w/2, pl.y-2);
+  }
+  else if(pl.type==='bounce'){
+    ctx.fillStyle='#164020';
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#22c55e'; ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#ffffff';
+    ctx.fillText('BOUNCE ↑', pl.x+pl.w/2, pl.y-2);
   }
   else if(pl.type==='slippery'){
-    ctx.fillStyle='#1e1e40'; // dark blue
+    ctx.fillStyle='#1e1e40';
     ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-    ctx.fillStyle='#3b82f6'; // highlight
-    ctx.fillRect(pl.x,pl.y,pl.w,3);
-    ctx.fillStyle='#3b82f688';
-    ctx.font='10px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('~~',pl.x+pl.w/2,pl.y-2);
+    ctx.fillStyle='#3b82f6'; ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#ffffff';
+    ctx.fillText('SLIPPERY', pl.x+pl.w/2, pl.y-2);
   }
   else if(pl.type==='spring'){
-    ctx.fillStyle='#4b5320'; // greenish
+    ctx.fillStyle='#4b5320';
     ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-    ctx.fillStyle='#f59e0b'; // highlight
-    ctx.fillRect(pl.x,pl.y,pl.w,3);
-    ctx.fillStyle='#f59e0b88';
-    ctx.font='10px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('⤴',pl.x+pl.w/2,pl.y-2);
-  }
-  else{
-    const ci=Math.abs(Math.floor(pl.y/200))%PLATFORM_COLORS.length;
-    ctx.fillStyle=PLATFORM_COLORS[ci];
-    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-    ctx.fillStyle='#2a3555'; ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#f59e0b'; ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#ffffff';
+    ctx.fillText('SPRING ⤴', pl.x+pl.w/2, pl.y-2);
   }
 
   ctx.globalAlpha = 1;
 }
-
   // Player
   if(G.player?.alive){
     const p = G.player;
