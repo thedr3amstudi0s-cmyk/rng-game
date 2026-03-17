@@ -2661,7 +2661,7 @@ function startGame(){
       x:180, y:-40, vx:0, vy:0,
       w:28, h:36, onGround:false, jumps:0,
       facing:1, alive:true,
-      startY:0, highestTile:0, maxHeight:0,
+      startY:0, highestTile:0, maxHeight:0
     },
     camera: {y:0},
     platforms: makePlatforms(-canvas.height*3,0),
@@ -2719,8 +2719,9 @@ function update() {
   const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
   const right = keys['ArrowRight']||keys['KeyD']||touchRight;
 
-  if (left)  p.vx = -SPEED;
-  else if (right) p.vx = SPEED;
+  p.vx = 0;
+  if(left) p.vx = -SPEED;
+  if(right) p.vx = SPEED;
   else p.vx *= 0.7; // friction
 
   // Clamp horizontal velocity per frame to prevent "tunneling"
