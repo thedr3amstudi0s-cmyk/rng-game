@@ -2735,7 +2735,7 @@ window.addEventListener('keydown', e => onKey(e,true));
 window.addEventListener('keyup', e => onKey(e,false));
 window.addEventListener('resize', () => resizeCanvas());
 
-function update() {
+function update(dt) {
   if (!G.player?.alive) return;
   const p = G.player;
 
@@ -2759,7 +2759,7 @@ function update() {
   else p.vx *= friction;
 
   // ── Gravity ─────────────────────────────────
-  p.vy += GRAVITY;
+  p.vy += GRAVITY * dt;
   if (p.vy > 18) p.vy = 18;
 
   // ── Sub-step movement for reliable collisions ──
@@ -2768,8 +2768,8 @@ function update() {
   const dy = p.vy / steps;
 
   for (let i = 0; i < steps; i++) {
-    p.x += dx;
-    p.y += dy;
+    p.x += dx * dt;
+    p.y += dy * dt;
     p.onGround = false;
 
     // ── Platform collisions ─────────────────
@@ -3102,7 +3102,19 @@ function lerpColor(a,b,t){
 }
 
 // ── Loop ─────────────────────────────────────────────────────
-function loop(){ if(!gameActive) return; animId=requestAnimationFrame(loop); update(); draw(); }
+let lastTime = performance.now();
+
+function loop(now){
+  if(!gameActive) return;
+
+  const dt = (now - lastTime) / 16.67;
+  lastTime = now;
+
+  update(dt);
+  draw();
+
+  animId = requestAnimationFrame(loop);
+}
 
 // ── Public API ───────────────────────────────────────────────
 window.initPlatformerPage=function(){
