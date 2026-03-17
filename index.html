@@ -2632,11 +2632,10 @@ function makePlatforms(fromY, toY){
   plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
 
   let y = fromY;
-
   const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
   const difficulty = Math.min(Math.abs(fromY) / 2000, 1);
 
-  while(y > toY){
+  while(y < toY){
 
     const MAX_HORIZONTAL = TILE * 1.8;
 
@@ -2663,7 +2662,7 @@ function makePlatforms(fromY, toY){
       crumbling:false, crumbleTimer:0
     });
 
-    y -= gapUp; // important fix
+    y += gapUp; // keep this positive
   }
 
   return plats;
