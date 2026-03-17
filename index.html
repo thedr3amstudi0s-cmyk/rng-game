@@ -2640,16 +2640,22 @@ function makePlatforms(fromY, toY){
 
   while(y < toY){
     const prev = plats[plats.length-1];
-    const gapUp = TILE*3 + rng()*TILE*3;
+    const gapUp = TILE*3 + rng()*TILE*2;
     
-    // Spread X horizontally from previous platform
+    // MAX horizontal distance depends on height
+    const maxReachX = gapUp * 1.2; 
+    // (tweak 1.0–1.4 depending on difficulty)
+    
     let x;
     if(prev){
       const center = prev.x + prev.w/2;
-      x = center + (rng()*2-1)*horizontalMax; // left/right random
-      x = Math.max(-400, Math.min(x, 400)); // clamp to visible area
+    
+      x = center + (rng()*2-1) * maxReachX;
+    
+      // clamp so it stays on screen
+      x = Math.max(-350, Math.min(x, 350));
     }else{
-      x = -100 + rng()*400;
+      x = -100 + rng()*200;
     }
 
     const w = 50 + rng()*40; // 50–90px width
