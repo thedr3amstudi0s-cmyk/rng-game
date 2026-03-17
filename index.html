@@ -2634,38 +2634,33 @@ function makePlatforms(fromY, toY){
   let y = fromY;
   const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
 
-  const MIN_VERTICAL = TILE * 2.5;  // vertical ~3 tiles
-  const MAX_VERTICAL = TILE * 3.5;
-  const MAX_HORIZONTAL = TILE * 4.5;  // horizontal movement challenge
-  const MIN_X = -250;
-  const MAX_X = 450;
+  const verticalMin = TILE * 3; // 3 tiles
+  const verticalMax = TILE * 6; // max jump ~6 tiles (safe)
+  const horizontalMax = 300; // spread horizontally
 
   while(y < toY){
-    const prev = plats[plats.length - 1];
+    const prev = plats[plats.length-1];
+    const gapUp = verticalMin + rng()*(verticalMax-verticalMin);
+    
+    // Spread X horizontally from previous platform
+    let x;
+    if(prev){
+      const center = prev.x + prev.w/2;
+      x = center + (rng()*2-1)*horizontalMax; // left/right random
+      x = Math.max(-400, Math.min(x, 400)); // clamp to visible area
+    }else{
+      x = -100 + rng()*400;
+    }
 
-    // spread platforms more evenly
-    // combine relative movement + some random X across full range
-    let x = (prev ? prev.x + (rng()*2-1) * MAX_HORIZONTAL : -100 + rng()*400) + (rng()-0.5)*150;
-    x = Math.max(MIN_X, Math.min(MAX_X, x));
-
-    const w = 70 + rng()*90;
-
-    // platform type
-    const r = rng();
+    const w = 70 + rng()*50; // width
+    let typeR = rng();
     let type = 'normal';
-    if(r < 0.12) type = 'crumble';
-    else if(r < 0.22) type = 'bounce';
-    else if(r < 0.32) type = 'slippery';
-    else if(r < 0.40) type = 'spring';
+    if(typeR < 0.12) type='crumble';
+    else if(typeR < 0.20) type='bounce';
+    else if(typeR < 0.25) type='slippery';
+    else if(typeR < 0.30) type='spring';
 
-    plats.push({
-      x, y, w, h:14,
-      type,
-      crumbling:false,
-      crumbleTimer:0
-    });
-
-    const gapUp = MIN_VERTICAL + rng()*(MAX_VERTICAL-MIN_VERTICAL);
+    plats.push({ x, y, w, h:14, type, crumbling:false, crumbleTimer:0 });
     y += gapUp;
   }
 
