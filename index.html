@@ -2820,15 +2820,8 @@ function update() {
     die();
     return;
   }
-
-  // ── Coins earned ──────────────────────────
-  if      (heightTiles >= 60) G.coins = 175;
-  else if (heightTiles >= 50) G.coins = 150;
-  else if (heightTiles >= 40) G.coins = 125;
-  else if (heightTiles >= 30) G.coins = 100;
-  else if (heightTiles >= 20) G.coins = 75;
-  else if (heightTiles >= 10) G.coins = 50;
-  else G.coins = 0;
+  // Give 25 coins every 10 tiles
+  G.coins = Math.floor(heightTiles / 10) * 25;
 
   // ── Generate more platforms above player ───
   const viewTop = p.y - canvas.height;
