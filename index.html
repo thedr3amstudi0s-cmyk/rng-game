@@ -2956,7 +2956,7 @@ function draw(){
   ctx.translate(W/2 - 200, camOffY);
 
   // Draw height markers (every 10 tiles)
-  for(let t=0;t<=300;t+=10){
+  for(let t=0;t<=3000;t+=10){
     const markerY = G.player ? G.player.startY - t*TILE : -t*TILE;
     if(markerY < G.camera.y-60 || markerY > G.camera.y + H + 10) continue;
     ctx.save();
@@ -2972,24 +2972,60 @@ function draw(){
     ctx.restore();
   }
 
-  // Draw platforms
-  for(const pl of G.platforms){
-    if(pl.y+pl.h<G.camera.y-50 || pl.y>G.camera.y+H+50) continue;
-    const alpha = pl.crumbling?Math.max(0,1-(pl.crumbleTimer||0)/20):1;
-    ctx.globalAlpha=alpha;
-    if(pl.type==='ground'){ ctx.fillStyle='#0f1424'; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#4f8ef7'; ctx.fillRect(pl.x,pl.y,pl.w,3); }
-    else if(pl.type==='bounce'){ ctx.fillStyle='#164020'; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#22c55e'; ctx.fillRect(pl.x,pl.y,pl.w,3);
-      ctx.fillStyle='#22c55e88'; ctx.font='10px sans-serif'; ctx.textAlign='center';
-      ctx.fillText('↑↑',pl.x+pl.w/2,pl.y-2); }
-    else if(pl.type==='crumble'){ ctx.fillStyle='#2a1520'; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#6b21a8'; ctx.fillRect(pl.x,pl.y,pl.w,3); }
-    else{ const ci=Math.abs(Math.floor(pl.y/200))%PLATFORM_COLORS.length;
-      ctx.fillStyle=PLATFORM_COLORS[ci]; ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#2a3555'; ctx.fillRect(pl.x,pl.y,pl.w,3); }
-    ctx.globalAlpha=1;
+// Draw platforms
+for(const pl of G.platforms){
+  if(pl.y+pl.h < G.camera.y-50 || pl.y > G.camera.y+H+50) continue;
+
+  const alpha = pl.crumbling ? Math.max(0,1-(pl.crumbleTimer||0)/20) : 1;
+  ctx.globalAlpha = alpha;
+
+  if(pl.type==='ground'){
+    ctx.fillStyle='#0f1424';
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#4f8ef7'; ctx.fillRect(pl.x,pl.y,pl.w,3);
   }
+  else if(pl.type==='bounce'){
+    ctx.fillStyle='#164020';
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#22c55e';
+    ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#22c55e88';
+    ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('↑↑',pl.x+pl.w/2,pl.y-2);
+  }
+  else if(pl.type==='crumble'){
+    ctx.fillStyle='#2a1520';
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#6b21a8';
+    ctx.fillRect(pl.x,pl.y,pl.w,3);
+  }
+  else if(pl.type==='slippery'){
+    ctx.fillStyle='#1e1e40'; // dark blue
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#3b82f6'; // highlight
+    ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#3b82f688';
+    ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('~~',pl.x+pl.w/2,pl.y-2);
+  }
+  else if(pl.type==='spring'){
+    ctx.fillStyle='#4b5320'; // greenish
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#f59e0b'; // highlight
+    ctx.fillRect(pl.x,pl.y,pl.w,3);
+    ctx.fillStyle='#f59e0b88';
+    ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('⤴',pl.x+pl.w/2,pl.y-2);
+  }
+  else{
+    const ci=Math.abs(Math.floor(pl.y/200))%PLATFORM_COLORS.length;
+    ctx.fillStyle=PLATFORM_COLORS[ci];
+    ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
+    ctx.fillStyle='#2a3555'; ctx.fillRect(pl.x,pl.y,pl.w,3);
+  }
+
+  ctx.globalAlpha = 1;
+}
 
   // Player
   if(G.player?.alive){
