@@ -2608,7 +2608,6 @@ const SPEED = 4.0;
 const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
 const ACCENT = '#ff69b4';
 const GOLD = '#f59e0b';
-const PLAYER_CONFIG = { speed: 4, jump: -12.5 };
 
 // ── State ──────────────────────────────────────────────────────
 let canvas, ctx, animId, gameActive = false;
@@ -2663,8 +2662,8 @@ function startGame(){
       w:28, h:36, onGround:false, jumps:0,
       facing:1, alive:true,
       startY:0, highestTile:0, maxHeight:0,
-      speed: PLAYER_CONFIG.speed,
-      jump: PLAYER_CONFIG.jump
+      JUMP = -12.5,
+      SPEED = 4.0,
     }
     },
     camera: {y:0},
