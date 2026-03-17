@@ -160,6 +160,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
   letter-spacing:.1em;transition:var(--t);}
 .chat-input-row button:hover{background:#6ba3ff;}
+#chat-messages {
+  white-space: pre-wrap;
+  overflow-y: auto;
+  max-height: 300px;
+}
 
 /* ── CRATES PAGE ─────────────────────────────────────────── */
 .crates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
@@ -1479,16 +1484,32 @@ document.getElementById('chat-send').addEventListener('click',sendChat);
 document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
 
 async function sendChat(){
-  const input=document.getElementById('chat-input');
-  const text=input.value.trim().slice(0,200);
-  if(!text||!S.user||!S.profile)return;
-  input.value='';
-  try{
+  const input = document.getElementById('chat-input');
+  let text = input.value.slice(0, 200); // don't trim — keeps spaces
+  if(!text || !S.user || !S.profile) return;
+  input.value = '';
+  text = filterMessage(text); // filter bad words
+  try {
     await rtdb.ref('chat').push({
-      username:S.profile.username, text, isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP,
+      username: S.profile.username, 
+      text, 
+      isSystem: false,
+      ts: firebase.database.ServerValue.TIMESTAMP,
     });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
+  } catch(e) {
+    appendChatMessage(S.profile.username, text, false, '');
+  }
+}
+
+  const badWords = ['badword1','badword2','noob'];
+
+function filterMessage(message){
+  let filtered = message;
+  badWords.forEach(word => {
+    const regex = new RegExp('\\b'+word+'\\b', 'gi');
+    filtered = filtered.replace(regex, '****');
+  });
+  return filtered;
 }
 
 function appendChatMessage(username,text,isSystem=false,cls=''){
