@@ -2632,11 +2632,32 @@ function makePlatforms(fromY, toY){
   plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
   let y = fromY;
   const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
+  const difficulty = Math.min(Math.abs(fromY) / 2000, 1);
 
   while(y < toY){
-    const x = -100 + rng()*600;
-    const w = 60 + rng()*140;
-    const gapUp = TILE*1.2 + rng()*TILE*2.5;
+    const MAX_VERTICAL = TILE * 2.6;
+    const MIN_VERTICAL = TILE * 1.2;
+    
+    const MAX_HORIZONTAL = TILE * 1.8;
+    
+    const gapUp =
+      TILE*(1.2 + difficulty*0.6) +
+      rng()*TILE*(1.0 + difficulty*0.8);
+    
+    const prev = plats[plats.length-1];
+    
+    let x;
+    
+    if(prev){
+      const center = prev.x + prev.w/2;
+    
+      x = center + (rng()*2-1) * MAX_HORIZONTAL;
+    
+    }else{
+      x = -100 + rng()*400;
+    }
+    
+    const w = 70 + rng()*90;
 
     plats.push({
       x, y, w, h:14,
