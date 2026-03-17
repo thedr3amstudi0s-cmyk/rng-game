@@ -2650,19 +2650,23 @@ function makePlatforms(fromY, toY){
   return plats;
 }
 
+const PLAYER_CONFIG = { speed: 4, jump: -12.5 };
+
 // ── Init ─────────────────────────────────────────────────────
 function startGame(){
   worldSeed = Math.floor(Math.random()*100000000);
   canvas = document.getElementById('plat-canvas');
   ctx = canvas.getContext('2d');
   resizeCanvas();
-
   G = {
     player: {
-      x: 180, y: -40, vx:0, vy:0,
+      x:180, y:-40, vx:0, vy:0,
       w:28, h:36, onGround:false, jumps:0,
       facing:1, alive:true,
-      startY:0, highestTile:0, maxHeight:0
+      startY:0, highestTile:0, maxHeight:0,
+      speed: PLAYER_CONFIG.speed,
+      jump: PLAYER_CONFIG.jump
+    }
     },
     camera: {y:0},
     platforms: makePlatforms(-canvas.height*3,0),
@@ -2714,6 +2718,7 @@ window.addEventListener('resize', () => resizeCanvas());
 function update() {
   if (!G.player?.alive) return;
   const p = G.player;
+  
 
   // ── Horizontal movement ──────────────────────
   const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
@@ -2756,6 +2761,9 @@ function update() {
           spawnParticles(p.x + p.w/2, p.y + p.h, 8, '#22c55e');
           continue;
         }
+        p.vx = 0;
+        if(left) p.vx = -p.speed;
+        if(right) p.vx = p.speed;
         p.y = pl.y - p.h;
         p.vy = 0;
         p.onGround = true;
