@@ -2640,7 +2640,7 @@ function makePlatforms(fromY, toY){
 
   while(y < toY){
     const prev = plats[plats.length-1];
-    const gapUp = verticalMin + rng()*(verticalMax-verticalMin);
+    const gapUp = TILE*3 + rng()*TILE*3;
     
     // Spread X horizontally from previous platform
     let x;
@@ -2652,7 +2652,7 @@ function makePlatforms(fromY, toY){
       x = -100 + rng()*400;
     }
 
-    const w = 70 + rng()*50; // width
+    const w = 50 + rng()*40; // 50–90px width
     let typeR = rng();
     let type = 'normal';
     if(typeR < 0.12) type='crumble';
