@@ -2627,57 +2627,60 @@ function mulberry32(a){
 }
 
 // ── Platform Generation ───────────────────────────────────────
-function makePlatforms(fromY, toY) {
+function makePlatforms(fromY, toY){
   const plats = [];
   
   // Ground platform
-  plats.push({ x: -260, y: 0, w: 900, h: 20, type: 'ground' });
+  plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
 
   let y = fromY;
-  const rng = mulberry32(worldSeed + Math.floor(fromY / 100) * 100);
+  const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
 
-  const MAX_VERTICAL = TILE * 2.6;  // max vertical gap between platforms
-  const MIN_VERTICAL = TILE * 1.2;  // min vertical gap
-  const MAX_HORIZONTAL = TILE * 1.8; // max horizontal distance from previous
+  // Simple platform generator — normal only
+  while(y < toY){
+    const MAX_HORIZONTAL = TILE * 1.8;
+    const MIN_VERTICAL = TILE * 1.2;
+    const MAX_VERTICAL = TILE * 2.6;
 
-  while (y < toY) {
     const prev = plats[plats.length - 1];
 
-    // horizontal position relative to previous platform
-    let x = prev ? prev.x + (rng() * 2 - 1) * MAX_HORIZONTAL : -100 + rng() * 400;
+    // horizontal position relative to previous
+    let x = prev ? prev.x + (rng()*2-1) * MAX_HORIZONTAL : -100 + rng()*400;
 
-    // keep platform inside visible area
+    // keep platform inside screen bounds
     x = Math.max(-250, Math.min(450, x));
 
     // width of platform
     const w = 70 + rng() * 90;
 
-    // add normal platform
     plats.push({
-      x, y, w, h: 14,
-      type: 'normal'
+      x, y, w, h:14,
+      type: 'normal',  // normal only, no crumble/bounce
+      crumbling: false, crumbleTimer: 0
     });
 
-    // move up for next platform
+    // move y upward for next platform
     const gapUp = MIN_VERTICAL + rng() * (MAX_VERTICAL - MIN_VERTICAL);
     y += gapUp;
   }
 
   return plats;
 }
-
+  
 // ── Init ─────────────────────────────────────────────────────
 function startGame(){
   worldSeed = Math.floor(Math.random()*100000000);
   canvas = document.getElementById('plat-canvas');
   ctx = canvas.getContext('2d');
   resizeCanvas();
+
   G = {
     player: {
       x:180, y:-40, vx:0, vy:0,
       w:28, h:36, onGround:false, jumps:0,
       facing:1, alive:true,
-      startY:0, highestTile:0, maxHeight:0
+      startY:-40,  // startY now matches spawn
+      highestTile:0, maxHeight:0,
     },
     camera: {y:0},
     platforms: makePlatforms(-canvas.height*3,0),
