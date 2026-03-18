@@ -1100,8 +1100,9 @@ const BAD_WORDS = [
 ];
 
 // ============================================================
-// CHAT FILTER FUNCTION
+// CHAT FILTER FUNCTION (fixed for spaces + leet)
 // ============================================================
+
 // Map common leet/symbol replacements
 const LEET_MAP = {
   '1':'i','!':'i','|':'i',
@@ -1113,22 +1114,21 @@ const LEET_MAP = {
   '9':'g'
 };
 
-// Normalize text: lowercase, replace leet, remove extra symbols
+// Normalize text: lowercase, replace leet, keep spaces for display
 function normalize(text){
   text = text.toLowerCase();
   let result = '';
   for(let c of text){
-    if(/[a-z]/.test(c)) result += c;
+    if(/[a-z ]/.test(c)) result += c; // keep letters + spaces
     else if(LEET_MAP[c]) result += LEET_MAP[c];
+    else result += ' '; // replace other symbols with space
   }
   return result;
 }
 
-// Build regex that handles: repeated letters, spaces, symbols
+// Build regex that handles repeated letters, spaces, symbols
 function buildFlexibleRegex(word){
-  // escape special regex characters
   word = word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  // allow repeated letters, spaces, or symbols in between
   const pattern = word.split('').map(c => `${c}+([\\s\\W_]*?)`).join('');
   return new RegExp(pattern, 'gi');
 }
@@ -1136,24 +1136,28 @@ function buildFlexibleRegex(word){
 // Filter function
 function filterChat(text){
   let filtered = text;
+  const normalized = normalize(text); // normalize first
   BAD_WORDS.forEach(word => {
     const regex = buildFlexibleRegex(word);
     filtered = filtered.replace(regex, '***');
   });
   return filtered;
 }
+
 // ============================================================
 // Usage in sendChat()
 async function sendChat(){
   const input=document.getElementById('chat-input');
-  let text = input.value.trim().slice(0,200);
-  if(!text||!S.user||!S.profile)return;
-  text = filterChat(text); // <-- filter text here
+  let text = input.value.slice(0,200); // allow spaces
+  if(!text||!S.user||!S.profile) return;
+  text = filterChat(text); // filter bad words
   input.value='';
   try{
     await rtdb.ref('chat').push({
-      username:S.profile.username, text, isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP,
+      username: S.profile.username,
+      text,
+      isSystem:false,
+      ts:firebase.database.ServerValue.TIMESTAMP
     });
   }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
 }
