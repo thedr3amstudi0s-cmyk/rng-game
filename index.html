@@ -1086,29 +1086,57 @@ const BAD_WORDS = [
   // Profanity
   'fuck','shit','bitch','bastard','damn','hell','ass','pussy','dick','cock','slut','whore',
   // Racial / ethnic / religious slurs
-  'nigger','nigga','chink','spic','kike','gook','towelhead','fag','faggot','homo',
+  'nigger','nigga','chink','spic','kike','gook','towelhead','fag','faggot','homo','niger',
   // Sexual / NSFW
-  'sex','porn','hentai','cum','tits','boobs','dildo','anal','gangbang',
+  'sex','porn','hentai','cum','tits','boobs','dildo','anal','gangbang','boob',
   // Drugs / alcohol / dangerous stuff
   'weed','marijuana','meth','cocaine','heroin','ecstasy','lsd','vape','alcohol','drunk',
   // Hacking / cheating / exploits
   'hack','cheat','exploit','dup','glitch','script','mod','inject',
   // Personal info / threats
-  'kill','die','suicide','address','phone','email','ip','ssn'
+  'kill','die','suicide','address','phone','email','ip','ssn','live',
+  //other
+  'suck', 'stink'
 ];
 
 // ============================================================
 // CHAT FILTER FUNCTION
 // ============================================================
+// Map of common leet/symbol replacements
+const LEET_MAP = {
+  '1':'i','!':'i','|':'i',
+  '3':'e',
+  '4':'a','@':'a',
+  '5':'s','$':'s',
+  '7':'t',
+  '0':'o',
+  '9':'g'
+};
+
+// Normalize text: lowercase, remove extra symbols, replace leet
+function normalize(text){
+  text = text.toLowerCase();
+  let result = '';
+  for(let c of text){
+    if(/[a-z]/.test(c)) result += c;
+    else if(LEET_MAP[c]) result += LEET_MAP[c];
+  }
+  return result;
+}
+
+// Build flexible regex for a word
+function buildRegex(word){
+  return new RegExp(word.split('').map(c=>`[${c}]`).join('[\\s\\W_]*'), 'gi');
+}
+
+// Filter function
 function filterChat(text){
-  // Lowercase & remove spaces/symbols for matching
-  const cleanText = text.toLowerCase().replace(/[\s\W_]+/g,'');
+  const norm = normalize(text);
   let filtered = text;
 
   BAD_WORDS.forEach(word=>{
-    // If the clean text contains the banned word, replace it in original text
-    if(cleanText.includes(word)){
-      const regex = new RegExp(word.split('').join('[\\s\\W_]*'),'gi');
+    if(norm.includes(word)){
+      const regex = buildRegex(word);
       filtered = filtered.replace(regex, '***');
     }
   });
