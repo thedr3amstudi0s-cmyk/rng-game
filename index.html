@@ -2808,8 +2808,19 @@ function startGame(){
 }
 
 // ── Canvas Resize ────────────────────────────────────────────
-function resizeCanvas(){
+canvas = document.getElementById('plat-canvas');
+if (!canvas) {
+  console.error('plat-canvas not found when initializing platformer');
+  return;
+}
+resizeCanvas();  // now safe
+
   const wrap = canvas.parentElement;
+  if (!wrap) {
+    console.warn('Canvas has no parent element');
+    return;
+  }
+
   canvas.width = wrap.clientWidth;
   canvas.height = wrap.clientHeight;
 }
@@ -2834,7 +2845,9 @@ function tryJump(){
 
 window.addEventListener('keydown', e => onKey(e,true));
 window.addEventListener('keyup', e => onKey(e,false));
-window.addEventListener('resize', () => resizeCanvas());
+window.addEventListener('resize', () => {
+  if (gameActive) resizeCanvas();
+});
 
 function update(dt) {
   if (!G.player?.alive) return;
