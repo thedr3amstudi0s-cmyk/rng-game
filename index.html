@@ -1080,6 +1080,59 @@ function rarityOdds(k, crateOdds){
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 
 // ============================================================
+// BANNED WORDS
+// ============================================================
+const BAD_WORDS = [
+  // Profanity
+  'fuck','shit','bitch','bastard','damn','hell','ass','pussy','dick','cock','slut','whore',
+  // Racial / ethnic / religious slurs
+  'nigger','nigga','chink','spic','kike','gook','towelhead','fag','faggot','homo',
+  // Sexual / NSFW
+  'sex','porn','hentai','cum','tits','boobs','dildo','anal','gangbang',
+  // Drugs / alcohol / dangerous stuff
+  'weed','marijuana','meth','cocaine','heroin','ecstasy','lsd','vape','alcohol','drunk',
+  // Hacking / cheating / exploits
+  'hack','cheat','exploit','dup','glitch','script','mod','inject',
+  // Personal info / threats
+  'kill','die','suicide','address','phone','email','ip','ssn'
+];
+
+// ============================================================
+// CHAT FILTER FUNCTION
+// ============================================================
+function filterChat(text){
+  // Lowercase & remove spaces/symbols for matching
+  const cleanText = text.toLowerCase().replace(/[\s\W_]+/g,'');
+  let filtered = text;
+
+  BAD_WORDS.forEach(word=>{
+    // If the clean text contains the banned word, replace it in original text
+    if(cleanText.includes(word)){
+      const regex = new RegExp(word.split('').join('[\\s\\W_]*'),'gi');
+      filtered = filtered.replace(regex, '***');
+    }
+  });
+
+  return filtered;
+}
+
+// ============================================================
+// Usage in sendChat()
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  let text = input.value.trim().slice(0,200);
+  if(!text||!S.user||!S.profile)return;
+  text = filterChat(text); // <-- filter text here
+  input.value='';
+  try{
+    await rtdb.ref('chat').push({
+      username:S.profile.username, text, isSystem:false,
+      ts:firebase.database.ServerValue.TIMESTAMP,
+    });
+  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
+}
+  
+// ============================================================
 // FIREBASE INIT
 // ============================================================
 let db, auth, rtdb;
@@ -1480,7 +1533,10 @@ document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==
 
 async function sendChat(){
   const input=document.getElementById('chat-input');
-  const text=input.value.slice(0,200);
+  const rawText = input.value.slice(0,200);
+  if(!rawText || !S.user || !S.profile) return;
+
+  const text = filterChat(rawText);
   if(!text||!S.user||!S.profile)return;
   input.value='';
   try{
