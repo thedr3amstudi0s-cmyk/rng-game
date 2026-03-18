@@ -2382,19 +2382,21 @@ async function executeTrade(){
       let myCoins=myData.coins||0;
       let theirCoins=theirData.coins||0;
 
-      // Validate and move my items
+      // Move my items to partner
       for(const ti of myAgreedItems){
-        const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
-        if(idx===-1) throw new Error('DUPE_DETECTED: Item "'+ti.name+'" not in your inventory');
+        const idx = myInv.findIndex(i => i.uniqueId === ti.uniqueId);
+        if(idx === -1) throw new Error('Item "'+ti.name+'" not in your inventory');
         myInv.splice(idx,1);
-        theirInv.push({itemId:ti.itemId,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
+        // Transfer the same uniqueId instead of generating a new one
+        theirInv.push({...ti, obtainedAt: new Date().toISOString()});
       }
-      // Validate and move their items
+      
+      // Move partner items to me
       for(const ti of theirAgreedItems){
-        const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
-        if(idx===-1) throw new Error('DUPE_DETECTED: Item "'+ti.name+'" not in partner inventory');
+        const idx = theirInv.findIndex(i => i.uniqueId === ti.uniqueId);
+        if(idx === -1) throw new Error('Item "'+ti.name+'" not in partner inventory');
         theirInv.splice(idx,1);
-        myInv.push({itemId:ti.itemId,uniqueId:genUID(),obtainedAt:new Date().toISOString()});
+        myInv.push({...ti, obtainedAt: new Date().toISOString()});
       }
       // Validate and transfer coins
       if(myAgreedCoins>myCoins) throw new Error('Not enough coins to complete trade');
