@@ -1100,10 +1100,9 @@ const BAD_WORDS = [
 ];
 
 // ============================================================
-// CHAT FILTER FUNCTION (fixed for spaces + leet)
+// CHAT FILTER FUNCTION (working version)
 // ============================================================
 
-// Map common leet/symbol replacements
 const LEET_MAP = {
   '1':'i','!':'i','|':'i',
   '3':'e',
@@ -1114,37 +1113,44 @@ const LEET_MAP = {
   '9':'g'
 };
 
-// Normalize text: lowercase, replace leet, keep spaces for display
+// Normalize text: lowercase, replace leet, turn non-letters into space
 function normalize(text){
   text = text.toLowerCase();
   let result = '';
   for(let c of text){
-    if(/[a-z ]/.test(c)) result += c; // keep letters + spaces
+    if(/[a-z]/.test(c)) result += c;
     else if(LEET_MAP[c]) result += LEET_MAP[c];
-    else result += ' '; // replace other symbols with space
+    else result += ' '; // replace all other symbols with space
   }
   return result;
 }
 
-// Build regex that handles repeated letters, spaces, symbols
+// Build regex for a word allowing spaces/symbols/repeated letters
 function buildFlexibleRegex(word){
   word = word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  const pattern = word.split('').map(c => `${c}+([\\s\\W_]*?)`).join('');
-  return new RegExp(pattern, 'gi');
+  return new RegExp(word.split('').map(c => `${c}+[^a-z]*`).join(''), 'gi');
 }
 
-// Filter function
+// Filter chat
 function filterChat(text){
-  let filtered = text;
-  const normalized = normalize(text); // normalize first
+  let normalizedText = normalize(text);
+  let filteredText = text.split('');
+
   BAD_WORDS.forEach(word => {
     const regex = buildFlexibleRegex(word);
-    filtered = filtered.replace(regex, '***');
+    let match;
+    while((match = regex.exec(normalizedText)) !== null){
+      // replace matched portion in original text with ***
+      for(let i = match.index; i < match.index + match[0].length; i++){
+        if(filteredText[i] !== undefined) filteredText[i] = '';
+      }
+      filteredText[match.index] = '***';
+    }
   });
-  return filtered;
-}
 
-// ============================================================
+  return filteredText.join('');
+}
+  
 // Usage in sendChat()
 async function sendChat(){
   const input=document.getElementById('chat-input');
