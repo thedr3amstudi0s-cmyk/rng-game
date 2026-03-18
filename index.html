@@ -1102,7 +1102,7 @@ const BAD_WORDS = [
 // ============================================================
 // CHAT FILTER FUNCTION
 // ============================================================
-// Map of common leet/symbol replacements
+// Map common leet/symbol replacements
 const LEET_MAP = {
   '1':'i','!':'i','|':'i',
   '3':'e',
@@ -1113,7 +1113,7 @@ const LEET_MAP = {
   '9':'g'
 };
 
-// Normalize text: lowercase, remove extra symbols, replace leet
+// Normalize text: lowercase, replace leet, remove extra symbols
 function normalize(text){
   text = text.toLowerCase();
   let result = '';
@@ -1124,26 +1124,24 @@ function normalize(text){
   return result;
 }
 
-// Build flexible regex for a word
-function buildRegex(word){
-  return new RegExp(word.split('').map(c=>`[${c}]`).join('[\\s\\W_]*'), 'gi');
+// Build regex that handles: repeated letters, spaces, symbols
+function buildFlexibleRegex(word){
+  // escape special regex characters
+  word = word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  // allow repeated letters, spaces, or symbols in between
+  const pattern = word.split('').map(c => `${c}+([\\s\\W_]*?)`).join('');
+  return new RegExp(pattern, 'gi');
 }
 
 // Filter function
 function filterChat(text){
-  const norm = normalize(text);
   let filtered = text;
-
-  BAD_WORDS.forEach(word=>{
-    if(norm.includes(word)){
-      const regex = buildRegex(word);
-      filtered = filtered.replace(regex, '***');
-    }
+  BAD_WORDS.forEach(word => {
+    const regex = buildFlexibleRegex(word);
+    filtered = filtered.replace(regex, '***');
   });
-
   return filtered;
 }
-
 // ============================================================
 // Usage in sendChat()
 async function sendChat(){
