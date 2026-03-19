@@ -45,12 +45,9 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar-track{background:var(--bg-dark);}
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
 
-/* ── SCREENS ─────────────────────────────────────────────── */
-/* ── SCREENS ─────────────────────────────────────────────── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;}
 
-/* ── AUTH ────────────────────────────────────────────────── */
 #auth-screen{align-items:center;justify-content:center;position:relative;
   background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
 .auth-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
@@ -78,7 +75,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .auth-note{color:var(--text-2);font-size:.85rem;text-align:center;}
 .auth-note strong{color:var(--gold);}
 
-/* ── BUTTONS ─────────────────────────────────────────────── */
 .btn-primary{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;
   padding:13px 24px;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;
   font-weight:700;letter-spacing:.1em;transition:var(--t);
@@ -104,7 +100,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   letter-spacing:.05em;transition:var(--t);}
 .btn-back:hover{border-color:var(--accent);color:var(--accent);}
 
-/* ── LOADING OVERLAY ─────────────────────────────────────── */
 #loading-overlay{position:fixed;inset:0;background:var(--bg-deep);z-index:9999;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
   transition:opacity .4s ease;}
@@ -115,7 +110,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
 
-/* ── GAME LAYOUT ─────────────────────────────────────────── */
 #game-screen{flex-direction:column;height:100vh;overflow:hidden;}
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
   height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);
@@ -136,13 +130,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .nav-item.active{background:var(--bg-hover);color:var(--accent);}
 .page-content{overflow-y:auto;padding:24px;background:var(--bg-deep);}
 #page-platformer{padding:0!important;}
-.page-content:has(#page-platformer.active){padding:0;overflow:hidden;display:flex;flex-direction:column;}
 .page{display:none;}.page.active{display:block;}
 .page-header{margin-bottom:24px;}
 .page-header h2{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
 .page-header p{color:var(--text-2);font-size:.9rem;margin-top:4px;}
 
-/* ── CHAT ────────────────────────────────────────────────── */
 .chat-panel{background:var(--bg-card);border-left:1px solid var(--border);
   display:flex;flex-direction:column;overflow:hidden;}
 .chat-header{padding:14px 16px;border-bottom:1px solid var(--border);
@@ -162,6 +154,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .chat-input-row button:hover{background:#6ba3ff;}
 
 /* ── CRATES PAGE ─────────────────────────────────────────── */
+.crates-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.crates-tab{padding:8px 14px;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
+  letter-spacing:.08em;color:var(--text-2);transition:var(--t);}
+.crates-tab.active{border-color:var(--accent);color:var(--accent);background:var(--accent)11;}
+.crates-tab:hover:not(.active){border-color:var(--border-b);color:var(--text-1);}
 .crates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
 .crate-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);
   padding:20px 16px;text-align:center;cursor:pointer;transition:var(--t);
@@ -176,6 +174,9 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .crate-price{display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark);
   border:1px solid var(--border);border-radius:20px;padding:4px 12px;
   font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--gold);}
+.crate-category-badge{display:inline-block;padding:2px 8px;border-radius:10px;
+  font-family:var(--font-d);font-size:.55rem;letter-spacing:.08em;margin-bottom:8px;
+  border:1px solid currentColor;opacity:.8;}
 
 /* ── CRATE OPENING ───────────────────────────────────────── */
 .crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
@@ -227,6 +228,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .result-rarity{font-family:var(--font-d);font-size:.8rem;font-weight:700;letter-spacing:.2em;
   padding:4px 16px;border-radius:20px;border:1px solid currentColor;}
 .result-value{color:var(--gold);font-family:var(--font-d);font-size:.9rem;}
+.result-cosmetic-type{color:var(--text-2);font-size:.8rem;font-family:var(--font-d);letter-spacing:.1em;}
 .result-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .btn-keep,.btn-sell-result,.btn-open-again{padding:10px 20px;border-radius:var(--r);
   font-family:var(--font-d);font-size:.75rem;font-weight:700;letter-spacing:.08em;transition:var(--t);}
@@ -238,6 +240,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .btn-open-again:hover{border-color:var(--text-2);color:var(--text-1);}
 
 /* ── INVENTORY ───────────────────────────────────────────── */
+.inv-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.inv-tab{padding:7px 14px;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
+  letter-spacing:.08em;color:var(--text-2);transition:var(--t);}
+.inv-tab.active{border-color:var(--accent);color:var(--accent);background:var(--accent)11;}
 .inv-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
 .search-input,.sort-select{background:var(--bg-card);border:1px solid var(--border);
   border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
@@ -274,9 +281,42 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   transition:var(--t);position:relative;user-select:none;}
 .item-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px var(--ig,transparent);}
 .item-card.selected{background:var(--bg-hover);box-shadow:0 0 0 2px var(--accent);}
+.item-card.equipped-badge::after{content:'ON';position:absolute;top:4px;right:4px;
+  background:#22c55e;color:#000;font-family:var(--font-d);font-size:.45rem;font-weight:900;
+  padding:2px 4px;border-radius:4px;letter-spacing:.05em;}
 .item-icon{font-size:2rem;display:block;margin-bottom:4px;}
 .item-name{font-size:.6rem;font-family:var(--font-d);letter-spacing:.04em;color:var(--text-2);line-height:1.2;}
 .item-value-small{font-size:.6rem;color:var(--gold);margin-top:2px;font-family:var(--font-m);}
+.item-type-badge{font-size:.5rem;color:var(--text-3);font-family:var(--font-d);letter-spacing:.05em;margin-top:1px;}
+
+/* ── COSMETICS WARDROBE ──────────────────────────────────── */
+.wardrobe-panel{background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--rl);padding:20px;margin-bottom:20px;}
+.wardrobe-title{font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.1em;
+  color:var(--text-2);margin-bottom:16px;}
+.wardrobe-slots{display:flex;gap:12px;flex-wrap:wrap;}
+.wardrobe-slot{background:var(--bg-dark);border:2px dashed var(--border);border-radius:var(--r);
+  padding:12px;text-align:center;min-width:90px;cursor:pointer;transition:var(--t);}
+.wardrobe-slot.filled{border-style:solid;border-color:var(--accent)66;}
+.wardrobe-slot:hover{border-color:var(--accent);background:var(--bg-hover);}
+.wardrobe-slot-label{font-family:var(--font-d);font-size:.55rem;letter-spacing:.1em;color:var(--text-3);margin-bottom:6px;}
+.wardrobe-slot-icon{font-size:1.8rem;display:block;margin-bottom:4px;}
+.wardrobe-slot-name{font-size:.6rem;color:var(--text-2);font-family:var(--font-d);}
+.wardrobe-slot-empty{font-size:.7rem;color:var(--text-3);font-style:italic;}
+.btn-unequip{font-size:.6rem;font-family:var(--font-d);color:#ef4444;margin-top:4px;
+  background:transparent;border:none;cursor:pointer;letter-spacing:.05em;}
+.btn-unequip:hover{text-decoration:underline;}
+
+/* ── PLAYER PREVIEW ──────────────────────────────────────── */
+.player-preview-wrap{display:flex;align-items:center;justify-content:center;
+  background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;min-height:120px;margin-bottom:16px;}
+.player-preview-char{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.preview-hat{font-size:2rem;line-height:1;}
+.preview-body{width:36px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;position:relative;}
+.preview-eyes{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:.7rem;}
+.preview-name{font-family:var(--font-d);font-size:.6rem;color:var(--text-2);margin-top:4px;letter-spacing:.05em;}
 
 /* ── TRADE ───────────────────────────────────────────────── */
 .trade-players-panel{background:var(--bg-card);border:1px solid var(--border);
@@ -328,7 +368,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .btn-cancel-trade:hover{background:#ef4444;color:#fff;}
 .trade-message{padding:10px;font-size:.85rem;color:var(--gold);text-align:center;min-height:20px;}
 
-/* ── FINAL TRADE MODAL ───────────────────────────────────── */
 .trade-final-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);
   display:flex;align-items:center;justify-content:center;z-index:1000;}
 .trade-final-inner{background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);
@@ -349,7 +388,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   letter-spacing:.08em;transition:var(--t);}
 .btn-cancel-final:hover{border-color:#ef4444;color:#ef4444;}
 
-/* ── LEADERBOARD ─────────────────────────────────────────── */
 .lb-tabs{display:flex;gap:6px;margin-bottom:20px;}
 .lb-tab{padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);
   border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
@@ -367,7 +405,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .lb-sub{color:var(--text-2);font-size:.78rem;margin-top:2px;}
 .lb-value{font-family:var(--font-m);font-size:.9rem;color:var(--gold);font-weight:700;}
 
-/* ── TRADE HISTORY ───────────────────────────────────────── */
 .history-list{display:flex;flex-direction:column;gap:10px;}
 .history-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;}
 .history-header{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.8rem;}
@@ -377,14 +414,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .history-items-list{display:flex;gap:4px;flex-wrap:wrap;}
 .history-item-chip{padding:3px 8px;border-radius:12px;border:1px solid;font-size:.7rem;}
 
-/* ── GLOBAL BANNER ───────────────────────────────────────── */
 .global-banner{position:fixed;top:56px;left:0;right:0;z-index:500;
   background:linear-gradient(135deg,#7c3aed,#4f8ef7);padding:10px 20px;text-align:center;
   font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.08em;color:#fff;
   animation:banner-slide .4s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 @keyframes banner-slide{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
 
-/* ── TOOLTIP ─────────────────────────────────────────────── */
 .item-tooltip{position:fixed;z-index:900;background:var(--bg-card);border:1px solid var(--border-b);
   border-radius:var(--r);padding:12px 14px;min-width:160px;max-width:220px;
   pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.5);}
@@ -393,8 +428,8 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .tooltip-rarity{font-size:.7rem;font-family:var(--font-d);text-align:center;letter-spacing:.1em;margin-bottom:6px;}
 .tooltip-desc{font-size:.78rem;color:var(--text-2);text-align:center;margin-bottom:6px;}
 .tooltip-value{font-family:var(--font-m);font-size:.75rem;color:var(--gold);text-align:center;}
+.tooltip-type{font-size:.65rem;color:var(--text-3);text-align:center;font-family:var(--font-d);letter-spacing:.08em;}
 
-/* ── TOASTS ──────────────────────────────────────────────── */
 #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
 .toast{background:var(--bg-card);border:1px solid var(--border-b);border-left:3px solid var(--accent);
   border-radius:var(--r);padding:12px 16px;min-width:220px;font-size:.85rem;color:var(--text-1);
@@ -403,7 +438,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @keyframes toast-in{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
 
-/* ── ULTRA OVERLAY ───────────────────────────────────────── */
 .ultra-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;
   display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .5s ease;}
 @keyframes ultra-fade-in{from{opacity:0}to{opacity:1}}
@@ -426,7 +460,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   font-weight:900;letter-spacing:.15em;transition:var(--t);}
 .btn-ultra-close:hover{transform:scale(1.05);}
 
-/* ── INCOMING TRADE ──────────────────────────────────────── */
 .incoming-trade-modal{position:fixed;bottom:80px;right:24px;background:var(--bg-card);
   border:1px solid var(--accent);border-radius:var(--rl);padding:16px 20px;z-index:800;
   max-width:280px;box-shadow:0 0 30px var(--accent-g);animation:toast-in .3s ease;}
@@ -439,7 +472,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
   letter-spacing:.08em;transition:var(--t);}
 
-/* ── ANIMATIONS ──────────────────────────────────────────── */
 @keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 8px var(--accent))}50%{filter:drop-shadow(0 0 20px var(--accent))}}
 @keyframes rainbow-border{
   0%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}
@@ -452,15 +484,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 }
 .rarity-divine{animation:rainbow-border 2s linear infinite!important;}
 
-/* ── RESPONSIVE ──────────────────────────────────────────── */
-/* ── MOBILE RESPONSIVE ───────────────────────────────────── */
 @media(max-width:900px){
   .game-layout{grid-template-columns:72px 1fr}
   .chat-panel{display:none}
 }
 @media(max-width:600px){
   .top-nav{padding:0 10px;height:48px;}
-  #game-screen{grid-template-rows:48px auto 1fr;}
   .nav-logo{font-size:.85rem;}
   .coin-display{font-size:.82rem;gap:4px;}
   .game-layout{grid-template-columns:60px 1fr;}
@@ -492,8 +521,8 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   .lb-username{font-size:.82rem;}
   .history-row{padding:10px 12px;}
   .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
+  .wardrobe-slots{gap:8px;}
 }
-
 
 /* ── PLATFORMER ──────────────────────────────────────────── */
 #page-platformer{display:none;height:100%;flex-direction:column;gap:0;padding:0!important;}
@@ -526,14 +555,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 </style>
 <body>
 
-<!-- LOADING OVERLAY -->
 <div id="loading-overlay">
   <div class="loading-logo">⚡ CRATEVAULT</div>
   <div class="loading-spinner"></div>
   <div class="loading-text">CONNECTING TO THE VAULT...</div>
 </div>
 
-<!-- AUTH SCREEN -->
 <div id="auth-screen" class="screen">
   <div class="auth-particles" id="auth-particles"></div>
   <div class="auth-container">
@@ -570,7 +597,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   </div>
 </div>
 
-<!-- MAIN GAME -->
 <div id="game-screen" class="screen">
   <header class="top-nav">
     <div class="nav-logo">⚡ CRATEVAULT</div>
@@ -588,17 +614,22 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <nav class="side-nav">
       <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
       <button class="nav-item" data-page="inventory"><span class="nav-icon">🎒</span><span class="nav-label">INVENTORY</span></button>
+      <button class="nav-item" data-page="wardrobe"><span class="nav-icon">👗</span><span class="nav-label">WARDROBE</span></button>
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
-      <button class="nav-item" data-page="platformer"><span class="nav-icon">🧗</span><span class="nav-label">CLIMB (under development)</span></button>
+      <button class="nav-item" data-page="platformer"><span class="nav-icon">🧗</span><span class="nav-label">CLIMB</span></button>
     </nav>
 
     <main class="page-content">
 
       <!-- CRATES -->
       <section class="page active" id="page-crates">
-        <div class="page-header"><h2>CRATE SHOP</h2><p>Roll for rare items. Fortune favors the bold.</p></div>
+        <div class="page-header">
+          <h2>CRATE SHOP</h2>
+          <p>Open cosmetic crates to unlock unique items for your character.</p>
+        </div>
+        <div class="crates-tabs" id="crates-tabs"></div>
         <div class="crates-grid" id="crates-grid"></div>
       </section>
 
@@ -639,6 +670,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
         <div class="result-panel hidden" id="result-panel">
           <div class="result-inner">
+            <div class="result-cosmetic-type" id="result-cosmetic-type"></div>
             <div class="result-icon" id="result-icon"></div>
             <div class="result-name" id="result-name"></div>
             <div class="result-rarity" id="result-rarity"></div>
@@ -656,6 +688,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <section class="page" id="page-inventory">
         <div class="page-header">
           <h2>INVENTORY</h2>
+          <div class="inv-tabs" id="inv-tabs">
+            <button class="inv-tab active" data-inv="all">All Items</button>
+            <button class="inv-tab" data-inv="cosmetics">Cosmetics</button>
+            <button class="inv-tab" data-inv="items">Gear Items</button>
+          </div>
           <div class="inv-controls">
             <input type="text" id="inv-search" placeholder="🔍 Search items..." class="search-input"/>
             <select id="inv-sort" class="sort-select">
@@ -709,6 +746,29 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="inventory-grid" id="inventory-grid"></div>
       </section>
 
+      <!-- WARDROBE -->
+      <section class="page" id="page-wardrobe">
+        <div class="page-header"><h2>WARDROBE</h2><p>Customize your Vault Climber character.</p></div>
+        <div class="player-preview-wrap">
+          <div class="player-preview-char" id="player-preview">
+            <div class="preview-hat" id="preview-hat">🎩</div>
+            <div class="preview-body" id="preview-body" style="background:#ff69b4;">
+              <div class="preview-eyes" id="preview-eyes">👀</div>
+            </div>
+            <div style="font-size:.5rem;color:var(--text-3);font-family:var(--font-d);margin-top:4px;">YOUR CHARACTER</div>
+          </div>
+        </div>
+        <div class="wardrobe-panel">
+          <div class="wardrobe-title">EQUIPPED COSMETICS</div>
+          <div class="wardrobe-slots" id="wardrobe-slots"></div>
+        </div>
+        <div class="page-header" style="margin-top:8px;margin-bottom:12px;">
+          <h2 style="font-size:1rem;">YOUR COSMETICS</h2>
+          <p>Click a cosmetic to equip it.</p>
+        </div>
+        <div class="inventory-grid" id="cosmetics-grid"></div>
+      </section>
+
       <!-- TRADE -->
       <section class="page" id="page-trade">
         <div class="page-header"><h2>TRADING</h2><p>⚠️ Always double-check items before finalizing a trade.</p></div>
@@ -758,7 +818,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
           <div class="trade-message" id="trade-message"></div>
         </div>
-        <!-- FINAL MODAL lives inside page-trade so it's always accessible -->
         <div class="trade-final-modal hidden" id="trade-final-modal">
           <div class="trade-final-inner">
             <h3>⚠️ FINAL CONFIRMATION</h3>
@@ -787,6 +846,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="page-header"><h2>TRADE HISTORY</h2></div>
         <div class="history-list" id="history-list"></div>
       </section>
+
       <!-- PLATFORMER -->
       <section class="page" id="page-platformer">
         <div class="plat-header">
@@ -823,19 +883,17 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   </div>
 </div>
 
-<!-- TOOLTIP -->
 <div class="item-tooltip hidden" id="item-tooltip">
   <div class="tooltip-icon" id="tt-icon"></div>
   <div class="tooltip-name" id="tt-name"></div>
   <div class="tooltip-rarity" id="tt-rarity"></div>
+  <div class="tooltip-type" id="tt-type"></div>
   <div class="tooltip-desc" id="tt-desc"></div>
   <div class="tooltip-value" id="tt-value"></div>
 </div>
 
-<!-- TOASTS -->
 <div id="toast-container"></div>
 
-<!-- ULTRA OVERLAY -->
 <div class="ultra-overlay hidden" id="ultra-overlay">
   <div class="ultra-inner">
     <div class="ultra-rays"></div>
@@ -848,7 +906,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 
 <script>
 // ============================================================
-// GAME DATA
+// RARITIES
 // ============================================================
 const RARITIES = {
   common:    {name:'Common',    color:'#9ca3af',glow:'#9ca3af44',tier:1},
@@ -864,10 +922,213 @@ const RARITIES = {
   ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
 };
 
-// Item values are calibrated so EV/price ≈ 0.50 for every crate.
-// Sell price = 70% of value. Ultra items are jackpots — exciting but not game-breaking.
+// ============================================================
+// COSMETIC ITEMS
+// type: 'hat' | 'eye_color' | 'particle' | 'background' | 'color' | 'seasonal'
+// equipSlot: which slot this occupies
+// visual: the actual visual value used in platformer
+// ============================================================
+const COSMETIC_ITEMS = [
+  // ── HATS ──────────────────────────────────────────────────
+  {id:'h001',name:'Top Hat',       type:'hat',icon:'🎩',rarity:'common',   value:80,  desc:'Classic gentleman\'s hat.',  visual:'🎩'},
+  {id:'h002',name:'Baseball Cap',  type:'hat',icon:'🧢',rarity:'common',   value:80,  desc:'Casual everyday cap.',       visual:'🧢'},
+  {id:'h003',name:'Cowboy Hat',    type:'hat',icon:'🤠',rarity:'common',   value:90,  desc:'Yeehaw!',                    visual:'🤠'},
+  {id:'h004',name:'Sombrero',      type:'hat',icon:'👒',rarity:'uncommon', value:200, desc:'Fiesta time.',               visual:'👒'},
+  {id:'h005',name:'Wizard Hat',    type:'hat',icon:'🧙',rarity:'uncommon', value:220, desc:'Arcane power flows through.',visual:'🧙'},
+  {id:'h006',name:'Crown',         type:'hat',icon:'👑',rarity:'rare',     value:500, desc:'Ruler of the vault.',        visual:'👑'},
+  {id:'h007',name:'Party Hat',     type:'hat',icon:'🎉',rarity:'common',   value:70,  desc:'Always celebrating.',        visual:'🎉'},
+  {id:'h008',name:'Chef Hat',      type:'hat',icon:'👨‍🍳',rarity:'uncommon',value:180, desc:'Master chef.',               visual:'👨‍🍳'},
+  {id:'h009',name:'Viking Helmet', type:'hat',icon:'⛑️',rarity:'rare',     value:480, desc:'Battle-hardened warrior.',   visual:'⛑️'},
+  {id:'h010',name:'Space Helmet',  type:'hat',icon:'👨‍🚀',rarity:'epic',    value:1500,desc:'For zero-gravity jumps.',    visual:'👨‍🚀'},
+  {id:'h011',name:'Devil Horns',   type:'hat',icon:'😈',rarity:'epic',     value:1800,desc:'Mischievous energy.',        visual:'😈'},
+  {id:'h012',name:'Halo',          type:'hat',icon:'😇',rarity:'legendary',value:5000,desc:'Blessed from above.',        visual:'😇'},
+
+  // ── EYE COLORS ────────────────────────────────────────────
+  {id:'e001',name:'Blue Eyes',     type:'eye_color',icon:'🔵',rarity:'common',   value:60,  desc:'Classic blue.',    visual:'🔵',eyeColor:'#3b82f6'},
+  {id:'e002',name:'Red Eyes',      type:'eye_color',icon:'🔴',rarity:'common',   value:60,  desc:'Fierce red.',      visual:'🔴',eyeColor:'#ef4444'},
+  {id:'e003',name:'Green Eyes',    type:'eye_color',icon:'🟢',rarity:'common',   value:60,  desc:'Forest green.',    visual:'🟢',eyeColor:'#22c55e'},
+  {id:'e004',name:'Purple Eyes',   type:'eye_color',icon:'🟣',rarity:'uncommon', value:160, desc:'Mysterious.',      visual:'🟣',eyeColor:'#a855f7'},
+  {id:'e005',name:'Gold Eyes',     type:'eye_color',icon:'🟡',rarity:'rare',     value:420, desc:'Eyes of a legend.',visual:'🟡',eyeColor:'#f59e0b'},
+  {id:'e006',name:'Rainbow Eyes',  type:'eye_color',icon:'🌈',rarity:'legendary',value:5500,desc:'All colors at once.',visual:'🌈',eyeColor:'rainbow'},
+  {id:'e007',name:'White Eyes',    type:'eye_color',icon:'⚪',rarity:'uncommon', value:200, desc:'Ghostly pale.',    visual:'⚪',eyeColor:'#e8eaf6'},
+  {id:'e008',name:'Black Eyes',    type:'eye_color',icon:'⚫',rarity:'rare',     value:400, desc:'Void gaze.',       visual:'⚫',eyeColor:'#111111'},
+
+  // ── PARTICLES ─────────────────────────────────────────────
+  {id:'p001',name:'Star Trail',    type:'particle',icon:'⭐',rarity:'uncommon', value:300, desc:'Leaves stars behind.',     visual:'star'},
+  {id:'p002',name:'Fire Trail',    type:'particle',icon:'🔥',rarity:'rare',     value:600, desc:'Blazing footsteps.',        visual:'fire'},
+  {id:'p003',name:'Ice Trail',     type:'particle',icon:'❄️',rarity:'rare',     value:620, desc:'Frosty cold steps.',        visual:'ice'},
+  {id:'p004',name:'Lightning',     type:'particle',icon:'⚡',rarity:'epic',     value:2000,desc:'Crackling electricity.',     visual:'lightning'},
+  {id:'p005',name:'Rainbow Burst', type:'particle',icon:'🌈',rarity:'legendary',value:6000,desc:'Explosions of color.',      visual:'rainbow'},
+  {id:'p006',name:'Heart Trail',   type:'particle',icon:'❤️',rarity:'common',   value:100, desc:'Spreading the love.',       visual:'heart'},
+  {id:'p007',name:'Ghost Trail',   type:'particle',icon:'👻',rarity:'uncommon', value:280, desc:'Eerie vapor clouds.',       visual:'ghost'},
+  {id:'p008',name:'Money Rain',    type:'particle',icon:'💰',rarity:'epic',     value:2200,desc:'Coins fall with every step.',visual:'money'},
+  {id:'p009',name:'Cosmic Dust',   type:'particle',icon:'✨',rarity:'mythic',   value:40000,desc:'Particles from another realm.',visual:'cosmic'},
+
+  // ── BACKGROUNDS ───────────────────────────────────────────
+  {id:'b001',name:'Forest',        type:'background',icon:'🌲',rarity:'common',   value:120,  desc:'Tall pine forest.',         visual:'forest'},
+  {id:'b002',name:'Cave',          type:'background',icon:'🪨',rarity:'common',   value:110,  desc:'Dark underground cave.',     visual:'cave'},
+  {id:'b003',name:'Ocean',         type:'background',icon:'🌊',rarity:'uncommon', value:280,  desc:'Deep blue ocean.',           visual:'ocean'},
+  {id:'b004',name:'Volcano',       type:'background',icon:'🌋',rarity:'rare',     value:550,  desc:'Lava-filled volcano.',       visual:'volcano'},
+  {id:'b005',name:'Farm',          type:'background',icon:'🌾',rarity:'common',   value:100,  desc:'Peaceful countryside.',      visual:'farm'},
+  {id:'b006',name:'City',          type:'background',icon:'🏙️',rarity:'uncommon', value:260,  desc:'Urban skyline.',             visual:'city'},
+  {id:'b007',name:'Space',         type:'background',icon:'🚀',rarity:'epic',     value:2500, desc:'Infinite cosmos.',           visual:'space'},
+  {id:'b008',name:'Sky Kingdom',   type:'background',icon:'☁️',rarity:'rare',     value:600,  desc:'Floating in the clouds.',    visual:'sky'},
+  {id:'b009',name:'Ice Tundra',    type:'background',icon:'🏔️',rarity:'rare',     value:580,  desc:'Frozen wasteland.',          visual:'ice'},
+  {id:'b010',name:'Neon City',     type:'background',icon:'🌃',rarity:'legendary',value:7000, desc:'Cyberpunk metropolis.',      visual:'neon'},
+  {id:'b011',name:'Rainbow World', type:'background',icon:'🌈',rarity:'mythic',   value:45000,desc:'Reality bends here.',        visual:'rainbow'},
+
+  // ── COLORS (player body color) ────────────────────────────
+  {id:'col001',name:'Hot Pink',    type:'color',icon:'🩷',rarity:'common',   value:60,  desc:'Default vibrant pink.',  visual:'#ff69b4'},
+  {id:'col002',name:'Electric Blue',type:'color',icon:'💙',rarity:'common',  value:60,  desc:'Charged blue.',          visual:'#3b82f6'},
+  {id:'col003',name:'Lime Green',  type:'color',icon:'💚',rarity:'common',   value:60,  desc:'Neon lime.',             visual:'#22c55e'},
+  {id:'col004',name:'Deep Red',    type:'color',icon:'❤️',rarity:'common',   value:60,  desc:'Blood red.',             visual:'#ef4444'},
+  {id:'col005',name:'Orange',      type:'color',icon:'🧡',rarity:'common',   value:60,  desc:'Fiery orange.',          visual:'#f97316'},
+  {id:'col006',name:'Yellow',      type:'color',icon:'💛',rarity:'uncommon', value:150, desc:'Sunny yellow.',          visual:'#eab308'},
+  {id:'col007',name:'Dark Blue',   type:'color',icon:'🔵',rarity:'uncommon', value:160, desc:'Midnight blue.',         visual:'#1d4ed8'},
+  {id:'col008',name:'Navy',        type:'color',icon:'🟦',rarity:'uncommon', value:140, desc:'Deep navy.',             visual:'#1e3a5f'},
+  {id:'col009',name:'Purple',      type:'color',icon:'💜',rarity:'uncommon', value:170, desc:'Royal purple.',          visual:'#a855f7'},
+  {id:'col010',name:'Gold',        type:'color',icon:'🟡',rarity:'rare',     value:450, desc:'Gleaming gold body.',    visual:'#f59e0b'},
+  {id:'col011',name:'Rose Gold',   type:'color',icon:'🌸',rarity:'rare',     value:480, desc:'Delicate rose gold.',    visual:'#e67e9b'},
+  {id:'col012',name:'Neon Green',  type:'color',icon:'🟩',rarity:'rare',     value:500, desc:'Toxic neon glow.',       visual:'#00ff7f'},
+  {id:'col013',name:'Void Black',  type:'color',icon:'⬛',rarity:'epic',     value:1800,desc:'Pure darkness.',         visual:'#0a0a0a'},
+  {id:'col014',name:'Galaxy',      type:'color',icon:'🌌',rarity:'epic',     value:2000,desc:'Deep space body.',       visual:'#1a0a3e'},
+  {id:'col015',name:'Rainbow',     type:'color',icon:'🌈',rarity:'legendary',value:6000,desc:'Cycling through all colors.',visual:'rainbow'},
+  {id:'col016',name:'Pure White',  type:'color',icon:'⬜',rarity:'rare',     value:420, desc:'Blinding white.',        visual:'#f0f0f0'},
+  {id:'col017',name:'Maroon',      type:'color',icon:'🟥',rarity:'uncommon', value:155, desc:'Deep maroon.',           visual:'#800000'},
+  {id:'col018',name:'Teal',        type:'color',icon:'🩵',rarity:'uncommon', value:160, desc:'Cool teal.',             visual:'#0d9488'},
+
+  // ── SEASONAL ──────────────────────────────────────────────
+  {id:'s001',name:'Pumpkin Hat',   type:'seasonal',icon:'🎃',rarity:'rare',     value:700,   desc:'Halloween special.',      visual:'🎃',season:'Halloween'},
+  {id:'s002',name:'Santa Hat',     type:'seasonal',icon:'🎅',rarity:'rare',     value:700,   desc:'Christmas special.',      visual:'🎅',season:'Christmas'},
+  {id:'s003',name:'Bunny Ears',    type:'seasonal',icon:'🐰',rarity:'uncommon', value:350,   desc:'Easter special.',         visual:'🐰',season:'Easter'},
+  {id:'s004',name:'Fireworks',     type:'seasonal',icon:'🎆',rarity:'epic',     value:2500,  desc:'4th of July special.',    visual:'🎆',season:'July 4th'},
+  {id:'s005',name:'New Year Crown',type:'seasonal',icon:'🥳',rarity:'legendary',value:8000,  desc:'Ring in the new year.',   visual:'🥳',season:'New Year'},
+  {id:'s006',name:'Snowflake Aura',type:'seasonal',icon:'❄️',rarity:'mythic',   value:50000, desc:'Winter wonderland.',      visual:'❄️',season:'Winter'},
+];
+
+// ============================================================
+// COSMETIC CRATES — 6 categories
+// ============================================================
+const COSMETIC_CRATES = [
+  // HATS — 4 crates
+  {id:'hats_common',    name:'Basic Hat Crate',    category:'hat',      price:200,   icon:'🎩', color:'#9ca3af',
+   desc:'Common and uncommon hats.',
+   odds:{common:0.75, uncommon:0.25},
+   items:['h001','h002','h003','h004','h005','h007','h008']},
+
+  {id:'hats_rare',      name:'Rare Hat Crate',     category:'hat',      price:600,   icon:'👑', color:'#3b82f6',
+   desc:'Rare and epic headgear.',
+   odds:{rare:0.70, epic:0.30},
+   items:['h006','h007','h009','h010','h011']},
+
+  {id:'hats_epic',      name:'Epic Hat Crate',     category:'hat',      price:2000,  icon:'😈', color:'#a855f7',
+   desc:'Epic and legendary hats only.',
+   odds:{epic:0.65, legendary:0.35},
+   items:['h010','h011','h012']},
+
+  {id:'hats_divine',    name:'Divine Hat Crate',   category:'hat',      price:6000,  icon:'😇', color:'#f59e0b',
+   desc:'Only the rarest hats.',
+   odds:{legendary:0.80, mythic:0.18, divine:0.02},
+   items:['h012']},
+
+  // EYE COLORS — 3 crates
+  {id:'eyes_basic',     name:'Eye Color Crate',    category:'eye_color',price:150,   icon:'👁️', color:'#3b82f6',
+   desc:'Change your eye color.',
+   odds:{common:0.70, uncommon:0.25, rare:0.05},
+   items:['e001','e002','e003','e004','e005','e007','e008']},
+
+  {id:'eyes_rare',      name:'Rare Eye Crate',     category:'eye_color',price:800,   icon:'🌈', color:'#a855f7',
+   desc:'Rare and legendary eye colors.',
+   odds:{rare:0.60, legendary:0.40},
+   items:['e005','e006','e008']},
+
+  {id:'eyes_rainbow',   name:'Rainbow Eye Crate',  category:'eye_color',price:5000,  icon:'✨', color:'#f59e0b',
+   desc:'Guaranteed legendary rainbow eyes.',
+   odds:{legendary:1.0},
+   items:['e006']},
+
+  // PARTICLES — 4 crates
+  {id:'particles_basic',name:'Particle Crate',     category:'particle', price:250,   icon:'⭐', color:'#22c55e',
+   desc:'Unlock cool trail effects.',
+   odds:{common:0.65, uncommon:0.30, rare:0.05},
+   items:['p001','p006','p007']},
+
+  {id:'particles_rare', name:'Rare Particle Crate',category:'particle', price:1000,  icon:'🔥', color:'#ef4444',
+   desc:'Rare and epic particles.',
+   odds:{rare:0.70, epic:0.30},
+   items:['p002','p003','p004','p008']},
+
+  {id:'particles_epic', name:'Epic Particle Crate',category:'particle', price:3500,  icon:'⚡', color:'#a855f7',
+   desc:'Epic particles with mythic chance.',
+   odds:{epic:0.75, mythic:0.25},
+   items:['p004','p005','p008','p009']},
+
+  {id:'particles_cosmic',name:'Cosmic Particle Crate',category:'particle',price:12000,icon:'✨',color:'#ffd700',
+   desc:'Mythic cosmic dust guaranteed.',
+   odds:{epic:0.30, mythic:0.65, divine:0.05},
+   items:['p004','p005','p008','p009']},
+
+  // BACKGROUNDS — 4 crates
+  {id:'bg_nature',      name:'Nature Background',  category:'background',price:200,  icon:'🌲', color:'#22c55e',
+   desc:'Peaceful nature settings.',
+   odds:{common:0.75, uncommon:0.25},
+   items:['b001','b002','b005','b003','b006']},
+
+  {id:'bg_adventure',   name:'Adventure Background',category:'background',price:700, icon:'🌋', color:'#ef4444',
+   desc:'Dramatic adventure scenes.',
+   odds:{uncommon:0.50, rare:0.50},
+   items:['b003','b004','b006','b008','b009']},
+
+  {id:'bg_epic',        name:'Epic Background',    category:'background',price:3000, icon:'🚀', color:'#3b82f6',
+   desc:'Epic and legendary scenes.',
+   odds:{rare:0.40, epic:0.50, legendary:0.10},
+   items:['b007','b008','b009','b010']},
+
+  {id:'bg_mythic',      name:'Mythic Background',  category:'background',price:50000,icon:'🌈', color:'#ff00ff',
+   desc:'Mythic rainbow world.',
+   odds:{legendary:0.50, mythic:0.48, divine:0.02},
+   items:['b010','b011']},
+
+  // COLORS — 4 crates
+  {id:'col_basic',      name:'Color Crate',        category:'color',    price:100,   icon:'🎨', color:'#f97316',
+   desc:'Basic player body colors.',
+   odds:{common:0.80, uncommon:0.20},
+   items:['col001','col002','col003','col004','col005','col006','col007','col008','col009','col017','col018']},
+
+  {id:'col_rare',       name:'Rare Color Crate',   category:'color',    price:600,   icon:'✨', color:'#a855f7',
+   desc:'Rare and epic body colors.',
+   odds:{uncommon:0.30, rare:0.55, epic:0.15},
+   items:['col006','col007','col009','col010','col011','col012','col013','col014','col016']},
+
+  {id:'col_epic',       name:'Epic Color Crate',   category:'color',    price:2500,  icon:'🌌', color:'#1a0a3e',
+   desc:'Epic and legendary colors.',
+   odds:{epic:0.65, legendary:0.35},
+   items:['col013','col014','col015']},
+
+  {id:'col_rainbow',    name:'Rainbow Color Crate',category:'color',    price:7000,  icon:'🌈', color:'#ffd700',
+   desc:'Legendary rainbow body color.',
+   odds:{legendary:1.0},
+   items:['col015']},
+
+  // SEASONAL — 3 crates
+  {id:'seasonal_basic', name:'Seasonal Crate',     category:'seasonal', price:500,   icon:'🎃', color:'#f97316',
+   desc:'Seasonal event cosmetics.',
+   odds:{uncommon:0.55, rare:0.40, epic:0.05},
+   items:['s001','s002','s003','s004']},
+
+  {id:'seasonal_rare',  name:'Rare Seasonal Crate',category:'seasonal', price:3000,  icon:'🎅', color:'#ef4444',
+   desc:'Rare seasonal items.',
+   odds:{rare:0.30, epic:0.50, legendary:0.20},
+   items:['s001','s002','s004','s005']},
+
+  {id:'seasonal_mythic',name:'Mythic Seasonal Crate',category:'seasonal',price:15000,icon:'❄️',color:'#00ffff',
+   desc:'The rarest seasonal items ever.',
+   odds:{legendary:0.55, mythic:0.40, divine:0.05},
+   items:['s005','s006']},
+];
+
+// Keep original gear items and crates
 const ITEMS = [
-  // COMMON — value ~50 (sells for ~30)
   {id:'c001',name:'Rusty Coin',       rarity:'common',   icon:'🪙', value:48,  desc:'A worn tarnished coin.'},
   {id:'c002',name:'Wooden Shield',    rarity:'common',   icon:'🛡️', value:52,  desc:'Basic wooden protection.'},
   {id:'c003',name:'Old Dagger',       rarity:'common',   icon:'🗡️', value:50,  desc:'Dull but functional.'},
@@ -883,7 +1144,6 @@ const ITEMS = [
   {id:'c013',name:'Empty Bottle',     rarity:'common',   icon:'🍶', value:46,  desc:'Could hold anything.'},
   {id:'c014',name:'Wool Hat',         rarity:'common',   icon:'🎩', value:50,  desc:'Keeps your head warm.'},
   {id:'c015',name:'Tin Cup',          rarity:'common',   icon:'🫙', value:46,  desc:'Dented but drinkable.'},
-  // UNCOMMON — value ~108 (sells for ~65, profit on Starter)
   {id:'u001',name:'Silver Ring',      rarity:'uncommon', icon:'💍', value:100, desc:'A simple silver band.'},
   {id:'u002',name:'Steel Sword',      rarity:'uncommon', icon:'⚔️', value:115, desc:'Sharper than most.'},
   {id:'u003',name:'Iron Helm',        rarity:'uncommon', icon:'⛑️', value:105, desc:'Solid iron headgear.'},
@@ -896,7 +1156,6 @@ const ITEMS = [
   {id:'u010',name:'Blue Crystal',     rarity:'uncommon', icon:'💎', value:120, desc:'Faintly glowing gem.'},
   {id:'u011',name:'Shadow Cloak',     rarity:'uncommon', icon:'🧥', value:115, desc:'Hard to see in.'},
   {id:'u012',name:'Bone Charm',       rarity:'uncommon', icon:'🦴', value:100, desc:'Provides minor warding.'},
-  // RARE — value ~300 (sells for ~180, profit on Warrior)
   {id:'r001',name:'Enchanted Blade',  rarity:'rare',     icon:'🔷', value:285, desc:'Hums with arcane energy.'},
   {id:'r002',name:'Dragon Scale',     rarity:'rare',     icon:'🐉', value:315, desc:'Impervious to flame.'},
   {id:'r003',name:'Mana Crystal',     rarity:'rare',     icon:'🔮', value:295, desc:'Crystallized magic.'},
@@ -907,153 +1166,51 @@ const ITEMS = [
   {id:'r008',name:'Ice Crown',        rarity:'rare',     icon:'👑', value:330, desc:'Freezes the mind.'},
   {id:'r009',name:'Fire Emblem',      rarity:'rare',     icon:'🔥', value:305, desc:'Smoldering with power.'},
   {id:'r010',name:'Moon Amulet',      rarity:'rare',     icon:'🌙', value:290, desc:'Grants lunar vision.'},
-  // EPIC — value ~2,333 (sells for ~1,400, profit on Shadow)
-  {id:'e001',name:'Void Blade',       rarity:'epic',     icon:'🌑', value:2200, desc:'Cuts through reality.'},
-  {id:'e002',name:'Soul Gem',         rarity:'epic',     icon:'💜', value:2350, desc:'Contains a trapped soul.'},
-  {id:'e003',name:'Titan Armor',      rarity:'epic',     icon:'🛡️', value:2500, desc:'Forged by giants.'},
-  {id:'e004',name:'Celestial Bow',    rarity:'epic',     icon:'🌟', value:2250, desc:'Arrows pierce stars.'},
-  {id:'e005',name:'Chaos Orb',        rarity:'epic',     icon:'🌪️', value:2500, desc:'Unpredictable power.'},
-  {id:'e006',name:'Phantom Crown',    rarity:'epic',     icon:'👑', value:2400, desc:'Ruler of shadows.'},
-  {id:'e007',name:'Elder Wand',       rarity:'epic',     icon:'🪄', value:2350, desc:'Mastery over death.'},
-  {id:'e008',name:'Abyssal Ring',     rarity:'epic',     icon:'🖤', value:2200, desc:'Power from the deep.'},
-  // LEGENDARY — value ~9,167 (sells for ~5,500, profit on Celestial)
+  {id:'e001i',name:'Void Blade',      rarity:'epic',     icon:'🌑', value:2200, desc:'Cuts through reality.'},
+  {id:'e002i',name:'Soul Gem',        rarity:'epic',     icon:'💜', value:2350, desc:'Contains a trapped soul.'},
+  {id:'e003i',name:'Titan Armor',     rarity:'epic',     icon:'🛡️', value:2500, desc:'Forged by giants.'},
+  {id:'e004i',name:'Celestial Bow',   rarity:'epic',     icon:'🌟', value:2250, desc:'Arrows pierce stars.'},
   {id:'l001',name:'Sunforged Sword',  rarity:'legendary',icon:'☀️', value:8500,  desc:'Blazing with solar power.'},
   {id:'l002',name:'Moonweave Robe',   rarity:'legendary',icon:'🌕', value:9000,  desc:'Woven from moonlight.'},
   {id:'l003',name:'Storm Trident',    rarity:'legendary',icon:'🔱', value:9500,  desc:'Commands the seas.'},
-  {id:'l004',name:'Infinity Gauntlet',rarity:'legendary',icon:'✊', value:10000, desc:'Controls reality.'},
-  {id:'l005',name:'Phoenix Feather',  rarity:'legendary',icon:'🦅', value:9000,  desc:'Grants rebirth.'},
-  {id:'l006',name:'God Slayer',       rarity:'legendary',icon:'⚔️', value:10500, desc:'Even gods fear this.'},
-  // MYTHIC — value ~91,667 (sells for ~55,000, big profit on Mythic crate 8k)
   {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:88000,  desc:'Opens any dimension.'},
   {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:92000,  desc:'Piece of a dead star.'},
-  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:96000,  desc:'Reality bends around it.'},
-  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:90000,  desc:'Fragment of nothingness.'},
-  // DIVINE — value ~216,667 (sells for ~130,000)
   {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:210000, desc:'Touched by a deity.'},
-  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:225000, desc:'Born at start of time.'},
-  // ULTRA
-  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:666667,     desc:'1 in a million. Truly impossible.'},
-  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3333333,    desc:'One of only a few in existence.'},
-  {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
-  {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
+  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:666667, desc:'1 in a million.'},
 ];
 
-// Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
 const CRATES = [
-  {
-    id:'starter', name:'Starter Crate', price:50, icon:'📦', color:'#9ca3af',
-    desc:'For new adventurers. Commons are likely, but Rare is possible.',
-    odds:{common:0.88, uncommon:0.09, rare:0.03},
-    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010',
-           'c011','c012','c013','c014','c015',
-           'u001','u002','u003','u004','u005',
-           'r001','r002'],
-  },
-  {
-    id:'warrior', name:'Warrior Crate', price:125, icon:'⚔️', color:'#ef4444',
-    desc:'Combat gear and deadly weapons.',
-    odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-    items:['c001','c003','c006','c009','c010','c012',
-           'u002','u003','u004','u008',
-           'r001','r004','r009',
-           'e001','e003'],
-  },
-  {
-    id:'explorer', name:'Explorer Crate', price:125, icon:'🗺️', color:'#22c55e',
-    desc:'Tools for the adventurous spirit.',
-    odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-    items:['c004','c007','c011','c013','c014','c015',
-           'u005','u006','u008','u009',
-           'r002','r007','r010',
-           'e004','e007'],
-  },
-  {
-    id:'mystic', name:'Mystic Crate', price:250, icon:'🔮', color:'#a855f7',
-    desc:'Magical artifacts and arcane secrets.',
-    odds:{common:0.60, uncommon:0.28, rare:0.10, epic:0.02},
-    items:['c002','c008','c013',
-           'u007','u009','u010','u012',
-           'r003','r006','r007','r010',
-           'e002','e004','e007'],
-  },
-  {
-    id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626',
-    desc:'Scorched by hellfire. Rare guaranteed, Epic possible.',
-    odds:{rare:0.82, epic:0.15, legendary:0.03},
-    items:['r001','r004','r005','r006','r007','r009',
-           'e001','e003','e005','e006','e008',
-           'l006'],
-  },
-  {
-    id:'shadow', name:'Shadow Crate', price:750, icon:'🌑', color:'#6b21a8',
-    desc:'No filler — Rare guaranteed, Epic and Legendary possible.',
-    odds:{rare:0.78, epic:0.18, legendary:0.04},
-    items:['r005','r006','r007','r009','r010',
-           'e001','e002','e005','e006','e008',
-           'l004','l006'],
-  },
-  {
-    id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8',
-    desc:'Crackling with energy. Epic is common, Legendary rare.',
-    odds:{rare:0.60, epic:0.33, legendary:0.07},
-    items:['r004','r007','r008','r009',
-           'e001','e002','e004','e005','e006','e007','e008',
-           'l001','l003','l005','l006'],
-  },
-  {
-    id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
-    desc:'Blessed by the heavens. Epic guaranteed, Legendary and Mythic possible.',
-    odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02},
-    items:['r008','r003','r010',
-           'e004','e006','e002','e003',
-           'l001','l002','l005',
-           'm002'],
-  },
-  {
-    id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207',
-    desc:'Relics of a forgotten age. Legendary likely, Mythic possible.',
-    odds:{epic:0.55, legendary:0.38, mythic:0.07},
-    items:['e002','e003','e004','e006','e007',
-           'l001','l002','l003','l004','l005','l006',
-           'm001','m004'],
-  },
-  {
-    id:'mythic', name:'Mythic Crate', price:8000, icon:'💀', color:'#ef4444',
-    desc:'Only the brave dare open this. Legendary and Mythic.',
-    odds:{epic:0.40, legendary:0.48, mythic:0.12},
-    items:['r001','r004','r006',
-           'e001','e002','e005','e006','e008',
-           'l001','l003','l006',
-           'm001','m004'],
-  },
-  {
-    id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
-    desc:'From the deepest depths. Legendary guaranteed, Mythic likely.',
-    odds:{legendary:0.72, mythic:0.28},
-    items:['l001','l002','l003','l004','l005','l006',
-           'm001','m002','m003','m004'],
-  },
-
-
-  {
-    id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
-    desc:'From the space between worlds. Mythic dominant, Ultra possible.',
-    odds:{legendary:0.20, mythic:0.779, ultra1:0.021},
-    items:['l003','l004','l006',
-           'm001','m002','m003','m004',
-           'ur01'],
-  },
-  {
-    id:'omega', name:'OMEGA Crate', price:180000, icon:'⚡', color:'#ffd700',
-    desc:'The only crate with Divine drops. Ultra odds are astronomical.',
-    odds:{mythic: 0.9499, divine:0.0400, ultra1:0.0099, ultra2:0.0001, ultra3:0.000009, ultra4:0.000001},
-    items:['m001','m002','m003','m004',
-           'd001','d002',
-           'ur01','ur02','ur03','ur04'],
-  },
+  {id:'starter',name:'Starter Crate',price:50,icon:'📦',color:'#9ca3af',
+   desc:'For new adventurers. Commons are likely.',
+   odds:{common:0.88, uncommon:0.09, rare:0.03},
+   items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015','u001','u002','u003','r001','r002']},
+  {id:'warrior',name:'Warrior Crate',price:125,icon:'⚔️',color:'#ef4444',
+   desc:'Combat gear and deadly weapons.',
+   odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
+   items:['c001','c003','c006','c009','c010','u002','u003','u004','r001','r004','e001i','e003i']},
+  {id:'infernal',name:'Infernal Crate',price:500,icon:'🔥',color:'#dc2626',
+   desc:'Rare guaranteed, Epic possible.',
+   odds:{rare:0.82, epic:0.15, legendary:0.03},
+   items:['r001','r004','r005','r006','r009','e001i','e003i','l001']},
+  {id:'celestial',name:'Celestial Crate',price:3500,icon:'🌟',color:'#f59e0b',
+   desc:'Epic guaranteed, Legendary possible.',
+   odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02},
+   items:['r008','r003','e004i','e002i','l001','l002','m002']},
+  {id:'mythic_crate',name:'Mythic Crate',price:8000,icon:'💀',color:'#ef4444',
+   desc:'Legendary and Mythic only.',
+   odds:{epic:0.40, legendary:0.48, mythic:0.12},
+   items:['e001i','e002i','l001','l003','m001','m002']},
+  {id:'omega',name:'OMEGA Crate',price:180000,icon:'⚡',color:'#ffd700',
+   desc:'Divine and Ultra drops possible.',
+   odds:{mythic:0.9499, divine:0.0400, ultra1:0.0099},
+   items:['m001','m002','d001','ur01']},
 ];
 
-function getItem(id){return ITEMS.find(i=>i.id===id);}
+function getCosmeticItem(id){ return COSMETIC_ITEMS.find(i=>i.id===id); }
+function getItem(id){
+  return COSMETIC_ITEMS.find(i=>i.id===id) || ITEMS.find(i=>i.id===id);
+}
+function getCrate(id){ return CRATES.find(c=>c.id===id)||COSMETIC_CRATES.find(c=>c.id===id); }
 function getRarity(k){return RARITIES[k]||RARITIES.common;}
 function fmtNum(n){
   if(n>=1e12)return(n/1e12).toFixed(1)+'T';
@@ -1063,14 +1220,9 @@ function fmtNum(n){
   return String(Math.floor(n));
 }
 function rarityOdds(k, crateOdds){
-  // If called with crate-specific odds, use those
   const pct = crateOdds ? crateOdds[k] : null;
-  if(pct == null) {
-    const r=RARITIES[k]; if(!r)return'';
-    if(r.display)return r.display;
-    return'—';
-  }
-  if(RARITIES[k]?.display) return RARITIES[k].display; // ultra tiers always show display
+  if(pct==null){const r=RARITIES[k];if(!r)return'';if(r.display)return r.display;return'—';}
+  if(RARITIES[k]?.display)return RARITIES[k].display;
   const p=pct*100;
   if(p>=1)return p.toFixed(0)+'%';
   if(p>=.1)return p.toFixed(1)+'%';
@@ -1079,176 +1231,99 @@ function rarityOdds(k, crateOdds){
 }
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 
-// ============================================================
-// BANNED WORDS
-// ============================================================
-const BAD_WORDS = [
-  // Profanity
-  'fuck','shit','bitch','bastard','damn','hell','ass','pussy','dick','cock','slut','whore',
-  // Racial / ethnic / religious slurs
-  'nigger','nigga','chink','spic','kike','gook','towelhead','fag','faggot','homo','niger',
-  // Sexual / NSFW
-  'sex','porn','hentai','cum','tits','boobs','dildo','anal','gangbang','boob',
-  // Drugs / alcohol / dangerous stuff
-  'weed','marijuana','meth','cocaine','heroin','ecstasy','lsd','vape','alcohol','drunk',
-  // Hacking / cheating / exploits
-  'hack','cheat','exploit','dup','glitch','script','mod','inject',
-  // Personal info / threats
-  'kill','die','suicide','address','phone','email','ip','ssn','live',
-  //other
-  'suck', 'stink'
-];
-
-// ============================================================
-// CHAT FILTER FUNCTION (working version)
-// ============================================================
-
-const LEET_MAP = {
-  '1':'i','!':'i','|':'i',
-  '3':'e',
-  '4':'a','@':'a',
-  '5':'s','$':'s',
-  '7':'t',
-  '0':'o',
-  '9':'g'
+const CATEGORY_LABELS = {
+  hat:'🎩 Hats', eye_color:'👁️ Eye Colors', particle:'✨ Particles',
+  background:'🌄 Backgrounds', color:'🎨 Colors', seasonal:'🎃 Seasonal',
+  gear:'⚔️ Gear Items'
+};
+const CATEGORY_COLORS = {
+  hat:'#f59e0b', eye_color:'#3b82f6', particle:'#a855f7',
+  background:'#22c55e', color:'#ef4444', seasonal:'#ff6b35', gear:'#9ca3af'
 };
 
-// Normalize text: lowercase, replace leet, turn non-letters into space
+// ============================================================
+// BANNED WORDS / CHAT FILTER
+// ============================================================
+const BAD_WORDS = ['fuck','shit','bitch','bastard','damn','hell','ass','pussy','dick','cock','slut','whore',
+  'nigger','nigga','chink','spic','kike','gook','towelhead','fag','faggot','homo','niger',
+  'sex','porn','hentai','cum','tits','boobs','dildo','anal','gangbang','boob',
+  'weed','marijuana','meth','cocaine','heroin','ecstasy','lsd','vape','alcohol','drunk',
+  'hack','cheat','exploit','dup','glitch','script','mod','inject',
+  'kill','die','suicide','address','phone','email','ip','ssn','live','suck','stink'];
+
+const LEET_MAP = {'1':'i','!':'i','|':'i','3':'e','4':'a','@':'a','5':'s','$':'s','7':'t','0':'o','9':'g'};
 function normalize(text){
-  text = text.toLowerCase();
-  let result = '';
-  for(let c of text){
-    if(/[a-z]/.test(c)) result += c;
-    else if(LEET_MAP[c]) result += LEET_MAP[c];
-    else result += ' '; // replace all other symbols with space
-  }
+  text=text.toLowerCase(); let result='';
+  for(let c of text){if(/[a-z]/.test(c))result+=c;else if(LEET_MAP[c])result+=LEET_MAP[c];else result+=' ';}
   return result;
 }
-
-// Build regex for a word allowing spaces/symbols/repeated letters
 function buildFlexibleRegex(word){
-  word = word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  return new RegExp(word.split('').map(c => `${c}+[^a-z]*`).join(''), 'gi');
+  word=word.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&');
+  return new RegExp(word.split('').map(c=>`${c}+[^a-z]*`).join(''),'gi');
 }
-
-// Filter chat
 function filterChat(text){
-  let normalizedText = normalize(text);
-  let filteredText = text.split('');
-
-  BAD_WORDS.forEach(word => {
-    const regex = buildFlexibleRegex(word);
-    let match;
-    while((match = regex.exec(normalizedText)) !== null){
-      // replace matched portion in original text with ***
-      for(let i = match.index; i < match.index + match[0].length; i++){
-        if(filteredText[i] !== undefined) filteredText[i] = '';
-      }
-      filteredText[match.index] = '***';
+  let normalizedText=normalize(text); let filteredText=text.split('');
+  BAD_WORDS.forEach(word=>{
+    const regex=buildFlexibleRegex(word); let match;
+    while((match=regex.exec(normalizedText))!==null){
+      for(let i=match.index;i<match.index+match[0].length;i++){if(filteredText[i]!==undefined)filteredText[i]='';}
+      filteredText[match.index]='***';
     }
   });
-
   return filteredText.join('');
 }
-  
-// Usage in sendChat()
-async function sendChat(){
-  const input=document.getElementById('chat-input');
-  let text = input.value.slice(0,200); // allow spaces
-  if(!text||!S.user||!S.profile) return;
-  text = filterChat(text); // filter bad words
-  input.value='';
-  try{
-    await rtdb.ref('chat').push({
-      username: S.profile.username,
-      text,
-      isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP
-    });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
-}
-  
+
 // ============================================================
 // FIREBASE INIT
 // ============================================================
 let db, auth, rtdb;
-
 function initFirebase(cfg){
-  if(firebase.apps.length) firebase.apps.forEach(a=>a.delete());
+  if(firebase.apps.length)firebase.apps.forEach(a=>a.delete());
   firebase.initializeApp(cfg);
-  auth  = firebase.auth();
-  db    = firebase.firestore();
-  rtdb  = firebase.database();
+  auth=firebase.auth(); db=firebase.firestore(); rtdb=firebase.database();
 }
 
 // ============================================================
 // STATE
 // ============================================================
 const S = {
-  user: null,
-  profile: null,
-  inventory: [],
-  selectedItems: new Set(),
-  currentCrate: null,
-  currentLbTab: 'richest',
-  lbData: {},
-  tradeRoomId: null,
-  tradeMyItems: [],
-  tradeTheirItems: [],
-  tradeMyAccepted: false,
-  tradeTheirAccepted: false,
-  tradeCountdownActive: false,
-  tradePartnerUid: null,
-  onlinePlayers: [],
-  presenceRef: null,
-  presenceHeartbeat: null,
-  tradeMyCoins: 0,
-  tradeTheirCoins: 0,
-  tradeSortBy: 'rarity',
-  luckBoost: null,      // 'minor' | 'huge' | null
-  luckBoostUsed: false,
-  autoSell: false,
-  autoSellMode: 'rarity',
-  autoSellRarity: 'common',
-  autoSellPrice: 0,
-  lastOpenedInvItem: null,
-  // FIX: track whether realtime listeners have been set up to avoid duplicates
-  listenersInitialized: false,
+  user:null, profile:null, inventory:[], cosmeticInventory:[],
+  equipped:{hat:null, eye_color:null, particle:null, background:null, color:null, seasonal:null},
+  selectedItems:new Set(),
+  currentCrate:null, currentLbTab:'richest', lbData:{},
+  tradeRoomId:null, tradeMyItems:[], tradeTheirItems:[],
+  tradeMyAccepted:false, tradeTheirAccepted:false, tradeCountdownActive:false,
+  tradePartnerUid:null, onlinePlayers:[], presenceRef:null, presenceHeartbeat:null,
+  tradeMyCoins:0, tradeTheirCoins:0, tradeSortBy:'rarity',
+  luckBoost:null, luckBoostUsed:false,
+  autoSell:false, autoSellMode:'rarity', autoSellRarity:'common', autoSellPrice:0,
+  lastOpenedInvItem:null, listenersInitialized:false,
+  currentCrateTab:'all', currentInvTab:'all',
 };
 
 // ============================================================
 // UTILITY
 // ============================================================
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
-}
-function hideLoadingOverlay(){
-  const ol = document.getElementById('loading-overlay');
-  ol.style.opacity='0';
-  ol.style.pointerEvents='none';
-  ol.style.display='none';
-}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id)?.classList.add('active');}
+function hideLoadingOverlay(){const ol=document.getElementById('loading-overlay');ol.style.opacity='0';ol.style.pointerEvents='none';ol.style.display='none';}
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
 }
 function toast(msg,type='',duration=3000){
-  const el=document.createElement('div');
-  el.className='toast '+(type||'');
-  el.textContent=msg;
+  const el=document.createElement('div'); el.className='toast '+(type||''); el.textContent=msg;
   document.getElementById('toast-container').appendChild(el);
   setTimeout(()=>{el.style.animation='toast-out .3s ease forwards';setTimeout(()=>el.remove(),300);},duration);
 }
 function showGlobalBanner(msg){
-  const b=document.getElementById('global-banner');
-  b.textContent=msg; b.classList.remove('hidden');
+  const b=document.getElementById('global-banner'); b.textContent=msg; b.classList.remove('hidden');
   setTimeout(()=>b.classList.add('hidden'),8000);
 }
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ============================================================
-// AUTH TABS
+// AUTH
 // ============================================================
 document.querySelectorAll('.auth-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
@@ -1258,15 +1333,10 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
     document.getElementById('register-form').classList.toggle('hidden',tab.dataset.tab!=='register');
   });
 });
-
-// Enter key on login fields
 ['login-email','login-password'].forEach(id=>{
-  document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('login-btn').click(); });
+  document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-btn').click();});
 });
 
-// ============================================================
-// LOGIN — FIX: no polling loop, just sign in and let observer handle it
-// ============================================================
 document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-password').value;
@@ -1275,18 +1345,10 @@ document.getElementById('login-btn').addEventListener('click',async()=>{
   err.textContent='';
   if(!email||!pass){err.textContent='Please enter email and password.';return;}
   btn.disabled=true; btn.textContent='LOADING...';
-  try{
-    await auth.signInWithEmailAndPassword(email,pass);
-    // onAuthStateChanged handles the rest
-  }catch(e){
-    err.textContent=friendlyAuthError(e.code)||'Login failed. Check your details.';
-    btn.disabled=false; btn.textContent='ENTER THE VAULT';
-  }
+  try{await auth.signInWithEmailAndPassword(email,pass);}
+  catch(e){err.textContent=friendlyAuthError(e.code)||'Login failed.';btn.disabled=false;btn.textContent='ENTER THE VAULT';}
 });
 
-// ============================================================
-// REGISTER
-// ============================================================
 document.getElementById('register-btn').addEventListener('click',async()=>{
   const username=document.getElementById('reg-username').value.trim();
   const email=document.getElementById('reg-email').value.trim();
@@ -1299,32 +1361,21 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
   if(!pass||pass.length<6){err.textContent='Password must be at least 6 characters.';return;}
   btn.disabled=true; btn.textContent='CREATING...';
   try{
-    // Check username first, then create auth
     const snap=await db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get();
-    if(!snap.empty){
-      err.textContent='Username already taken.';
-      btn.disabled=false; btn.textContent='CREATE ACCOUNT';
-      return;
-    }
+    if(!snap.empty){err.textContent='Username already taken.';btn.disabled=false;btn.textContent='CREATE ACCOUNT';return;}
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    // Write profile — onAuthStateChanged will pick it up
     await db.collection('users').doc(cred.user.uid).set({
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
-      coins:400, inventory:[], tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
+      coins:400, inventory:[], cosmeticInventory:[], equipped:{},
+      tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
       totalValue:0, rarestItem:null, rarestTier:0,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     });
-  }catch(e){
-    err.textContent=friendlyAuthError(e.code)||e.message;
-    btn.disabled=false; btn.textContent='CREATE ACCOUNT';
-  }
+  }catch(e){err.textContent=friendlyAuthError(e.code)||e.message;btn.disabled=false;btn.textContent='CREATE ACCOUNT';}
 });
 
 document.getElementById('logout-btn').addEventListener('click',async()=>{
-  await leavePresence();
-  S.listenersInitialized=false;
-  await auth.signOut();
-  toast('Logged out.');
+  await leavePresence(); S.listenersInitialized=false; await auth.signOut(); toast('Logged out.');
 });
 
 function friendlyAuthError(code){
@@ -1332,68 +1383,51 @@ function friendlyAuthError(code){
     'auth/user-not-found':'No account with that email.',
     'auth/wrong-password':'Wrong password.',
     'auth/invalid-credential':'Wrong email or password.',
-    'auth/invalid-login-credentials':'Wrong email or password.',
-    'auth/email-already-in-use':'That email already has an account. Please log in.',
+    'auth/email-already-in-use':'That email already has an account.',
     'auth/invalid-email':'Invalid email address.',
     'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/too-many-requests':'Too many attempts. Try again in a minute.',
-    'auth/network-request-failed':'Network error. Check your connection.',
-    'auth/user-disabled':'This account has been disabled.',
+    'auth/too-many-requests':'Too many attempts. Try again later.',
   };
   return map[code]||'';
 }
 
 // ============================================================
 // AUTH STATE OBSERVER
-// FIX: Show game screen immediately, load profile in background
-// FIX: Only set up realtime listeners once per session
 // ============================================================
 function startAuthObserver(){
   auth.onAuthStateChanged(async user=>{
     if(user){
       S.user=user;
-      // Show game immediately — don't wait for profile
-      showScreen('game-screen');
-      hideLoadingOverlay();
-      loadCratesPage();
-      showPage('crates');
-      // Reset auth button states
+      showScreen('game-screen'); hideLoadingOverlay();
+      loadCratesPage(); showPage('crates');
       const lb=document.getElementById('login-btn');
       const rb=document.getElementById('register-btn');
       if(lb){lb.disabled=false;lb.textContent='ENTER THE VAULT';}
       if(rb){rb.disabled=false;rb.textContent='CREATE ACCOUNT';}
-      // Load profile — retry a few times for new registrations
       let doc=null;
       for(let i=0;i<5;i++){
-        try{ doc=await db.collection('users').doc(user.uid).get(); }catch(e){ break; }
-        if(doc&&doc.exists) break;
+        try{doc=await db.collection('users').doc(user.uid).get();}catch(e){break;}
+        if(doc&&doc.exists)break;
         await new Promise(r=>setTimeout(r,500));
       }
-      if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
+      if(!doc||!doc.exists){toast('Profile not found.','error');await auth.signOut();return;}
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
+      S.cosmeticInventory=[...S.profile.cosmeticInventory||[]];
+      S.equipped={...{hat:null,eye_color:null,particle:null,background:null,color:null,seasonal:null},...(S.profile.equipped||{})};
       document.getElementById('nav-username').textContent=S.profile.username;
-      // Show admin button for admin user
-      if(S.profile.username==='Dreamcrusher'){
-        document.getElementById('admin-refresh-btn').classList.remove('hidden');
-      }
+      if(S.profile.username==='Dreamcrusher')document.getElementById('admin-refresh-btn').classList.remove('hidden');
       updateCoinDisplay(S.profile.coins);
-      // FIX: Only initialize realtime listeners once to avoid duplicate handlers
       if(!S.listenersInitialized){
         S.listenersInitialized=true;
-        setupPresence();
-        listenToPresence();
-        listenToChat();
-        listenToTradeRequests();
-        setupTradeInviteListener();
+        setupPresence(); listenToPresence(); listenToChat();
+        listenToTradeRequests(); setupTradeInviteListener();
       }
-      checkLuckMilestone(null);
-      updateLuckBar(null);
-    } else {
+      checkLuckMilestone(null); updateLuckBar(null);
+      renderWardrobeSlots(); updatePlayerPreview();
+    }else{
       S.user=null; S.profile=null; S.listenersInitialized=false;
-      hideLoadingOverlay();
-      showScreen('auth-screen');
-      spawnParticles();
+      hideLoadingOverlay(); showScreen('auth-screen'); spawnParticles();
     }
   });
 }
@@ -1404,33 +1438,19 @@ function updateCoinDisplay(coins){
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
 }
 
-// Daily login bonus — scales with login streak
-// Luck milestone: every 10 crates = minor boost, every 100 = huge boost
-// Luck milestones based on COINS SPENT (not crates opened)
-// Minor boost every 1,000 coins spent; Huge boost every 10,000 coins spent
-// Opening a Starter (50c) adds 50 luck; Omega (180k) adds 180,000 luck
-// Luck thresholds are per-crate: minor = 10x price, huge = 100x price
-// This prevents cheap crate grinding from boosting expensive crate rolls.
-
-function getLuckThresholds(crate){
-  return { minor: crate.price*10, huge: crate.price*100 };
-}
+function getLuckThresholds(crate){return{minor:crate.price*10,huge:crate.price*100};}
 
 function checkLuckMilestone(crate){
-  if(!S.profile||!crate) return;
+  if(!S.profile||!crate)return;
   const perCrate=S.profile.luckCoinsPerCrate||{};
   const total=perCrate[crate.id]||0;
   const prev=total-crate.price;
-  const {minor,huge}=getLuckThresholds(crate);
+  const{minor,huge}=getLuckThresholds(crate);
   if(Math.floor(total/huge)>Math.floor(prev/huge)){
-    S.luckBoost='huge';
-    S.luckBoostCrate=crate.id;
-    S.luckBoostUsed=false;
+    S.luckBoost='huge'; S.luckBoostCrate=crate.id; S.luckBoostUsed=false;
     toast('🌟 HUGE LUCK BOOST on '+crate.name+'! Next open has massively improved odds!','gold',6000);
-  } else if(Math.floor(total/minor)>Math.floor(prev/minor)){
-    S.luckBoost='minor';
-    S.luckBoostCrate=crate.id;
-    S.luckBoostUsed=false;
+  }else if(Math.floor(total/minor)>Math.floor(prev/minor)){
+    S.luckBoost='minor'; S.luckBoostCrate=crate.id; S.luckBoostUsed=false;
     toast('✨ Luck Boost on '+crate.name+'! Next open has better odds!','gold',4000);
   }
   updateLuckBar(crate);
@@ -1440,62 +1460,29 @@ function updateLuckBar(crate){
   const fill=document.getElementById('luck-bar-fill');
   const count=document.getElementById('luck-bar-count');
   const status=document.getElementById('luck-bar-status');
-  if(!fill||!count||!status) return;
-
-  if(!crate){
-    fill.style.width='0%';
-    fill.className='luck-bar-fill';
-    count.textContent='';
-    status.textContent='Open a crate to build luck';
-    status.style.color='var(--text-3)';
-    return;
-  }
-
-  const {minor,huge}=getLuckThresholds(crate);
+  if(!fill||!count||!status)return;
+  if(!crate){fill.style.width='0%';fill.className='luck-bar-fill';count.textContent='';status.textContent='Open a crate to build luck';status.style.color='var(--text-3)';return;}
+  const{minor,huge}=getLuckThresholds(crate);
   const perCrate=S.profile?.luckCoinsPerCrate||{};
   const total=perCrate[crate.id]||0;
-  const boostActive=S.luckBoost && S.luckBoostCrate===crate.id;
-
-  if(boostActive && S.luckBoost==='huge'){
-    fill.style.width='100%';
-    fill.className='luck-bar-fill boost-huge';
-    count.textContent='🌟 HUGE BOOST READY';
-    status.textContent='🌟 HUGE BOOST READY — open now!';
-    status.style.color='#ff00ff';
-    return;
-  }
-  if(boostActive && S.luckBoost==='minor'){
-    fill.style.width='100%';
-    fill.className='luck-bar-fill boost-minor';
-    count.textContent='✨ BOOST READY';
-    status.textContent='✨ LUCK BOOST READY — open now!';
-    status.style.color='#f59e0b';
-    return;
-  }
-
+  const boostActive=S.luckBoost&&S.luckBoostCrate===crate.id;
+  if(boostActive&&S.luckBoost==='huge'){fill.style.width='100%';fill.className='luck-bar-fill boost-huge';count.textContent='🌟 HUGE BOOST READY';status.textContent='🌟 HUGE BOOST READY — open now!';status.style.color='#ff00ff';return;}
+  if(boostActive&&S.luckBoost==='minor'){fill.style.width='100%';fill.className='luck-bar-fill boost-minor';count.textContent='✨ BOOST READY';status.textContent='✨ LUCK BOOST READY — open now!';status.style.color='#f59e0b';return;}
   const minorProgress=total%minor;
   const hugeProgress=total%huge;
   const minorPct=minorProgress/minor*100;
   const hugeRatio=hugeProgress/huge;
-
   fill.style.width=minorPct+'%';
   fill.className='luck-bar-fill';
   fill.style.background='linear-gradient(90deg,#3b82f6,'+(hugeRatio>0.7?'#f59e0b':'#a855f7')+')';
-
   count.textContent='🪙 '+fmtNum(minorProgress)+' / '+fmtNum(minor)+'  ('+fmtNum(hugeProgress)+' / '+fmtNum(huge)+' for 🌟)';
   const toMinor=minor-minorProgress;
-  const toHuge=huge-hugeProgress;
-  if(hugeRatio>=0.9){
-    status.textContent='🌟 '+fmtNum(toHuge)+' coins to HUGE BOOST!';
-    status.style.color='#f59e0b';
-  } else {
-    status.textContent='✨ '+fmtNum(toMinor)+' coins to next boost';
-    status.style.color='var(--text-3)';
-  }
+  if(hugeRatio>=0.9){status.textContent='🌟 '+fmtNum(huge-hugeProgress)+' coins to HUGE BOOST!';status.style.color='#f59e0b';}
+  else{status.textContent='✨ '+fmtNum(toMinor)+' coins to next boost';status.style.color='var(--text-3)';}
 }
 
 // ============================================================
-// REALTIME PRESENCE
+// PRESENCE
 // ============================================================
 function setupPresence(){
   if(!S.user||!S.profile)return;
@@ -1503,53 +1490,36 @@ function setupPresence(){
     const uid=S.user.uid;
     const ref=rtdb.ref('presence/'+uid);
     S.presenceRef=ref;
-
-    // Re-register presence every time Firebase reports (re)connection
-    rtdb.ref('.info/connected').on('value', snap=>{
-      if(!snap.val()) return; // disconnected — onDisconnect handles cleanup
-      const data={uid, username:S.profile.username, online:true, ts:firebase.database.ServerValue.TIMESTAMP, tradeRoomId:S.tradeRoomId||null};
-      ref.set(data);
-      ref.onDisconnect().remove();
+    rtdb.ref('.info/connected').on('value',snap=>{
+      if(!snap.val())return;
+      const data={uid,username:S.profile.username,online:true,ts:firebase.database.ServerValue.TIMESTAMP,tradeRoomId:S.tradeRoomId||null};
+      ref.set(data); ref.onDisconnect().remove();
     });
-
-    // Heartbeat: rewrite presence every 30s to prove we're alive
-    if(S.presenceHeartbeat) clearInterval(S.presenceHeartbeat);
-    S.presenceHeartbeat = setInterval(()=>{
-      if(!S.user||!S.presenceRef) return;
-      S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP});
-    }, 30000);
-
-  }catch(e){ console.warn('Presence unavailable:',e.message); }
+    if(S.presenceHeartbeat)clearInterval(S.presenceHeartbeat);
+    S.presenceHeartbeat=setInterval(()=>{if(!S.user||!S.presenceRef)return;S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP});},30000);
+  }catch(e){console.warn('Presence unavailable:',e.message);}
 }
-
-function updatePresenceTradeStatus(roomId){
-  if(!S.presenceRef) return;
-  S.presenceRef.update({tradeRoomId: roomId||null});
-}
-
+function updatePresenceTradeStatus(roomId){if(!S.presenceRef)return;S.presenceRef.update({tradeRoomId:roomId||null});}
 async function leavePresence(){
   try{
-    if(S.presenceHeartbeat){ clearInterval(S.presenceHeartbeat); S.presenceHeartbeat=null; }
-    if(S.presenceRef){ await S.presenceRef.remove(); S.presenceRef=null; }
-    rtdb.ref('.info/connected').off(); // detach reconnect listener
+    if(S.presenceHeartbeat){clearInterval(S.presenceHeartbeat);S.presenceHeartbeat=null;}
+    if(S.presenceRef){await S.presenceRef.remove();S.presenceRef=null;}
+    rtdb.ref('.info/connected').off();
   }catch(e){}
 }
-
 function listenToPresence(){
   try{
     rtdb.ref('presence').on('value',snap=>{
       const data=snap.val()||{};
-      // Filter out stale entries (no heartbeat in 90s)
       const now=Date.now();
       S.onlinePlayers=Object.values(data).filter(p=>{
-        if(p.uid===S.user?.uid) return false;
-        if(p.ts && (now - p.ts) > 90000) return false; // stale
+        if(p.uid===S.user?.uid)return false;
+        if(p.ts&&(now-p.ts)>90000)return false;
         return true;
       });
-      // Always update the trade page list, even if it's not visible right now
       renderOnlinePlayers();
     });
-  }catch(e){ console.warn('Presence listen unavailable:',e.message); }
+  }catch(e){console.warn('Presence listen unavailable:',e.message);}
 }
 
 // ============================================================
@@ -1559,63 +1529,79 @@ function listenToChat(){
   try{
     rtdb.ref('chat').limitToLast(50).on('child_added',snap=>{
       const msg=snap.val();
-      if(msg) appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
+      if(msg)appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
     });
-  }catch(e){ console.warn('Chat unavailable:',e.message); }
+  }catch(e){console.warn('Chat unavailable:',e.message);}
 }
-
 document.getElementById('chat-send').addEventListener('click',sendChat);
-document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
-
+document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
 async function sendChat(){
   const input=document.getElementById('chat-input');
-  const rawText = input.value.slice(0,200);
-  if(!rawText || !S.user || !S.profile) return;
-
-  const text = filterChat(rawText);
-  if(!text||!S.user||!S.profile)return;
+  const rawText=input.value.slice(0,200);
+  if(!rawText||!S.user||!S.profile)return;
+  const text=filterChat(rawText);
   input.value='';
-  try{
-    await rtdb.ref('chat').push({
-      username:S.profile.username, text, isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP,
-    });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
+  try{await rtdb.ref('chat').push({username:S.profile.username,text,isSystem:false,ts:firebase.database.ServerValue.TIMESTAMP});}
+  catch(e){appendChatMessage(S.profile.username,text,false,'');}
 }
-
 function appendChatMessage(username,text,isSystem=false,cls=''){
   const msgs=document.getElementById('chat-messages');
-  const el=document.createElement('div');
-  el.className='chat-msg';
+  const el=document.createElement('div'); el.className='chat-msg';
   const spanCls=cls||'system';
   el.innerHTML=isSystem
-    ? `<span class="chat-msg-${spanCls}">${escHtml(username)}:</span> ${escHtml(text)}`
-    : `<span class="chat-msg-user">${escHtml(username)}:</span> ${escHtml(text)}`;
-  msgs.appendChild(el);
-  msgs.scrollTop=msgs.scrollHeight;
-  while(msgs.children.length>100) msgs.removeChild(msgs.firstChild);
+    ?`<span class="chat-msg-${spanCls}">${escHtml(username)}:</span> ${escHtml(text)}`
+    :`<span class="chat-msg-user">${escHtml(username)}:</span> ${escHtml(text)}`;
+  msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
+  while(msgs.children.length>100)msgs.removeChild(msgs.firstChild);
 }
 
-function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
 // ============================================================
-// CRATES PAGE
+// CRATES PAGE — with category tabs
 // ============================================================
 function loadCratesPage(){
+  // Build tabs
+  const tabsEl=document.getElementById('crates-tabs');
+  tabsEl.innerHTML='';
+  const categories=['all','hat','eye_color','particle','background','color','seasonal','gear'];
+  categories.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='crates-tab'+(cat===S.currentCrateTab?' active':'');
+    btn.textContent=cat==='all'?'🎁 All Crates':cat==='gear'?'⚔️ Gear Items':(CATEGORY_LABELS[cat]||cat);
+    btn.addEventListener('click',()=>{
+      S.currentCrateTab=cat;
+      document.querySelectorAll('.crates-tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      renderCratesGrid();
+    });
+    tabsEl.appendChild(btn);
+  });
+  renderCratesGrid();
+}
+
+function renderCratesGrid(){
   const grid=document.getElementById('crates-grid');
   grid.innerHTML='';
-  CRATES.forEach(crate=>{
+  let allCrates=[
+    ...COSMETIC_CRATES.map(c=>({...c,isCosmetic:true})),
+    ...CRATES.map(c=>({...c,isCosmetic:false,category:'gear'}))
+  ];
+  if(S.currentCrateTab!=='all'){
+    allCrates=allCrates.filter(c=>c.category===S.currentCrateTab);
+  }
+  allCrates.forEach(crate=>{
+    const catColor=CATEGORY_COLORS[crate.category]||crate.color||'#4f8ef7';
     const c=document.createElement('div');
     c.className='crate-card';
-    c.style.setProperty('--cc',crate.color==='#ffffff'?'#aaa':crate.color);
-    c.style.setProperty('--cg',(crate.color==='#ffffff'?'#aaaaaa':crate.color)+'33');
-    c.innerHTML=`<span class="crate-emoji">${crate.icon}</span>
+    c.style.setProperty('--cc',catColor);
+    c.style.setProperty('--cg',catColor+'33');
+    const catLabel=CATEGORY_LABELS[crate.category]||crate.category||'';
+    c.innerHTML=`<div class="crate-category-badge" style="color:${catColor}">${catLabel}</div>
+      <span class="crate-emoji">${crate.icon}</span>
       <div class="crate-name">${crate.name}</div>
       <div class="crate-desc">${crate.desc}</div>
       <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
     c.addEventListener('click',()=>{
-      // FIX: Guard — don't allow opening if profile not loaded yet
-      if(!S.profile){ toast('Still loading your profile, please wait...'); return; }
+      if(!S.profile){toast('Still loading your profile...');return;}
       openCratePage(crate);
     });
     grid.appendChild(c);
@@ -1641,9 +1627,11 @@ document.getElementById('back-from-opening').addEventListener('click',()=>showPa
 
 function buildCrateInfoPanel(crate){
   const panel=document.getElementById('crate-info-panel');
-  const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
+  const allItems=crate.items.map(id=>{
+    return COSMETIC_ITEMS.find(i=>i.id===id)||ITEMS.find(i=>i.id===id);
+  }).filter(Boolean);
   const grouped={};
-  crateItems.forEach(item=>{ if(!grouped[item.rarity])grouped[item.rarity]=[]; grouped[item.rarity].push(item); });
+  allItems.forEach(item=>{if(!grouped[item.rarity])grouped[item.rarity]=[];grouped[item.rarity].push(item);});
   const order=['ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
   panel.innerHTML=`
     <div style="flex:1">
@@ -1656,43 +1644,37 @@ function buildCrateInfoPanel(crate){
     </div>`;
   const itemsEl=document.getElementById('cip-items');
   const oddsEl=document.getElementById('cip-odds');
-  const shownRar=new Set();
   order.forEach(rar=>{
     if(!grouped[rar])return;
-    shownRar.add(rar);
     const r=getRarity(rar);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
     grouped[rar].forEach(item=>{
-      const pill=document.createElement('div');
-      pill.className='crate-item-pill';
+      const pill=document.createElement('div'); pill.className='crate-item-pill';
       pill.style.cssText=`border-color:${col}66;color:${col}`;
       pill.innerHTML=`${item.icon} <span style="color:var(--text-2)">${item.name}</span>`;
       itemsEl.appendChild(pill);
     });
   });
-  // Show odds for each rarity tier present in this crate's odds table
   order.filter(r=>crate.odds[r]!=null).forEach(rar=>{
     const r=getRarity(rar);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem';
     row.innerHTML=`<span style="color:${col};font-family:var(--font-d);font-size:.65rem;letter-spacing:.05em">${r.name}</span>
-      <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar, crate.odds)}</span>`;
+      <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar,crate.odds)}</span>`;
     oddsEl.appendChild(row);
   });
 }
 
-function buildSpinTrack(crate, winningItem, landIdx){
+function buildSpinTrack(crate,winningItem,landIdx){
   const track=document.getElementById('spin-track');
   track.innerHTML=''; track.style.transform='translateX(0)'; track.style.transition='none';
-  const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-  // Generate 60 items; place winning item exactly at landIdx
+  const pool=crate.items.map(id=>COSMETIC_ITEMS.find(i=>i.id===id)||ITEMS.find(i=>i.id===id)).filter(Boolean);
   for(let i=0;i<60;i++){
-    const item=(winningItem && i===landIdx) ? winningItem : pool[Math.floor(Math.random()*pool.length)];
+    const item=(winningItem&&i===landIdx)?winningItem:pool[Math.floor(Math.random()*pool.length)];
     const r=getRarity(item.rarity);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
-    const el=document.createElement('div');
-    el.className='spin-item';
+    const el=document.createElement('div'); el.className='spin-item';
     el.style.borderColor=col+'66';
     el.innerHTML=`<span>${item.icon}</span><div class="spin-item-name">${item.name}</div>`;
     track.appendChild(el);
@@ -1700,54 +1682,25 @@ function buildSpinTrack(crate, winningItem, landIdx){
 }
 
 function rollItem(crateId){
-  const crate=CRATES.find(c=>c.id===crateId);
-  if(!crate)return null;
-  const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-
-  // Apply luck boost by biasing odds toward higher rarities
+  const crate=getCrate(crateId); if(!crate)return null;
+  const pool=crate.items.map(id=>COSMETIC_ITEMS.find(i=>i.id===id)||ITEMS.find(i=>i.id===id)).filter(Boolean);
   const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
   let odds={...crate.odds};
-
-  if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate===crateId){
+  if(S.luckBoost&&!S.luckBoostUsed&&S.luckBoostCrate===crateId){
     const entries=Object.entries(odds);
     const maxTier=Math.max(...entries.map(([r])=>rarityTier[r]||0));
     const minTier=Math.min(...entries.map(([r])=>rarityTier[r]||0));
-
-    if(S.luckBoost==='minor'){
-      // Shift 30% weight from bottom half rarities to top half
-      entries.forEach(([r])=>{
-        const t=rarityTier[r]||0;
-        const mid=(maxTier+minTier)/2;
-        if(t<=mid) odds[r]*=0.5;   // halve lower rarities
-        else odds[r]*=1.5;          // boost higher rarities
-      });
-    } else if(S.luckBoost==='huge'){
-      // Massively shift — bottom rarities down to 10%, upper rarities up 4x
-      entries.forEach(([r])=>{
-        const t=rarityTier[r]||0;
-        const mid=(maxTier+minTier)/2;
-        if(t<=mid) odds[r]*=0.1;
-        else odds[r]*=4;
-      });
-    }
-    // Consume boost
-    S.luckBoost=null;
-    S.luckBoostUsed=true;
+    if(S.luckBoost==='minor'){entries.forEach(([r])=>{const t=rarityTier[r]||0;const mid=(maxTier+minTier)/2;if(t<=mid)odds[r]*=0.5;else odds[r]*=1.5;});}
+    else if(S.luckBoost==='huge'){entries.forEach(([r])=>{const t=rarityTier[r]||0;const mid=(maxTier+minTier)/2;if(t<=mid)odds[r]*=0.1;else odds[r]*=4;});}
+    S.luckBoost=null; S.luckBoostUsed=true;
   }
-
-  // Pick rarity
   const rarityEntries=Object.entries(odds);
   const total=rarityEntries.reduce((s,[,v])=>s+v,0);
   let rand=Math.random()*total;
   let chosenRarity=rarityEntries[rarityEntries.length-1][0];
-  for(const[rarity,weight] of rarityEntries){
-    rand-=weight;
-    if(rand<=0){ chosenRarity=rarity; break; }
-  }
-
-  // Pick random item of that rarity
+  for(const[rarity,weight]of rarityEntries){rand-=weight;if(rand<=0){chosenRarity=rarity;break;}}
   const matching=pool.filter(i=>i.rarity===chosenRarity);
-  if(matching.length) return matching[Math.floor(Math.random()*matching.length)];
+  if(matching.length)return matching[Math.floor(Math.random()*matching.length)];
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
@@ -1760,58 +1713,88 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   document.getElementById('result-panel').classList.add('hidden');
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
-  // Deduct coins immediately before spin starts
   S.profile.coins-=crate.price;
   updateCoinDisplay(S.profile.coins);
   await animateSpin(crate,item);
-  // Save to Firestore
+  const isCosmetic=!!item.type;
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
-  S.inventory.push(invItem);
+  if(isCosmetic){
+    S.cosmeticInventory.push(invItem);
+  } else {
+    S.inventory.push(invItem);
+  }
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
-  if(!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate={};
+  if(!S.profile.luckCoinsPerCrate)S.profile.luckCoinsPerCrate={};
   S.profile.luckCoinsPerCrate[crate.id]=(S.profile.luckCoinsPerCrate[crate.id]||0)+crate.price;
   checkLuckMilestone(crate);
   const r=getRarity(item.rarity);
   if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=item.id;S.profile.rarestTier=r.tier;}
-  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  S.profile.totalValue=[...S.inventory,...S.cosmeticInventory].reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+
+  // Auto-sell check (cosmetics can be sold too)
+  if(S.autoSell&&shouldAutoSell(item)){
+    const earned=Math.floor(item.value*.90);
+    toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
+    if(isCosmetic){
+      S.cosmeticInventory.pop();
+    } else {
+      S.inventory.pop();
+    }
+    S.profile.coins+=earned;
+    updateCoinDisplay(S.profile.coins);
+    try{
+      await db.collection('users').doc(S.user.uid).update({
+        coins:firebase.firestore.FieldValue.increment(earned-crate.price),
+        inventory:S.inventory, cosmeticInventory:S.cosmeticInventory,
+        cratesOpened:S.profile.cratesOpened,
+        [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(crate.price),
+        totalValue:S.profile.totalValue,
+      });
+    }catch(e){toast('Save error','error');}
+    btn.disabled=false; return;
+  }
+
   try{
     await db.collection('users').doc(S.user.uid).update({
       coins:firebase.firestore.FieldValue.increment(-crate.price),
-      inventory:S.inventory,
+      inventory:S.inventory, cosmeticInventory:S.cosmeticInventory,
       cratesOpened:S.profile.cratesOpened,
       [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(crate.price),
-      rarestItem:S.profile.rarestItem,
-      rarestTier:S.profile.rarestTier,
-      totalValue:S.profile.totalValue,
+      rarestItem:S.profile.rarestItem, rarestTier:S.profile.rarestTier, totalValue:S.profile.totalValue,
     });
-  }catch(e){ toast('Save error: '+e.message,'error'); }
-  showResult(item,r,invItem);
-  // Ultra rare announcement
+  }catch(e){toast('Save error: '+e.message,'error');}
+  S.lastOpenedInvItem={...invItem,isCosmetic};
+  showResult(item,r,invItem,isCosmetic);
   if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
     setTimeout(()=>showUltraOverlay(item),800);
-    const desc=r.display?`(${r.display})`:'';
-    const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name} ${desc}!`;
+    const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name}!`;
     showGlobalBanner(msg);
-    try{
-      await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',ts:firebase.database.ServerValue.TIMESTAMP});
-    }catch(e){}
+    try{await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',ts:firebase.database.ServerValue.TIMESTAMP});}
+    catch(e){}
   }
   btn.disabled=false;
 });
 
+function shouldAutoSell(item){
+  if(S.autoSellMode==='rarity'){
+    const itemTier=rarityTierOrder.indexOf(item.rarity);
+    const threshTier=rarityTierOrder.indexOf(S.autoSellRarity);
+    return itemTier!==-1&&threshTier!==-1&&itemTier<=threshTier;
+  }else if(S.autoSellMode==='price'){
+    return item.value<S.autoSellPrice;
+  }
+  return false;
+}
+
 function animateSpin(crate,winningItem){
   return new Promise(resolve=>{
-    const iW=108; // exactly matches .spin-item width
-    // Land somewhere in the middle-right of the track for a convincing spin
+    const iW=108;
     const landIdx=40+Math.floor(Math.random()*6);
     buildSpinTrack(crate,winningItem,landIdx);
     const track=document.getElementById('spin-track');
     const containerW=document.getElementById('spin-container').offsetWidth;
-    // Center of item at landIdx = landIdx*iW + iW/2
-    // We want that to align with the indicator at containerW/2
-    // So: translateX = containerW/2 - (landIdx*iW + iW/2)
-    const targetX = containerW/2 - (landIdx*iW + iW/2);
-    void track.offsetWidth; // Force reflow before transition
+    const targetX=containerW/2-(landIdx*iW+iW/2);
+    void track.offsetWidth;
     track.style.transition='transform 4s cubic-bezier(0.08,0,0.06,1)';
     track.style.transform=`translateX(${targetX}px)`;
     setTimeout(()=>{
@@ -1828,36 +1811,17 @@ function animateSpin(crate,winningItem){
   });
 }
 
-function showResult(item,r,invItem){
-  S.lastOpenedInvItem=invItem;
-
-  // Auto-sell check
-  if(S.autoSell){
-    let shouldSell=false;
-    if(S.autoSellMode==='rarity'){
-      const itemTier=rarityTierOrder.indexOf(item.rarity);
-      const threshTier=rarityTierOrder.indexOf(S.autoSellRarity);
-      shouldSell=itemTier!==-1&&threshTier!==-1&&itemTier<=threshTier;
-    } else if(S.autoSellMode==='price'){
-      shouldSell=item.value<S.autoSellPrice;
-    }
-    if(shouldSell){
-      const earned=Math.floor(item.value*.90);
-      toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
-      sellItems([invItem.uniqueId]);
-      return; // skip showing result panel
-    }
-  }
+function showResult(item,r,invItem,isCosmetic){
   const col=r.color==='#ffffff'?'#aaa':r.color;
   const panel=document.getElementById('result-panel');
   panel.style.setProperty('--rc',col);
   panel.style.setProperty('--rg',r.glow||col+'44');
   panel.className='result-panel'+(item.rarity==='divine'?' rarity-divine':'');
+  document.getElementById('result-cosmetic-type').textContent=isCosmetic?'✨ '+(CATEGORY_LABELS[item.type]||item.type).toUpperCase()+' COSMETIC':'';
   document.getElementById('result-icon').textContent=item.icon;
   document.getElementById('result-name').textContent=item.name;
   const rarEl=document.getElementById('result-rarity');
-  rarEl.textContent=r.name.toUpperCase();
-  rarEl.style.color=col; rarEl.style.borderColor=col+'88';
+  rarEl.textContent=r.name.toUpperCase(); rarEl.style.color=col; rarEl.style.borderColor=col+'88';
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
   panel.classList.remove('hidden');
 }
@@ -1868,9 +1832,9 @@ document.getElementById('btn-keep-item').addEventListener('click',()=>{
 });
 
 document.getElementById('btn-sell-result').addEventListener('click',async()=>{
-  const invItem=S.lastOpenedInvItem;
-  if(!invItem)return;
-  await sellItems([invItem.uniqueId]);
+  const invInfo=S.lastOpenedInvItem; if(!invInfo)return;
+  if(invInfo.isCosmetic){await sellCosmeticItems([invInfo.uniqueId]);}
+  else{await sellItems([invInfo.uniqueId]);}
   document.getElementById('result-panel').classList.add('hidden');
 });
 
@@ -1882,11 +1846,19 @@ document.getElementById('btn-open-again').addEventListener('click',()=>{
 // ============================================================
 // INVENTORY
 // ============================================================
+const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4'];
+
 document.getElementById('inv-search').addEventListener('input',renderInventory);
 document.getElementById('inv-sort').addEventListener('change',renderInventory);
 
-// ── AUTO-SELL UI ────────────────────────────────────────────────────────────
-const rarityTierOrder=['common','uncommon','rare','epic','legendary','mythic','divine','ultra1','ultra2','ultra3','ultra4'];
+document.querySelectorAll('.inv-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.inv-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    S.currentInvTab=tab.dataset.inv;
+    renderInventory();
+  });
+});
 
 document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   S.autoSell=e.target.checked;
@@ -1896,7 +1868,6 @@ document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   status.className=S.autoSell?'auto-sell-on':'auto-sell-off';
   config.style.display=S.autoSell?'flex':'none';
 });
-// Start with config hidden
 document.getElementById('auto-sell-config').style.display='none';
 
 document.querySelectorAll('input[name="auto-sell-mode"]').forEach(radio=>{
@@ -1915,36 +1886,43 @@ document.querySelectorAll('.rarity-chip').forEach(chip=>{
   });
 });
 
-document.getElementById('auto-sell-price-input').addEventListener('input',e=>{
-  S.autoSellPrice=parseInt(e.target.value)||0;
-});
+document.getElementById('auto-sell-price-input').addEventListener('input',e=>{S.autoSellPrice=parseInt(e.target.value)||0;});
 
 function renderInventory(){
   const grid=document.getElementById('inventory-grid');
   const search=document.getElementById('inv-search').value.toLowerCase();
   const sort=document.getElementById('inv-sort').value;
-  let items=[...S.inventory];
-  if(search) items=items.filter(inv=>{const it=getItem(inv.itemId);return it&&it.name.toLowerCase().includes(search);});
-  items.sort((a,b)=>{
-    const ia=getItem(a.itemId),ib=getItem(b.itemId); if(!ia||!ib)return 0;
-    if(sort==='rarity') return (getRarity(ib.rarity).tier||0)-(getRarity(ia.rarity).tier||0);
-    if(sort==='value')  return ib.value-ia.value;
-    if(sort==='name')   return ia.name.localeCompare(ib.name);
+
+  let allItems=[];
+  if(S.currentInvTab==='all'||S.currentInvTab==='items'){
+    S.inventory.forEach(inv=>{const it=getItem(inv.itemId);if(it)allItems.push({inv,item:it,isCosmetic:false});});
+  }
+  if(S.currentInvTab==='all'||S.currentInvTab==='cosmetics'){
+    S.cosmeticInventory.forEach(inv=>{const it=getItem(inv.itemId);if(it)allItems.push({inv,item:it,isCosmetic:true});});
+  }
+
+  if(search)allItems=allItems.filter(({item})=>item.name.toLowerCase().includes(search));
+  allItems.sort((a,b)=>{
+    const ia=a.item,ib=b.item;
+    if(sort==='rarity')return(getRarity(ib.rarity).tier||0)-(getRarity(ia.rarity).tier||0);
+    if(sort==='value')return ib.value-ia.value;
+    if(sort==='name')return ia.name.localeCompare(ib.name);
     return 0;
   });
+
   grid.innerHTML='';
-  if(!items.length){
+  if(!allItems.length){
     grid.innerHTML='<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">Your inventory is empty. Open some crates!</div>';
-  } else {
-    items.forEach(inv=>makeItemCard(inv,grid,true));
+  }else{
+    allItems.forEach(({inv,item,isCosmetic})=>makeItemCard(inv,item,grid,true,isCosmetic));
   }
-  const total=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-  document.getElementById('inv-count').textContent=S.inventory.length+' items';
+  const total=[...S.inventory,...S.cosmeticInventory].reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  document.getElementById('inv-count').textContent=(S.inventory.length+S.cosmeticInventory.length)+' items';
   document.getElementById('inv-total-value').textContent='Total: '+fmtNum(total)+' 🪙';
 }
 
-function makeItemCard(inv,container,selectable=false){
-  const item=getItem(inv.itemId); if(!item)return null;
+function makeItemCard(inv,item,container,selectable=false,isCosmetic=false){
+  if(!item)return null;
   const r=getRarity(item.rarity);
   const col=r.color==='#ffffff'?'#aaa':r.color;
   const card=document.createElement('div');
@@ -1952,15 +1930,24 @@ function makeItemCard(inv,container,selectable=false){
   card.style.setProperty('--ic',col+'aa');
   card.style.setProperty('--ig',r.glow||'#9ca3af33');
   card.dataset.uid=inv.uniqueId;
-  if(selectable&&S.selectedItems.has(inv.uniqueId)) card.classList.add('selected');
-  card.innerHTML=`<span class="item-icon">${item.icon}</span><div class="item-name">${item.name}</div><div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
+  // Check if equipped
+  if(isCosmetic&&item.type){
+    const equippedId=S.equipped[item.type];
+    if(equippedId===inv.uniqueId)card.classList.add('equipped-badge');
+  }
+  if(selectable&&S.selectedItems.has(inv.uniqueId))card.classList.add('selected');
+  const typeLabel=isCosmetic?(CATEGORY_LABELS[item.type]||item.type||''):'';
+  card.innerHTML=`<span class="item-icon">${item.icon}</span>
+    <div class="item-name">${item.name}</div>
+    ${isCosmetic?`<div class="item-type-badge">${typeLabel}</div>`:''}
+    <div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
   if(selectable){
     card.addEventListener('click',()=>{
       if(S.selectedItems.has(inv.uniqueId)){S.selectedItems.delete(inv.uniqueId);card.classList.remove('selected');}
       else{S.selectedItems.add(inv.uniqueId);card.classList.add('selected');}
     });
   }
-  card.addEventListener('mouseenter',e=>showTip(e,item,r));
+  card.addEventListener('mouseenter',e=>showTip(e,item,r,isCosmetic));
   card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
   card.addEventListener('mousemove',e=>{
     const tt=document.getElementById('item-tooltip');
@@ -1971,13 +1958,14 @@ function makeItemCard(inv,container,selectable=false){
   return card;
 }
 
-function showTip(e,item,r){
+function showTip(e,item,r,isCosmetic=false){
   const tt=document.getElementById('item-tooltip');
   const col=r.color==='#ffffff'?'#aaa':r.color;
   document.getElementById('tt-icon').textContent=item.icon;
   document.getElementById('tt-name').textContent=item.name;
   const rarEl=document.getElementById('tt-rarity');
   rarEl.textContent=r.name; rarEl.style.color=col;
+  document.getElementById('tt-type').textContent=isCosmetic?(CATEGORY_LABELS[item.type]||item.type||''):'';
   document.getElementById('tt-desc').textContent=item.desc||'';
   document.getElementById('tt-value').textContent='🪙 '+item.value.toLocaleString();
   tt.classList.remove('hidden');
@@ -1988,7 +1976,11 @@ function showTip(e,item,r){
 document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
   const ids=[...S.selectedItems];
   if(!ids.length){toast('Select items to sell first.');return;}
-  await sellItems(ids);
+  // Sort into gear vs cosmetic
+  const cosmeticIds=ids.filter(uid=>S.cosmeticInventory.some(i=>i.uniqueId===uid));
+  const gearIds=ids.filter(uid=>S.inventory.some(i=>i.uniqueId===uid));
+  if(gearIds.length)await sellItems(gearIds);
+  if(cosmeticIds.length)await sellCosmeticItems(cosmeticIds);
   S.selectedItems.clear();
 });
 
@@ -1998,31 +1990,178 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
-    if(item) earned+=Math.floor(item.value*.90);
+    if(item)earned+=Math.floor(item.value*.90);
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
-  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  S.profile.totalValue=[...S.inventory,...S.cosmeticInventory].reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      coins:firebase.firestore.FieldValue.increment(earned), inventory:S.inventory, totalValue:S.profile.totalValue,
+    });
+  }catch(e){toast('Save error','error');return;}
+  updateCoinDisplay(S.profile.coins);
+  toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
+  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
+}
+
+async function sellCosmeticItems(uniqueIds){
+  let earned=0;
+  for(const uid of uniqueIds){
+    const idx=S.cosmeticInventory.findIndex(i=>i.uniqueId===uid);
+    if(idx===-1)continue;
+    const item=getItem(S.cosmeticInventory[idx].itemId);
+    if(item)earned+=Math.floor(item.value*.90);
+    // Unequip if equipped
+    if(item&&item.type&&S.equipped[item.type]===uid){
+      S.equipped[item.type]=null;
+    }
+    S.cosmeticInventory.splice(idx,1);
+  }
+  S.profile.coins+=earned;
+  S.profile.totalValue=[...S.inventory,...S.cosmeticInventory].reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
   try{
     await db.collection('users').doc(S.user.uid).update({
       coins:firebase.firestore.FieldValue.increment(earned),
-      inventory:S.inventory,
-      totalValue:S.profile.totalValue,
+      cosmeticInventory:S.cosmeticInventory, equipped:S.equipped, totalValue:S.profile.totalValue,
     });
-  }catch(e){ toast('Save error','error'); return; }
+  }catch(e){toast('Save error','error');return;}
   updateCoinDisplay(S.profile.coins);
-  toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
-  if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
+  toast('Sold cosmetic for 🪙 '+fmtNum(earned)+'!','gold');
+  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
+  if(document.getElementById('page-wardrobe').classList.contains('active')){renderWardrobeSlots();updatePlayerPreview();renderCosmeticsGrid();}
+}
+
+// ============================================================
+// WARDROBE
+// ============================================================
+const EQUIP_SLOTS = [
+  {type:'hat',label:'HAT',emptyIcon:'🎩'},
+  {type:'eye_color',label:'EYES',emptyIcon:'👁️'},
+  {type:'particle',label:'TRAIL',emptyIcon:'✨'},
+  {type:'background',label:'BACKGROUND',emptyIcon:'🖼️'},
+  {type:'color',label:'BODY COLOR',emptyIcon:'🎨'},
+  {type:'seasonal',label:'SEASONAL',emptyIcon:'🎃'},
+];
+
+function renderWardrobeSlots(){
+  const slotsEl=document.getElementById('wardrobe-slots');
+  if(!slotsEl)return;
+  slotsEl.innerHTML='';
+  EQUIP_SLOTS.forEach(slot=>{
+    const equippedUid=S.equipped[slot.type];
+    const equippedInv=equippedUid?S.cosmeticInventory.find(i=>i.uniqueId===equippedUid):null;
+    const equippedItem=equippedInv?getCosmeticItem(equippedInv.itemId):null;
+    const div=document.createElement('div');
+    div.className='wardrobe-slot'+(equippedItem?' filled':'');
+    div.innerHTML=`<div class="wardrobe-slot-label">${slot.label}</div>
+      <span class="wardrobe-slot-icon">${equippedItem?equippedItem.icon:slot.emptyIcon}</span>
+      <div class="${equippedItem?'wardrobe-slot-name':'wardrobe-slot-empty'}">${equippedItem?equippedItem.name:'Empty'}</div>
+      ${equippedItem?`<button class="btn-unequip" data-type="${slot.type}">UNEQUIP</button>`:''}`;
+    if(equippedItem){
+      div.querySelector('.btn-unequip').addEventListener('click',e=>{e.stopPropagation();unequipCosmetic(slot.type);});
+    }
+    slotsEl.appendChild(div);
+  });
+}
+
+function renderCosmeticsGrid(){
+  const grid=document.getElementById('cosmetics-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  if(!S.cosmeticInventory.length){
+    grid.innerHTML='<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">No cosmetics yet. Open cosmetic crates!</div>';
+    return;
+  }
+  S.cosmeticInventory.forEach(inv=>{
+    const item=getCosmeticItem(inv.itemId); if(!item)return;
+    const r=getRarity(item.rarity);
+    const col=r.color==='#ffffff'?'#aaa':r.color;
+    const card=document.createElement('div');
+    card.className='item-card'+(item.rarity==='divine'?' rarity-divine':'');
+    card.style.setProperty('--ic',col+'aa');
+    card.style.setProperty('--ig',r.glow||'#9ca3af33');
+    const isEquipped=S.equipped[item.type]===inv.uniqueId;
+    if(isEquipped)card.classList.add('equipped-badge');
+    card.innerHTML=`<span class="item-icon">${item.icon}</span>
+      <div class="item-name">${item.name}</div>
+      <div class="item-type-badge">${CATEGORY_LABELS[item.type]||''}</div>`;
+    card.addEventListener('click',()=>equipCosmetic(inv,item));
+    card.addEventListener('mouseenter',e=>showTip(e,item,r,true));
+    card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
+    card.addEventListener('mousemove',e=>{
+      const tt=document.getElementById('item-tooltip');
+      tt.style.left=Math.min(e.clientX+12,window.innerWidth-240)+'px';
+      tt.style.top=Math.min(e.clientY+12,window.innerHeight-200)+'px';
+    });
+    grid.appendChild(card);
+  });
+}
+
+async function equipCosmetic(inv,item){
+  if(!item.type)return;
+  S.equipped[item.type]=inv.uniqueId;
+  try{await db.collection('users').doc(S.user.uid).update({equipped:S.equipped});}
+  catch(e){toast('Save error','error');return;}
+  toast('Equipped '+item.icon+' '+item.name+'!','success');
+  renderWardrobeSlots(); updatePlayerPreview(); renderCosmeticsGrid();
+}
+
+async function unequipCosmetic(type){
+  S.equipped[type]=null;
+  try{await db.collection('users').doc(S.user.uid).update({equipped:S.equipped});}
+  catch(e){toast('Save error','error');return;}
+  toast('Unequipped.','');
+  renderWardrobeSlots(); updatePlayerPreview(); renderCosmeticsGrid();
+}
+
+function updatePlayerPreview(){
+  // Hat
+  const hatUid=S.equipped['hat'];
+  const hatInv=hatUid?S.cosmeticInventory.find(i=>i.uniqueId===hatUid):null;
+  const hatItem=hatInv?getCosmeticItem(hatInv.itemId):null;
+  const hatEl=document.getElementById('preview-hat');
+  if(hatEl)hatEl.textContent=hatItem?hatItem.visual:'';
+
+  // Body color
+  const colorUid=S.equipped['color'];
+  const colorInv=colorUid?S.cosmeticInventory.find(i=>i.uniqueId===colorUid):null;
+  const colorItem=colorInv?getCosmeticItem(colorInv.itemId):null;
+  const bodyEl=document.getElementById('preview-body');
+  if(bodyEl){
+    if(colorItem&&colorItem.visual==='rainbow'){
+      bodyEl.style.background='linear-gradient(135deg,#ff0000,#ff7700,#ffff00,#00ff00,#0000ff,#8b00ff)';
+    }else if(colorItem){
+      bodyEl.style.background=colorItem.visual;
+    }else{
+      bodyEl.style.background='#ff69b4';
+    }
+  }
+
+  // Eye color
+  const eyeUid=S.equipped['eye_color'];
+  const eyeInv=eyeUid?S.cosmeticInventory.find(i=>i.uniqueId===eyeUid):null;
+  const eyeItem=eyeInv?getCosmeticItem(eyeInv.itemId):null;
+  const eyesEl=document.getElementById('preview-eyes');
+  if(eyesEl){
+    if(eyeItem&&eyeItem.eyeColor==='rainbow'){
+      eyesEl.textContent='🌈';
+    }else if(eyeItem){
+      eyesEl.innerHTML=`<span style="color:${eyeItem.eyeColor};font-size:.8rem">●●</span>`;
+    }else{
+      eyesEl.textContent='👀';
+    }
+  }
 }
 
 // ============================================================
 // LEADERBOARD
 // ============================================================
 async function loadLeaderboard(){
-  const list = document.getElementById('leaderboard-list');
+  const list=document.getElementById('leaderboard-list');
   list.innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
   try{
-    const [r1,r2,r3]=await Promise.all([
+    const[r1,r2,r3]=await Promise.all([
       db.collection('users').orderBy('coins','desc').limit(10).get(),
       db.collection('users').orderBy('cratesOpened','desc').limit(10).get(),
       db.collection('users').orderBy('totalValue','desc').limit(10).get(),
@@ -2035,33 +2174,31 @@ async function loadLeaderboard(){
     S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
     renderLeaderboard(S.currentLbTab||'richest');
   }catch(e){
-    list.innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard. Make sure Firestore indexes are created.</div>';
-    console.error('Leaderboard error:',e);
+    list.innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard.</div>';
   }
 }
 
 function renderLeaderboard(tab){
   S.currentLbTab=tab;
   const list=document.getElementById('leaderboard-list');
-  if(!list){ console.error('[CV] leaderboard-list not found!'); return; }
+  if(!list)return;
   const rows=S.lbData[tab]||[];
   list.innerHTML='';
   rows.forEach((p,i)=>{
-    const row=document.createElement('div');
-    row.className='lb-row';
+    const row=document.createElement('div'); row.className='lb-row';
     const rc=i===0?'lb-rank-1':i===1?'lb-rank-2':i===2?'lb-rank-3':'';
     const rl=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
     let val='';
-    if(tab==='richest')    val='🪙 '+fmtNum(p.coins||0);
-    if(tab==='mostCrates') val=(p.cratesOpened||0).toLocaleString()+' crates';
-    if(tab==='mostValue')  val='🪙 '+fmtNum(p.totalValue||0);
+    if(tab==='richest')val='🪙 '+fmtNum(p.coins||0);
+    if(tab==='mostCrates')val=(p.cratesOpened||0).toLocaleString()+' crates';
+    if(tab==='mostValue')val='🪙 '+fmtNum(p.totalValue||0);
     row.innerHTML=`<div class="lb-rank ${rc}">${rl}</div>
       <div class="lb-info"><div class="lb-username">${escHtml(p.username)}</div>
         <div class="lb-sub">Rarest: ${p.rarestItemIcon} ${escHtml(p.rarestItemName)}</div></div>
       <div class="lb-value">${val}</div>`;
     list.appendChild(row);
   });
-  if(!rows.length) list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">No data yet.</div>';
+  if(!rows.length)list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">No data yet.</div>';
 }
 
 document.querySelectorAll('.lb-tab').forEach(tab=>{
@@ -2077,19 +2214,12 @@ document.querySelectorAll('.lb-tab').forEach(tab=>{
 // ============================================================
 function renderTradeHistory(){
   const list=document.getElementById('history-list');
-  if(!S.profile){
-    list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">Sign in to see your trade history.</div>';
-    return;
-  }
+  if(!S.profile){list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">Sign in to see trade history.</div>';return;}
   const history=[...(S.profile.tradeHistory||[])].reverse();
   list.innerHTML='';
-  if(!history.length){
-    list.innerHTML='<div style="color:var(--text-3);font-style:italic">No trades yet.</div>';
-    return;
-  }
+  if(!history.length){list.innerHTML='<div style="color:var(--text-3);font-style:italic">No trades yet.</div>';return;}
   history.forEach(trade=>{
-    const row=document.createElement('div');
-    row.className='history-row';
+    const row=document.createElement('div'); row.className='history-row';
     const date=new Date(trade.timestamp).toLocaleString();
     const chips=(items)=>(items||[]).map(i=>{
       const r=getRarity(i.rarity);const col=r.color==='#ffffff'?'#aaa':r.color;
@@ -2113,11 +2243,9 @@ function listenToTradeRequests(){
   if(!S.user)return;
   const loginTime=Date.now();
   rtdb.ref('tradeRequests/'+S.user.uid).on('child_added',snap=>{
-    const req=snap.val();
-    if(!req)return;
+    const req=snap.val(); if(!req)return;
     snap.ref.remove();
-    // Ignore requests that were queued before we logged in
-    if(req.ts && req.ts < loginTime - 5000) return;
+    if(req.ts&&req.ts<loginTime-5000)return;
     showIncomingTradeModal(req.fromUid,req.fromUsername);
   });
 }
@@ -2125,78 +2253,58 @@ function listenToTradeRequests(){
 function renderOnlinePlayers(){
   const list=document.getElementById('online-players-list');
   list.innerHTML='';
-  // If YOU are already in a trade, show a notice instead of player list
-  if(S.tradeRoomId){
-    list.innerHTML='<div class="no-players" style="color:var(--gold)">⚔️ You are currently in a trade.</div>';
-    return;
-  }
+  if(S.tradeRoomId){list.innerHTML='<div class="no-players" style="color:var(--gold)">⚔️ You are currently in a trade.</div>';return;}
   if(!S.onlinePlayers.length){list.innerHTML='<div class="no-players">No other players online</div>';return;}
   S.onlinePlayers.forEach(p=>{
     const inTrade=!!p.tradeRoomId;
-    const chip=document.createElement('div');
-    chip.className='online-player-chip';
+    const chip=document.createElement('div'); chip.className='online-player-chip';
     chip.style.opacity=inTrade?'0.5':'1';
     chip.innerHTML=`<div class="online-dot"></div>
       <span class="online-player-name">${escHtml(p.username)}</span>
       ${inTrade
-        ? '<span style="font-size:.65rem;font-family:var(--font-d);color:var(--text-3);padding:4px 10px">IN TRADE</span>'
-        : `<button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`
-      }`;
-    if(!inTrade) chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
+        ?'<span style="font-size:.65rem;font-family:var(--font-d);color:var(--text-3);padding:4px 10px">IN TRADE</span>'
+        :`<button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`}`;
+    if(!inTrade)chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
     list.appendChild(chip);
   });
 }
 
 async function sendTradeRequest(toUid,toUsername){
   if(!S.user||!S.profile)return;
-  if(S.tradeRoomId){ toast('You are already in a trade!','error'); return; }
+  if(S.tradeRoomId){toast('You are already in a trade!','error');return;}
   try{
-    await rtdb.ref('tradeRequests/'+toUid).push({
-      fromUid:S.user.uid,fromUsername:S.profile.username,
-      ts:firebase.database.ServerValue.TIMESTAMP,
-    });
+    await rtdb.ref('tradeRequests/'+toUid).push({fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
     toast('Trade request sent to '+toUsername+'!');
-  }catch(e){ toast('Failed to send trade request','error'); }
+  }catch(e){toast('Failed to send trade request','error');}
 }
 
 function showIncomingTradeModal(fromUid,fromUsername){
-  if(S.tradeRoomId){ return; } // already in a trade — silently ignore
+  if(S.tradeRoomId)return;
   document.querySelectorAll('.incoming-trade-modal').forEach(e=>e.remove());
-  const modal=document.createElement('div');
-  modal.className='incoming-trade-modal';
+  const modal=document.createElement('div'); modal.className='incoming-trade-modal';
   modal.innerHTML=`<h4>🤝 TRADE REQUEST</h4><p><strong>${escHtml(fromUsername)}</strong> wants to trade!</p>
     <div class="incoming-trade-btns">
       <button class="btn-atr">ACCEPT</button>
       <button class="btn-dtr">DECLINE</button>
     </div>`;
   document.body.appendChild(modal);
-  modal.querySelector('.btn-atr').addEventListener('click',()=>{ modal.remove(); createTradeRoom(fromUid,fromUsername); });
-  modal.querySelector('.btn-dtr').addEventListener('click',()=>{ modal.remove(); toast('Trade declined.'); });
-  setTimeout(()=>{ if(document.body.contains(modal)) modal.remove(); },30000);
+  modal.querySelector('.btn-atr').addEventListener('click',()=>{modal.remove();createTradeRoom(fromUid,fromUsername);});
+  modal.querySelector('.btn-dtr').addEventListener('click',()=>{modal.remove();toast('Trade declined.');});
+  setTimeout(()=>{if(document.body.contains(modal))modal.remove();},30000);
 }
 
 async function createTradeRoom(partnerUid,partnerUsername){
   const roomId=genUID();
-  S.tradeRoomId=roomId;
-  S.tradePartnerUid=partnerUid;
-  S.tradeMyItems=[];
-  S.tradeTheirItems=[];
-  S.tradeMyAccepted=false;
-  S.tradeTheirAccepted=false;
-  S.tradeCountdownActive=false;
-  S.tradeExecuting=false;
-  S.tradeMyCoins=0;
-  S.tradeTheirCoins=0;
-  const room={
-    roomId,
-    players:{
-      [S.user.uid]:{uid:S.user.uid,username:S.profile.username,items:[],accepted:false,finalAccepted:false},
-      [partnerUid]:{uid:partnerUid,username:partnerUsername,items:[],accepted:false,finalAccepted:false},
-    },
-    locked:false,createdAt:firebase.database.ServerValue.TIMESTAMP,
-  };
+  S.tradeRoomId=roomId; S.tradePartnerUid=partnerUid;
+  S.tradeMyItems=[]; S.tradeTheirItems=[];
+  S.tradeMyAccepted=false; S.tradeTheirAccepted=false;
+  S.tradeCountdownActive=false; S.tradeExecuting=false;
+  S.tradeMyCoins=0; S.tradeTheirCoins=0;
+  const room={roomId,players:{
+    [S.user.uid]:{uid:S.user.uid,username:S.profile.username,items:[],accepted:false,finalAccepted:false},
+    [partnerUid]:{uid:partnerUid,username:partnerUsername,items:[],accepted:false,finalAccepted:false},
+  },locked:false,createdAt:firebase.database.ServerValue.TIMESTAMP};
   await rtdb.ref('tradeRooms/'+roomId).set(room);
-  // Notify partner
   await rtdb.ref('tradeInvites/'+partnerUid).push({roomId,fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
   listenToTradeRoom(roomId);
   updatePresenceTradeStatus(roomId);
@@ -2208,22 +2316,16 @@ async function createTradeRoom(partnerUid,partnerUsername){
   toast('Trade room created!','success');
 }
 
-// FIX: partner receives invite via this listener (was incorrectly a standalone function called again from boot)
 function setupTradeInviteListener(){
   if(!S.user)return;
   rtdb.ref('tradeInvites/'+S.user.uid).on('child_added',snap=>{
     const inv=snap.val(); if(!inv)return;
     snap.ref.remove();
-    S.tradeRoomId=inv.roomId;
-    S.tradePartnerUid=inv.fromUid;
-    S.tradeMyItems=[];
-    S.tradeTheirItems=[];
-    S.tradeMyAccepted=false;
-    S.tradeTheirAccepted=false;
-    S.tradeCountdownActive=false;
-    S.tradeExecuting=false;
-    S.tradeMyCoins=0;
-    S.tradeTheirCoins=0;
+    S.tradeRoomId=inv.roomId; S.tradePartnerUid=inv.fromUid;
+    S.tradeMyItems=[]; S.tradeTheirItems=[];
+    S.tradeMyAccepted=false; S.tradeTheirAccepted=false;
+    S.tradeCountdownActive=false; S.tradeExecuting=false;
+    S.tradeMyCoins=0; S.tradeTheirCoins=0;
     listenToTradeRoom(inv.roomId);
     updatePresenceTradeStatus(inv.roomId);
     showPage('trade');
@@ -2237,50 +2339,31 @@ function setupTradeInviteListener(){
 
 let tradeRoomListener=null;
 function listenToTradeRoom(roomId){
-  if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
+  if(tradeRoomListener){tradeRoomListener();tradeRoomListener=null;}
   const ref=rtdb.ref('tradeRooms/'+roomId);
   const handler=snap=>{
     const room=snap.val();
-    if(!room){ resetTradeState(); return; }
+    if(!room){resetTradeState();return;}
     const players=room.players||{};
     const myData=players[S.user.uid];
     const theirData=players[S.tradePartnerUid];
-    if(myData){
-      S.tradeMyItems=myData.items||[];
-      S.tradeMyCoins=myData.coins||0;
-      S.tradeMyAccepted=myData.accepted||false;
-    }
+    if(myData){S.tradeMyItems=myData.items||[];S.tradeMyCoins=myData.coins||0;S.tradeMyAccepted=myData.accepted||false;}
     if(theirData){
-      S.tradeTheirItems=theirData.items||[];
-      S.tradeTheirCoins=theirData.coins||0;
-      S.tradeTheirAccepted=theirData.accepted||false;
+      S.tradeTheirItems=theirData.items||[];S.tradeTheirCoins=theirData.coins||0;S.tradeTheirAccepted=theirData.accepted||false;
       document.getElementById('trade-them-name').textContent=theirData.username||'Partner';
-      const theirCoinsEl=document.getElementById('trade-their-coins-display');
-      if(theirCoinsEl) theirCoinsEl.textContent=S.tradeTheirCoins>0?`🪙 ${fmtNum(S.tradeTheirCoins)} offered`:'';
+      const el=document.getElementById('trade-their-coins-display');
+      if(el)el.textContent=S.tradeTheirCoins>0?`🪙 ${fmtNum(S.tradeTheirCoins)} offered`:'';
     }
     renderTradeItems('trade-items-you',S.tradeMyItems,true);
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
     renderTradeInventoryMini();
     updateTradeStatus();
-    // Both accepted → lock room. Only run if not already locked/locking.
-    const allAccepted = Object.values(players).length>=2 && Object.values(players).every(p=>p.accepted);
-    if(allAccepted && !room.locked){
-      rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
-    }
-    // room.locked → show final modal exactly once per trade session
-    if(room.locked && !S.tradeCountdownActive){
-      S.tradeCountdownActive=true;
-      showFinalModal(S.tradeMyItems,S.tradeTheirItems);
-    }
-    // Both finalAccepted → execute trade (only the first player whose listener fires handles it)
-    const allFinal = Object.values(players).length>=2 && Object.values(players).every(p=>p.finalAccepted);
-    if(allFinal && !room.completed && !room.executing && !S.tradeExecuting){
-      S.tradeExecuting=true;
-      executeTrade();
-    }
-    if(room.completed){
-      handleTradeComplete(room);
-    }
+    const allAccepted=Object.values(players).length>=2&&Object.values(players).every(p=>p.accepted);
+    if(allAccepted&&!room.locked)rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
+    if(room.locked&&!S.tradeCountdownActive){S.tradeCountdownActive=true;showFinalModal(S.tradeMyItems,S.tradeTheirItems);}
+    const allFinal=Object.values(players).length>=2&&Object.values(players).every(p=>p.finalAccepted);
+    if(allFinal&&!room.completed&&!room.executing&&!S.tradeExecuting){S.tradeExecuting=true;executeTrade();}
+    if(room.completed)handleTradeComplete(room);
   };
   ref.on('value',handler);
   tradeRoomListener=()=>ref.off('value',handler);
@@ -2289,20 +2372,15 @@ function listenToTradeRoom(roomId){
 function renderTradeItems(containerId,items,isYours){
   const el=document.getElementById(containerId);
   el.innerHTML='';
-  if(!items||!items.length){
-    el.innerHTML=`<div class="trade-empty-hint">${isYours?'Click items below to add':'Waiting for partner...'}</div>`;
-    return;
-  }
+  if(!items||!items.length){el.innerHTML=`<div class="trade-empty-hint">${isYours?'Click items below to add':'Waiting for partner...'}</div>`;return;}
   items.forEach(item=>{
-    const r=getRarity(item.rarity);
-    const col=r.color==='#ffffff'?'#aaa':r.color;
-    const card=document.createElement('div');
-    card.className='item-card';
+    const r=getRarity(item.rarity);const col=r.color==='#ffffff'?'#aaa':r.color;
+    const card=document.createElement('div'); card.className='item-card';
     card.style.width='80px';
     card.style.setProperty('--ic',col+'aa');
     card.style.setProperty('--ig',r.glow||'#9ca3af33');
     card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
-    if(isYours){ card.title='Click to remove'; card.addEventListener('click',()=>removeFromTrade(item.uniqueId)); }
+    if(isYours){card.title='Click to remove';card.addEventListener('click',()=>removeFromTrade(item.uniqueId));}
     card.addEventListener('mouseenter',e=>showTip(e,item,r));
     card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
     el.appendChild(card);
@@ -2314,51 +2392,37 @@ function renderTradeInventoryMini(){
   grid.innerHTML='';
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
   const rarityOrder={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
-
-  let items=[...S.inventory];
-  if(S.tradeSortBy==='rarity'){
-    items.sort((a,b)=>{
-      const ia=getItem(a.itemId), ib=getItem(b.itemId);
-      return (rarityOrder[ib?.rarity]||0)-(rarityOrder[ia?.rarity]||0);
-    });
-  } else if(S.tradeSortBy==='value'){
-    items.sort((a,b)=>{
-      const ia=getItem(a.itemId), ib=getItem(b.itemId);
-      return (ib?.value||0)-(ia?.value||0);
-    });
-  } else if(S.tradeSortBy==='name'){
-    items.sort((a,b)=>{
-      const ia=getItem(a.itemId), ib=getItem(b.itemId);
-      return (ia?.name||'').localeCompare(ib?.name||'');
-    });
-  }
-
-  items.forEach(inv=>{
-    const item=getItem(inv.itemId); if(!item)return;
-    const r=getRarity(item.rarity);
-    const col=r.color==='#ffffff'?'#aaa':r.color;
+  // Combine gear + cosmetics
+  let allInvItems=[
+    ...S.inventory.map(inv=>({inv,item:getItem(inv.itemId)})),
+    ...S.cosmeticInventory.map(inv=>({inv,item:getItem(inv.itemId)})),
+  ].filter(x=>x.item);
+  if(S.tradeSortBy==='rarity')allInvItems.sort((a,b)=>(rarityOrder[b.item?.rarity]||0)-(rarityOrder[a.item?.rarity]||0));
+  else if(S.tradeSortBy==='value')allInvItems.sort((a,b)=>(b.item?.value||0)-(a.item?.value||0));
+  else if(S.tradeSortBy==='name')allInvItems.sort((a,b)=>(a.item?.name||'').localeCompare(b.item?.name||''));
+  allInvItems.forEach(({inv,item})=>{
+    const r=getRarity(item.rarity);const col=r.color==='#ffffff'?'#aaa':r.color;
     const card=document.createElement('div');
     card.className='item-card'+(inTrade.has(inv.uniqueId)?' selected':'');
     card.style.width='75px';
     card.style.setProperty('--ic',col+'aa');
     card.style.setProperty('--ig',r.glow||'#9ca3af33');
     card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
-    card.addEventListener('click',()=>inTrade.has(inv.uniqueId)?removeFromTrade(inv.uniqueId):addToTrade(inv));
+    card.addEventListener('click',()=>inTrade.has(inv.uniqueId)?removeFromTrade(inv.uniqueId):addToTrade(inv,item));
     card.addEventListener('mouseenter',e=>showTip(e,item,r));
     card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
     grid.appendChild(card);
   });
 }
 
-async function addToTrade(inv){
+async function addToTrade(inv,item){
   if(!S.tradeRoomId)return;
-  const item=getItem(inv.itemId); if(!item)return;
   const newItem={uniqueId:inv.uniqueId,itemId:inv.itemId,...item};
   const myItems=[...S.tradeMyItems,newItem];
   try{
     await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,coins:S.tradeMyCoins,accepted:false,finalAccepted:false});
     await resetTradeAccepts('Item added to trade.');
-  }catch(e){ toast('Error adding item','error'); }
+  }catch(e){toast('Error adding item','error');}
 }
 
 async function removeFromTrade(uniqueId){
@@ -2367,20 +2431,20 @@ async function removeFromTrade(uniqueId){
   try{
     await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:myItems,coins:S.tradeMyCoins,accepted:false,finalAccepted:false});
     await resetTradeAccepts('Item removed from trade.');
-  }catch(e){ toast('Error removing item','error'); }
+  }catch(e){toast('Error removing item','error');}
 }
 
 async function setTradeCoins(amount){
   if(!S.tradeRoomId)return;
   const coins=Math.max(0,Math.floor(amount)||0);
-  if(coins>(S.profile?.coins||0)){ toast('Not enough coins!','error'); return; }
+  if(coins>(S.profile?.coins||0)){toast('Not enough coins!','error');return;}
   S.tradeMyCoins=coins;
   document.getElementById('trade-coin-offer-display').textContent=coins>0?`🪙 ${fmtNum(coins)} offered`:'';
   document.getElementById('trade-coin-input').value=coins||'';
   try{
     await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({items:S.tradeMyItems,coins,accepted:false,finalAccepted:false});
     await resetTradeAccepts(coins>0?`Offering 🪙 ${fmtNum(coins)} coins.`:'Coin offer removed.');
-  }catch(e){ toast('Error setting coins','error'); }
+  }catch(e){toast('Error setting coins','error');}
 }
 
 async function resetTradeAccepts(message){
@@ -2397,36 +2461,26 @@ async function resetTradeAccepts(message){
 
 document.getElementById('btn-accept-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  try{
-    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
-    toast('Waiting for partner to accept...');
-    // The live listener will detect when both accepted and set locked:true
-  }catch(e){ toast('Error accepting trade','error'); }
+  try{await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});toast('Waiting for partner to accept...');}
+  catch(e){toast('Error accepting trade','error');}
 });
 
 document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
-  resetTradeState();
-  toast('Trade cancelled.','error');
+  try{await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();}catch(e){}
+  resetTradeState(); toast('Trade cancelled.','error');
 });
 
-// Coin offer SET button
 document.getElementById('btn-set-coins').addEventListener('click',()=>{
   const val=parseInt(document.getElementById('trade-coin-input').value)||0;
   setTradeCoins(val);
 });
-document.getElementById('trade-coin-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter') setTradeCoins(parseInt(e.target.value)||0);
-});
+document.getElementById('trade-coin-input').addEventListener('keydown',e=>{if(e.key==='Enter')setTradeCoins(parseInt(e.target.value)||0);});
 
-// Sort buttons
 document.querySelectorAll('.trade-sort-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.trade-sort-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    S.tradeSortBy=btn.dataset.sort;
-    renderTradeInventoryMini();
+    btn.classList.add('active'); S.tradeSortBy=btn.dataset.sort; renderTradeInventoryMini();
   });
 });
 
@@ -2435,70 +2489,63 @@ document.getElementById('btn-final-accept').addEventListener('click',async()=>{
   if(btn.disabled||btn.classList.contains('disabled'))return;
   if(!S.tradeRoomId)return;
   btn.disabled=true; btn.textContent='Waiting for partner...';
-  try{
-    // Just write our finalAccepted — the tradeRoomListener will detect when both are true and call executeTrade()
-    await rtdb.ref('tradeRooms/'+S.tradeRoomId+'/players/'+S.user.uid).update({finalAccepted:true});
-  }catch(e){ toast('Error finalizing trade','error'); btn.disabled=false; btn.textContent='FINAL ACCEPT'; }
+  try{await rtdb.ref('tradeRooms/'+S.tradeRoomId+'/players/'+S.user.uid).update({finalAccepted:true});}
+  catch(e){toast('Error finalizing trade','error');btn.disabled=false;btn.textContent='FINAL ACCEPT';}
 });
 
 document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
-  resetTradeState();
-  toast('Trade cancelled.','error');
+  try{await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();}catch(e){}
+  resetTradeState(); toast('Trade cancelled.','error');
 });
 
 async function executeTrade(){
   if(!S.tradeRoomId||!S.tradePartnerUid)return;
   try{
-    // Mark room completed in RTDB first — prevents double execution if both listeners fire
     await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({executing:true});
-    // Re-read agreed terms from RTDB at execution time
     const roomSnap=await rtdb.ref('tradeRooms/'+S.tradeRoomId).get();
     const room=roomSnap.val();
-    if(!room){ toast('Trade room gone — trade cancelled.','error'); resetTradeState(); return; }
+    if(!room){toast('Trade room gone.','error');resetTradeState();return;}
     const myAgreedItems=(room.players?.[S.user.uid]?.items)||[];
     const theirAgreedItems=(room.players?.[S.tradePartnerUid]?.items)||[];
     const myAgreedCoins=(room.players?.[S.user.uid]?.coins)||0;
     const theirAgreedCoins=(room.players?.[S.tradePartnerUid]?.coins)||0;
-
-    // Firestore transaction — reads and writes are atomic, preventing duplication
     await db.runTransaction(async tx=>{
       const myRef=db.collection('users').doc(S.user.uid);
       const theirRef=db.collection('users').doc(S.tradePartnerUid);
-      const [myDoc,theirDoc]=await Promise.all([tx.get(myRef),tx.get(theirRef)]);
-      if(!myDoc.exists||!theirDoc.exists) throw new Error('User not found');
+      const[myDoc,theirDoc]=await Promise.all([tx.get(myRef),tx.get(theirRef)]);
+      if(!myDoc.exists||!theirDoc.exists)throw new Error('User not found');
       const myData=myDoc.data(); const theirData=theirDoc.data();
       let myInv=[...myData.inventory||[]];
       let theirInv=[...theirData.inventory||[]];
-      let myCoins=myData.coins||0;
-      let theirCoins=theirData.coins||0;
-
-      // Move my items to partner
+      let myCosInv=[...myData.cosmeticInventory||[]];
+      let theirCosInv=[...theirData.cosmeticInventory||[]];
+      let myCoins=myData.coins||0; let theirCoins=theirData.coins||0;
       for(const ti of myAgreedItems){
-        const idx = myInv.findIndex(i => i.uniqueId === ti.uniqueId);
-        if(idx === -1) throw new Error('Item "'+ti.name+'" not in your inventory');
-        myInv.splice(idx,1);
-        // Transfer the same uniqueId instead of generating a new one
-        theirInv.push({...ti, obtainedAt: new Date().toISOString()});
+        let idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+        if(idx!==-1){myInv.splice(idx,1);theirInv.push({...ti,obtainedAt:new Date().toISOString()});}
+        else{
+          idx=myCosInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+          if(idx===-1)throw new Error('Item "'+ti.name+'" not in your inventory');
+          myCosInv.splice(idx,1);theirCosInv.push({...ti,obtainedAt:new Date().toISOString()});
+        }
       }
-      
-      // Move partner items to me
       for(const ti of theirAgreedItems){
-        const idx = theirInv.findIndex(i => i.uniqueId === ti.uniqueId);
-        if(idx === -1) throw new Error('Item "'+ti.name+'" not in partner inventory');
-        theirInv.splice(idx,1);
-        myInv.push({...ti, obtainedAt: new Date().toISOString()});
+        let idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+        if(idx!==-1){theirInv.splice(idx,1);myInv.push({...ti,obtainedAt:new Date().toISOString()});}
+        else{
+          idx=theirCosInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+          if(idx===-1)throw new Error('Item "'+ti.name+'" not in partner inventory');
+          theirCosInv.splice(idx,1);myCosInv.push({...ti,obtainedAt:new Date().toISOString()});
+        }
       }
-      // Validate and transfer coins
-      if(myAgreedCoins>myCoins) throw new Error('Not enough coins to complete trade');
-      if(theirAgreedCoins>theirCoins) throw new Error("Partner doesn't have enough coins");
+      if(myAgreedCoins>myCoins)throw new Error('Not enough coins');
+      if(theirAgreedCoins>theirCoins)throw new Error("Partner doesn't have enough coins");
       myCoins=myCoins-myAgreedCoins+theirAgreedCoins;
       theirCoins=theirCoins-theirAgreedCoins+myAgreedCoins;
-
       const ts=new Date().toISOString(); const tradeId=genUID();
-      const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-      const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+      const myVal=[...myInv,...myCosInv].reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+      const theirVal=[...theirInv,...theirCosInv].reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
       const myLog={tradeId,partnerId:S.tradePartnerUid,partnerName:theirData.username,
         itemsGiven:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         itemsReceived:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
@@ -2507,18 +2554,14 @@ async function executeTrade(){
         itemsGiven:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         itemsReceived:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         coinsGiven:theirAgreedCoins,coinsReceived:myAgreedCoins,timestamp:ts};
-      tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
-      tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
+      tx.update(myRef,{inventory:myInv,cosmeticInventory:myCosInv,coins:myCoins,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
+      tx.update(theirRef,{inventory:theirInv,cosmeticInventory:theirCosInv,coins:theirCoins,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
     });
     await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({completed:true});
   }catch(e){
     console.error('Trade error:',e);
-    if(e.message&&e.message.startsWith('DUPE_DETECTED')){
-      toast('⛔ '+e.message.replace('DUPE_DETECTED: ',''),'error');
-    } else {
-      toast('Trade failed: '+e.message,'error');
-    }
-    try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(_){}
+    toast('Trade failed: '+e.message,'error');
+    try{await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();}catch(_){}
     resetTradeState();
   }
 }
@@ -2527,60 +2570,44 @@ async function handleTradeComplete(room){
   try{
     const doc=await db.collection('users').doc(S.user.uid).get();
     if(doc.exists){
-      S.profile=doc.data();
-      S.inventory=[...S.profile.inventory||[]];
+      S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]];
+      S.cosmeticInventory=[...S.profile.cosmeticInventory||[]];
+      S.equipped={...{hat:null,eye_color:null,particle:null,background:null,color:null,seasonal:null},...(S.profile.equipped||{})};
       updateCoinDisplay(S.profile.coins);
     }
   }catch(e){}
-  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
+  try{await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove();}catch(e){}
   resetTradeState();
   toast('🎉 Trade completed successfully!','success');
-  if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
+  if(document.getElementById('page-inventory').classList.contains('active'))renderInventory();
 }
 
-// FIX: showFinalModal - countdown properly enables the button and doesn't use wrong element ID
 let _finalModalCd=null;
 function showFinalModal(myItems,theirItems){
-  // Clear any previous countdown interval to prevent double-firing
-  if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
+  if(_finalModalCd){clearInterval(_finalModalCd);_finalModalCd=null;}
   const modal=document.getElementById('trade-final-modal');
   const theirName=document.getElementById('trade-them-name').textContent;
-  const iList=(items,coins)=>{
-    const parts=[];
-    if(coins>0) parts.push(`🪙 ${fmtNum(coins)} coins`);
-    (items||[]).forEach(i=>parts.push(`${i.icon} ${i.name}`));
-    return parts.join(', ')||'Nothing';
-  };
+  const iList=(items,coins)=>{const parts=[];if(coins>0)parts.push(`🪙 ${fmtNum(coins)} coins`);(items||[]).forEach(i=>parts.push(`${i.icon} ${i.name}`));return parts.join(', ')||'Nothing';};
   document.getElementById('final-trade-summary').innerHTML=
     `<div style="margin-bottom:8px"><strong style="color:var(--accent)">${escHtml(S.profile.username)} gives:</strong><br>${iList(myItems,S.tradeMyCoins)}</div>
      <div><strong style="color:var(--gold)">${escHtml(theirName)} gives:</strong><br>${iList(theirItems,S.tradeTheirCoins)}</div>`;
   modal.classList.remove('hidden');
   const btn=document.getElementById('btn-final-accept');
   const cdDisplay=modal.querySelector('.countdown-display');
-  // Reset button state
-  btn.disabled=true;
-  btn.className='btn-final-accept disabled';
-  btn.textContent='FINAL ACCEPT';
+  btn.disabled=true; btn.className='btn-final-accept disabled'; btn.textContent='FINAL ACCEPT';
   let count=5;
-  // Write count directly into a plain element — no innerHTML rewrites during countdown
   cdDisplay.textContent='';
   const prefix=document.createTextNode('Final accept available in ');
   const numSpan=document.createElement('span');
-  numSpan.style.color='var(--gold)';
-  numSpan.style.fontSize='1.4rem';
-  numSpan.style.fontWeight='900';
+  numSpan.style.color='var(--gold)';numSpan.style.fontSize='1.4rem';numSpan.style.fontWeight='900';
   numSpan.textContent=count;
   const suffix=document.createTextNode('s...');
-  cdDisplay.appendChild(prefix);
-  cdDisplay.appendChild(numSpan);
-  cdDisplay.appendChild(suffix);
+  cdDisplay.appendChild(prefix);cdDisplay.appendChild(numSpan);cdDisplay.appendChild(suffix);
   _finalModalCd=setInterval(()=>{
-    count--;
-    numSpan.textContent=count;
+    count--;numSpan.textContent=count;
     if(count<=0){
-      clearInterval(_finalModalCd); _finalModalCd=null;
-      btn.disabled=false;
-      btn.className='btn-final-accept';
+      clearInterval(_finalModalCd);_finalModalCd=null;
+      btn.disabled=false;btn.className='btn-final-accept';
       cdDisplay.innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
     }
   },1000);
@@ -2596,17 +2623,14 @@ function updateTradeStatus(){
 }
 
 function resetTradeState(){
-  if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
-  if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
-  S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
-  S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false; S.tradeExecuting=false;
-  S.tradeMyCoins=0; S.tradeTheirCoins=0;
-  const coinInput=document.getElementById('trade-coin-input');
-  if(coinInput) coinInput.value='';
-  const coinDisplay=document.getElementById('trade-coin-offer-display');
-  if(coinDisplay) coinDisplay.textContent='';
-  const theirCoins=document.getElementById('trade-their-coins-display');
-  if(theirCoins) theirCoins.textContent='';
+  if(_finalModalCd){clearInterval(_finalModalCd);_finalModalCd=null;}
+  if(tradeRoomListener){tradeRoomListener();tradeRoomListener=null;}
+  S.tradeRoomId=null;S.tradeMyItems=[];S.tradeTheirItems=[];
+  S.tradeMyAccepted=false;S.tradeTheirAccepted=false;S.tradeCountdownActive=false;S.tradeExecuting=false;
+  S.tradeMyCoins=0;S.tradeTheirCoins=0;
+  const coinInput=document.getElementById('trade-coin-input');if(coinInput)coinInput.value='';
+  const coinDisplay=document.getElementById('trade-coin-offer-display');if(coinDisplay)coinDisplay.textContent='';
+  const theirCoins=document.getElementById('trade-their-coins-display');if(theirCoins)theirCoins.textContent='';
   document.getElementById('trade-room').classList.add('hidden');
   document.getElementById('trade-final-modal').classList.add('hidden');
   document.getElementById('trade-message').textContent='';
@@ -2620,11 +2644,12 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const page=btn.dataset.page;
     showPage(page);
-    if(page==='inventory') renderInventory();
-    if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
-    if(page==='leaderboard') loadLeaderboard();
-    if(page==='history') renderTradeHistory();
-    if(page==='platformer') initPlatformerPage();
+    if(page==='inventory')renderInventory();
+    if(page==='wardrobe'){renderWardrobeSlots();updatePlayerPreview();renderCosmeticsGrid();}
+    if(page==='trade'){renderOnlinePlayers();if(S.tradeRoomId)renderTradeUI();}
+    if(page==='leaderboard')loadLeaderboard();
+    if(page==='history')renderTradeHistory();
+    if(page==='platformer')initPlatformerPage();
     else stopPlatformer();
   });
 });
@@ -2647,572 +2672,406 @@ function showUltraOverlay(item){
   document.getElementById('ultra-sub').textContent=r.display?'Odds: '+r.display:'You pulled a '+r.name+'!';
   document.getElementById('ultra-overlay').classList.remove('hidden');
 }
-document.getElementById('btn-ultra-close').addEventListener('click',()=>{
-  document.getElementById('ultra-overlay').classList.add('hidden');
-});
+document.getElementById('btn-ultra-close').addEventListener('click',()=>{document.getElementById('ultra-overlay').classList.add('hidden');});
 
 // ============================================================
-// PARTICLES
+// PARTICLES (auth screen)
 // ============================================================
 function spawnParticles(){
-  const c=document.getElementById('auth-particles'); if(!c)return;
-  c.innerHTML='';
+  const c=document.getElementById('auth-particles');if(!c)return;c.innerHTML='';
   for(let i=0;i<30;i++){
-    const p=document.createElement('div');
-    const sz=Math.random()*3+1;
-    p.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;
-      left:${Math.random()*100}%;top:${Math.random()*100}%;
-      background:rgba(79,142,247,${Math.random()*.5+.1});
-      animation:float ${Math.random()*8+4}s ${Math.random()*8}s infinite ease-in-out;
-      box-shadow:0 0 ${sz*3}px rgba(79,142,247,.5)`;
+    const p=document.createElement('div');const sz=Math.random()*3+1;
+    p.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;background:rgba(79,142,247,${Math.random()*.5+.1});animation:float ${Math.random()*8+4}s ${Math.random()*8}s infinite ease-in-out;box-shadow:0 0 ${sz*3}px rgba(79,142,247,.5)`;
     c.appendChild(p);
   }
 }
 
 // ============================================================
-// BOOT
+// ADMIN
 // ============================================================
-// Admin force-refresh button
 document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
-  const btn = document.getElementById('admin-refresh-btn');
-  btn.disabled = true;
-  btn.textContent = 'Refreshing...';
+  const btn=document.getElementById('admin-refresh-btn');
+  btn.disabled=true; btn.textContent='Refreshing...';
   try{
-    await rtdb.ref('admin/forceRefresh').set({
-      ts: firebase.database.ServerValue.TIMESTAMP,
-      by: S.profile?.username || 'admin',
-    });
-    toast('Force refresh sent to all clients!','success');
-  }catch(e){
-    toast('Error: '+e.message,'error');
-  }
-  setTimeout(()=>{ btn.disabled=false; btn.textContent='⚡ REFRESH ALL'; }, 2000);
+    await rtdb.ref('admin/forceRefresh').set({ts:firebase.database.ServerValue.TIMESTAMP,by:S.profile?.username||'admin'});
+    toast('Force refresh sent!','success');
+  }catch(e){toast('Error: '+e.message,'error');}
+  setTimeout(()=>{btn.disabled=false;btn.textContent='⚡ REFRESH ALL';},2000);
 });
 
 // ============================================================
-// VAULT RUNNER — Only Up Edition
+// VAULT CLIMBER PLATFORMER (with cosmetics support)
 // ============================================================
 (function(){
+const TILE=48,GRAVITY=0.45,JUMP=-12.5,SPEED=4.0;
+const PLATFORM_COLORS=['#1e2840','#162030','#1a2535','#0f1a28'];
+const DEFAULT_COLOR='#ff69b4';
+let canvas,ctx,animId,gameActive=false;
+let keys={},touchLeft=false,touchRight=false;
+let G={};
+let worldSeed=Math.floor(Math.random()*100000000);
+let hasCashedOut=false;
 
-// ── Constants ─────────────────────────────────────────────────
-const TILE = 48;
-const GRAVITY = 0.45;
-const JUMP = -12.5;
-const SPEED = 4.0;
-const PLATFORM_COLORS = ['#1e2840','#162030','#1a2535','#0f1a28'];
-const ACCENT = '#ff69b4';
-const GOLD = '#f59e0b';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
-// ── State ──────────────────────────────────────────────────────
-let canvas, ctx, animId, gameActive = false;
-let keys = {}, touchLeft = false, touchRight = false, touchJump = false;
-let G = {};
-let worldSeed = Math.floor(Math.random()*100000000);
-let hasCashedOut = false;
-
-// ── Random Number Generator ───────────────────────────────────
-function mulberry32(a){
-  return function(){
-    a|=0; a=a+0x6D2B79F5|0;
-    let t=Math.imul(a^a>>>15,1|a);
-    t=t+Math.imul(t^t>>>7,61|t)^t;
-    return((t^t>>>14)>>>0)/4294967296;
-  };
-}
-
-// ── Platform Generation ───────────────────────────────────────
-function makePlatforms(fromY, toY){
-  const plats = [];
-  plats.push({ x:-260, y:0, w:900, h:20, type:'ground' });
-
-  let y = fromY;
-  const rng = mulberry32(worldSeed + Math.floor(fromY/100)*100);
-
-  const verticalMin = TILE * 3; // 3 tiles
-  const verticalMax = TILE * 6; // max jump ~6 tiles (safe)
-  const horizontalMax = 300; // spread horizontally
-
-  while(y < toY){
-    const prev = plats[plats.length-1];
-    const gapUp = TILE*3 + rng()*TILE*2;
-    
-    // MAX horizontal distance depends on height
-    const maxReachX = gapUp * 1.1; 
-    // (tweak 1.0–1.4 depending on difficulty)
-    
+function makePlatforms(fromY,toY){
+  const plats=[];
+  plats.push({x:-260,y:0,w:900,h:20,type:'ground'});
+  let y=fromY;
+  const rng=mulberry32(worldSeed+Math.floor(fromY/100)*100);
+  while(y<toY){
+    const prev=plats[plats.length-1];
+    const gapUp=TILE*3+rng()*TILE*2;
+    const maxReachX=gapUp*1.1;
     let x;
-    if(prev){
-      const center = prev.x + prev.w/2;
-    
-      x = center + (rng()*2-1) * maxReachX;
-    
-      // clamp so it stays on screen
-      x = Math.max(-350, Math.min(x, 350));
-    }else{
-      x = -100 + rng()*200;
-    }
-
-    const w = 50 + rng()*40; // 50–90px width
-    let typeR = rng();
-    let type = 'normal';
-    if(typeR < 0.12) type='crumble';
-    else if(typeR < 0.20) type='bounce';
-    else if(typeR < 0.25) type='slippery';
-    else if(typeR < 0.30) type='spring';
-
-    plats.push({ x, y, w, h:14, type, crumbling:false, crumbleTimer:0 });
-    y += gapUp;
+    if(prev){const center=prev.x+prev.w/2;x=center+(rng()*2-1)*maxReachX;x=Math.max(-350,Math.min(x,350));}
+    else{x=-100+rng()*200;}
+    const w=50+rng()*40;
+    let typeR=rng();
+    let type='normal';
+    if(typeR<0.12)type='crumble';
+    else if(typeR<0.20)type='bounce';
+    else if(typeR<0.25)type='slippery';
+    else if(typeR<0.30)type='spring';
+    else if(typeR<0.35)type='moving';
+    plats.push({x,y,w,h:14,type,crumbling:false,crumbleTimer:0,origX:x,moveDir:1});
+    y+=gapUp;
   }
-
   return plats;
 }
-  
-// ── Init ─────────────────────────────────────────────────────
+
+function getPlayerColor(){
+  const uid=S.equipped?.['color'];
+  const inv=uid?S.cosmeticInventory?.find(i=>i.uniqueId===uid):null;
+  const item=inv?getCosmeticItem(inv.itemId):null;
+  if(!item)return DEFAULT_COLOR;
+  if(item.visual==='rainbow'){
+    const t=Date.now()/500;
+    const h=Math.floor((t*60)%360);
+    return`hsl(${h},100%,60%)`;
+  }
+  return item.visual||DEFAULT_COLOR;
+}
+
+function getPlayerHat(){
+  const uid=S.equipped?.['hat'];
+  const inv=uid?S.cosmeticInventory?.find(i=>i.uniqueId===uid):null;
+  const item=inv?getCosmeticItem(inv.itemId):null;
+  return item?item.visual:null;
+}
+
+function getBackground(){
+  const uid=S.equipped?.['background'];
+  const inv=uid?S.cosmeticInventory?.find(i=>i.uniqueId===uid):null;
+  const item=inv?getCosmeticItem(inv.itemId):null;
+  return item?item.visual:null;
+}
+
+function getParticleColor(){
+  const uid=S.equipped?.['particle'];
+  const inv=uid?S.cosmeticInventory?.find(i=>i.uniqueId===uid):null;
+  const item=inv?getCosmeticItem(inv.itemId):null;
+  if(!item)return null;
+  const pColors={star:'#ffd700',fire:'#ff4500',ice:'#87ceeb',lightning:'#ffe000',
+    rainbow:'rainbow',heart:'#ff1493',ghost:'#c8c8ff',money:'#22c55e',cosmic:'#fffaaa'};
+  return pColors[item.visual]||'#ffffff';
+}
+
 function startGame(){
-  worldSeed = Math.floor(Math.random()*100000000);
-  canvas = document.getElementById('plat-canvas');
-  ctx = canvas.getContext('2d');
+  worldSeed=Math.floor(Math.random()*100000000);
+  canvas=document.getElementById('plat-canvas'); ctx=canvas.getContext('2d');
   resizeCanvas();
-
-  G = {
-    player: {
-      x:180, y:-40, vx:0, vy:0,
-      w:28, h:36, onGround:false, jumps:0,
-      facing:1, alive:true,
-      startY:-40,  // startY now matches spawn
-      highestTile:0, maxHeight:0,
-    },
-    camera: {y:0},
-    platforms: makePlatforms(-canvas.height*3,0),
-    genTop: -canvas.height*3,
-    particles: [],
-    coins:0,
-    startTime: Date.now(),
-    pulseTick:0
+  G={
+    player:{x:180,y:-40,vx:0,vy:0,w:28,h:36,onGround:false,jumps:0,facing:1,alive:true,startY:-40,highestTile:0},
+    camera:{y:0},
+    platforms:makePlatforms(-canvas.height*3,0),
+    genTop:-canvas.height*3,
+    particles:[],coins:0,startTime:Date.now(),pulseTick:0
   };
-
   document.getElementById('plat-overlay').classList.add('hidden');
-  document.getElementById('plat-cashout-btn').style.display = 'flex';
+  document.getElementById('plat-cashout-btn').style.display='flex';
   updateHUD();
-
-  if(animId) cancelAnimationFrame(animId);
-  animId = requestAnimationFrame(loop);
-  gameActive = true;
+  if(animId)cancelAnimationFrame(animId);
+  animId=requestAnimationFrame(loop);
+  gameActive=true;
 }
 
-// ── Canvas Resize ────────────────────────────────────────────
-function resizeCanvas(){
-  const wrap = canvas.parentElement;
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
-}
+function resizeCanvas(){const wrap=canvas.parentElement;canvas.width=wrap.clientWidth;canvas.height=wrap.clientHeight;}
 
-// ── Input ─────────────────────────────────────────────────────
-function onKey(e, down){
-  keys[e.code] = down;
-  if(down && (e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space')) tryJump();
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+function onKey(e,down){
+  keys[e.code]=down;
+  if(down&&(e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space'))tryJump();
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
 }
 
 function tryJump(){
-  const p = G.player;
-  if(!gameActive || !p.alive) return;
-  if(p.jumps < 2){ 
-    p.vy = JUMP;
-    p.jumps++;
-    p.onGround = false;
-    spawnParticles(p.x+p.w/2,p.y,5,ACCENT);
-  }
+  const p=G.player;
+  if(!gameActive||!p.alive)return;
+  if(p.jumps<2){p.vy=JUMP;p.jumps++;p.onGround=false;spawnParticle(p.x+p.w/2,p.y,5);}
 }
 
-window.addEventListener('keydown', e => onKey(e,true));
-window.addEventListener('keyup', e => onKey(e,false));
-window.addEventListener('resize', () => resizeCanvas());
+window.addEventListener('keydown',e=>onKey(e,true));
+window.addEventListener('keyup',e=>onKey(e,false));
+window.addEventListener('resize',()=>{if(canvas)resizeCanvas();});
 
-function update(dt) {
-  if (!G.player?.alive) return;
-  const p = G.player;
-
-  // ── Input state ─────────────────────────────
-  const left  = keys['ArrowLeft']||keys['KeyA']||touchLeft;
-  const right = keys['ArrowRight']||keys['KeyD']||touchRight;
-
-  // ── Horizontal movement ──────────────────────
-  let friction = 0.7; // default
+function update(dt){
+  if(!G.player?.alive)return;
+  const p=G.player;
+  const left=keys['ArrowLeft']||keys['KeyA']||touchLeft;
+  const right=keys['ArrowRight']||keys['KeyD']||touchRight;
+  if(p.vx<0)p.facing=-1; else if(p.vx>0)p.facing=1;
+  let friction=0.7;
   if(p.onGround){
-    // get platform player is standing on
-    const pl = G.platforms.find(pl => 
-      Math.abs(p.y + p.h - pl.y) < 1 &&
-      p.x + p.w > pl.x && p.x < pl.x + pl.w
-    );
-    if(pl?.type === 'slippery') friction = 0.95;
+    const pl=G.platforms.find(pl=>Math.abs(p.y+p.h-pl.y)<1&&p.x+p.w>pl.x&&p.x<pl.x+pl.w);
+    if(pl?.type==='slippery')friction=0.95;
   }
-
-  if(left)  p.vx = -SPEED * dt;
-  else if(right) p.vx = SPEED * dt;
-  else p.vx *= friction;
-
-  // ── Gravity ─────────────────────────────────
-  p.vy += GRAVITY * dt;
-  if (p.vy > 18) p.vy = 18;
-
-  // ── Sub-step movement for reliable collisions ──
-  const steps = Math.ceil(Math.max(Math.abs(p.vx), Math.abs(p.vy)) / (TILE/2)) || 1;
-  const dx = (p.vx * dt) / steps;
-  const dy = (p.vy * dt) / steps;
-
-  for (let i = 0; i < steps; i++) {
-    p.x += dx;
-    p.y += dy;
-    p.onGround = false;
-
-    // ── Platform collisions ─────────────────
-    for (const pl of G.platforms) {
-      if (pl.x > p.x + p.w || pl.x + pl.w < p.x) continue;
-      const prevBottom = p.y - dy + p.h;
-      const curBottom  = p.y + p.h;
-      if (prevBottom <= pl.y && curBottom >= pl.y && p.vy > 0) {
-        // landing
-        p.y = pl.y - p.h;
-        p.vy = 0;
-        p.onGround = true;
-        p.jumps = 0;
-    
-        // Platform effects
-        if(pl.type === 'crumble') {
-          pl.crumbling = true;
-        }
-        else if(pl.type === 'bounce') {
-          p.vy = JUMP * 1.5;  // normal bounce
-          spawnParticles(p.x + p.w/2, p.y + p.h, 8, '#22c55e');
-        }
-        else if(pl.type === 'slippery') {
-          p.vx *= 1.1;  // slide effect
-        }
-        else if(pl.type === 'spring') {
-          p.vy = JUMP * 1.8; // extra boost
-          spawnParticles(p.x + p.w/2, p.y + p.h, 10, '#f59e0b');
-        }
-    
-        break; // stop checking other platforms for this sub-step
+  if(left)p.vx=-SPEED*dt; else if(right)p.vx=SPEED*dt; else p.vx*=friction;
+  p.vy+=GRAVITY*dt; if(p.vy>18)p.vy=18;
+  const steps=Math.ceil(Math.max(Math.abs(p.vx),Math.abs(p.vy))/(TILE/2))||1;
+  const dx=(p.vx*dt)/steps;
+  const dy=(p.vy*dt)/steps;
+  for(let i=0;i<steps;i++){
+    p.x+=dx; p.y+=dy; p.onGround=false;
+    for(const pl of G.platforms){
+      if(pl.gone)continue;
+      if(pl.x>p.x+p.w||pl.x+pl.w<p.x)continue;
+      const prevBottom=p.y-dy+p.h; const curBottom=p.y+p.h;
+      if(prevBottom<=pl.y&&curBottom>=pl.y&&p.vy>0){
+        p.y=pl.y-p.h; p.vy=0; p.onGround=true; p.jumps=0;
+        if(pl.type==='crumble')pl.crumbling=true;
+        else if(pl.type==='bounce'){p.vy=JUMP*1.5;spawnParticle(p.x+p.w/2,p.y+p.h,8,'#22c55e');}
+        else if(pl.type==='slippery')p.vx*=1.1;
+        else if(pl.type==='spring'){p.vy=JUMP*1.8;spawnParticle(p.x+p.w/2,p.y+p.h,10,'#f59e0b');}
+        break;
       }
     }
   }
-
-  // ── Crumble platform timers ─────────────────
-  for (const pl of G.platforms) {
-    if (pl.crumbling) {
-      pl.crumbleTimer = (pl.crumbleTimer || 0) + 1;
-      if (pl.crumbleTimer > 20) {
-        pl.gone = true;
-        spawnParticles(pl.x + pl.w/2, pl.y + pl.h/2, 6, '#6b21a8');
-      }
+  // Moving platforms
+  for(const pl of G.platforms){
+    if(pl.type==='moving'&&!pl.gone){
+      pl.x+=pl.moveDir*1.2*dt;
+      if(pl.x>pl.origX+60||pl.x<pl.origX-60)pl.moveDir*=-1;
     }
   }
-  G.platforms = G.platforms.filter(pl => !pl.gone);
-
-  // ── Track highest tiles reached ─────────────
-  const heightTiles = Math.max(0, Math.floor((p.startY - p.y) / TILE));
-  if (heightTiles > p.highestTile) p.highestTile = heightTiles;
-
-  // ── Death conditions ───────────────────────
-  if (heightTiles < p.highestTile - 50 || p.y > 0) {
-    die();
-    return;
+  // Crumble
+  for(const pl of G.platforms){
+    if(pl.crumbling){pl.crumbleTimer=(pl.crumbleTimer||0)+1;if(pl.crumbleTimer>20){pl.gone=true;spawnParticle(pl.x+pl.w/2,pl.y,6,'#6b21a8');}}
   }
-  // Give 25 coins every 10 tiles
-  G.coins = Math.floor(heightTiles / 10) * 25;
-
-  // ── Generate more platforms above player ───
-  const viewTop = p.y - canvas.height;
-  if (viewTop - TILE*8 < G.genTop) {
-    const newBottom = G.genTop - canvas.height*2;
-    const newPlats = makePlatforms(newBottom, G.genTop);
-    G.platforms.push(...newPlats.map(pl => ({ ...pl, y: pl.y })));
-    G.genTop = newBottom;
+  G.platforms=G.platforms.filter(pl=>!pl.gone);
+  const heightTiles=Math.max(0,Math.floor((p.startY-p.y)/TILE));
+  if(heightTiles>p.highestTile)p.highestTile=heightTiles;
+  if(heightTiles<p.highestTile-50||p.y>0){die();return;}
+  G.coins=Math.floor(heightTiles/10)*25;
+  // Spawn trail particles
+  const pc=getParticleColor();
+  if(pc&&(Math.abs(p.vx)>0.5||!p.onGround)){
+    if(Math.random()<0.3)spawnParticle(p.x+p.w/2,p.y+p.h,2,pc==='rainbow'?`hsl(${Math.floor(Math.random()*360)},100%,60%)`:pc);
   }
-
-  // Remove platforms far below camera
-  const camBottom = p.y + canvas.height*1.5;
-  G.platforms = G.platforms.filter(pl => pl.y < camBottom);
-
-  // ── Camera follow ─────────────────────────
-  const targetCamY = p.y - canvas.height*0.55;
-  G.camera.y += (targetCamY - G.camera.y) * 0.12;
-
-  // ── Update HUD ───────────────────────────
+  const viewTop=p.y-canvas.height;
+  if(viewTop-TILE*8<G.genTop){
+    const newBottom=G.genTop-canvas.height*2;
+    const newPlats=makePlatforms(newBottom,G.genTop);
+    G.platforms.push(...newPlats.map(pl=>({...pl})));
+    G.genTop=newBottom;
+  }
+  const camBottom=p.y+canvas.height*1.5;
+  G.platforms=G.platforms.filter(pl=>pl.y<camBottom);
+  const targetCamY=p.y-canvas.height*0.55;
+  G.camera.y+=(targetCamY-G.camera.y)*0.12;
   updateHUD();
 }
 
-// ── Cash Out ──────────────────────────────────────────────────
 async function cashOut(){
-  if(!gameActive || hasCashedOut) return;
-  hasCashedOut = true;
-
-  const heightTiles = Math.max(0, Math.floor((G.player.startY - G.player.y) / TILE));
-  const earned = heightTiles >= 10 ? G.coins : 0;
-
-  if(earned > 0){
-    // Update local profile first
-    S.profile.coins += earned;
-
-    // Update Firestore database
-    try{
-      await db.collection('users').doc(S.user.uid).update({
-        coins: firebase.firestore.FieldValue.increment(earned)
-      });
-    }catch(e){
-      toast('Save error','error');
-      return;
-    }
-
+  if(!gameActive||hasCashedOut)return;
+  hasCashedOut=true;
+  const heightTiles=Math.max(0,Math.floor((G.player.startY-G.player.y)/TILE));
+  const earned=heightTiles>=10?G.coins:0;
+  if(earned>0){
+    S.profile.coins+=earned;
+    try{await db.collection('users').doc(S.user.uid).update({coins:firebase.firestore.FieldValue.increment(earned)});}
+    catch(e){toast('Save error','error');return;}
     updateCoinDisplay(S.profile.coins);
-    toast('Cashed out 🪙 ' + fmtNum(earned) + '!', 'gold');
+    toast('Cashed out 🪙 '+fmtNum(earned)+'!','gold');
   }
-
-  // Stop player movement and show end screen
-  G.player.alive = false;
-  showEndScreen(true, earned);
+  G.player.alive=false;
+  showEndScreen(true,earned);
 }
 
-// ── Death ─────────────────────────────────────────────────────
 function die(){
-  if(hasCashedOut || !G.player.alive) return;
+  if(hasCashedOut||!G.player.alive)return;
   G.player.alive=false;
-  spawnParticles(G.player.x+G.player.w/2,G.player.y+G.player.h/2,25,ACCENT,6);
+  spawnParticle(G.player.x+G.player.w/2,G.player.y+G.player.h/2,25,getPlayerColor(),6);
   setTimeout(()=>showEndScreen(false,0),800);
 }
 
-// ── End Screen ────────────────────────────────────────────────
-function showEndScreen(cashed, earned=0){
-  gameActive=false;
-  cancelAnimationFrame(animId);
+function showEndScreen(cashed,earned=0){
+  gameActive=false; cancelAnimationFrame(animId);
   document.getElementById('plat-cashout-btn').style.display='none';
-
-  const overlay = document.getElementById('plat-overlay');
-  overlay.querySelector('.plat-overlay-title').textContent = cashed?'💰 CASHED OUT!':'💀 YOU FELL';
-  overlay.querySelector('.plat-overlay-sub').textContent =
-    `HEIGHT: ${G.player?Math.max(0,Math.floor((G.player.startY - G.player.y)/TILE)):0} tiles · ${cashed?'COINS AWARDED':'NO REWARD'}`;
-  document.getElementById('plat-final-score').textContent =
-    cashed?`🪙 +${earned} coins`:'🪙 0 coins';
+  const overlay=document.getElementById('plat-overlay');
+  overlay.querySelector('.plat-overlay-title').textContent=cashed?'💰 CASHED OUT!':'💀 YOU FELL';
+  overlay.querySelector('.plat-overlay-sub').textContent=
+    `HEIGHT: ${G.player?Math.max(0,Math.floor((G.player.startY-G.player.y)/TILE)):0} tiles · ${cashed?'COINS AWARDED':'NO REWARD'}`;
+  document.getElementById('plat-final-score').textContent=cashed?`🪙 +${earned} coins`:'🪙 0 coins';
   document.getElementById('btn-plat-start').textContent='▶ PLAY AGAIN';
   overlay.classList.remove('hidden');
   hasCashedOut=false;
 }
 
-// ── HUD ──────────────────────────────────────────────────────
 function updateHUD(){
-  const heightTiles = G.player?Math.max(0,Math.floor((G.player.startY - G.player.y)/TILE)):0;
-  document.getElementById('plat-score').textContent = G.coins||0;
-  document.getElementById('plat-lives').textContent = heightTiles + ' tiles';
-  document.getElementById('plat-level').textContent = "1";
+  const heightTiles=G.player?Math.max(0,Math.floor((G.player.startY-G.player.y)/TILE)):0;
+  document.getElementById('plat-score').textContent=G.coins||0;
+  document.getElementById('plat-lives').textContent=heightTiles+' tiles';
+  document.getElementById('plat-level').textContent='1';
 }
 
-// ── Particles ─────────────────────────────────────────────────
-function spawnParticles(x,y,n,col,spread=3){
+function spawnParticle(x,y,n,col,spread=3){
+  const c=col||getPlayerColor();
   for(let i=0;i<n;i++){
-    G.particles.push({
-      x,y,
-      vx:(Math.random()-0.5)*spread*2,
-      vy:(Math.random()-1.5)*spread,
-      life:1, decay:0.035+Math.random()*0.04, r:3+Math.random()*4, col
-    });
+    G.particles.push({x,y,vx:(Math.random()-.5)*spread*2,vy:(Math.random()-1.5)*spread,life:1,decay:0.035+Math.random()*.04,r:3+Math.random()*4,col:c});
   }
 }
 
-// ── Draw ─────────────────────────────────────────────────────
-function draw(){
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0,0,W,H);
+function lerpColor(a,b,t){
+  const ah=parseInt(a.slice(1),16),bh=parseInt(b.slice(1),16);
+  const ar=(ah>>16)&255,ag=(ah>>8)&255,ab=ah&255;
+  const br=(bh>>16)&255,bg=(bh>>8)&255,bb=bh&255;
+  const r=Math.round(ar+(br-ar)*t),g=Math.round(ag+(bg-ag)*t),bl=Math.round(ab+(bb-ab)*t);
+  return'#'+(r<<16|g<<8|bl).toString(16).padStart(6,'0');
+}
 
-  // Sky gradient
-  const heightAbove = G.player?Math.max(0,G.player.startY - G.player.y):0;
-  const skyT = Math.min(heightAbove/2000,1);
-  const sky = ctx.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0,lerpColor('#000005','#0a0020',skyT));
-  sky.addColorStop(1,lerpColor('#050810','#020015',skyT));
-  ctx.fillStyle = sky;
-  ctx.fillRect(0,0,W,H);
-
+function drawBackground(){
+  const W=canvas.width,H=canvas.height;
+  const bg=getBackground();
+  const heightAbove=G.player?Math.max(0,G.player.startY-G.player.y):0;
+  const skyT=Math.min(heightAbove/2000,1);
+  let sky;
+  if(bg==='space'){
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#000005'); sky.addColorStop(1,'#050810');
+  }else if(bg==='forest'){
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,lerpColor('#0a2a0a','#001800',skyT));
+    sky.addColorStop(1,lerpColor('#1a4a1a','#0a200a',skyT));
+  }else if(bg==='ocean'){
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,lerpColor('#001840','#000820',skyT));
+    sky.addColorStop(1,lerpColor('#003060','#001028',skyT));
+  }else if(bg==='volcano'){
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,lerpColor('#3a0000','#1a0000',skyT));
+    sky.addColorStop(1,lerpColor('#5a1000','#2a0500',skyT));
+  }else if(bg==='neon'){
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#0a001a'); sky.addColorStop(1,'#00001a');
+  }else if(bg==='rainbow'){
+    sky=ctx.createLinearGradient(0,0,W,0);
+    const t=Date.now()/3000;
+    sky.addColorStop(0,`hsl(${(t*60)%360},70%,15%)`);
+    sky.addColorStop(0.5,`hsl(${(t*60+180)%360},70%,15%)`);
+    sky.addColorStop(1,`hsl(${(t*60+360)%360},70%,15%)`);
+  }else{
+    sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,lerpColor('#000005','#0a0020',skyT));
+    sky.addColorStop(1,lerpColor('#050810','#020015',skyT));
+  }
+  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
   // Stars
   G.pulseTick=(G.pulseTick||0)+1;
   for(let i=0;i<80;i++){
-    const sx=(i*137.508+50)%W, sy=(i*97.3+20)%H;
-    const bright=0.3+Math.sin(G.pulseTick*0.02+i)*0.3;
+    const sx=(i*137.508+50)%W,sy=(i*97.3+20)%H;
+    const bright=0.3+Math.sin(G.pulseTick*.02+i)*.3;
     ctx.fillStyle=`rgba(255,255,255,${bright})`;
     ctx.fillRect(sx,sy,1,1);
   }
+}
 
-  const camOffY = -G.camera.y;
-  ctx.save();
-  ctx.translate(W/2 - 200, camOffY);
-
-  // Draw height markers (every 10 tiles)
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  drawBackground();
+  const camOffY=-G.camera.y;
+  ctx.save(); ctx.translate(W/2-200,camOffY);
+  // Height markers
   for(let t=0;t<=3000;t+=10){
-    const markerY = G.player ? G.player.startY - t*TILE : -t*TILE;
-    if(markerY < G.camera.y-60 || markerY > G.camera.y + H + 10) continue;
-    ctx.save();
-    ctx.globalAlpha = 0.18;
-    ctx.strokeStyle = ACCENT;
-    ctx.setLineDash([4,8]);
-    ctx.beginPath(); ctx.moveTo(-300,markerY); ctx.lineTo(900,markerY); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = ACCENT;
-    ctx.font='10px "Orbitron",sans-serif'; ctx.textAlign='right';
-    ctx.fillText(t+' tiles',-10,markerY-3);
+    const markerY=G.player?G.player.startY-t*TILE:-t*TILE;
+    if(markerY<G.camera.y-60||markerY>G.camera.y+H+10)continue;
+    ctx.save(); ctx.globalAlpha=0.18; ctx.strokeStyle='#ff69b4'; ctx.setLineDash([4,8]);
+    ctx.beginPath();ctx.moveTo(-300,markerY);ctx.lineTo(900,markerY);ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha=0.5; ctx.fillStyle='#ff69b4';
+    ctx.font='10px "Orbitron",sans-serif';ctx.textAlign='right';ctx.fillText(t+' tiles',-10,markerY-3);
     ctx.restore();
   }
-
-// Draw platforms
-for(const pl of G.platforms){
-  if(pl.y+pl.h < G.camera.y-50 || pl.y > G.camera.y+H+50) continue;
-
-  const alpha = pl.crumbling ? Math.max(0,1-(pl.crumbleTimer||0)/20) : 1;
-  ctx.globalAlpha = alpha;
-
-  ctx.font='10px "Orbitron",sans-serif';
-  ctx.textAlign='center';
-  ctx.textBaseline='bottom';
-
-  switch(pl.type){
-    case 'ground':
-      ctx.fillStyle='#0f1424';
-      ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#4f8ef7';
-      ctx.fillRect(pl.x,pl.y,pl.w,3);
-      ctx.fillStyle='#ffffff';
-      ctx.fillText('GROUND', pl.x+pl.w/2, pl.y-2);
-      break;
-
-    case 'crumble':
-      ctx.fillStyle='#2a1520';
-      ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#6b21a8';
-      ctx.fillRect(pl.x,pl.y,pl.w,3);
-      ctx.fillStyle='#e0b0ff';
-      ctx.fillText('CRUMBLE', pl.x+pl.w/2, pl.y-2);
-      break;
-
-    case 'bounce':
-      ctx.fillStyle='#164020';
-      ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#22c55e';
-      ctx.fillRect(pl.x,pl.y,pl.w,3);
-      ctx.fillStyle='#a0ff88';
-      ctx.fillText('BOUNCE ↑', pl.x+pl.w/2, pl.y-2);
-      break;
-
-    case 'slippery':
-      ctx.fillStyle='#1e1e40';
-      ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#3b82f6';
-      ctx.fillRect(pl.x,pl.y,pl.w,3);
-      ctx.fillStyle='#88d0ff';
-      ctx.fillText('SLIPPERY ❄', pl.x+pl.w/2, pl.y-2);
-      break;
-
-    case 'spring':
-      ctx.fillStyle='#4b5320';
-      ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#f59e0b';
-      ctx.fillRect(pl.x,pl.y,pl.w,3);
-      ctx.fillStyle='#ffd166';
-      ctx.fillText('SPRING ⤴', pl.x+pl.w/2, pl.y-2);
-      break;
-
-    default:
-      const ci=Math.abs(Math.floor(pl.y/200))%PLATFORM_COLORS.length;
-      ctx.fillStyle=PLATFORM_COLORS[ci];
-      ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
-      ctx.fillStyle='#2a3555';
-      ctx.fillRect(pl.x,pl.y,pl.w,3);
+  // Platforms
+  for(const pl of G.platforms){
+    if(pl.y+pl.h<G.camera.y-50||pl.y>G.camera.y+H+50)continue;
+    const alpha=pl.crumbling?Math.max(0,1-(pl.crumbleTimer||0)/20):1;
+    ctx.globalAlpha=alpha;
+    ctx.font='10px "Orbitron",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+    switch(pl.type){
+      case'ground':ctx.fillStyle='#0f1424';ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#4f8ef7';ctx.fillRect(pl.x,pl.y,pl.w,3);ctx.fillStyle='#fff';ctx.fillText('GROUND',pl.x+pl.w/2,pl.y-2);break;
+      case'crumble':ctx.fillStyle='#2a1520';ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#6b21a8';ctx.fillRect(pl.x,pl.y,pl.w,3);ctx.fillStyle='#e0b0ff';ctx.fillText('CRUMBLE',pl.x+pl.w/2,pl.y-2);break;
+      case'bounce':ctx.fillStyle='#164020';ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#22c55e';ctx.fillRect(pl.x,pl.y,pl.w,3);ctx.fillStyle='#a0ff88';ctx.fillText('BOUNCE ↑',pl.x+pl.w/2,pl.y-2);break;
+      case'slippery':ctx.fillStyle='#1e1e40';ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#3b82f6';ctx.fillRect(pl.x,pl.y,pl.w,3);ctx.fillStyle='#88d0ff';ctx.fillText('SLIPPERY ❄',pl.x+pl.w/2,pl.y-2);break;
+      case'spring':ctx.fillStyle='#4b5320';ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#f59e0b';ctx.fillRect(pl.x,pl.y,pl.w,3);ctx.fillStyle='#ffd166';ctx.fillText('SPRING ⤴',pl.x+pl.w/2,pl.y-2);break;
+      case'moving':ctx.fillStyle='#1a2040';ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#00ffff';ctx.fillRect(pl.x,pl.y,pl.w,3);ctx.fillStyle='#88ffff';ctx.fillText('MOVING →',pl.x+pl.w/2,pl.y-2);break;
+      default:const ci=Math.abs(Math.floor(pl.y/200))%PLATFORM_COLORS.length;ctx.fillStyle=PLATFORM_COLORS[ci];ctx.fillRect(pl.x,pl.y,pl.w,pl.h);ctx.fillStyle='#2a3555';ctx.fillRect(pl.x,pl.y,pl.w,3);
+    }
+    ctx.globalAlpha=1;
   }
-
-  ctx.globalAlpha = 1;
-}
   // Player
   if(G.player?.alive){
-    const p = G.player;
+    const p=G.player;
     ctx.save();
     ctx.translate(p.x+p.w/2,p.y+p.h/2);
     ctx.scale(p.facing,1);
-    const hw=p.w/2, hh=p.h/2;
-    ctx.shadowBlur=16; ctx.shadowColor=ACCENT; ctx.fillStyle=ACCENT;
+    const hw=p.w/2,hh=p.h/2;
+    const pColor=getPlayerColor();
+    ctx.shadowBlur=16; ctx.shadowColor=pColor; ctx.fillStyle=pColor;
     ctx.fillRect(-hw,-hh,p.w,p.h);
-    ctx.shadowBlur=0; ctx.fillStyle='#0a0e1a';
+    ctx.shadowBlur=0; ctx.fillStyle='rgba(0,0,0,0.3)';
     ctx.fillRect(-hw+4,-hh+4,p.w-8,p.h*0.38);
-    ctx.fillStyle='#e8eaf6';
-    ctx.fillRect(-hw+7,-hh+7,5,5); ctx.fillRect(hw-12,-hh+7,5,5);
+    // Eyes
+    const eyeUid=S.equipped?.['eye_color'];
+    const eyeInv=eyeUid?S.cosmeticInventory?.find(i=>i.uniqueId===eyeUid):null;
+    const eyeItem=eyeInv?getCosmeticItem(eyeInv.itemId):null;
+    if(eyeItem&&eyeItem.eyeColor!=='rainbow'){
+      ctx.fillStyle=eyeItem.eyeColor;
+      ctx.fillRect(-hw+7,-hh+7,5,5); ctx.fillRect(hw-12,-hh+7,5,5);
+    }else{
+      ctx.fillStyle='#e8eaf6'; ctx.fillRect(-hw+7,-hh+7,5,5); ctx.fillRect(hw-12,-hh+7,5,5);
+    }
     ctx.fillStyle='#000'; ctx.fillRect(-hw+8,-hh+8,3,3); ctx.fillRect(hw-11,-hh+8,3,3);
+    // Hat
+    const hat=getPlayerHat();
+    if(hat){
+      ctx.font='18px serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+      ctx.fillText(hat,0,-hh+2);
+    }
     ctx.restore();
   }
-
   // Particles
   for(let i=G.particles.length-1;i>=0;i--){
     const pt=G.particles[i];
     pt.x+=pt.vx; pt.y+=pt.vy; pt.vy+=0.12; pt.life-=pt.decay;
-    if(pt.life<=0){G.particles.splice(i,1); continue;}
+    if(pt.life<=0){G.particles.splice(i,1);continue;}
     ctx.save(); ctx.globalAlpha=pt.life; ctx.fillStyle=pt.col;
     ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r*pt.life,0,Math.PI*2); ctx.fill(); ctx.restore();
   }
-
   ctx.restore();
-
-  // Fell overlay
-  if(G.player && !G.player.alive){
-    ctx.fillStyle='rgba(239,68,68,0.25)'; ctx.fillRect(0,0,W,H);
-  }
+  if(G.player&&!G.player.alive){ctx.fillStyle='rgba(239,68,68,0.25)';ctx.fillRect(0,0,W,H);}
 }
 
-function drawLegend(){
-  const x = 10, y = 10;
-  ctx.font = '12px "Orbitron",sans-serif';
-  ctx.textAlign='left';
-  ctx.textBaseline='top';
-
-  const legend = [
-    {type:'GROUND', color:'#4f8ef7'},
-    {type:'CRUMBLE', color:'#6b21a8'},
-    {type:'BOUNCE', color:'#22c55e'},
-    {type:'SLIPPERY', color:'#3b82f6'},
-    {type:'SPRING', color:'#f59e0b'}
-  ];
-
-  legend.forEach((l,i)=>{
-    ctx.fillStyle=l.color;
-    ctx.fillRect(x, y + i*20, 12,12);
-    ctx.fillStyle='#fff';
-    ctx.fillText(l.type, x+18, y + i*20);
-  });
-}
-  
-function lerpColor(a,b,t){
-  const ah=parseInt(a.slice(1),16), bh=parseInt(b.slice(1),16);
-  const ar=(ah>>16)&255, ag=(ah>>8)&255, ab=ah&255;
-  const br=(bh>>16)&255, bg=(bh>>8)&255, bb=bh&255;
-  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
-  return '#'+(r<<16|g<<8|bl).toString(16).padStart(6,'0');
-}
-
-// ── Loop ─────────────────────────────────────────────────────
-let lastTime = 0;
-
+let lastTime=0;
 function loop(time){
-  if(!gameActive) return;
-
-  const dt = Math.min((time - lastTime) / 16.67, 2); // normalize (60fps = 1)
-  lastTime = time;
-
-  update(dt);
-  draw();
-
-  animId = requestAnimationFrame(loop);
+  if(!gameActive)return;
+  const dt=Math.min((time-lastTime)/16.67,2);
+  lastTime=time;
+  update(dt); draw();
+  animId=requestAnimationFrame(loop);
 }
 
-// ── Public API ───────────────────────────────────────────────
 window.initPlatformerPage=function(){
-  canvas=document.getElementById('plat-canvas'); if(!canvas) return;
+  canvas=document.getElementById('plat-canvas');if(!canvas)return;
   resizeCanvas();
   const overlay=document.getElementById('plat-overlay');
   overlay.querySelector('.plat-overlay-title').textContent='VAULT CLIMBER';
@@ -3221,55 +3080,47 @@ window.initPlatformerPage=function(){
   document.getElementById('plat-cashout-btn').style.display='none';
   overlay.classList.remove('hidden');
 };
-
-window.stopPlatformer=function(){ if(gameActive){gameActive=false; cancelAnimationFrame(animId); animId=null;} };
-window.platCashOut=function(){ cashOut(); };
+window.stopPlatformer=function(){if(gameActive){gameActive=false;cancelAnimationFrame(animId);animId=null;}};
+window.platCashOut=function(){cashOut();};
 document.getElementById('btn-plat-start').addEventListener('click',startGame);
-document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
-
+document.addEventListener('keydown',e=>{if(e.code==='Escape')cashOut();});
 })();
 
+// ============================================================
+// BOOT
+// ============================================================
 (function boot(){
-  const cfg = {
-    apiKey:            "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
-    authDomain:        "rng-game-13854.firebaseapp.com",
-    projectId:         "rng-game-13854",
-    storageBucket:     "rng-game-13854.firebasestorage.app",
-    messagingSenderId: "60292248542",
-    appId:             "1:60292248542:web:2942a3a407dab5d51a234f",
-    measurementId:     "G-PH8Q3YGWZ3",
-    databaseURL:       "https://rng-game-13854-default-rtdb.firebaseio.com",
+  const cfg={
+    apiKey:"AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
+    authDomain:"rng-game-13854.firebaseapp.com",
+    projectId:"rng-game-13854",
+    storageBucket:"rng-game-13854.firebasestorage.app",
+    messagingSenderId:"60292248542",
+    appId:"1:60292248542:web:2942a3a407dab5d51a234f",
+    measurementId:"G-PH8Q3YGWZ3",
+    databaseURL:"https://rng-game-13854-default-rtdb.firebaseio.com",
   };
   try{
     initFirebase(cfg);
     startAuthObserver();
-    // Re-announce presence when tab becomes visible again (e.g. alt-tab back)
     document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible' && S.user && S.presenceRef){
-        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
+      if(document.visibilityState==='visible'&&S.user&&S.presenceRef){
+        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP,online:true});
       }
     });
-    // Admin force-refresh: listen for reload signal on RTDB
-    const refreshRef = rtdb.ref('admin/forceRefresh');
-    let lastRefreshTs = 0;
-    refreshRef.on('value', snap=>{
-      const val = snap.val();
-      if(!val || !val.ts) return;
-      // Only reload if this is a NEW signal (not one from before we loaded)
-      if(val.ts > lastRefreshTs && lastRefreshTs !== 0){
-        setTimeout(()=>location.reload(), 500);
-      }
-      lastRefreshTs = val.ts;
+    const refreshRef=rtdb.ref('admin/forceRefresh');
+    let lastRefreshTs=0;
+    refreshRef.on('value',snap=>{
+      const val=snap.val();
+      if(!val||!val.ts)return;
+      if(val.ts>lastRefreshTs&&lastRefreshTs!==0)setTimeout(()=>location.reload(),500);
+      lastRefreshTs=val.ts;
     });
-    // Particles shown after auth observer fires for non-logged-in state
   }catch(e){
     console.error('Firebase init error:',e);
-    hideLoadingOverlay();
-    showScreen('auth-screen');
-    spawnParticles();
+    hideLoadingOverlay(); showScreen('auth-screen'); spawnParticles();
   }
 })();
-
 </script>
 </body>
 </html>
