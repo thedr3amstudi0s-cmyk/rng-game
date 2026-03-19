@@ -315,7 +315,7 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
 /* ── LAYOUT ───────────────────────────────────────────────── */
 .game-layout {
   display:grid; grid-template-columns:76px 1fr 272px;
-  flex:1; overflow:hidden;
+  flex:1; overflow:hidden; min-height:0;
 }
 
 /* ── SIDE NAV ─────────────────────────────────────────────── */
@@ -361,10 +361,16 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
   background:
     radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,128,255,0.03) 0%, transparent 60%),
     var(--bg-deep);
+  display:flex; flex-direction:column;
 }
 #page-platformer { padding:0 !important; }
+/* When platformer is active, kill page-content padding+scroll so canvas fills */
+.page-content:has(#page-platformer.active) {
+  padding:0; overflow:hidden;
+}
 .page { display:none; }
 .page.active { display:block; animation:page-in .2s ease; }
+#page-platformer.active { display:flex; flex:1; min-height:0; }
 @keyframes page-in { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
 
 .page-header { margin-bottom:28px; }
@@ -834,7 +840,7 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
 .player-preview-wrap {
   display:flex; align-items:center; justify-content:center;
   background:var(--bg-deep); border:1px solid var(--border);
-  border-radius:var(--r); padding:28px; min-height:130px; margin-bottom:18px;
+  border-radius:var(--r); padding:16px; min-height:160px; margin-bottom:18px;
   position:relative; overflow:hidden;
 }
 .player-preview-wrap::before {
@@ -842,18 +848,7 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
   background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,200,255,0.04), transparent);
   pointer-events:none;
 }
-.player-preview-char {
-  position:relative; display:flex; flex-direction:column;
-  align-items:center; gap:4px; z-index:1;
-}
-.preview-hat { font-size:2.2rem; line-height:1; }
-.preview-body {
-  width:40px; height:48px; border-radius:6px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.2rem; position:relative;
-  box-shadow:0 4px 16px rgba(0,0,0,.4), 0 0 12px currentColor;
-}
-.preview-eyes { position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:.75rem; }
+#preview-canvas { border-radius:var(--r); }
 
 /* ── TRADE ────────────────────────────────────────────────── */
 .trade-players-panel {
@@ -1171,8 +1166,8 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
 .rarity-divine { animation:rainbow-border 2s linear infinite !important; }
 
 /* ── PLATFORMER ───────────────────────────────────────────── */
-#page-platformer { display:none; height:100%; flex-direction:column; }
-#page-platformer.active { display:flex; }
+#page-platformer { display:none; flex-direction:column; min-height:0; }
+#page-platformer.active { display:flex; flex:1; min-height:0; overflow:hidden; }
 .plat-header {
   display:flex; align-items:center; justify-content:space-between;
   padding:12px 22px; background:var(--bg-card);
@@ -1186,9 +1181,9 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
 .plat-stat { display:flex; align-items:center; gap:6px; color:var(--text-2); }
 .plat-canvas-wrap {
   flex:1; position:relative; overflow:hidden;
-  background:#000; display:flex; align-items:center; justify-content:center; min-height:0;
+  background:#000; min-height:0;
 }
-#plat-canvas { display:block; image-rendering:pixelated; }
+#plat-canvas { display:block; image-rendering:pixelated; position:absolute; inset:0; width:100%; height:100%; }
 .plat-overlay {
   position:absolute; inset:0; display:flex; flex-direction:column;
   align-items:center; justify-content:center;
@@ -1458,13 +1453,7 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
       <section class="page" id="page-wardrobe">
         <div class="page-header"><h2>WARDROBE</h2><p>Customize your Vault Climber character.</p></div>
         <div class="player-preview-wrap">
-          <div class="player-preview-char" id="player-preview">
-            <div class="preview-hat" id="preview-hat">🎩</div>
-            <div class="preview-body" id="preview-body" style="background:#ff69b4;">
-              <div class="preview-eyes" id="preview-eyes">👀</div>
-            </div>
-            <div style="font-size:.5rem;color:var(--text-3);font-family:var(--font-d);margin-top:4px;">YOUR CHARACTER</div>
-          </div>
+          <canvas id="preview-canvas" width="160" height="160" style="display:block;image-rendering:pixelated"></canvas>
         </div>
         <div class="wardrobe-panel">
           <div class="wardrobe-title">EQUIPPED COSMETICS</div>
@@ -1791,33 +1780,58 @@ function cosmeticIconSVG(iconId, size=48) {
       <polygon points="${h+14},${h+4} ${h+10},${q-2} ${h+6},${h-2}" fill="#c00"/>
       <ellipse cx="${h}" cy="${h+4}" rx="8" ry="3" fill="#a00" opacity=".5"/></svg>`;
     case 'hat_halo': return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
-      ${defs('hl',`<stop offset="0%" stop-color="#ffe066"/><stop offset="100%" stop-color="#ffa500"/>`)}
-      <ellipse cx="${h}" cy="${h}" rx="16" ry="5" fill="none" stroke="url(#ghl)" stroke-width="3" opacity=".9"/>
-      <ellipse cx="${h}" cy="${h}" rx="14" ry="3.5" fill="none" stroke="#fff" stroke-width="1" opacity=".5"/>
-      <ellipse cx="${h}" cy="${h}" rx="10" ry="2" fill="rgba(255,220,50,0.15)"/></svg>`;
+      <defs>
+        <radialGradient id="ghl2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff9aa"/><stop offset="60%" stop-color="#ffcc00"/><stop offset="100%" stop-color="#ff8800"/></radialGradient>
+        <filter id="hglow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <ellipse cx="${h}" cy="${h}" rx="18" ry="6" fill="url(#ghl2)" filter="url(#hglow)" opacity=".95"/>
+      <ellipse cx="${h}" cy="${h}" rx="18" ry="6" fill="none" stroke="#fff" stroke-width="1" opacity=".4"/>
+      <ellipse cx="${h}" cy="${h}" rx="12" ry="3" fill="rgba(255,240,100,0.3)"/>
+      <ellipse cx="${h-5}" cy="${h-1}" rx="4" ry="1.5" fill="#fff" opacity=".3" transform="rotate(-10,${h-5},${h-1})"/></svg>`;
 
     // ── EYE COLORS ──────────────────────────────────────────
     case 'eye_blue': case 'eye_red': case 'eye_green': case 'eye_purple':
     case 'eye_gold': case 'eye_white': case 'eye_black': {
       const eyeColors={eye_blue:'#3b82f6',eye_red:'#ef4444',eye_green:'#22c55e',
-        eye_purple:'#a855f7',eye_gold:'#f59e0b',eye_white:'#e8eaf6',eye_black:'#1a1a1a'};
+        eye_purple:'#a855f7',eye_gold:'#f59e0b',eye_white:'#ddeeff',eye_black:'#1a1a1a'};
       const ec=eyeColors[iconId]||'#3b82f6';
+      const isBright=['eye_white','eye_gold'].includes(iconId);
       return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
-        ${defs('ey',`<stop offset="0%" stop-color="${ec}"/><stop offset="100%" stop-color="${ec}88"/>`)}
-        <ellipse cx="${h-10}" cy="${h}" rx="8" ry="6" fill="url(#gey)"/>
-        <ellipse cx="${h+10}" cy="${h}" rx="8" ry="6" fill="url(#gey)"/>
-        <circle cx="${h-10}" cy="${h}" r="3.5" fill="#0008"/>
-        <circle cx="${h+10}" cy="${h}" r="3.5" fill="#0008"/>
-        <circle cx="${h-8}" cy="${h-1}" r="1.5" fill="#fff" opacity=".8"/>
-        <circle cx="${h+12}" cy="${h-1}" r="1.5" fill="#fff" opacity=".8"/></svg>`;}
+        <defs>
+          <radialGradient id="iris${iconId}" cx="40%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="${isBright?ec:ec+'ff'}"/>
+            <stop offset="70%" stop-color="${ec}"/>
+            <stop offset="100%" stop-color="${ec}88"/>
+          </radialGradient>
+          <filter id="eglow${iconId}"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+      <ellipse cx="${h-10}" cy="${h+1}" rx="9" ry="7" fill="#fff" opacity=".95"/>
+        <circle cx="${h-10}" cy="${h+1}" r="5.5" fill="url(#iris${iconId})" filter="url(#eglow${iconId})"/>
+        <circle cx="${h-10}" cy="${h+1}" r="3" fill="#0a0a0a"/>
+        <circle cx="${h-7}" cy="${h-1}" r="2" fill="#fff" opacity=".9"/>
+        <ellipse cx="${h-10}" cy="${h+1}" rx="9" ry="7" fill="none" stroke="#0004" stroke-width="0.5"/>
+        <ellipse cx="${h+10}" cy="${h+1}" rx="9" ry="7" fill="#fff" opacity=".95"/>
+        <circle cx="${h+10}" cy="${h+1}" r="5.5" fill="url(#iris${iconId})" filter="url(#eglow${iconId})"/>
+        <circle cx="${h+10}" cy="${h+1}" r="3" fill="#0a0a0a"/>
+        <circle cx="${h+13}" cy="${h-1}" r="2" fill="#fff" opacity=".9"/>
+        <ellipse cx="${h+10}" cy="${h+1}" rx="9" ry="7" fill="none" stroke="#0004" stroke-width="0.5"/>
+      </svg>`;}
     case 'eye_rainbow': return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="grb" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f00"/><stop offset="33%" stop-color="#0f0"/><stop offset="66%" stop-color="#00f"/><stop offset="100%" stop-color="#f0f"/></linearGradient></defs>
-      <ellipse cx="${h-10}" cy="${h}" rx="8" ry="6" fill="url(#grb)"/>
-      <ellipse cx="${h+10}" cy="${h}" rx="8" ry="6" fill="url(#grb)"/>
-      <circle cx="${h-10}" cy="${h}" r="3" fill="#0006"/>
-      <circle cx="${h+10}" cy="${h}" r="3" fill="#0006"/>
-      <circle cx="${h-8}" cy="${h-1}" r="1.5" fill="#fff" opacity=".8"/>
-      <circle cx="${h+12}" cy="${h-1}" r="1.5" fill="#fff" opacity=".8"/></svg>`;
+      <defs>
+        <radialGradient id="eyerb" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#ff0"/><stop offset="33%" stop-color="#0f0"/><stop offset="66%" stop-color="#00f"/><stop offset="100%" stop-color="#f0f"/>
+        </radialGradient>
+        <filter id="rbglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <ellipse cx="${h-10}" cy="${h+1}" rx="9" ry="7" fill="#fff" opacity=".95"/>
+      <circle cx="${h-10}" cy="${h+1}" r="5.5" fill="url(#eyerb)" filter="url(#rbglow)"/>
+      <circle cx="${h-10}" cy="${h+1}" r="2.5" fill="#0a0a0a"/>
+      <circle cx="${h-7}" cy="${h-1}" r="2" fill="#fff" opacity=".9"/>
+      <ellipse cx="${h+10}" cy="${h+1}" rx="9" ry="7" fill="#fff" opacity=".95"/>
+      <circle cx="${h+10}" cy="${h+1}" r="5.5" fill="url(#eyerb)" filter="url(#rbglow)"/>
+      <circle cx="${h+10}" cy="${h+1}" r="2.5" fill="#0a0a0a"/>
+      <circle cx="${h+13}" cy="${h-1}" r="2" fill="#fff" opacity=".9"/>
+    </svg>`;
 
     // ── PARTICLES ───────────────────────────────────────────
     case 'par_star': return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
@@ -1850,9 +1864,21 @@ function cosmeticIconSVG(iconId, size=48) {
       <circle cx="${h}" cy="${h}" r="12" fill="#22c55e" opacity=".3"/>
       <text x="${h}" y="${h+5}" text-anchor="middle" font-size="18" font-weight="bold" fill="#22c55e" font-family="serif">$</text></svg>`;
     case 'par_cosmic': return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
-      ${defs('cos',`<radialGradient id="gcos" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff"/><stop offset="50%" stop-color="#aaf"/><stop offset="100%" stop-color="#308" stop-opacity="0"/></radialGradient>`)}
-      <circle cx="${h}" cy="${h}" r="14" fill="url(#gcos)"/>
-      ${[0,45,90,135,180,225,270,315].map(a=>`<line x1="${h}" y1="${h}" x2="${h+Math.cos(a*Math.PI/180)*14}" y2="${h+Math.sin(a*Math.PI/180)*14}" stroke="#aaf" stroke-width="0.8" opacity=".5"/>`).join('')}</svg>`;
+      <defs>
+        <radialGradient id="gcos" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="30%" stop-color="#aaaaff"/>
+          <stop offset="70%" stop-color="#4400cc"/>
+          <stop offset="100%" stop-color="#110033" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="cosglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <circle cx="${h}" cy="${h}" r="16" fill="url(#gcos)" filter="url(#cosglow)"/>
+      ${[0,45,90,135,180,225,270,315].map((a,i)=>{const len=i%2===0?16:12;const clr=i%2===0?'#ccaaff':'#8866ff';const sw=i%2===0?1.5:1;return`<line x1="${h+Math.cos(a*Math.PI/180)*6}" y1="${h+Math.sin(a*Math.PI/180)*6}" x2="${h+Math.cos(a*Math.PI/180)*len}" y2="${h+Math.sin(a*Math.PI/180)*len}" stroke="${clr}" stroke-width="${sw}" opacity=".8"/>`;}).join('')}
+      <circle cx="${h}" cy="${h}" r="4" fill="#fff" opacity=".9"/>
+      <circle cx="${h}" cy="${h}" r="2" fill="#fff"/>
+      ${[{x:8,y:6,r:1.5},{x:36,y:14,r:1},{x:12,y:36,r:1.2},{x:38,y:36,r:1},{x:6,y:26,r:1}].map(p=>`<circle cx="${p.x}" cy="${p.y}" r="${p.r}" fill="#aaf" opacity=".6"/>`).join('')}
+    </svg>`;
 
     // ── BACKGROUNDS ─────────────────────────────────────────
     case 'bg_forest': return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
@@ -2911,10 +2937,11 @@ function makeItemCard(inv,item,container,selectable=false,isCosmetic=false){
   if(selectable&&S.selectedItems.has(inv.uniqueId))card.classList.add('selected');
   const typeLabel=isCosmetic?(CATEGORY_LABELS[item.type]||item.type||''):'';
   card.innerHTML='';
-  // Icon
+  // Icon — cosmetic items use string IDs like 'hat_top', gear uses emoji
   const iconWrap=document.createElement('div');
   iconWrap.style.cssText='width:100%;display:flex;justify-content:center;margin-bottom:5px';
-  if(isCosmetic&&item.icon&&!item.icon.includes('️')&&!/\p{Emoji}/u.test(item.icon.slice(0,1))||isCosmetic&&/^[a-z]/.test(item.icon)){
+  const isCosmeticIcon=isCosmetic&&item.icon&&/^[a-z]/.test(item.icon);
+  if(isCosmeticIcon){
     const ico=cosmeticIconEl(item.icon,40);
     iconWrap.appendChild(ico);
   }else{
@@ -3124,45 +3151,158 @@ async function unequipCosmetic(type){
 }
 
 function updatePlayerPreview(){
-  // Hat
-  const hatUid=S.equipped['hat'];
-  const hatInv=hatUid?S.cosmeticInventory.find(i=>i.uniqueId===hatUid):null;
-  const hatItem=hatInv?getCosmeticItem(hatInv.itemId):null;
-  const hatEl=document.getElementById('preview-hat');
-  if(hatEl){
-    hatEl.innerHTML='';
-    if(hatItem){
-      hatEl.innerHTML=cosmeticIconSVG(hatItem.icon,44);
-    }
-  }
+  const cvs=document.getElementById('preview-canvas');
+  if(!cvs)return;
+  const ctx2=cvs.getContext('2d');
+  const W=cvs.width, H=cvs.height;
+  ctx2.clearRect(0,0,W,H);
 
-  // Body color
+  // Background — dark with subtle glow
+  ctx2.fillStyle='#0b1120';
+  ctx2.fillRect(0,0,W,H);
+  // Ground line
+  ctx2.fillStyle='#1c2840';
+  ctx2.fillRect(0,H-28,W,4);
+  ctx2.fillStyle='#00c8ff22';
+  ctx2.fillRect(0,H-28,W,1);
+
+  // Get equipped cosmetics
   const colorUid=S.equipped['color'];
   const colorInv=colorUid?S.cosmeticInventory.find(i=>i.uniqueId===colorUid):null;
   const colorItem=colorInv?getCosmeticItem(colorInv.itemId):null;
-  const bodyEl=document.getElementById('preview-body');
-  if(bodyEl){
-    if(colorItem&&colorItem.visual==='rainbow'){
-      bodyEl.style.background='linear-gradient(135deg,#ff0000,#ff7700,#ffff00,#00ff00,#0000ff,#8b00ff)';
-    }else if(colorItem){
-      bodyEl.style.background=colorItem.visual;
-    }else{
-      bodyEl.style.background='#ff69b4';
-    }
-  }
 
-  // Eye color
+  const hatUid=S.equipped['hat'];
+  const hatInv=hatUid?S.cosmeticInventory.find(i=>i.uniqueId===hatUid):null;
+  const hatItem=hatInv?getCosmeticItem(hatInv.itemId):null;
+
   const eyeUid=S.equipped['eye_color'];
   const eyeInv=eyeUid?S.cosmeticInventory.find(i=>i.uniqueId===eyeUid):null;
   const eyeItem=eyeInv?getCosmeticItem(eyeInv.itemId):null;
-  const eyesEl=document.getElementById('preview-eyes');
-  if(eyesEl){
-    eyesEl.innerHTML='';
-    if(eyeItem){
-      eyesEl.innerHTML=cosmeticIconSVG(eyeItem.icon,28);
-    }else{
-      eyesEl.innerHTML='<span style="font-size:.8rem">👀</span>';
+
+  const seasonalUid=S.equipped['seasonal'];
+  const seasonalInv=seasonalUid?S.cosmeticInventory.find(i=>i.uniqueId===seasonalUid):null;
+  const seasonalItem=seasonalInv?getCosmeticItem(seasonalInv.itemId):null;
+
+  // Resolve body color
+  let bodyColor='#ff69b4';
+  if(colorItem){
+    if(colorItem.visual==='rainbow'){
+      const t=Date.now()/800;
+      bodyColor=`hsl(${(t*60)%360},90%,55%)`;
+    } else {
+      bodyColor=colorItem.visual;
     }
+  }
+
+  // Resolve eye color
+  let eyeColor='#e8f0ff';
+  let eyeGlow=false;
+  if(eyeItem){
+    if(eyeItem.eyeColor==='rainbow'){
+      const t=Date.now()/400;
+      eyeColor=`hsl(${(t*90)%360},100%,60%)`;
+      eyeGlow=true;
+    } else {
+      eyeColor=eyeItem.eyeColor;
+      eyeGlow=true;
+    }
+  }
+
+  const cx=W/2, groundY=H-28;
+  const bodyW=44, bodyH=54;
+  const bx=cx-bodyW/2, by=groundY-bodyH;
+
+  // Body glow
+  ctx2.shadowColor=bodyColor;
+  ctx2.shadowBlur=20;
+  ctx2.fillStyle=bodyColor;
+
+  // Body (rounded rect)
+  const r=6;
+  ctx2.beginPath();
+  ctx2.moveTo(bx+r,by); ctx2.lineTo(bx+bodyW-r,by);
+  ctx2.quadraticCurveTo(bx+bodyW,by,bx+bodyW,by+r);
+  ctx2.lineTo(bx+bodyW,by+bodyH-r);
+  ctx2.quadraticCurveTo(bx+bodyW,by+bodyH,bx+bodyW-r,by+bodyH);
+  ctx2.lineTo(bx+r,by+bodyH);
+  ctx2.quadraticCurveTo(bx,by+bodyH,bx,by+bodyH-r);
+  ctx2.lineTo(bx,by+r);
+  ctx2.quadraticCurveTo(bx,by,bx+r,by);
+  ctx2.closePath();
+  ctx2.fill();
+  ctx2.shadowBlur=0;
+
+  // Body shading (top highlight)
+  const highlight=ctx2.createLinearGradient(bx,by,bx,by+bodyH*0.5);
+  highlight.addColorStop(0,'rgba(255,255,255,0.18)');
+  highlight.addColorStop(1,'rgba(0,0,0,0.0)');
+  ctx2.fillStyle=highlight;
+  ctx2.beginPath();
+  ctx2.moveTo(bx+r,by); ctx2.lineTo(bx+bodyW-r,by);
+  ctx2.quadraticCurveTo(bx+bodyW,by,bx+bodyW,by+r);
+  ctx2.lineTo(bx+bodyW,by+bodyH*0.5);
+  ctx2.lineTo(bx,by+bodyH*0.5);
+  ctx2.lineTo(bx,by+r);
+  ctx2.quadraticCurveTo(bx,by,bx+r,by);
+  ctx2.closePath();
+  ctx2.fill();
+
+  // Face area (slightly lighter)
+  ctx2.fillStyle='rgba(255,255,255,0.08)';
+  ctx2.fillRect(bx+6,by+8,bodyW-12,bodyH*0.45);
+
+  // Eyes
+  const eyeY=by+18;
+  const leftEyeX=cx-10, rightEyeX=cx+10;
+  if(eyeGlow){ctx2.shadowColor=eyeColor;ctx2.shadowBlur=10;}
+  // Whites
+  ctx2.fillStyle='#fff';
+  ctx2.beginPath(); ctx2.ellipse(leftEyeX,eyeY,6,5,0,0,Math.PI*2); ctx2.fill();
+  ctx2.beginPath(); ctx2.ellipse(rightEyeX,eyeY,6,5,0,0,Math.PI*2); ctx2.fill();
+  // Iris
+  ctx2.fillStyle=eyeColor;
+  ctx2.beginPath(); ctx2.ellipse(leftEyeX,eyeY,4,4,0,0,Math.PI*2); ctx2.fill();
+  ctx2.beginPath(); ctx2.ellipse(rightEyeX,eyeY,4,4,0,0,Math.PI*2); ctx2.fill();
+  // Pupil
+  ctx2.fillStyle='#000';
+  ctx2.beginPath(); ctx2.ellipse(leftEyeX+1,eyeY+1,2,2,0,0,Math.PI*2); ctx2.fill();
+  ctx2.beginPath(); ctx2.ellipse(rightEyeX+1,eyeY+1,2,2,0,0,Math.PI*2); ctx2.fill();
+  // Shine
+  ctx2.fillStyle='rgba(255,255,255,0.9)';
+  ctx2.beginPath(); ctx2.ellipse(leftEyeX-1,eyeY-1,1.5,1.5,0,0,Math.PI*2); ctx2.fill();
+  ctx2.beginPath(); ctx2.ellipse(rightEyeX-1,eyeY-1,1.5,1.5,0,0,Math.PI*2); ctx2.fill();
+  ctx2.shadowBlur=0;
+
+  // Mouth (little smile)
+  ctx2.strokeStyle='rgba(0,0,0,0.4)'; ctx2.lineWidth=2; ctx2.lineCap='round';
+  ctx2.beginPath(); ctx2.arc(cx,by+32,5,0.2,Math.PI-0.2); ctx2.stroke();
+
+  // Draw hat/seasonal using SVG overlaid
+  if(hatItem||seasonalItem){
+    const displayItem=hatItem||seasonalItem;
+    const hatSVG=cosmeticIconSVG(displayItem.icon,52);
+    const img=new Image();
+    const blob=new Blob([hatSVG],{type:'image/svg+xml'});
+    const url=URL.createObjectURL(blob);
+    img.onload=()=>{
+      ctx2.drawImage(img,cx-26,by-50,52,52);
+      URL.revokeObjectURL(url);
+      // Label
+      ctx2.fillStyle='rgba(0,200,255,0.4)';
+      ctx2.font='bold 9px "Orbitron",sans-serif';
+      ctx2.textAlign='center'; ctx2.fillText('YOUR CHARACTER',cx,H-8);
+    };
+    img.src=url;
+  } else {
+    ctx2.fillStyle='rgba(0,200,255,0.4)';
+    ctx2.font='bold 9px "Orbitron",sans-serif';
+    ctx2.textAlign='center'; ctx2.fillText('YOUR CHARACTER',cx,H-8);
+  }
+
+  // Schedule rainbow re-draw if color or eyes are rainbow
+  const isRainbow=(colorItem?.visual==='rainbow')||(eyeItem?.eyeColor==='rainbow');
+  if(isRainbow&&document.getElementById('page-wardrobe')?.classList.contains('active')){
+    requestAnimationFrame(updatePlayerPreview);
   }
 }
 
@@ -3808,7 +3948,11 @@ function startGame(){
   gameActive=true;
 }
 
-function resizeCanvas(){const wrap=canvas.parentElement;canvas.width=wrap.clientWidth;canvas.height=wrap.clientHeight;}
+function resizeCanvas(){
+  const wrap=canvas.parentElement;
+  canvas.width=wrap.offsetWidth||wrap.clientWidth||800;
+  canvas.height=wrap.offsetHeight||wrap.clientHeight||600;
+}
 
 function onKey(e,down){
   keys[e.code]=down;
@@ -4068,14 +4212,21 @@ function draw(){
   drawBackground();
   const camOffY=-G.camera.y;
   ctx.save(); ctx.translate(W/2-200,camOffY);
-  // Height markers
-  for(let t=0;t<=3000;t+=10){
+  // Height markers — subtle lines only, no text (text is in HUD)
+  for(let t=10;t<=3000;t+=10){
     const markerY=G.player?G.player.startY-t*TILE:-t*TILE;
     if(markerY<G.camera.y-60||markerY>G.camera.y+H+10)continue;
-    ctx.save(); ctx.globalAlpha=0.18; ctx.strokeStyle='#ff69b4'; ctx.setLineDash([4,8]);
+    const isMajor=(t%50===0);
+    ctx.save(); ctx.globalAlpha=isMajor?0.18:0.07;
+    ctx.strokeStyle=isMajor?'#00c8ff':'#4080a0';
+    ctx.setLineDash(isMajor?[6,8]:[2,12]);
     ctx.beginPath();ctx.moveTo(-300,markerY);ctx.lineTo(900,markerY);ctx.stroke();
-    ctx.setLineDash([]); ctx.globalAlpha=0.5; ctx.fillStyle='#ff69b4';
-    ctx.font='10px "Orbitron",sans-serif';ctx.textAlign='right';ctx.fillText(t+' tiles',-10,markerY-3);
+    if(isMajor){
+      ctx.setLineDash([]);ctx.globalAlpha=0.35;
+      ctx.fillStyle='#00c8ff';
+      ctx.font='9px "Orbitron",sans-serif';ctx.textAlign='right';
+      ctx.fillText(t+'t',-14,markerY-3);
+    }
     ctx.restore();
   }
   // Platforms
