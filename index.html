@@ -2422,7 +2422,25 @@ function startAuthObserver(){
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       S.cosmeticInventory=[...S.profile.cosmeticInventory||[]];
-      S.equipped={...{hat:null,eye_color:null,particle:null,background:null,color:null,seasonal:null},...(S.profile.equipped||{})};
+      // Normalize equipped — handle legacy dot-notation keys stored by previous bug
+      const rawEquipped=S.profile.equipped||{};
+      const flatEquipped={hat:null,eye_color:null,particle:null,background:null,color:null,seasonal:null};
+      // Check for properly nested object
+      if(rawEquipped.hat!==undefined||rawEquipped.eye_color!==undefined||
+         rawEquipped.background!==undefined||rawEquipped.color!==undefined||
+         rawEquipped.particle!==undefined||rawEquipped.seasonal!==undefined){
+        Object.assign(flatEquipped,rawEquipped);
+      } else {
+        // Check for legacy literal dot-notation keys on profile
+        const pd=S.profile;
+        if(pd['equipped.hat']!==undefined)flatEquipped.hat=pd['equipped.hat'];
+        if(pd['equipped.eye_color']!==undefined)flatEquipped.eye_color=pd['equipped.eye_color'];
+        if(pd['equipped.particle']!==undefined)flatEquipped.particle=pd['equipped.particle'];
+        if(pd['equipped.background']!==undefined)flatEquipped.background=pd['equipped.background'];
+        if(pd['equipped.color']!==undefined)flatEquipped.color=pd['equipped.color'];
+        if(pd['equipped.seasonal']!==undefined)flatEquipped.seasonal=pd['equipped.seasonal'];
+      }
+      S.equipped=flatEquipped;
       document.getElementById('nav-username').textContent=S.profile.username;
       if(S.profile.username==='Dreamcrusher')document.getElementById('admin-refresh-btn').classList.remove('hidden');
       updateCoinDisplay(S.profile.coins);
@@ -2432,6 +2450,16 @@ function startAuthObserver(){
         listenToTradeRequests(); setupTradeInviteListener();
       }
       checkLuckMilestone(null); updateLuckBar(null);
+      // Migrate: if any dot-notation keys exist on profile, write proper nested equipped object
+      const needsMigration=['equipped.hat','equipped.eye_color','equipped.particle',
+        'equipped.background','equipped.color','equipped.seasonal']
+        .some(k=>S.profile[k]!==undefined);
+      if(needsMigration){
+        try{
+          await db.collection('users').doc(S.user.uid).update({equipped:S.equipped});
+          console.log('Migrated equipped field to nested object');
+        }catch(e){console.warn('Migration failed:',e);}
+      }
       renderWardrobeSlots(); updatePlayerPreview();
     }else{
       S.user=null; S.profile=null; S.listenersInitialized=false;
@@ -3079,13 +3107,9 @@ async function sellCosmeticItems(uniqueIds){
   try{
     await db.collection('users').doc(S.user.uid).update({
       coins:firebase.firestore.FieldValue.increment(earned),
-      cosmeticInventory:S.cosmeticInventory, totalValue:S.profile.totalValue,
-      'equipped.hat':S.equipped.hat||null,
-      'equipped.eye_color':S.equipped.eye_color||null,
-      'equipped.particle':S.equipped.particle||null,
-      'equipped.background':S.equipped.background||null,
-      'equipped.color':S.equipped.color||null,
-      'equipped.seasonal':S.equipped.seasonal||null,
+      cosmeticInventory:S.cosmeticInventory,
+      totalValue:S.profile.totalValue,
+      equipped:S.equipped,
     });
   }catch(e){toast('Save error','error');return;}
   updateCoinDisplay(S.profile.coins);
@@ -3172,23 +3196,20 @@ async function equipCosmetic(inv,item){
   if(!item.type)return;
   S.equipped[item.type]=inv.uniqueId;
   try{
-    const upd={};
-    upd['equipped.'+item.type]=inv.uniqueId;
-    await db.collection('users').doc(S.user.uid).update(upd);
+    await db.collection('users').doc(S.user.uid).update({equipped:S.equipped});
   }catch(e){toast('Save error','error');return;}
   toast('Equipped '+item.name+'!','success');
-  if(G){G._hatCache=null;G._hatCacheLoading=false;}
+  if(typeof G!=='undefined'&&G){G._hatCache=null;G._hatCacheLoading=false;}
   renderWardrobeSlots(); updatePlayerPreview(); renderCosmeticsGrid();
 }
 
 async function unequipCosmetic(type){
   S.equipped[type]=null;
   try{
-    const upd={};
-    upd['equipped.'+type]=null;
-    await db.collection('users').doc(S.user.uid).update(upd);
+    await db.collection('users').doc(S.user.uid).update({equipped:S.equipped});
   }catch(e){toast('Save error','error');return;}
   toast('Unequipped.','');
+  if(typeof G!=='undefined'&&G){G._hatCache=null;G._hatCacheLoading=false;}
   renderWardrobeSlots(); updatePlayerPreview(); renderCosmeticsGrid();
 }
 
@@ -3766,7 +3787,25 @@ async function handleTradeComplete(room){
     if(doc.exists){
       S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]];
       S.cosmeticInventory=[...S.profile.cosmeticInventory||[]];
-      S.equipped={...{hat:null,eye_color:null,particle:null,background:null,color:null,seasonal:null},...(S.profile.equipped||{})};
+      // Normalize equipped — handle legacy dot-notation keys stored by previous bug
+      const rawEquipped=S.profile.equipped||{};
+      const flatEquipped={hat:null,eye_color:null,particle:null,background:null,color:null,seasonal:null};
+      // Check for properly nested object
+      if(rawEquipped.hat!==undefined||rawEquipped.eye_color!==undefined||
+         rawEquipped.background!==undefined||rawEquipped.color!==undefined||
+         rawEquipped.particle!==undefined||rawEquipped.seasonal!==undefined){
+        Object.assign(flatEquipped,rawEquipped);
+      } else {
+        // Check for legacy literal dot-notation keys on profile
+        const pd=S.profile;
+        if(pd['equipped.hat']!==undefined)flatEquipped.hat=pd['equipped.hat'];
+        if(pd['equipped.eye_color']!==undefined)flatEquipped.eye_color=pd['equipped.eye_color'];
+        if(pd['equipped.particle']!==undefined)flatEquipped.particle=pd['equipped.particle'];
+        if(pd['equipped.background']!==undefined)flatEquipped.background=pd['equipped.background'];
+        if(pd['equipped.color']!==undefined)flatEquipped.color=pd['equipped.color'];
+        if(pd['equipped.seasonal']!==undefined)flatEquipped.seasonal=pd['equipped.seasonal'];
+      }
+      S.equipped=flatEquipped;
       updateCoinDisplay(S.profile.coins);
     }
   }catch(e){}
@@ -3935,7 +3974,7 @@ function makePlatforms(fromY,toY){
 }
 
 function getPlayerColor(){
-  const uid=S.equipped?.['color']||S.equipped?.color;
+  const uid=S.equipped?.['color'];
   const inv=uid?S.cosmeticInventory?.find(i=>i.uniqueId===uid):null;
   const item=inv?getCosmeticItem(inv.itemId):null;
   if(!item)return DEFAULT_COLOR;
@@ -3956,7 +3995,7 @@ function getPlayerHat(){
 }
 
 function getBackground(){
-  const uid=S.equipped?.['background']||S.equipped?.background;
+  const uid=S.equipped?.['background'];
   if(!uid)return null;
   const inv=S.cosmeticInventory?.find(i=>i.uniqueId===uid);
   const item=inv?getCosmeticItem(inv.itemId):null;
