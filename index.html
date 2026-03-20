@@ -1210,6 +1210,87 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
 }
 .rarity-divine { animation:rainbow-border 2s linear infinite !important; }
 
+/* ── BUG REPORT ───────────────────────────────────────────── */
+.bug-form-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--rl); padding:28px; max-width:680px;
+  position:relative; overflow:hidden;
+}
+.bug-form-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,#ef4444,#f97316,#ef4444);
+  background-size:200% 100%; animation:bug-slide 3s linear infinite;
+}
+@keyframes bug-slide { to { background-position:200% 0; } }
+.bug-field { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
+.bug-label {
+  font-family:var(--font-d); font-size:.62rem; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--text-3);
+}
+.bug-select, .bug-input, .bug-textarea {
+  background:var(--bg-deep); border:1px solid var(--border);
+  border-radius:var(--r); padding:11px 14px;
+  font-size:.88rem; color:var(--text-1);
+  font-family:var(--font-u); transition:var(--t);
+  width:100%;
+}
+.bug-select:focus, .bug-input:focus, .bug-textarea:focus {
+  border-color:var(--accent); outline:none;
+  box-shadow:0 0 0 3px var(--accent-dim);
+}
+.bug-select option { background:var(--bg-card); }
+.bug-textarea { resize:vertical; min-height:120px; line-height:1.5; }
+.bug-severity-row { display:flex; gap:8px; flex-wrap:wrap; }
+.bug-severity-btn {
+  padding:7px 16px; border-radius:20px; border:1px solid var(--border);
+  background:var(--bg-deep); color:var(--text-3);
+  font-family:var(--font-d); font-size:.62rem; font-weight:700;
+  letter-spacing:.08em; cursor:pointer; transition:var(--t); text-transform:uppercase;
+}
+.bug-severity-btn:hover { border-color:var(--border-b); color:var(--text-2); }
+.bug-severity-btn.active-low    { border-color:#22d35e; color:#22d35e; background:rgba(34,211,94,.08); }
+.bug-severity-btn.active-medium { border-color:#f59e0b; color:#f59e0b; background:rgba(245,158,11,.08); }
+.bug-severity-btn.active-high   { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,.08); }
+.btn-submit-bug {
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:#fff; padding:13px 28px; border-radius:var(--r);
+  font-family:var(--font-d); font-size:.78rem; font-weight:900;
+  letter-spacing:.12em; text-transform:uppercase; transition:var(--t);
+  border:none; cursor:pointer; box-shadow:0 4px 20px rgba(239,68,68,.3);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn-submit-bug:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(239,68,68,.45); }
+.btn-submit-bug:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.bug-success {
+  background:rgba(34,211,94,.08); border:1px solid rgba(34,211,94,.3);
+  border-radius:var(--r); padding:16px 20px; display:flex; align-items:center;
+  gap:12px; color:#22d35e; font-family:var(--font-u); font-size:.9rem;
+  animation:page-in .3s ease;
+}
+.bug-success-icon { font-size:1.6rem; flex-shrink:0; }
+.bug-recent {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--rl); padding:20px; max-width:680px; margin-top:24px;
+}
+.bug-recent-title {
+  font-family:var(--font-d); font-size:.7rem; letter-spacing:.18em;
+  color:var(--text-3); text-transform:uppercase; margin-bottom:14px;
+}
+.bug-report-row {
+  display:flex; align-items:flex-start; gap:12px; padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.bug-report-row:last-child { border-bottom:none; }
+.bug-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+.bug-row-area { font-family:var(--font-d); font-size:.65rem; color:var(--accent); letter-spacing:.06em; margin-bottom:3px; }
+.bug-row-text { font-size:.82rem; color:var(--text-1); line-height:1.4; margin-bottom:3px; }
+.bug-row-meta { font-size:.7rem; color:var(--text-3); font-family:var(--font-m); }
+.bug-badge {
+  display:inline-block; padding:2px 8px; border-radius:10px;
+  font-family:var(--font-d); font-size:.55rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; margin-left:6px;
+}
+
 /* ── PLATFORMER ───────────────────────────────────────────── */
 #page-platformer { display:none; flex-direction:column; min-height:0; }
 #page-platformer.active { display:flex; flex:1; min-height:0; overflow:hidden; }
@@ -1366,6 +1447,7 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
+      <button class="nav-item" data-page="bugreport"><span class="nav-icon">🐛</span><span class="nav-label">BUGS</span></button>
       <button class="nav-item" data-page="quests"><span class="nav-icon">📜</span><span class="nav-label">QUESTS</span></button>
       <button class="nav-item" data-page="platformer"><span class="nav-icon">🧗</span><span class="nav-label">CLIMB</span></button>
     </nav>
@@ -1588,6 +1670,63 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
       <section class="page" id="page-history">
         <div class="page-header"><h2>TRADE HISTORY</h2></div>
         <div class="history-list" id="history-list"></div>
+      </section>
+
+      <!-- BUG REPORT -->
+      <section class="page" id="page-bugreport">
+        <div class="page-header">
+          <h2>BUG REPORT</h2>
+          <p>Found something broken? Let us know and we'll fix it fast.</p>
+        </div>
+        <div class="bug-form-card" id="bug-form-card">
+          <div class="bug-field">
+            <label class="bug-label">Area</label>
+            <select class="bug-select" id="bug-area">
+              <option value="">— Select area —</option>
+              <option value="Crate Shop">📦 Crate Shop</option>
+              <option value="Crate Opening">🎰 Crate Opening / Spin</option>
+              <option value="Inventory">🎒 Inventory</option>
+              <option value="Wardrobe">👗 Wardrobe / Equipping</option>
+              <option value="Trading">🤝 Trading</option>
+              <option value="Leaderboard">🏆 Leaderboard</option>
+              <option value="Quests">📜 Quests</option>
+              <option value="Vault Climber">🧗 Vault Climber</option>
+              <option value="Chat">💬 Chat</option>
+              <option value="Login / Account">🔐 Login / Account</option>
+              <option value="Coins / Economy">🪙 Coins / Economy</option>
+              <option value="Cosmetics / Icons">🎨 Cosmetics / Icons</option>
+              <option value="Other">⚙️ Other</option>
+            </select>
+          </div>
+          <div class="bug-field">
+            <label class="bug-label">Severity</label>
+            <div class="bug-severity-row" id="bug-severity-row">
+              <button class="bug-severity-btn" data-sev="Low">🟢 Low — Minor visual issue</button>
+              <button class="bug-severity-btn" data-sev="Medium">🟡 Medium — Feature broken</button>
+              <button class="bug-severity-btn" data-sev="High">🔴 High — Can't play / data loss</button>
+            </div>
+          </div>
+          <div class="bug-field">
+            <label class="bug-label">Title</label>
+            <input type="text" class="bug-input" id="bug-title" placeholder="Short summary of the bug..." maxlength="100"/>
+          </div>
+          <div class="bug-field">
+            <label class="bug-label">Description</label>
+            <textarea class="bug-textarea" id="bug-desc" placeholder="What happened? What did you expect to happen? Steps to reproduce if possible..." maxlength="1000"></textarea>
+          </div>
+          <div class="bug-field">
+            <label class="bug-label">Steps to reproduce <span style="opacity:.5;font-weight:400">(optional)</span></label>
+            <textarea class="bug-textarea" id="bug-steps" placeholder="1. Go to...&#10;2. Click on...&#10;3. See error..." maxlength="500" style="min-height:80px"></textarea>
+          </div>
+          <button class="btn-submit-bug" id="btn-submit-bug">
+            <span>🐛</span> SUBMIT REPORT
+          </button>
+          <div class="bug-error" id="bug-error" style="color:#ef4444;font-size:.82rem;margin-top:12px;min-height:18px"></div>
+        </div>
+        <div class="bug-recent" id="bug-recent">
+          <div class="bug-recent-title">YOUR RECENT REPORTS</div>
+          <div id="bug-recent-list"><div style="color:var(--text-3);font-size:.85rem;font-style:italic">No reports submitted yet.</div></div>
+        </div>
       </section>
 
       <!-- QUESTS -->
@@ -2630,6 +2769,7 @@ function startAuthObserver(){
         listenToTradeRequests(); setupTradeInviteListener();
       }
       checkLuckMilestone(null); updateLuckBar(null);
+      initBugReport();
       // Migrate: if any dot-notation keys exist on profile, write proper nested equipped object
       const needsMigration=['equipped.hat','equipped.eye_color','equipped.particle',
         'equipped.background','equipped.color','equipped.seasonal']
@@ -4073,6 +4213,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     if(page==='leaderboard')loadLeaderboard();
     if(page==='history')renderTradeHistory();
     if(page==='quests')renderQuestsPage();
+    if(page==='bugreport'){loadRecentBugReports();}
     if(page==='platformer')initPlatformerPage();
     else stopPlatformer();
   });
@@ -5000,6 +5141,125 @@ function renderQuestsPage(){
       list.appendChild(card);
     });
   });
+}
+
+// ============================================================
+// BUG REPORT SYSTEM
+// ============================================================
+const BUG_SEVERITY_COLORS = { Low:'#22d35e', Medium:'#f59e0b', High:'#ef4444' };
+let bugSelectedSeverity = '';
+
+function initBugReport(){
+  // Severity buttons
+  document.querySelectorAll('.bug-severity-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      bugSelectedSeverity = btn.dataset.sev;
+      document.querySelectorAll('.bug-severity-btn').forEach(b=>{
+        b.className='bug-severity-btn';
+      });
+      btn.classList.add('active-'+bugSelectedSeverity.toLowerCase());
+    });
+  });
+
+  document.getElementById('btn-submit-bug').addEventListener('click', submitBugReport);
+}
+
+async function submitBugReport(){
+  const area    = document.getElementById('bug-area').value;
+  const title   = document.getElementById('bug-title').value.trim();
+  const desc    = document.getElementById('bug-desc').value.trim();
+  const steps   = document.getElementById('bug-steps').value.trim();
+  const errEl   = document.getElementById('bug-error');
+  errEl.textContent='';
+
+  if(!area)      { errEl.textContent='Please select an area.'; return; }
+  if(!bugSelectedSeverity){ errEl.textContent='Please select a severity level.'; return; }
+  if(!title)     { errEl.textContent='Please enter a short title.'; return; }
+  if(!desc)      { errEl.textContent='Please describe the bug.'; return; }
+
+  const btn = document.getElementById('btn-submit-bug');
+  btn.disabled=true; btn.innerHTML='<span>⏳</span> SUBMITTING...';
+
+  const report = {
+    uid:       S.user?.uid || 'anonymous',
+    username:  S.profile?.username || 'unknown',
+    area, severity: bugSelectedSeverity, title, description: desc,
+    steps: steps||'',
+    timestamp: new Date().toISOString(),
+    status: 'open',
+  };
+
+  try{
+    await db.collection('bugReports').add(report);
+
+    // Clear form
+    document.getElementById('bug-area').value='';
+    document.getElementById('bug-title').value='';
+    document.getElementById('bug-desc').value='';
+    document.getElementById('bug-steps').value='';
+    bugSelectedSeverity='';
+    document.querySelectorAll('.bug-severity-btn').forEach(b=>b.className='bug-severity-btn');
+
+    // Show success message briefly
+    const card = document.getElementById('bug-form-card');
+    const successEl = document.createElement('div');
+    successEl.className='bug-success';
+    successEl.style.marginTop='16px';
+    successEl.innerHTML=`<span class="bug-success-icon">✅</span>
+      <div><strong>Report submitted!</strong><br>
+      <span style="opacity:.7;font-size:.82rem">Thanks for helping improve CrateVault. We'll look into it!</span></div>`;
+    card.appendChild(successEl);
+    setTimeout(()=>successEl.remove(), 5000);
+
+    toast('Bug report submitted! Thanks 🐛','success');
+    loadRecentBugReports();
+  }catch(e){
+    errEl.textContent='Failed to submit: '+e.message;
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='<span>🐛</span> SUBMIT REPORT';
+}
+
+async function loadRecentBugReports(){
+  if(!S.user) return;
+  const listEl = document.getElementById('bug-recent-list');
+  if(!listEl) return;
+  listEl.innerHTML='<div style="color:var(--text-3);font-size:.82rem">Loading...</div>';
+
+  try{
+    const snap = await db.collection('bugReports')
+      .where('uid','==',S.user.uid)
+      .orderBy('timestamp','desc')
+      .limit(5)
+      .get();
+
+    if(snap.empty){
+      listEl.innerHTML='<div style="color:var(--text-3);font-size:.85rem;font-style:italic">No reports submitted yet.</div>';
+      return;
+    }
+
+    listEl.innerHTML='';
+    snap.forEach(doc=>{
+      const r = doc.data();
+      const color = BUG_SEVERITY_COLORS[r.severity]||'#888';
+      const date = new Date(r.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      const row = document.createElement('div');
+      row.className='bug-report-row';
+      row.innerHTML=`
+        <div class="bug-dot" style="background:${color}"></div>
+        <div style="flex:1;min-width:0">
+          <div class="bug-row-area">${escHtml(r.area)}
+            <span class="bug-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${r.severity}</span>
+          </div>
+          <div class="bug-row-text">${escHtml(r.title)}</div>
+          <div class="bug-row-meta">${date}</div>
+        </div>`;
+      listEl.appendChild(row);
+    });
+  }catch(e){
+    listEl.innerHTML='<div style="color:var(--text-3);font-size:.82rem;font-style:italic">Could not load reports.</div>';
+  }
 }
 
 // ============================================================
