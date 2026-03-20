@@ -4370,6 +4370,9 @@ function resizeCanvas(){
 }
 
 function onKey(e,down){
+  // Never steal keys from text inputs
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
   keys[e.code]=down;
   if(down&&(e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space'))tryJump();
   if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
@@ -4952,7 +4955,11 @@ window.initPlatformerPage=function(){
 window.stopPlatformer=function(){if(gameActive){gameActive=false;cancelAnimationFrame(animId);animId=null;}};
 window.platCashOut=function(){cashOut();};
 document.getElementById('btn-plat-start').addEventListener('click',startGame);
-document.addEventListener('keydown',e=>{if(e.code==='Escape')cashOut();});
+document.addEventListener('keydown',e=>{
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+  if(e.code==='Escape')cashOut();
+});
 })();
 
 // ============================================================
