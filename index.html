@@ -501,6 +501,16 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
   font-family:var(--font-d); font-size:.8rem; font-weight:700; color:var(--gold);
   box-shadow:0 0 10px var(--gold-dim);
 }
+.crate-price-locked {
+  background:var(--bg-deep); border:1px solid var(--border);
+  color:var(--text-3); box-shadow:none; font-size:.72rem;
+}
+.crate-price-quest {
+  background:rgba(34,211,94,.06); border:1px solid rgba(34,211,94,.3);
+  color:#22d35e; box-shadow:0 0 10px rgba(34,211,94,.1);
+}
+.crate-locked { cursor:not-allowed; }
+.crate-locked:hover { transform:none !important; box-shadow:none !important; }
 .crate-category-badge {
   display:inline-block; padding:3px 9px; border-radius:20px;
   font-family:var(--font-d); font-size:.55rem; letter-spacing:.1em;
@@ -2739,6 +2749,7 @@ function startAuthObserver(){
       }
       if(!doc||!doc.exists){toast('Profile not found.','error');await auth.signOut();return;}
       S.profile=doc.data();
+      if(!S.profile.questCrateInventory)S.profile.questCrateInventory={};
       S.inventory=[...S.profile.inventory||[]];
       S.cosmeticInventory=[...S.profile.cosmeticInventory||[]];
       // Normalize equipped — handle legacy dot-notation keys stored by previous bug
@@ -2949,17 +2960,31 @@ function renderCratesGrid(){
   allCrates.forEach(crate=>{
     const catColor=CATEGORY_COLORS[crate.category]||crate.color||'#4f8ef7';
     const c=document.createElement('div');
-    c.className='crate-card';
-    c.style.setProperty('--cc',catColor);
-    c.style.setProperty('--cg',catColor+'33');
+    const isQuestCrate=QUEST_CRATES.some(q=>q.id===crate.id);
+    const questCount=isQuestCrate?questCrateCount(crate.id):null;
+    const locked=isQuestCrate&&questCount<=0;
+    c.className='crate-card'+(locked?' crate-locked':'');
+    c.style.setProperty('--cc',locked?'#333':catColor);
+    c.style.setProperty('--cg',locked?'#33333333':catColor+'33');
     const catLabel=CATEGORY_LABELS[crate.category]||crate.category||'';
-    c.innerHTML=`<div class="crate-category-badge" style="color:${catColor}">${catLabel}</div>
-      <span class="crate-emoji">${crate.icon}</span>
+    let priceHtml;
+    if(isQuestCrate){
+      if(locked){
+        priceHtml=`<div class="crate-price crate-price-locked">🔒 Complete a quest to earn</div>`;
+      }else{
+        priceHtml=`<div class="crate-price crate-price-quest">🎁 ${questCount} available — FREE</div>`;
+      }
+    }else{
+      priceHtml=`<div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
+    }
+    c.innerHTML=`<div class="crate-category-badge" style="color:${locked?'#555':catColor}">${catLabel}</div>
+      <span class="crate-emoji" style="${locked?'filter:grayscale(1);opacity:.4':''}">${crate.icon}</span>
       <div class="crate-name">${crate.name}</div>
       <div class="crate-desc">${crate.desc}</div>
-      <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
+      ${priceHtml}`;
     c.addEventListener('click',()=>{
       if(!S.profile){toast('Still loading your profile...');return;}
+      if(locked){toast('Complete a quest to earn this crate!','error');return;}
       openCratePage(crate);
     });
     grid.appendChild(c);
@@ -3076,14 +3101,23 @@ function rollItem(crateId){
 document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const crate=S.currentCrate;
   if(!crate||!S.user||!S.profile)return;
-  if(S.profile.coins<crate.price){toast('Not enough coins! 🪙','error');return;}
+  const isQC=QUEST_CRATES.some(q=>q.id===crate.id);
+  if(isQC&&questCrateCount(crate.id)<=0){toast('You haven\'t earned this crate yet! Complete a quest first.','error');return;}
+  if(!isQC&&S.profile.coins<crate.price){toast('Not enough coins! 🪙','error');return;}
   const btn=document.getElementById('btn-open-crate');
   btn.disabled=true;
   document.getElementById('result-panel').classList.add('hidden');
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
-  S.profile.coins-=crate.price;
-  updateCoinDisplay(S.profile.coins);
+  const isQCOpen=QUEST_CRATES.some(q=>q.id===crate.id);
+  if(isQCOpen){
+    const qci=S.profile.questCrateInventory||{};
+    qci[crate.id]=Math.max(0,(qci[crate.id]||1)-1);
+    S.profile.questCrateInventory=qci;
+  }else{
+    S.profile.coins-=crate.price;
+    updateCoinDisplay(S.profile.coins);
+  }
   await animateSpin(crate,item);
   const isCosmetic=!!item.type;
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
@@ -3130,8 +3164,11 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   }
 
   try{
+    const isQCSave=QUEST_CRATES.some(q=>q.id===crate.id);
+    const coinsDelta=isQCSave?0:-crate.price;
     await db.collection('users').doc(S.user.uid).update({
-      coins:firebase.firestore.FieldValue.increment(-crate.price),
+      coins:firebase.firestore.FieldValue.increment(coinsDelta),
+      ...(isQCSave?{questCrateInventory:S.profile.questCrateInventory}:{}),
       inventory:S.inventory, cosmeticInventory:S.cosmeticInventory,
       cratesOpened:S.profile.cratesOpened,
       [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(crate.price),
@@ -5021,6 +5058,12 @@ const QUESTS = [
 // Add quest crates to the main CRATES lookup
 QUEST_CRATES.forEach(c=>{if(!CRATES.find(x=>x.id===c.id))CRATES.push(c);});
 
+function questCrateCount(crateId){
+  // Returns how many of this quest crate the player has earned and not yet opened
+  const inv = S.profile?.questCrateInventory || {};
+  return Math.max(0, inv[crateId] || 0);
+}
+
 function getQuestProgress(quest){
   if(!S.profile)return 0;
   const q=S.profile.quests||{};
@@ -5059,19 +5102,13 @@ async function claimQuest(questId){
     updateCoinDisplay(S.profile.coins);
   }
   if(quest.reward.crate){
-    const rewardCrate=QUEST_CRATES.find(c=>c.id===quest.reward.crate);
-    if(rewardCrate){
-      const item=rollItem(rewardCrate.id);
-      if(item){
-        const invItem={itemId:item.id,uniqueId:genUID(),crateSource:rewardCrate.id,obtainedAt:new Date().toISOString()};
-        const isCosmetic=!!item.type;
-        if(isCosmetic){S.cosmeticInventory.push(invItem);updates.cosmeticInventory=S.cosmeticInventory;}
-        else{S.inventory.push(invItem);updates.inventory=S.inventory;}
-        toast(`🎁 Quest reward: ${item.name}!`,'gold',4000);
-        const r=getRarity(item.rarity);
-        if(['mythic','divine','ultra1','legendary'].includes(item.rarity))showUltraOverlay(item);
-      }
-    }
+    // Add crate to the player's quest crate inventory (they open it separately)
+    const qci = S.profile.questCrateInventory || {};
+    qci[quest.reward.crate] = (qci[quest.reward.crate]||0) + 1;
+    S.profile.questCrateInventory = qci;
+    updates.questCrateInventory = qci;
+    const rewardCrate = QUEST_CRATES.find(c=>c.id===quest.reward.crate);
+    toast(`🎁 ${rewardCrate?.name||'Quest Crate'} added to your crate shop! Go open it.`,'gold',5000);
   }
   try{
     await db.collection('users').doc(S.user.uid).update(updates);
