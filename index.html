@@ -501,7 +501,10 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
   font-family:var(--font-d); font-size:.8rem; font-weight:700; color:var(--gold);
   box-shadow:0 0 10px var(--gold-dim);
 }
-.crate-price-locked {
+.crate-cosmetic-hint {
+  font-size:.62rem; color:#a855f7; font-family:var(--font-d);
+  letter-spacing:.06em; margin-bottom:8px; opacity:.85;
+}
   background:var(--bg-deep); border:1px solid var(--border);
   color:var(--text-3); box-shadow:none; font-size:.72rem;
 }
@@ -1467,8 +1470,8 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
       <!-- CRATES -->
       <section class="page active" id="page-crates">
         <div class="page-header">
-          <h2>CRATE SHOP</h2>
-          <p>Open cosmetic crates to unlock unique items for your character.</p>
+          <h2>CRATE VAULT</h2>
+          <p>Open crates to win coins. Rare cosmetics can drop as bonus loot.</p>
         </div>
         <div class="crates-tabs" id="crates-tabs"></div>
         <div class="crates-grid" id="crates-grid"></div>
@@ -1531,8 +1534,8 @@ input, select { font-family:inherit; color:inherit; border:none; outline:none; b
           <h2>INVENTORY</h2>
           <div class="inv-tabs" id="inv-tabs">
             <button class="inv-tab active" data-inv="all">All Items</button>
-            <button class="inv-tab" data-inv="cosmetics">Cosmetics</button>
-            <button class="inv-tab" data-inv="items">Gear Items</button>
+            <button class="inv-tab" data-inv="cosmetics">✨ Cosmetics</button>
+            <button class="inv-tab" data-inv="items">🎰 Vault Items</button>
           </div>
           <div class="inv-controls">
             <input type="text" id="inv-search" placeholder="🔍 Search items..." class="search-input"/>
@@ -2465,80 +2468,109 @@ const COSMETIC_CRATES = [
 
 // Keep original gear items and crates
 const ITEMS = [
-  {id:'c001',name:'Rusty Coin',       rarity:'common',   icon:'🪙', value:48,  desc:'A worn tarnished coin.'},
-  {id:'c002',name:'Wooden Shield',    rarity:'common',   icon:'🛡️', value:52,  desc:'Basic wooden protection.'},
-  {id:'c003',name:'Old Dagger',       rarity:'common',   icon:'🗡️', value:50,  desc:'Dull but functional.'},
-  {id:'c004',name:'Bread Loaf',       rarity:'common',   icon:'🍞', value:46,  desc:'Surprisingly filling.'},
-  {id:'c005',name:'Pebble',           rarity:'common',   icon:'🪨', value:44,  desc:'Just a rock. Or is it?'},
-  {id:'c006',name:'Leather Boots',    rarity:'common',   icon:'👢', value:54,  desc:'Well-worn travel boots.'},
-  {id:'c007',name:'Hemp Rope',        rarity:'common',   icon:'🧵', value:48,  desc:'Always useful.'},
-  {id:'c008',name:'Candle',           rarity:'common',   icon:'🕯️', value:44,  desc:'Lights the darkest caves.'},
-  {id:'c009',name:'Cloth Bandage',    rarity:'common',   icon:'🩹', value:48,  desc:'Stops minor bleeding.'},
-  {id:'c010',name:'Wooden Bow',       rarity:'common',   icon:'🏹', value:54,  desc:'Simple but effective.'},
-  {id:'c011',name:'Fishing Rod',      rarity:'common',   icon:'🎣', value:50,  desc:'For the patient angler.'},
-  {id:'c012',name:'Iron Nail',        rarity:'common',   icon:'📌', value:44,  desc:'Holds things together.'},
-  {id:'c013',name:'Empty Bottle',     rarity:'common',   icon:'🍶', value:46,  desc:'Could hold anything.'},
-  {id:'c014',name:'Wool Hat',         rarity:'common',   icon:'🎩', value:50,  desc:'Keeps your head warm.'},
-  {id:'c015',name:'Tin Cup',          rarity:'common',   icon:'🫙', value:46,  desc:'Dented but drinkable.'},
-  {id:'u001',name:'Silver Ring',      rarity:'uncommon', icon:'💍', value:100, desc:'A simple silver band.'},
-  {id:'u002',name:'Steel Sword',      rarity:'uncommon', icon:'⚔️', value:115, desc:'Sharper than most.'},
-  {id:'u003',name:'Iron Helm',        rarity:'uncommon', icon:'⛑️', value:105, desc:'Solid iron headgear.'},
-  {id:'u004',name:'Potion of Speed',  rarity:'uncommon', icon:'🧪', value:118, desc:'Fleet-footed formula.'},
-  {id:'u005',name:'Copper Key',       rarity:'uncommon', icon:'🗝️', value:98,  desc:'Opens many doors.'},
-  {id:'u006',name:'Map Fragment',     rarity:'uncommon', icon:'🗺️', value:105, desc:'Part of a larger secret.'},
-  {id:'u007',name:'Storm Scroll',     rarity:'uncommon', icon:'📜', value:115, desc:'Contains weather magic.'},
-  {id:'u008',name:'Fox Pelt',         rarity:'uncommon', icon:'🦊', value:102, desc:'Warm and valuable fur.'},
-  {id:'u009',name:'Magic Compass',    rarity:'uncommon', icon:'🧭', value:110, desc:'Points toward treasure.'},
-  {id:'u010',name:'Blue Crystal',     rarity:'uncommon', icon:'💎', value:120, desc:'Faintly glowing gem.'},
-  {id:'u011',name:'Shadow Cloak',     rarity:'uncommon', icon:'🧥', value:115, desc:'Hard to see in.'},
-  {id:'u012',name:'Bone Charm',       rarity:'uncommon', icon:'🦴', value:100, desc:'Provides minor warding.'},
-  {id:'r001',name:'Enchanted Blade',  rarity:'rare',     icon:'🔷', value:285, desc:'Hums with arcane energy.'},
-  {id:'r002',name:'Dragon Scale',     rarity:'rare',     icon:'🐉', value:315, desc:'Impervious to flame.'},
-  {id:'r003',name:'Mana Crystal',     rarity:'rare',     icon:'🔮', value:295, desc:'Crystallized magic.'},
-  {id:'r004',name:'Thunder Gauntlet', rarity:'rare',     icon:'⚡', value:320, desc:'Channels lightning.'},
-  {id:'r005',name:'Phantom Mask',     rarity:'rare',     icon:'👻', value:295, desc:'Face of the unseen.'},
-  {id:'r006',name:'Arcane Tome',      rarity:'rare',     icon:'📖', value:325, desc:'Ancient spellbook.'},
-  {id:'r007',name:'Vortex Staff',     rarity:'rare',     icon:'🌀', value:300, desc:'Creates small storms.'},
-  {id:'r008',name:'Ice Crown',        rarity:'rare',     icon:'👑', value:330, desc:'Freezes the mind.'},
-  {id:'r009',name:'Fire Emblem',      rarity:'rare',     icon:'🔥', value:305, desc:'Smoldering with power.'},
-  {id:'r010',name:'Moon Amulet',      rarity:'rare',     icon:'🌙', value:290, desc:'Grants lunar vision.'},
-  {id:'e001i',name:'Void Blade',      rarity:'epic',     icon:'🌑', value:2200, desc:'Cuts through reality.'},
-  {id:'e002i',name:'Soul Gem',        rarity:'epic',     icon:'💜', value:2350, desc:'Contains a trapped soul.'},
-  {id:'e003i',name:'Titan Armor',     rarity:'epic',     icon:'🛡️', value:2500, desc:'Forged by giants.'},
-  {id:'e004i',name:'Celestial Bow',   rarity:'epic',     icon:'🌟', value:2250, desc:'Arrows pierce stars.'},
-  {id:'l001',name:'Sunforged Sword',  rarity:'legendary',icon:'☀️', value:8500,  desc:'Blazing with solar power.'},
-  {id:'l002',name:'Moonweave Robe',   rarity:'legendary',icon:'🌕', value:9000,  desc:'Woven from moonlight.'},
-  {id:'l003',name:'Storm Trident',    rarity:'legendary',icon:'🔱', value:9500,  desc:'Commands the seas.'},
-  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:88000,  desc:'Opens any dimension.'},
-  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:92000,  desc:'Piece of a dead star.'},
-  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:210000, desc:'Touched by a deity.'},
-  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:666667, desc:'1 in a million.'},
+  // ── COMMON — small wins, chips, low cards ─────────────────
+  {id:'c001',name:'Penny Chip',       rarity:'common',   icon:'🟡', value:45,   desc:'A basic casino chip. Small but it adds up.'},
+  {id:'c002',name:'Lucky Nickel',     rarity:'common',   icon:'🪙', value:48,   desc:'Slightly luckier than average.'},
+  {id:'c003',name:'Two of Clubs',     rarity:'common',   icon:'🃏', value:42,   desc:'Lowest card in the deck.'},
+  {id:'c004',name:'Scratch Ticket',   rarity:'common',   icon:'🎟️', value:50,   desc:'Better luck next time... maybe.'},
+  {id:'c005',name:'Loaded Die',       rarity:'common',   icon:'🎲', value:44,   desc:'Slightly weighted. Shhh.'},
+  {id:'c006',name:'Slot Token',       rarity:'common',   icon:'🔘', value:52,   desc:'One spin awaits.'},
+  {id:'c007',name:'House Chip',       rarity:'common',   icon:'🔴', value:46,   desc:'Standard red chip.'},
+  {id:'c008',name:'Bent Card',        rarity:'common',   icon:'📄', value:43,   desc:'Someone marked this one.'},
+  {id:'c009',name:'Lucky Clover',     rarity:'common',   icon:'🍀', value:48,   desc:'Four leaves. Mild luck boost.'},
+  {id:'c010',name:'Poker Chip',       rarity:'common',   icon:'⚫', value:50,   desc:'Black chip. Entry level.'},
+  {id:'c011',name:'Numbered Ball',    rarity:'common',   icon:'🎱', value:47,   desc:'Drawn from the lottery drum.'},
+  {id:'c012',name:'Ticket Stub',      rarity:'common',   icon:'🎫', value:44,   desc:'Proof you were here.'},
+  {id:'c013',name:"Rabbit's Foot",   rarity:'common',   icon:'🐾', value:51,   desc:'Suspiciously lucky.'},
+  {id:'c014',name:'One-Armed Bandit', rarity:'common',   icon:'🎰', value:49,   desc:'The machine that started it all.'},
+  {id:'c015',name:'Consolation Prize',rarity:'common',   icon:'🏅', value:46,   desc:'You played. That counts.'},
+  // ── UNCOMMON — better chips, face cards, multipliers ──────
+  {id:'u001',name:'Silver Chip',      rarity:'uncommon', icon:'⚪', value:105,  desc:'Worth real money now.'},
+  {id:'u002',name:'Ace of Spades',    rarity:'uncommon', icon:'♠️', value:120,  desc:'The death card. Or the best card.'},
+  {id:'u003',name:'Double Down',      rarity:'uncommon', icon:'✌️', value:110,  desc:'2x your next play.'},
+  {id:'u004',name:'Gold Die',         rarity:'uncommon', icon:'🎲', value:118,  desc:'Solid gold. Rolls perfectly.'},
+  {id:'u005',name:'Flush Draw',       rarity:'uncommon', icon:'♦️', value:100,  desc:'One card away from glory.'},
+  {id:'u006',name:'Hot Streak',       rarity:'uncommon', icon:'🔥', value:115,  desc:'Three wins in a row.'},
+  {id:'u007',name:'Casino Marker',    rarity:'uncommon', icon:'📋', value:108,  desc:'Credit at the high-stakes table.'},
+  {id:'u008',name:'Loaded Roulette',  rarity:'uncommon', icon:'🎡', value:102,  desc:'The wheel knows your number.'},
+  {id:'u009',name:'Wild Card',        rarity:'uncommon', icon:'🃏', value:112,  desc:'Can be anything you need.'},
+  {id:'u010',name:'Blue Chip',        rarity:'uncommon', icon:'🔵', value:122,  desc:'Premium quality chip.'},
+  {id:'u011',name:'High Roller Pass', rarity:'uncommon', icon:'🎖️', value:116,  desc:'VIP access to the back room.'},
+  {id:'u012',name:'Pair of Kings',    rarity:'uncommon', icon:'👑', value:105,  desc:'A strong hand.'},
+  // ── RARE — jackpot pieces, special items ──────────────────
+  {id:'r001',name:'Mini Jackpot',     rarity:'rare',     icon:'💰', value:290,  desc:'A small but satisfying win.'},
+  {id:'r002',name:'Platinum Chip',    rarity:'rare',     icon:'🔷', value:320,  desc:'Only the biggest players use these.'},
+  {id:'r003',name:'Royal Flush',      rarity:'rare',     icon:'🂱', value:300,  desc:'The best hand in poker.'},
+  {id:'r004',name:'Lucky 7',          rarity:'rare',     icon:'7️⃣', value:315,  desc:'777. The slots dream.'},
+  {id:'r005',name:'House Edge',       rarity:'rare',     icon:'🏦', value:295,  desc:'You briefly become the house.'},
+  {id:'r006',name:'Jackpot Bell',     rarity:'rare',     icon:'🔔', value:330,  desc:'Ding ding ding!'},
+  {id:'r007',name:'Loaded Wheel',     rarity:'rare',     icon:'🎯', value:305,  desc:'Lands where you want it.'},
+  {id:'r008',name:'Four Aces',        rarity:'rare',     icon:'♣️', value:335,  desc:'Unbeatable hand.'},
+  {id:'r009',name:'Winning Ticket',   rarity:'rare',     icon:'🎟️', value:310,  desc:'Finally a winner.'},
+  {id:'r010',name:'VIP Chip',         rarity:'rare',     icon:'💎', value:295,  desc:'Exclusive to the high-limit room.'},
+  // ── EPIC — massive wins, legendary streaks ─────────────────
+  {id:'e001i',name:'Grand Jackpot',   rarity:'epic',     icon:'💵', value:2200, desc:'The big payout everyone chases.'},
+  {id:'e002i',name:'Whale Token',     rarity:'epic',     icon:'🐋', value:2400, desc:'Only whales carry these.'},
+  {id:'e003i',name:'Rigged Table',    rarity:'epic',     icon:'🎴', value:2500, desc:'The odds are in your favor.'},
+  {id:'e004i',name:'Infinite Spin',   rarity:'epic',     icon:'♾️', value:2300, desc:'The machine never stops.'},
+  // ── LEGENDARY ─────────────────────────────────────────────
+  {id:'l001',name:'Diamond Jackpot',  rarity:'legendary',icon:'💎', value:9000,  desc:'The vault opens for you.'},
+  {id:'l002',name:"Billionaire's Chip",rarity:'legendary',icon:'🪙',value:9500, desc:'Worth more than most cars.'},
+  {id:'l003',name:'The Bank',         rarity:'legendary',icon:'🏦', value:10000, desc:'You briefly own the casino.'},
+  // ── MYTHIC ─────────────────────────────────────────────────
+  {id:'m001',name:'Infinite Money',   rarity:'mythic',   icon:'💸', value:90000,  desc:'The printer goes brrr.'},
+  {id:'m002',name:'Casino Deed',      rarity:'mythic',   icon:'📜', value:95000,  desc:'You own the whole establishment.'},
+  // ── DIVINE / ULTRA ─────────────────────────────────────────
+  {id:'d001',name:'God Mode Chip',    rarity:'divine',   icon:'✨', value:210000, desc:'The universe bets on you.'},
+  {id:'ur01',name:'OMEGA JACKPOT',    rarity:'ultra1',   icon:'💠', value:666667, desc:"1 in a million. You're that person."},
 ];
 
 const CRATES = [
-  {id:'starter',name:'Starter Crate',price:50,icon:'📦',color:'#9ca3af',
-   desc:'For new adventurers. Commons are likely.',
-   odds:{common:0.88, uncommon:0.09, rare:0.03},
-   items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015','u001','u002','u003','r001','r002']},
-  {id:'warrior',name:'Warrior Crate',price:125,icon:'⚔️',color:'#ef4444',
-   desc:'Combat gear and deadly weapons.',
-   odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-   items:['c001','c003','c006','c009','c010','u002','u003','u004','r001','r004','e001i','e003i']},
-  {id:'infernal',name:'Infernal Crate',price:500,icon:'🔥',color:'#dc2626',
-   desc:'Rare guaranteed, Epic possible.',
-   odds:{rare:0.82, epic:0.15, legendary:0.03},
-   items:['r001','r004','r005','r006','r009','e001i','e003i','l001']},
-  {id:'celestial',name:'Celestial Crate',price:3500,icon:'🌟',color:'#f59e0b',
-   desc:'Epic guaranteed, Legendary possible.',
-   odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02},
-   items:['r008','r003','e004i','e002i','l001','l002','m002']},
-  {id:'mythic_crate',name:'Mythic Crate',price:8000,icon:'💀',color:'#ef4444',
-   desc:'Legendary and Mythic only.',
-   odds:{epic:0.40, legendary:0.48, mythic:0.12},
-   items:['e001i','e002i','l001','l003','m001','m002']},
-  {id:'omega',name:'OMEGA Crate',price:180000,icon:'⚡',color:'#ffd700',
-   desc:'Divine and Ultra drops possible.',
-   odds:{mythic:0.9499, divine:0.0400, ultra1:0.0099},
+  // ── PENNY SLOTS — entry level, mostly common wins ─────────
+  {id:'penny',    name:'Penny Slots',     price:25,    icon:'🎰', color:'#9ca3af',
+   desc:'Low stakes, low rewards. Everyone starts here.',
+   odds:{common:0.90, uncommon:0.08, rare:0.02},
+   cosmeticChance:0,
+   items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015']},
+
+  // ── LUCKY PULL — first real crate, small cosmetic chance ──
+  {id:'lucky',    name:'Lucky Pull',      price:100,   icon:'🍀', color:'#22c55e',
+   desc:'A bit of luck might land you something nice.',
+   odds:{common:0.72, uncommon:0.22, rare:0.06},
+   cosmeticChance:0.01,
+   cosmeticPool:['h001','h002','h003','e001','e002','e003','col001','col002','col003'],
+   items:['c001','c002','c005','c009','c010','c014','u001','u002','u003','u004','u005','u006','r001','r009']},
+
+  // ── HIGH ROLLER — mid tier, cosmetics visible ─────────────
+  {id:'highroller',name:'High Roller',   price:500,   icon:'🎩', color:'#3b82f6',
+   desc:'The real players are here. Rare+ guaranteed.',
+   odds:{rare:0.78, epic:0.18, legendary:0.04},
+   cosmeticChance:0.04,
+   cosmeticPool:['h001','h002','h003','h004','h005','e001','e002','e003','e004','col001','col002','col003','col004','col005','p006','b001','b005'],
+   items:['r001','r002','r003','r004','r005','r006','r007','r008','r009','r010','e001i','e002i']},
+
+  // ── VIP ROOM — high stakes, real cosmetic odds ─────────────
+  {id:'vip',      name:'VIP Room',        price:2500,  icon:'💎', color:'#a855f7',
+   desc:'Exclusive. Epic+ only. Cosmetics start dropping here.',
+   odds:{epic:0.60, legendary:0.32, mythic:0.08},
+   cosmeticChance:0.08,
+   cosmeticPool:['h004','h005','h006','h009','h010','e004','e005','col006','col007','col009','col010','p001','p002','p003','b002','b003','b006','b008'],
+   items:['e001i','e002i','e003i','e004i','l001','l002','l003']},
+
+  // ── JACKPOT VAULT — legendary+ chase, rare cosmetics ──────
+  {id:'jackpot',  name:'Jackpot Vault',   price:10000, icon:'💰', color:'#f59e0b',
+   desc:'Legendary guaranteed. Mythic possible. Real cosmetics drop here.',
+   odds:{legendary:0.60, mythic:0.35, divine:0.05},
+   cosmeticChance:0.12,
+   cosmeticPool:['h006','h009','h010','h011','h012','e005','e006','col010','col011','col012','col013','p004','p005','p007','b004','b007','b009','b010','s001','s002','s003'],
+   items:['l001','l002','l003','m001','m002']},
+
+  // ── OMEGA VAULT — end game, divine chase, legendary cosmetics
+  {id:'omega',    name:'OMEGA Vault',     price:100000,icon:'⚡', color:'#ffd700',
+   desc:'The ultimate gamble. Divine odds. Cosmetics from myth.',
+   odds:{mythic:0.88, divine:0.10, ultra1:0.02},
+   cosmeticChance:0.20,
+   cosmeticPool:['h012','e006','col014','col015','col016','p008','p009','b010','b011','s004','s005','s006'],
    items:['m001','m002','d001','ur01']},
 ];
 
@@ -2570,7 +2602,7 @@ function genUID(){return Date.now().toString(36)+Math.random().toString(36).slic
 const CATEGORY_LABELS = {
   hat:'🎩 Hats', eye_color:'👁️ Eye Colors', particle:'✨ Particles',
   background:'🌄 Backgrounds', color:'🎨 Colors', seasonal:'🎃 Seasonal',
-  gear:'⚔️ Gear Items',
+  gear:'🎰 Vault Crates',
   quest:'🏆 Quest Rewards'
 };
 const CATEGORY_COLORS = {
@@ -2930,7 +2962,7 @@ function loadCratesPage(){
   // Build tabs
   const tabsEl=document.getElementById('crates-tabs');
   tabsEl.innerHTML='';
-  const categories=['all','hat','eye_color','particle','background','color','seasonal','gear','quest'];
+  const categories=['all','gear','quest'];
   categories.forEach(cat=>{
     const btn=document.createElement('button');
     btn.className='crates-tab'+(cat===S.currentCrateTab?' active':'');
@@ -2950,9 +2982,8 @@ function renderCratesGrid(){
   const grid=document.getElementById('crates-grid');
   grid.innerHTML='';
   let allCrates=[
-    ...COSMETIC_CRATES.map(c=>({...c,isCosmetic:true})),
+    ...CRATES.filter(c=>!QUEST_CRATES.find(q=>q.id===c.id)).map(c=>({...c,isCosmetic:false,category:'gear'})),
     ...QUEST_CRATES.map(c=>({...c,isCosmetic:true,isQuest:true})),
-    ...CRATES.filter(c=>!QUEST_CRATES.find(q=>q.id===c.id)).map(c=>({...c,isCosmetic:false,category:'gear'}))
   ];
   if(S.currentCrateTab!=='all'){
     allCrates=allCrates.filter(c=>c.category===S.currentCrateTab);
@@ -2977,10 +3008,12 @@ function renderCratesGrid(){
     }else{
       priceHtml=`<div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
     }
+    const cosmChance=crate.cosmeticChance>0?`<div class="crate-cosmetic-hint">✨ ${(crate.cosmeticChance*100).toFixed(0)}% cosmetic drop chance</div>`:'';
     c.innerHTML=`<div class="crate-category-badge" style="color:${locked?'#555':catColor}">${catLabel}</div>
       <span class="crate-emoji" style="${locked?'filter:grayscale(1);opacity:.4':''}">${crate.icon}</span>
       <div class="crate-name">${crate.name}</div>
       <div class="crate-desc">${crate.desc}</div>
+      ${cosmChance}
       ${priceHtml}`;
     c.addEventListener('click',()=>{
       if(!S.profile){toast('Still loading your profile...');return;}
@@ -3093,8 +3126,19 @@ function rollItem(crateId){
   let rand=Math.random()*total;
   let chosenRarity=rarityEntries[rarityEntries.length-1][0];
   for(const[rarity,weight]of rarityEntries){rand-=weight;if(rand<=0){chosenRarity=rarity;break;}}
+  // Check for cosmetic bonus drop (separate chance on top of regular item)
+  // This is handled separately in the open flow — rollItem just returns gear items
   const matching=pool.filter(i=>i.rarity===chosenRarity);
   if(matching.length)return matching[Math.floor(Math.random()*matching.length)];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function rollCosmeticBonus(crate){
+  // Returns a cosmetic item if the crate rolls a bonus, otherwise null
+  if(!crate.cosmeticChance||!crate.cosmeticPool||crate.cosmeticPool.length===0)return null;
+  if(Math.random()>crate.cosmeticChance)return null;
+  const pool=crate.cosmeticPool.map(id=>COSMETIC_ITEMS.find(i=>i.id===id)).filter(Boolean);
+  if(!pool.length)return null;
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
@@ -3125,6 +3169,16 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
     S.cosmeticInventory.push(invItem);
   } else {
     S.inventory.push(invItem);
+  }
+
+  // Roll for cosmetic bonus drop (only on non-quest, non-cosmetic crates)
+  let bonusCosmetic=null, bonusCosmeticInvItem=null;
+  if(!QUEST_CRATES.some(q=>q.id===crate.id)&&!isCosmetic){
+    bonusCosmetic=rollCosmeticBonus(crate);
+    if(bonusCosmetic){
+      bonusCosmeticInvItem={itemId:bonusCosmetic.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
+      S.cosmeticInventory.push(bonusCosmeticInvItem);
+    }
   }
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
   trackQuestProgress('crates_opened',1);
@@ -3177,6 +3231,16 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   }catch(e){toast('Save error: '+e.message,'error');}
   S.lastOpenedInvItem={...invItem,isCosmetic};
   showResult(item,r,invItem,isCosmetic);
+  // If a bonus cosmetic dropped, show it as a separate exciting notification
+  if(bonusCosmetic){
+    const br=getRarity(bonusCosmetic.rarity);
+    setTimeout(()=>{
+      toast(`✨ BONUS DROP! ${bonusCosmetic.name} cosmetic!`,'gold',6000);
+      if(['mythic','divine','legendary'].includes(bonusCosmetic.rarity)){
+        showUltraOverlay(bonusCosmetic);
+      }
+    },1200);
+  }
   if(['ultra1','ultra2','ultra3','ultra4','divine','mythic'].includes(item.rarity)){
     setTimeout(()=>showUltraOverlay(item),800);
     const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name}!`;
@@ -4244,6 +4308,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const page=btn.dataset.page;
     showPage(page);
+    if(page==='crates')renderCratesGrid();
     if(page==='inventory')renderInventory();
     if(page==='wardrobe'){renderWardrobeSlots();updatePlayerPreview();renderCosmeticsGrid();}
     if(page==='trade'){renderOnlinePlayers();if(S.tradeRoomId)renderTradeUI();}
@@ -4305,7 +4370,7 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 // VAULT CLIMBER PLATFORMER (with cosmetics support)
 // ============================================================
 (function(){
-const TILE=48,GRAVITY=0.45,JUMP=-12.5,SPEED=5.0;
+const TILE=48,GRAVITY=0.45,JUMP=-12.5,SPEED=4.0;
 const PLATFORM_COLORS=['#1e2840','#162030','#1a2535','#0f1a28'];
 const DEFAULT_COLOR='#ff69b4';
 let canvas,ctx,animId,gameActive=false;
@@ -4470,8 +4535,15 @@ function update(dt){
   }
   G.platforms=G.platforms.filter(pl=>!pl.gone);
   const heightTiles=Math.max(0,Math.floor((p.startY-p.y)/TILE));
-  if(heightTiles>p.highestTile){p.highestTile=heightTiles;
-    trackQuestProgress('max_tiles',heightTiles);}
+  if(heightTiles>p.highestTile){
+    const prevMilestone=Math.floor(p.highestTile/10)*10;
+    p.highestTile=heightTiles;
+    const newMilestone=Math.floor(heightTiles/10)*10;
+    // Only call trackQuestProgress when crossing a 10-tile boundary (not every frame)
+    if(newMilestone>prevMilestone){
+      trackQuestProgress('max_tiles',heightTiles);
+    }
+  }
   if(heightTiles<p.highestTile-50||p.y>0){die();return;}
   G.coins=Math.floor(heightTiles/10)*25;
   // Spawn trail particles
@@ -5114,30 +5186,45 @@ async function claimQuest(questId){
     await db.collection('users').doc(S.user.uid).update(updates);
     toast('Quest claimed! '+(quest.reward.coins?`+${fmtNum(quest.reward.coins)} 🪙`:''),'success');
   }catch(e){toast('Save error','error');return;}
+  // Mark quest as toasted so it won't re-fire completion notification
+  _toastedQuests.add(questId);
   renderQuestsPage();
+  // Refresh crate shop so the newly earned crate shows as unlocked
+  if(document.getElementById('page-crates').classList.contains('active')){
+    renderCratesGrid();
+  }
 }
+
+// Track which quests we've already toasted this session so we never spam
+const _toastedQuests = new Set();
 
 async function trackQuestProgress(type, value=1){
   if(!S.user||!S.profile)return;
   const questData=S.profile.quests||{};
-  if(type==='max_tiles'||type==='max_tiles_ever'||type==='max_coins'){
-    if((questData[type]||0)>=value)return; // only update if new high
+
+  // For high-water-mark types, skip entirely if value didn't improve
+  const isHWM=(type==='max_tiles'||type==='max_tiles_ever'||type==='max_coins');
+  if(isHWM){
+    if((questData[type]||0)>=value)return;
     questData[type]=value;
   }else{
     questData[type]=(questData[type]||0)+value;
   }
   S.profile.quests=questData;
-  try{
-    await db.collection('users').doc(S.user.uid).update({[`quests.${type}`]:questData[type]});
-  }catch(e){}
-  // Check if any quests just completed
+
+  // Firestore write (fire-and-forget)
+  db.collection('users').doc(S.user.uid).update({[`quests.${type}`]:questData[type]}).catch(()=>{});
+
+  // Show completion toast exactly once per quest per session
   QUESTS.forEach(q=>{
-    if(q.type===type){
-      const prog=getQuestProgress(q);
-      const done=S.profile.questsDone||{};
-      if(prog>=q.target&&!done[q.id]){
-        toast(`✅ Quest complete: ${q.name}! Go to Quests to claim your reward.`,'gold',5000);
-      }
+    if(q.type!==type)return;
+    if(_toastedQuests.has(q.id))return;
+    const done=S.profile.questsDone||{};
+    if(done[q.id])return; // already claimed
+    const prog=getQuestProgress(q);
+    if(prog>=q.target){
+      _toastedQuests.add(q.id);
+      toast(`✅ Quest complete: ${q.name}! Go to Quests to claim your reward.`,'gold',5000);
     }
   });
 }
