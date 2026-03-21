@@ -2526,52 +2526,93 @@ const ITEMS = [
 ];
 
 const CRATES = [
-  // ── PENNY SLOTS — entry level, mostly common wins ─────────
-  {id:'penny',    name:'Penny Slots',     price:25,    icon:'🎰', color:'#9ca3af',
-   desc:'Low stakes, low rewards. Everyone starts here.',
-   odds:{common:0.90, uncommon:0.08, rare:0.02},
+  // ── TIER 1: Entry ──────────────────────────────────────────
+  {id:'penny',      name:'Penny Slots',       price:25,     icon:'🎰', color:'#9ca3af',
+   desc:'Low stakes. Mostly common wins.',
+   odds:{common:0.92, uncommon:0.08},
    cosmeticChance:0,
-   items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015']},
+   items:['c001','c002','c003','c004','c005','c006','c007']},
 
-  // ── LUCKY PULL — first real crate, small cosmetic chance ──
-  {id:'lucky',    name:'Lucky Pull',      price:100,   icon:'🍀', color:'#22c55e',
-   desc:'A bit of luck might land you something nice.',
-   odds:{common:0.72, uncommon:0.22, rare:0.06},
+  {id:'scratch',    name:'Scratch Card',      price:50,     icon:'🎟️', color:'#6b7280',
+   desc:'Scratch and hope for the best.',
+   odds:{common:0.85, uncommon:0.13, rare:0.02},
+   cosmeticChance:0,
+   items:['c008','c009','c010','c011','c012','c013','c014','c015','u001','r009']},
+
+  // ── TIER 2: Beginner ───────────────────────────────────────
+  {id:'lucky',      name:'Lucky Pull',        price:100,    icon:'🍀', color:'#22c55e',
+   desc:'A little luck might go a long way.',
+   odds:{common:0.70, uncommon:0.24, rare:0.06},
    cosmeticChance:0.01,
-   cosmeticPool:['h001','h002','h003','e001','e002','e003','col001','col002','col003'],
-   items:['c001','c002','c005','c009','c010','c014','u001','u002','u003','u004','u005','u006','r001','r009']},
+   cosmeticPool:['h001','h002','h003','e001','e002','col001','col002'],
+   items:['c001','c004','c006','u001','u002','u003','u004','r001']},
 
-  // ── HIGH ROLLER — mid tier, cosmetics visible ─────────────
-  {id:'highroller',name:'High Roller',   price:500,   icon:'🎩', color:'#3b82f6',
-   desc:'The real players are here. Rare+ guaranteed.',
+  {id:'clover',     name:'Four Leaf',         price:175,    icon:'🌿', color:'#16a34a',
+   desc:'Rare enough to find, luckier still to open.',
+   odds:{common:0.60, uncommon:0.30, rare:0.10},
+   cosmeticChance:0.015,
+   cosmeticPool:['h001','h002','e003','col003','col004','col005'],
+   items:['c002','c005','c007','u005','u006','u007','u008','r002','r010']},
+
+  // ── TIER 3: Mid ────────────────────────────────────────────
+  {id:'highroller', name:'High Roller',       price:500,    icon:'🎩', color:'#3b82f6',
+   desc:'Rare guaranteed. Epic possible.',
    odds:{rare:0.78, epic:0.18, legendary:0.04},
    cosmeticChance:0.04,
-   cosmeticPool:['h001','h002','h003','h004','h005','e001','e002','e003','e004','col001','col002','col003','col004','col005','p006','b001','b005'],
-   items:['r001','r002','r003','r004','r005','r006','r007','r008','r009','r010','e001i','e002i']},
+   cosmeticPool:['h003','h004','h005','e004','col006','col007','p006','b001'],
+   items:['r001','r002','r003','r004','r005','e001i','e002i']},
 
-  // ── VIP ROOM — high stakes, real cosmetic odds ─────────────
-  {id:'vip',      name:'VIP Room',        price:2500,  icon:'💎', color:'#a855f7',
-   desc:'Exclusive. Epic+ only. Cosmetics start dropping here.',
-   odds:{epic:0.60, legendary:0.32, mythic:0.08},
+  {id:'jackknife',  name:'Jack\'s Hand',      price:750,    icon:'♠️', color:'#1d4ed8',
+   desc:'Face cards and above. The dealer fears you.',
+   odds:{rare:0.65, epic:0.28, legendary:0.07},
+   cosmeticChance:0.04,
+   cosmeticPool:['h004','h005','e005','col008','col009','p007','b002','b005'],
+   items:['r006','r007','r008','r009','r010','e003i','e004i']},
+
+  // ── TIER 4: Advanced ───────────────────────────────────────
+  {id:'vip',        name:'VIP Room',          price:2500,   icon:'💎', color:'#a855f7',
+   desc:'Exclusive. Epic+ only. Real cosmetics start here.',
+   odds:{epic:0.62, legendary:0.30, mythic:0.08},
    cosmeticChance:0.08,
-   cosmeticPool:['h004','h005','h006','h009','h010','e004','e005','col006','col007','col009','col010','p001','p002','p003','b002','b003','b006','b008'],
-   items:['e001i','e002i','e003i','e004i','l001','l002','l003']},
+   cosmeticPool:['h006','h009','e005','e006','col010','col011','p001','p002','b003','b006'],
+   items:['e001i','e002i','e003i','l001','l002']},
 
-  // ── JACKPOT VAULT — legendary+ chase, rare cosmetics ──────
-  {id:'jackpot',  name:'Jackpot Vault',   price:10000, icon:'💰', color:'#f59e0b',
-   desc:'Legendary guaranteed. Mythic possible. Real cosmetics drop here.',
-   odds:{legendary:0.60, mythic:0.35, divine:0.05},
+  {id:'blacktie',   name:'Black Tie',         price:4000,   icon:'🥂', color:'#7c3aed',
+   desc:'The private lounge. Legendary common. Mythic possible.',
+   odds:{epic:0.40, legendary:0.48, mythic:0.12},
+   cosmeticChance:0.08,
+   cosmeticPool:['h010','h011','e007','e008','col012','col013','p003','p004','b004','b007','b008'],
+   items:['e003i','e004i','l001','l002','l003','m001']},
+
+  // ── TIER 5: High Stakes ────────────────────────────────────
+  {id:'jackpot',    name:'Jackpot Vault',     price:10000,  icon:'💰', color:'#f59e0b',
+   desc:'Legendary guaranteed. Mythic common. Real cosmetics drop.',
+   odds:{legendary:0.55, mythic:0.38, divine:0.07},
    cosmeticChance:0.12,
-   cosmeticPool:['h006','h009','h010','h011','h012','e005','e006','col010','col011','col012','col013','p004','p005','p007','b004','b007','b009','b010','s001','s002','s003'],
+   cosmeticPool:['h012','e006','col014','col015','p005','p008','b009','b010','s001','s002','s003'],
    items:['l001','l002','l003','m001','m002']},
 
-  // ── OMEGA VAULT — end game, divine chase, legendary cosmetics
-  {id:'omega',    name:'OMEGA Vault',     price:100000,icon:'⚡', color:'#ffd700',
-   desc:'The ultimate gamble. Divine odds. Cosmetics from myth.',
-   odds:{mythic:0.88, divine:0.10, ultra1:0.02},
+  {id:'whalepool',  name:'Whale Pool',        price:20000,  icon:'🐋', color:'#0891b2',
+   desc:'Only whales swim here. Divine possible.',
+   odds:{legendary:0.30, mythic:0.55, divine:0.15},
+   cosmeticChance:0.15,
+   cosmeticPool:['h011','h012','e006','col013','col014','col015','p008','p009','b010','b011','s004','s005'],
+   items:['l002','l003','m001','m002','d001']},
+
+  // ── TIER 6: End Game ───────────────────────────────────────
+  {id:'omega',      name:'OMEGA Vault',       price:100000, icon:'⚡', color:'#ffd700',
+   desc:'The ultimate gamble. Divine odds. Mythic cosmetics.',
+   odds:{mythic:0.85, divine:0.12, ultra1:0.03},
    cosmeticChance:0.20,
-   cosmeticPool:['h012','e006','col014','col015','col016','p008','p009','b010','b011','s004','s005','s006'],
+   cosmeticPool:['h012','e006','col015','col016','p009','b011','s005','s006'],
    items:['m001','m002','d001','ur01']},
+
+  {id:'godmode',    name:'God Mode',          price:500000, icon:'👁️', color:'#ff00ff',
+   desc:'Beyond the vault. 1-in-a-million odds.',
+   odds:{divine:0.70, ultra1:0.30},
+   cosmeticChance:0.35,
+   cosmeticPool:['h012','e006','col015','p009','b011','s006'],
+   items:['d001','ur01']},
 ];
 
 function getCosmeticItem(id){ return COSMETIC_ITEMS.find(i=>i.id===id); }
@@ -3064,8 +3105,10 @@ function buildCrateInfoPanel(crate){
     if(!grouped[rar])return;
     const r=getRarity(rar);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
+    const seen=new Set();
     grouped[rar].forEach(item=>{
-    grouped[rar].forEach(item=>{
+      if(seen.has(item.id))return;
+      seen.add(item.id);
       const pill=document.createElement('div'); pill.className='crate-item-pill';
       pill.style.cssText=`border-color:${col}66;color:${col}`;
       const isCosmIcon=/^[a-z]/.test(item.icon);
@@ -3074,7 +3117,6 @@ function buildCrateInfoPanel(crate){
         :`<span>${item.icon}</span>`;
       pill.innerHTML=`${iconHtml} <span style="color:var(--text-2)">${item.name}</span>`;
       itemsEl.appendChild(pill);
-    });
     });
   });
   order.filter(r=>crate.odds[r]!=null).forEach(rar=>{
