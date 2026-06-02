@@ -1272,18 +1272,11 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
 
 // ====================== LOGOUT ======================
 document.getElementById('logout-btn').addEventListener('click', async () => {
-  if (!window.auth) {
-    location.reload();
-    return;
-  }
-
   try {
-    await window.auth.signOut();
-    toast('Logged out successfully.', 'success');
-  } catch (e) {
-    console.error(e);
-    toast('Logout failed. Refreshing...', 'error');
-    setTimeout(() => location.reload(), 800);
+    if(window.auth) await window.auth.signOut();
+    toast('Logged out.', 'success');
+  } catch(e) {
+    location.reload();
   }
 });
   
@@ -2053,26 +2046,46 @@ document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
 });
 
 async function sellItems(uniqueIds){
-  let earned=0;
+  if(!S.user || !window.db) return;
+  
+  let earned = 0;
+  const remainingInventory = [];
+
   for(const uid of uniqueIds){
-    const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
-    if(idx===-1)continue;
-    const item=getItem(S.inventory[idx].itemId);
-    if(item) earned+=Math.floor(item.value*.90);
-    S.inventory.splice(idx,1);
+    const idx = S.inventory.findIndex(i => i.uniqueId === uid);
+    if(idx === -1) continue;
+    
+    const item = getItem(S.inventory[idx].itemId);
+    if(item) earned += Math.floor(item.value * 0.90);
+    
+    // Remove from array
+    S.inventory.splice(idx, 1);
   }
-  S.profile.coins+=earned;
-  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-  try{
-    await db.collection('users').doc(S.user.uid).update({
-      coins:firebase.firestore.FieldValue.increment(earned),
-      inventory:S.inventory,
-      totalValue:S.profile.totalValue,
+
+  S.profile.coins = (S.profile.coins || 0) + earned;
+  S.profile.totalValue = S.inventory.reduce((s, inv) => {
+    const it = getItem(inv.itemId);
+    return s + (it ? it.value : 0);
+  }, 0);
+
+  try {
+    await window.db.collection('users').doc(S.user.uid).update({
+      coins: firebase.firestore.FieldValue.increment(earned),
+      inventory: S.inventory,
+      totalValue: S.profile.totalValue
     });
-  }catch(e){ toast('Save error','error'); return; }
-  updateCoinDisplay(S.profile.coins);
-  toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
-  if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
+
+    updateCoinDisplay(S.profile.coins);
+    toast('Sold for 🪙 ' + fmtNum(earned) + '!', 'gold');
+    
+    // Force refresh inventory UI immediately
+    if(document.getElementById('page-inventory').classList.contains('active')) {
+      renderInventory();
+    }
+  } catch (e) {
+    console.error(e);
+    toast('Save error - please refresh', 'error');
+  }
 }
 
 // ============================================================
@@ -2697,14 +2710,19 @@ function resetTradeState(){
 // ============================================================
 document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    const page=btn.dataset.page;
+    const page = btn.dataset.page;
+    
+    // Skip platformer completely
+    if(page === 'platformer') {
+      toast('Vault Climber is currently disabled.', 'error');
+      return;
+    }
+
     showPage(page);
     if(page==='inventory') renderInventory();
     if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
     if(page==='leaderboard') loadLeaderboard();
     if(page==='history') renderTradeHistory();
-    if(page==='platformer') initPlatformerPage();
-    else stopPlatformer();
   });
 });
 
