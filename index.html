@@ -2058,27 +2058,46 @@ async function sellItems(uniqueIds){
 }
 
 // ============================================================
-// LEADERBOARD
+// LEADERBOARD - FIXED
 // ============================================================
 async function loadLeaderboard(){
   const list = document.getElementById('leaderboard-list');
-  list.innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
-  try{
-    const [r1,r2,r3]=await Promise.all([
-      db.collection('users').orderBy('coins','desc').limit(10).get(),
-      db.collection('users').orderBy('cratesOpened','desc').limit(10).get(),
-      db.collection('users').orderBy('totalValue','desc').limit(10).get(),
+  if (!list) return;
+
+  list.innerHTML = '<div style="color:var(--text-2);padding:16px">Loading...</div>';
+
+  if (!window.db) {
+    list.innerHTML = '<div style="color:#ef4444;padding:16px">Database not ready yet. Please refresh.</div>';
+    return;
+  }
+
+  try {
+    const [r1, r2, r3] = await Promise.all([
+      window.db.collection('users').orderBy('coins', 'desc').limit(10).get(),
+      window.db.collection('users').orderBy('cratesOpened', 'desc').limit(10).get(),
+      window.db.collection('users').orderBy('totalValue', 'desc').limit(10).get(),
     ]);
-    const enrich=snap=>snap.docs.map(d=>{
-      const u=d.data();
-      const rItem=u.rarestItem?getItem(u.rarestItem):null;
-      return{...u,rarestItemName:rItem?rItem.name:'None',rarestItemIcon:rItem?rItem.icon:'—'};
+
+    const enrich = snap => snap.docs.map(d => {
+      const u = d.data();
+      const rItem = u.rarestItem ? getItem(u.rarestItem) : null;
+      return {
+        ...u,
+        rarestItemName: rItem ? rItem.name : 'None',
+        rarestItemIcon: rItem ? rItem.icon : '—'
+      };
     });
-    S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
-    renderLeaderboard(S.currentLbTab||'richest');
-  }catch(e){
-    list.innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard. Make sure Firestore indexes are created.</div>';
-    console.error('Leaderboard error:',e);
+
+    S.lbData = {
+      richest: enrich(r1),
+      mostCrates: enrich(r2),
+      mostValue: enrich(r3)
+    };
+
+    renderLeaderboard(S.currentLbTab || 'richest');
+  } catch (e) {
+    console.error("Leaderboard error:", e);
+    list.innerHTML = '<div style="color:#ef4444;padding:16px">Error loading leaderboard.<br>Try refreshing the page.</div>';
   }
 }
 
