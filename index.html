@@ -1175,9 +1175,10 @@ let db, auth, rtdb;
 
 function initFirebase(cfg){
   if (firebase.apps.length > 0) return;
-  
+
   firebase.initializeApp(cfg);
-  
+
+  // Make them globally available
   window.auth = firebase.auth();
   window.db = firebase.firestore();
   window.rtdb = firebase.database();
@@ -3260,39 +3261,38 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
 
 (function boot(){
   const cfg = {
-    apiKey:            "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
-    authDomain:        "rng-game-13854.firebaseapp.com",
-    projectId:         "rng-game-13854",
-    storageBucket:     "rng-game-13854.firebasestorage.app",
+    apiKey: "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
+    authDomain: "rng-game-13854.firebaseapp.com",
+    projectId: "rng-game-13854",
+    storageBucket: "rng-game-13854.firebasestorage.app",
     messagingSenderId: "60292248542",
-    appId:             "1:60292248542:web:2942a3a407dab5d51a234f",
-    measurementId:     "G-PH8Q3YGWZ3",
-    databaseURL:       "https://rng-game-13854-default-rtdb.firebaseio.com",
+    appId: "1:60292248542:web:2942a3a407dab5d51a234f",
+    measurementId: "G-PH8Q3YGWZ3",
+    databaseURL: "https://rng-game-13854-default-rtdb.firebaseio.com",
   };
+
   try{
     initFirebase(cfg);
-    startAuthObserver();
-    // Re-announce presence when tab becomes visible again (e.g. alt-tab back)
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible' && S.user && S.presenceRef){
-        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
-      }
-    });
-    // Admin force-refresh: listen for reload signal on RTDB
+    
+    // Small delay to make sure window.auth is set
+    setTimeout(() => {
+      startAuthObserver();
+    }, 300);
+
+    // Admin force refresh listener
     const refreshRef = rtdb.ref('admin/forceRefresh');
     let lastRefreshTs = 0;
-    refreshRef.on('value', snap=>{
+    refreshRef.on('value', snap => {
       const val = snap.val();
-      if(!val || !val.ts) return;
-      // Only reload if this is a NEW signal (not one from before we loaded)
-      if(val.ts > lastRefreshTs && lastRefreshTs !== 0){
-        setTimeout(()=>location.reload(), 500);
+      if (!val || !val.ts) return;
+      if (val.ts > lastRefreshTs && lastRefreshTs !== 0) {
+        setTimeout(() => location.reload(), 500);
       }
       lastRefreshTs = val.ts;
     });
-    // Particles shown after auth observer fires for non-logged-in state
-  }catch(e){
-    console.error('Firebase init error:',e);
+
+  } catch(e){
+    console.error('Firebase init error:', e);
     hideLoadingOverlay();
     showScreen('auth-screen');
     spawnParticles();
