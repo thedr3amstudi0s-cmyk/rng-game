@@ -1,14 +1,14 @@
 // ============================================================
 // FIREBASE CONFIGURATION
 // ============================================================
-// TODO: Replace with your Firebase config from Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
+  authDomain: "rng-game-13854.firebaseapp.com",
+  databaseURL: "https://rng-game-13854-default-rtdb.firebaseio.com",
+  projectId: "rng-game-13854",
+  storageBucket: "rng-game-13854.appspot.com",
+  messagingSenderId: "60292248542",
+  appId: "1:60292248542:web:2942a3a407dab5d51a234f"
 };
 
 // Initialize Firebase
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() {
     hideLoadingOverlay();
     initializeUI();
-  }, 1000);
+  }, 1500);
 });
 
 function hideLoadingOverlay() {
@@ -40,7 +40,7 @@ function initializeUI() {
   auth.onAuthStateChanged(function(user) {
     if (user) {
       console.log('User logged in:', user.email);
-      showGameScreen();
+      showGameScreen(user);
     } else {
       console.log('No user logged in');
       showAuthScreen();
@@ -54,10 +54,10 @@ function showAuthScreen() {
   setupAuthListeners();
 }
 
-function showGameScreen() {
+function showGameScreen(user) {
   document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('game-screen').classList.add('active');
-  setupGameListeners();
+  setupGameListeners(user);
 }
 
 // ============================================================
@@ -84,7 +84,7 @@ function setupAuthListeners() {
 }
 
 function handleLogin() {
-  const email = document.getElementById('login-email').value;
+  const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   
   if (!email || !password) {
@@ -92,18 +92,27 @@ function handleLogin() {
     return;
   }
   
+  // Disable button during login
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+  
   auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      showGameScreen();
+    .then(userCredential => {
+      console.log('Login successful:', userCredential.user.email);
+      showGameScreen(userCredential.user);
     })
     .catch(error => {
+      console.error('Login error:', error);
       showAuthError('login', error.message);
+      btn.disabled = false;
+      btn.textContent = 'ENTER THE VAULT';
     });
 }
 
 function handleRegister() {
-  const username = document.getElementById('reg-username').value;
-  const email = document.getElementById('reg-email').value;
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
   
   if (!username || !email || !password) {
@@ -121,6 +130,11 @@ function handleRegister() {
     return;
   }
   
+  // Disable button during registration
+  const btn = document.getElementById('register-btn');
+  btn.disabled = true;
+  btn.textContent = 'Creating Account...';
+  
   auth.createUserWithEmailAndPassword(email, password)
     .then(userCredential => {
       // Create user profile in Firestore
@@ -130,14 +144,23 @@ function handleRegister() {
         coins: 400,
         inventory: [],
         createdAt: new Date(),
-        lastActive: new Date()
-      });
+        lastActive: new Date(),
+        stats: {
+          cratesOpened: 0,
+          totalSpent: 0,
+          totalWon: 0
+        }
+      }).then(() => userCredential.user);
     })
-    .then(() => {
-      showGameScreen();
+    .then(user => {
+      console.log('Registration successful:', user.email);
+      showGameScreen(user);
     })
     .catch(error => {
+      console.error('Registration error:', error);
       showAuthError('reg', error.message);
+      btn.disabled = false;
+      btn.textContent = 'CREATE ACCOUNT';
     });
 }
 
@@ -148,10 +171,9 @@ function showAuthError(form, message) {
 // ============================================================
 // GAME LISTENERS
 // ============================================================
-function setupGameListeners() {
-  const user = auth.currentUser;
+function setupGameListeners(user) {
   if (user) {
-    document.getElementById('nav-username').textContent = user.email;
+    document.getElementById('nav-username').textContent = user.email.split('@')[0];
     
     // Load user data
     loadUserData(user.uid);
@@ -160,7 +182,14 @@ function setupGameListeners() {
   // Logout button
   document.getElementById('logout-btn').addEventListener('click', function() {
     auth.signOut().then(() => {
+      console.log('User logged out');
       showAuthScreen();
+      // Clear forms
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-password').value = '';
+      document.getElementById('reg-username').value = '';
+      document.getElementById('reg-email').value = '';
+      document.getElementById('reg-password').value = '';
     });
   });
   
@@ -171,6 +200,17 @@ function setupGameListeners() {
       navigateToPage(page);
     });
   });
+  
+  // Chat functionality (basic)
+  const chatInput = document.getElementById('chat-input');
+  const chatSend = document.getElementById('chat-send');
+  
+  if (chatInput && chatSend) {
+    chatSend.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+  }
 }
 
 function loadUserData(uid) {
@@ -180,6 +220,8 @@ function loadUserData(uid) {
         const userData = doc.data();
         document.getElementById('coin-balance').textContent = userData.coins || 0;
         console.log('User data loaded:', userData);
+      } else {
+        console.log('User document not found');
       }
     })
     .catch(error => {
@@ -193,8 +235,36 @@ function navigateToPage(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   
   // Add active class to selected page and nav item
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelector('[data-page="' + page + '"]').classList.add('active');
+  const pageEl = document.getElementById('page-' + page);
+  const navEl = document.querySelector('[data-page="' + page + '"]');
+  
+  if (pageEl) pageEl.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  
+  console.log('Navigated to page:', page);
 }
 
-console.log('app.js loaded successfully');
+function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  // Save message to Firestore
+  db.collection('chat').add({
+    username: user.email.split('@')[0],
+    message: message,
+    timestamp: new Date(),
+    uid: user.uid
+  }).then(() => {
+    input.value = '';
+    console.log('Message sent');
+  }).catch(error => {
+    console.error('Error sending message:', error);
+  });
+}
+
+console.log('✅ CrateVault app.js loaded successfully with real Firebase config');
