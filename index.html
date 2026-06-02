@@ -3263,13 +3263,6 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
       }
       lastRefreshTs = val.ts;
     });
-    // Particles shown after auth observer fires for non-logged-in state
-  }catch(e){
-    console.error('Firebase init error:',e);
-    hideLoadingOverlay();
-    showScreen('auth-screen');
-    spawnParticles();
-  }
 })();
 
 </script>
