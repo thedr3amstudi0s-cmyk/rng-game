@@ -1378,49 +1378,40 @@ function friendlyAuthError(code) {
 // FIX: Show game screen immediately, load profile in background
 // FIX: Only set up realtime listeners once per session
 // ============================================================
+// ============================================================
+// AUTH STATE OBSERVER - FIXED
+// ============================================================
 function startAuthObserver(){
-  auth.onAuthStateChanged(async user=>{
-    if(user){
-      S.user=user;
-      // Show game immediately — don't wait for profile
+  if (!window.auth) {
+    console.error("❌ startAuthObserver: window.auth is undefined");
+    return;
+  }
+
+  console.log("✅ Starting auth observer...");
+
+  window.auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      S.user = user;
       showScreen('game-screen');
       hideLoadingOverlay();
       loadCratesPage();
       showPage('crates');
-      // Reset auth button states
-      const lb=document.getElementById('login-btn');
-      const rb=document.getElementById('register-btn');
-      if(lb){lb.disabled=false;lb.textContent='ENTER THE VAULT';}
-      if(rb){rb.disabled=false;rb.textContent='CREATE ACCOUNT';}
-      // Load profile — retry a few times for new registrations
-      let doc=null;
-      for(let i=0;i<5;i++){
-        try{ doc=await db.collection('users').doc(user.uid).get(); }catch(e){ break; }
-        if(doc&&doc.exists) break;
-        await new Promise(r=>setTimeout(r,500));
+
+      // Load profile
+      try {
+        const doc = await window.db.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          S.profile = doc.data();
+          S.inventory = [...(S.profile.inventory || [])];
+          document.getElementById('nav-username').textContent = S.profile.username || 'Player';
+          updateCoinDisplay(S.profile.coins || 400);
+        }
+      } catch (e) {
+        console.error("Profile load error:", e);
       }
-      if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
-      S.profile=doc.data();
-      S.inventory=[...S.profile.inventory||[]];
-      document.getElementById('nav-username').textContent=S.profile.username;
-      // Show admin button for admin user
-      if(S.profile.username==='Dreamcrusher'){
-        document.getElementById('admin-refresh-btn').classList.remove('hidden');
-      }
-      updateCoinDisplay(S.profile.coins);
-      // FIX: Only initialize realtime listeners once to avoid duplicate handlers
-      if(!S.listenersInitialized){
-        S.listenersInitialized=true;
-        setupPresence();
-        listenToPresence();
-        listenToChat();
-        listenToTradeRequests();
-        setupTradeInviteListener();
-      }
-      checkLuckMilestone(null);
-      updateLuckBar(null);
     } else {
-      S.user=null; S.profile=null; S.listenersInitialized=false;
+      S.user = null;
+      S.profile = null;
       hideLoadingOverlay();
       showScreen('auth-screen');
       spawnParticles();
