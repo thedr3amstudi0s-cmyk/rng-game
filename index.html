@@ -923,18 +923,18 @@ const ITEMS = [
   {id:'l005',name:'Phoenix Feather',  rarity:'legendary',icon:'🦅', value:9000,  desc:'Grants rebirth.'},
   {id:'l006',name:'God Slayer',       rarity:'legendary',icon:'⚔️', value:10500, desc:'Even gods fear this.'},
   // MYTHIC — value ~91,667 (sells for ~55,000, big profit on Mythic crate 8k)
-  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:88000,  desc:'Opens any dimension.'},
-  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:92000,  desc:'Piece of a dead star.'},
-  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:96000,  desc:'Reality bends around it.'},
-  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:90000,  desc:'Fragment of nothingness.'},
+  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:50000,  desc:'Opens any dimension.'},
+  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:55000,  desc:'Piece of a dead star.'},
+  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:60000,  desc:'Reality bends around it.'},
+  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:52000,  desc:'Fragment of nothingness.'},
   // DIVINE — value ~216,667 (sells for ~130,000)
-  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:210000, desc:'Touched by a deity.'},
-  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:225000, desc:'Born at start of time.'},
+  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:120000, desc:'Touched by a deity.'},
+  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:140000, desc:'Born at start of time.'},
   // ULTRA
-  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:666667,     desc:'1 in a million. Truly impossible.'},
-  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3333333,    desc:'One of only a few in existence.'},
-  {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
-  {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
+  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:250000,     desc:'1 in a million. Truly impossible.'},
+  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:1000000,    desc:'One of only a few in existence.'},
+  {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:5000000,   desc:'The eye that saw creation.'},
+  {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:25000000,   desc:'The rarest item in existence.'},
 ];
 
 // Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
@@ -1028,7 +1028,7 @@ const CRATES = [
   {
     id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
     desc:'From the deepest depths. Legendary guaranteed, Mythic likely.',
-    odds:{legendary:0.72, mythic:0.28},
+    odds:{legendary:0.90, mythic:0.10},
     items:['l001','l002','l003','l004','l005','l006',
            'm001','m002','m003','m004'],
   },
@@ -1037,7 +1037,7 @@ const CRATES = [
   {
     id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
     desc:'From the space between worlds. Mythic dominant, Ultra possible.',
-    odds:{legendary:0.20, mythic:0.779, ultra1:0.021},
+    odds:{legendary:0.35, mythic:0.645, ultra1:0.005},
     items:['l003','l004','l006',
            'm001','m002','m003','m004',
            'ur01'],
