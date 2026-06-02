@@ -1270,7 +1270,24 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
   if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-btn').click(); });
 });
 
-// ====================== LOGIN ======================
+// ====================== LOGOUT ======================
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  if (!window.auth) {
+    location.reload();
+    return;
+  }
+
+  try {
+    await window.auth.signOut();
+    toast('Logged out successfully.', 'success');
+  } catch (e) {
+    console.error(e);
+    toast('Logout failed. Refreshing...', 'error');
+    setTimeout(() => location.reload(), 800);
+  }
+});
+  
+  // ====================== LOGIN ======================
 document.getElementById('login-btn').addEventListener('click', async () => {
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-password').value;
@@ -1396,6 +1413,7 @@ function startAuthObserver(){
       hideLoadingOverlay();
       loadCratesPage();
       showPage('crates');
+      startPassiveIncome();
 
       // Load profile
       try {
@@ -3345,6 +3363,32 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
     spawnParticles();
   }
 })();
+
+  // ============================================================
+// PASSIVE INCOME: +25 coins every 10 minutes
+// ============================================================
+let passiveIncomeInterval = null;
+
+function startPassiveIncome() {
+  if (passiveIncomeInterval) clearInterval(passiveIncomeInterval);
+
+  passiveIncomeInterval = setInterval(async () => {
+    if (!S.user || !S.profile || !window.db) return;
+
+    const reward = 25;
+    S.profile.coins = (S.profile.coins || 0) + reward;
+
+    try {
+      await window.db.collection('users').doc(S.user.uid).update({
+        coins: firebase.firestore.FieldValue.increment(reward)
+      });
+      updateCoinDisplay(S.profile.coins);
+      toast(`+25 coins! (Passive reward)`, 'gold', 2500);
+    } catch (e) {
+      console.error('Passive income error:', e);
+    }
+  }, 10 * 60 * 1000); // 10 minutes
+}
 
 </script>
 </body>
