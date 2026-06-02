@@ -1426,8 +1426,18 @@ function startAuthObserver(){
           S.profile = doc.data();
           S.inventory = [...(S.profile.inventory || [])];
           
+          // After S.profile is set and inventory loaded...
           document.getElementById('nav-username').textContent = S.profile.username || 'Player';
           updateCoinDisplay(S.profile.coins || 400);
+          
+          // ADD THESE:
+          setupPresence();
+          listenToPresence();
+          listenToChat();
+          listenToTradeRequests();
+          setupTradeInviteListener();
+          
+          toast('Welcome back!', 'success', 1500);
           
           toast('Welcome back!', 'success', 1500);
         } else {
