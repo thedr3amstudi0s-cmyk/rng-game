@@ -1399,16 +1399,37 @@ function startAuthObserver(){
 
       // Load profile
       try {
-        const doc = await window.db.collection('users').doc(user.uid).get();
-        if (doc.exists) {
-          S.profile = doc.data();
-          S.inventory = [...(S.profile.inventory || [])];
-          document.getElementById('nav-username').textContent = S.profile.username || 'Player';
-          updateCoinDisplay(S.profile.coins || 400);
-        }
-      } catch (e) {
-        console.error("Profile load error:", e);
-      }
+  let doc = await window.db.collection('users').doc(user.uid).get();
+
+  if (doc.exists) {
+    S.profile = doc.data();
+    S.inventory = [...(S.profile.inventory || [])];
+    document.getElementById('nav-username').textContent = S.profile.username || 'Player';
+    updateCoinDisplay(S.profile.coins || 400);
+  } else {
+    // Create new profile for first-time users
+    const newProfile = {
+      uid: user.uid,
+      username: "Player" + Math.floor(1000 + Math.random() * 9000),
+      usernameLower: ("player" + Math.floor(1000 + Math.random() * 9000)).toLowerCase(),
+      coins: 400,
+      inventory: [],
+      cratesOpened: 0,
+      totalValue: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    await window.db.collection('users').doc(user.uid).set(newProfile);
+    S.profile = newProfile;
+    S.inventory = [];
+    document.getElementById('nav-username').textContent = newProfile.username;
+    updateCoinDisplay(400);
+    toast('Welcome to CrateVault! 🎉', 'success');
+  }
+} catch (e) {
+  console.error("Profile load error:", e);
+  toast('Login successful but profile failed to load.', 'error');
+}
     } else {
       S.user = null;
       S.profile = null;
