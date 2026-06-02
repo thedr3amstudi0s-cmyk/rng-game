@@ -1151,23 +1151,6 @@ function filterChat(text){
   return filteredText.join('');
 }
   
-// Usage in sendChat()
-async function sendChat(){
-  const input=document.getElementById('chat-input');
-  let text = input.value.slice(0,200); // allow spaces
-  if(!text||!S.user||!S.profile) return;
-  text = filterChat(text); // filter bad words
-  input.value='';
-  try{
-    await rtdb.ref('chat').push({
-      username: S.profile.username,
-      text,
-      isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP
-    });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
-}
-  
 // ============================================================
 // FIREBASE INIT
 // ============================================================
@@ -1267,20 +1250,24 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
 // ============================================================
 // LOGIN — FIX: no polling loop, just sign in and let observer handle it
 // ============================================================
-document.getElementById('login-btn').addEventListener('click',async()=>{
-  const email=document.getElementById('login-email').value.trim();
-  const pass=document.getElementById('login-password').value;
-  const err=document.getElementById('login-error');
-  const btn=document.getElementById('login-btn');
-  err.textContent='';
-  if(!email||!pass){err.textContent='Please enter email and password.';return;}
-  btn.disabled=true; btn.textContent='LOADING...';
-  try{
-    await auth.signInWithEmailAndPassword(email,pass);
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  const err   = document.getElementById('login-error');
+  const btn   = document.getElementById('login-btn');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Please enter email and password.'; return; }
+  btn.disabled = true; btn.textContent = 'LOADING...';
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
     // onAuthStateChanged handles the rest
-  }catch(e){
-    err.textContent=friendlyAuthError(e.code)||'Login failed. Check your details.';
-    btn.disabled=false; btn.textContent='ENTER THE VAULT';
+  } catch(e) {
+    console.error('Login error:', e.code, e.message); // ADD THIS for debugging
+    err.textContent = friendlyAuthError(e.code) || e.message || 'Login failed. Check your details.';
+  } finally {
+    // ALWAYS re-enable — observer will hide this screen on success anyway
+    btn.disabled = false;
+    btn.textContent = 'ENTER THE VAULT';
   }
 });
 
@@ -1329,18 +1316,22 @@ document.getElementById('logout-btn').addEventListener('click',async()=>{
 
 function friendlyAuthError(code){
   const map={
-    'auth/user-not-found':'No account with that email.',
-    'auth/wrong-password':'Wrong password.',
-    'auth/invalid-credential':'Wrong email or password.',
-    'auth/invalid-login-credentials':'Wrong email or password.',
-    'auth/email-already-in-use':'That email already has an account. Please log in.',
-    'auth/invalid-email':'Invalid email address.',
-    'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/too-many-requests':'Too many attempts. Try again in a minute.',
-    'auth/network-request-failed':'Network error. Check your connection.',
-    'auth/user-disabled':'This account has been disabled.',
+    'auth/user-not-found':             'No account with that email.',
+    'auth/wrong-password':             'Wrong password.',
+    'auth/invalid-credential':         'Wrong email or password.',
+    'auth/invalid-login-credentials':  'Wrong email or password.',
+    'auth/email-already-in-use':       'That email already has an account. Please log in.',
+    'auth/invalid-email':              'Invalid email address.',
+    'auth/weak-password':              'Password must be at least 6 characters.',
+    'auth/too-many-requests':          'Too many attempts. Try again in a minute.',
+    'auth/network-request-failed':     'Network error. Check your connection.',
+    'auth/user-disabled':              'This account has been disabled.',
+    'auth/operation-not-allowed':      'Email/password login is not enabled. Contact support.',
+    'auth/missing-password':           'Please enter a password.',
+    'auth/missing-email':              'Please enter an email address.',
+    'auth/configuration-not-found':    'Auth not configured. Check Firebase console.',
   };
-  return map[code]||'';
+  return map[code] || '';
 }
 
 // ============================================================
@@ -1396,6 +1387,16 @@ function startAuthObserver(){
       spawnParticles();
     }
   });
+    // Safety net — if auth observer never fires (SDK blocked/slow), show auth screen
+  setTimeout(() => {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay && overlay.style.display !== 'none') {
+      console.warn('Auth observer timed out — showing auth screen');
+      hideLoadingOverlay();
+      showScreen('auth-screen');
+      spawnParticles();
+    }
+  }, 5000);
 }
 
 function updateCoinDisplay(coins){
@@ -3243,11 +3244,14 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
   try{
     initFirebase(cfg);
     startAuthObserver();
-    // Re-announce presence when tab becomes visible again (e.g. alt-tab back)
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible' && S.user && S.presenceRef){
-        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
-      }
+    ...
+  }catch(e){
+    console.error('Firebase init error:',e);
+    hideLoadingOverlay();
+    showScreen('auth-screen');
+    spawnParticles();
+  }
+})();
     });
     // Admin force-refresh: listen for reload signal on RTDB
     const refreshRef = rtdb.ref('admin/forceRefresh');
