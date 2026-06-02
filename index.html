@@ -3259,6 +3259,9 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
 
 })();
 
+// ============================================================
+// BOOT - FINAL FIXED VERSION
+// ============================================================
 (function boot(){
   const cfg = {
     apiKey: "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
@@ -3271,27 +3274,40 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
     databaseURL: "https://rng-game-13854-default-rtdb.firebaseio.com",
   };
 
-  try{
+  try {
     initFirebase(cfg);
-    
-    // Small delay to make sure window.auth is set
-    setTimeout(() => {
-      startAuthObserver();
-    }, 300);
 
-    // Admin force refresh listener
-    const refreshRef = rtdb.ref('admin/forceRefresh');
-    let lastRefreshTs = 0;
-    refreshRef.on('value', snap => {
-      const val = snap.val();
-      if (!val || !val.ts) return;
-      if (val.ts > lastRefreshTs && lastRefreshTs !== 0) {
-        setTimeout(() => location.reload(), 500);
+    // Wait until Firebase is fully ready
+    let attempts = 0;
+    const waitForFirebase = setInterval(() => {
+      attempts++;
+      if (window.auth && window.db && window.rtdb) {
+        clearInterval(waitForFirebase);
+        console.log('✅ Firebase ready - starting auth observer');
+        startAuthObserver();
+
+        // Admin force refresh
+        const refreshRef = window.rtdb.ref('admin/forceRefresh');
+        let lastRefreshTs = 0;
+        refreshRef.on('value', snap => {
+          const val = snap.val();
+          if (!val || !val.ts) return;
+          if (val.ts > lastRefreshTs && lastRefreshTs !== 0) {
+            setTimeout(() => location.reload(), 500);
+          }
+          lastRefreshTs = val.ts;
+        });
       }
-      lastRefreshTs = val.ts;
-    });
+      if (attempts > 40) { // timeout after 2 seconds
+        clearInterval(waitForFirebase);
+        console.error('Firebase failed to initialize in time');
+        hideLoadingOverlay();
+        showScreen('auth-screen');
+        spawnParticles();
+      }
+    }, 50);
 
-  } catch(e){
+  } catch (e) {
     console.error('Firebase init error:', e);
     hideLoadingOverlay();
     showScreen('auth-screen');
