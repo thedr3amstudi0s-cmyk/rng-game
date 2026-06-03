@@ -1331,7 +1331,14 @@ document.getElementById('register-btn').addEventListener('click', async () => {
     errEl.textContent = 'Firebase not ready. Please refresh.';
     return;
   }
-
+  if(!S.listenersInitialized){
+        S.listenersInitialized=true;
+        setupPresence();
+        listenToPresence();
+        listenToChat();
+        listenToTradeRequests();
+        setupTradeInviteListener();
+      }
   btn.disabled = true;
   btn.textContent = 'CREATING...';
 
