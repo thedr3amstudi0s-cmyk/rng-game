@@ -554,6 +554,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <input type="password" id="login-password" placeholder="Enter password" /></div>
         <button class="btn-primary" id="login-btn">ENTER THE VAULT</button>
         <div class="auth-error" id="login-error"></div>
+        <div style="text-align:center;margin-top:8px">
+        <button id="forgot-pw-btn" style="background:none;border:none;color:var(--text-2);font-size:.8rem;cursor:pointer;text-decoration:underline;font-family:var(--font-u)">Forgot password?</button>
+        </div>
+        <div id="forgot-pw-success" style="color:#22c55e;font-size:.85rem;text-align:center;min-height:20px;display:none">Reset email sent! Check your inbox.</div>
       </div>
       <div class="auth-form hidden" id="register-form">
         <div class="form-group"><label>USERNAME</label>
@@ -1364,6 +1368,28 @@ document.getElementById('register-btn').addEventListener('click', async () => {
   }
 });
 
+document.getElementById('forgot-pw-btn').addEventListener('click', async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const errEl = document.getElementById('login-error');
+  const successEl = document.getElementById('forgot-pw-success');
+  errEl.textContent = '';
+  successEl.style.display = 'none';
+  if (!email) {
+    errEl.textContent = 'Enter your email above first, then click Forgot Password.';
+    return;
+  }
+  if (!window.auth) {
+    errEl.textContent = 'Firebase not ready. Please refresh.';
+    return;
+  }
+  try {
+    await window.auth.sendPasswordResetEmail(email);
+    successEl.style.display = 'block';
+  } catch (e) {
+    errEl.textContent = friendlyAuthError(e.code) || 'Could not send reset email.';
+  }
+});
+  
 function friendlyAuthError(code) {
   const messages = {
     'auth/user-not-found': 'No account found with this email',
