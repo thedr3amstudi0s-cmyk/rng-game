@@ -2846,7 +2846,6 @@ function resizeCanvas(){
 // ── Input ─────────────────────────────────────────────────────
 function onKey(e, down){
   keys[e.code] = down;
-  if(down && (e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space')) tryJump();
   if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
 }
 
