@@ -1450,18 +1450,16 @@ function startAuthObserver(){
       totalValue: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-
-    await window.db.collection('users').doc(user.uid).set(newProfile);
-    S.profile = newProfile;
-    S.inventory = [];
-    document.getElementById('nav-username').textContent = newProfile.username;
-    updateCoinDisplay(400);
-    toast('Welcome to CrateVault! 🎉', 'success');
-  }
-} catch (e) {
-  console.error("Profile load error:", e);
-  toast('Login successful but profile failed to load.', 'error');
-}
+    await db.collection('users').doc(S.user.uid).update({
+      coins:firebase.firestore.FieldValue.increment(-crate.price),
+      inventory:S.inventory,
+      cratesOpened:S.profile.cratesOpened,
+      [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(crate.price),
+      rarestItem:S.profile.rarestItem,
+      rarestTier:S.profile.rarestTier,
+      totalValue:S.profile.totalValue,
+    });
+  }catch(e){ toast('Save error: '+e.message,'error'); }
     } else {
       S.user = null;
       S.profile = null;
