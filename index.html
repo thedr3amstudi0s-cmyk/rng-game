@@ -3435,16 +3435,6 @@ function startPassiveIncome() {
     }
   }, 10 * 60 * 1000); // 10 minutes
 }
-  auth.onAuthStateChanged(async user=>{
-    if(!user) return;
-
-    S.user = user;
-
-    setupPresence();
-    listenToPresence();
-    listenToTradeRequests();
-    setupTradeInviteListener();
-});
 </script>
 </body>
 </html>
