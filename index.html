@@ -1223,11 +1223,19 @@ function handleChat(playerId, message) {
 // REQUIRED GAME HOOKS (YOU MUST HAVE THESE)
 // -----------------------------
 function sendSystemMessage(playerId, text) {
-  console.log(`[SYSTEM → ${playerId}] ${text}`);
+  firebase.database().ref("chat").push({
+    playerId: "SYSTEM",
+    message: text,
+    timestamp: Date.now()
+  });
 }
 
 function broadcastMessage(playerId, message) {
-  console.log(`[CHAT] ${playerId}: ${message}`);
+  firebase.database().ref("chat").push({
+    playerId,
+    message,
+    timestamp: Date.now()
+  });
 }
 
 function disconnectPlayer(playerId) {
