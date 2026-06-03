@@ -1003,6 +1003,7 @@ const ITEMS = [
 ];
 
 // Crates ordered by price with smoother progression
+// Crates ordered by price - Rebalanced for fair progression (EV/price ≈ 0.50)
 const CRATES = [
   {id:'starter', name:'Starter Crate', price:50, icon:'📦', color:'#9ca3af', desc:'For new adventurers.', odds:{common:0.87, uncommon:0.11, rare:0.02}, items: Array.from({length:25},(_,i)=>`c${(i+1).toString().padStart(3,'0')}`).concat(['u001','u002','r001'])},
   
@@ -1014,33 +1015,34 @@ const CRATES = [
   
   {id:'mystic', name:'Mystic Crate', price:320, icon:'🔮', color:'#a855f7', desc:'Magic & arcane.', odds:{uncommon:0.55, rare:0.35, epic:0.09, legendary:0.01}, items:['u007','u009','u010','r003','r006','r008','r018','e002','e007','e016']},
 
-  {id:'infernal', name:'Infernal Crate', price:650, icon:'🔥', color:'#dc2626', desc:'Fire & destruction.', odds:{rare:0.70, epic:0.25, legendary:0.05}, items:['r004','r009','r013','r020','e001','e005','e009','e012','l001','l006']},
+  {id:'infernal', name:'Infernal Crate', price:650, icon:'🔥', color:'#dc2626', desc:'Fire & destruction.', odds:{rare:0.72, epic:0.24, legendary:0.04}, items:['r004','r009','r013','r020','e001','e005','e009','e012','l001','l006']},
   
-  {id:'shadow', name:'Shadow Crate', price:950, icon:'🌑', color:'#6b21a8', desc:'Stealth & darkness.', odds:{rare:0.65, epic:0.30, legendary:0.05}, items:['r005','r011','r015','e001','e006','e008','e014','l002','l007']},
+  {id:'shadow', name:'Shadow Crate', price:950, icon:'🌑', color:'#6b21a8', desc:'Stealth & darkness.', odds:{rare:0.68, epic:0.28, legendary:0.04}, items:['r005','r011','r015','e001','e006','e008','e014','l002','l007']},
   
-  {id:'storm', name:'Storm Crate', price:1450, icon:'⛈️', color:'#38bdf8', desc:'Elemental fury.', odds:{rare:0.50, epic:0.40, legendary:0.10}, items:['r004','r007','r012','e004','e005','e012','e013','l003','l008','l011']},
+  {id:'storm', name:'Storm Crate', price:1450, icon:'⛈️', color:'#38bdf8', desc:'Elemental fury.', odds:{rare:0.58, epic:0.35, legendary:0.07}, items:['r004','r007','r012','e004','e005','e012','e013','l003','l008','l011']},
   
-  {id:'celestial', name:'Celestial Crate', price:2800, icon:'🌟', color:'#f59e0b', desc:'Heavenly power.', odds:{epic:0.55, legendary:0.38, mythic:0.07}, items:['e002','e004','e006','e010','l001','l002','l005','l007','m002','m005']},
+  {id:'celestial', name:'Celestial Crate', price:2800, icon:'🌟', color:'#f59e0b', desc:'Heavenly power.', odds:{epic:0.65, legendary:0.32, mythic:0.03}, items:['e002','e004','e006','e010','l001','l002','l005','l007','m002','m005']},
   
-  {id:'ancient', name:'Ancient Crate', price:4800, icon:'🏛️', color:'#a16207', desc:'Lost civilization relics.', odds:{epic:0.48, legendary:0.42, mythic:0.10}, items:['e003','e007','e015','l004','l006','l009','l010','m001','m003','m008']},
+  {id:'ancient', name:'Ancient Crate', price:4800, icon:'🏛️', color:'#a16207', desc:'Lost civilization relics.', odds:{epic:0.60, legendary:0.35, mythic:0.05}, items:['e003','e007','e015','l004','l006','l009','l010','m001','m003','m008']},
 
-  {id:'abyssal', name:'Abyssal Crate', price:9500, icon:'🌊', color:'#1e40af', desc:'Deep horrors.', odds:{legendary:0.68, mythic:0.28, divine:0.04}, items:['l001','l003','l004','l006','l012','m001','m004','m006','m009','d001']},
+  // Mid-High Tier - Much more balanced now
+  {id:'abyssal', name:'Abyssal Crate', price:12500, icon:'🌊', color:'#1e40af', desc:'Deep horrors.', odds:{legendary:0.78, mythic:0.20, divine:0.02}, items:['l001','l003','l004','l006','l012','m001','m004','m006','m009','d001']},
   
-  {id:'void', name:'Void Crate', price:18500, icon:'🕳️', color:'#555555', desc:'Nothingness calls.', odds:{legendary:0.45, mythic:0.48, ultra1:0.07}, items:['l004','l006','l011','m002','m003','m007','m010','ur01']},
+  {id:'void', name:'Void Crate', price:24500, icon:'🕳️', color:'#555555', desc:'Nothingness calls.', odds:{legendary:0.62, mythic:0.34, ultra1:0.04}, items:['l004','l006','l011','m002','m003','m007','m010','ur01']},
   
-  {id:'titan', name:'Titan Crate', price:32000, icon:'🏔️', color:'#b91c1c', desc:'Challenge the gods.', odds:{legendary:0.40, mythic:0.52, divine:0.08}, items:['l002','l005','l009','l013','m001','m005','m008','d002','d003']},
+  {id:'titan', name:'Titan Crate', price:42000, icon:'🏔️', color:'#b91c1c', desc:'Challenge the gods.', odds:{legendary:0.55, mythic:0.40, divine:0.05}, items:['l002','l005','l009','l013','m001','m005','m008','d002','d003']},
   
-  {id:'nebula', name:'Nebula Crate', price:58000, icon:'🌌', color:'#7c3aed', desc:'Born from stars.', odds:{mythic:0.75, divine:0.20, ultra1:0.05}, items:['m002','m003','m006','m009','d004','d005','ur01','ur02']},
+  {id:'nebula', name:'Nebula Crate', price:68000, icon:'🌌', color:'#7c3aed', desc:'Born from stars.', odds:{mythic:0.78, divine:0.18, ultra1:0.04}, items:['m002','m003','m006','m009','d004','d005','ur01','ur02']},
   
-  {id:'singularity', name:'Singularity Crate', price:125000, icon:'⚫', color:'#1e2937', desc:'Physics breaks here.', odds:{mythic:0.55, divine:0.35, ultra1:0.08, ultra2:0.02}, items:['m004','m007','m010','d001','d006','ur01','ur02']},
+  {id:'singularity', name:'Singularity Crate', price:135000, icon:'⚫', color:'#1e2937', desc:'Physics breaks here.', odds:{mythic:0.65, divine:0.30, ultra1:0.04, ultra2:0.01}, items:['m004','m007','m010','d001','d006','ur01','ur02']},
   
-  {id:'eternal', name:'Eternal Crate', price:280000, icon:'♾️', color:'#22d3ee', desc:'Timeless power.', odds:{divine:0.65, ultra1:0.20, ultra2:0.12, transcendent:0.03}, items:['d001','d002','d003','d005','ur02','ur03','tr01']},
+  {id:'eternal', name:'Eternal Crate', price:295000, icon:'♾️', color:'#22d3ee', desc:'Timeless power.', odds:{divine:0.72, ultra1:0.18, ultra2:0.08, transcendent:0.02}, items:['d001','d002','d003','d005','ur02','ur03','tr01']},
   
-  {id:'cosmic', name:'Cosmic Crate', price:650000, icon:'🌠', color:'#fffaaa', desc:'Beyond the universe.', odds:{ultra1:0.45, ultra2:0.35, ultra3:0.15, transcendent:0.05}, items:['ur01','ur02','ur03','tr01']},
+  {id:'cosmic', name:'Cosmic Crate', price:720000, icon:'🌠', color:'#fffaaa', desc:'Beyond the universe.', odds:{ultra1:0.55, ultra2:0.32, ultra3:0.10, transcendent:0.03}, items:['ur01','ur02','ur03','tr01']},
   
-  {id:'apex', name:'APEX Crate', price:1450000, icon:'👑', color:'#eab308', desc:'The pinnacle.', odds:{ultra2:0.55, ultra3:0.30, ultra4:0.10, transcendent:0.04, eternal:0.01}, items:['ur02','ur03','ur04','tr01','et01']},
+  {id:'apex', name:'APEX Crate', price:1680000, icon:'👑', color:'#eab308', desc:'The pinnacle.', odds:{ultra2:0.58, ultra3:0.28, ultra4:0.10, transcendent:0.03, eternal:0.01}, items:['ur02','ur03','ur04','tr01','et01']},
   
-  {id:'infinity', name:'INFINITY Crate', price:5000000, icon:'♾️', color:'#c026d3', desc:'The final crate.', odds:{ultra3:0.40, ultra4:0.35, transcendent:0.20, eternal:0.05}, items:['ur03','ur04','tr01','et01']},
+  {id:'infinity', name:'INFINITY Crate', price:5200000, icon:'♾️', color:'#c026d3', desc:'The final crate.', odds:{ultra3:0.50, ultra4:0.32, transcendent:0.15, eternal:0.03}, items:['ur03','ur04','tr01','et01']},
 ];
 
 function getItem(id){return ITEMS.find(i=>i.id===id);}
