@@ -1085,10 +1085,10 @@ function genUID(){return Date.now().toString(36)+Math.random().toString(36).slic
   
 const BAD_WORDS = [
   // === Profanity & Swears ===
-  'fuck','fucking','fucked','fucker','fuckyou','fuckoff','shit','shitty','bullshit','bitch','bitches','bitchy','bastard','damn','damnit','hell','ass','asshole','assholes','pussy','dick','dickhead','cock','cocksucker','slut','whore','cunt','twat','wank','wanker','prick','bollocks','tosser','bugger','bloody','arse','arsehole',
+  'fuck','fucking','fucked','fucker','fuckyou','fuckoff','shit','shitty','bullshit','bitch','bitches','bitchy','bastard','damn','damnit','hell','ass','asshole','assholes','pussy','dick','dickhead','cock','cocksucker','slut','whore','cunt','twat','wank','wanker','prick','bollocks','tosser','bugger','bloody','arse','arsehole','chode',
 
   // === Racial / Ethnic / Religious Slurs ===
-  'nigger','nigga','niggers','chink','chinks','spic','spics','kike','kikes','gook','gooks','towelhead','towelheads','fag','faggot','faggots','homo','homos','retard','retards','tranny','trannies','jewboy','sandnigger','beaner','wetback','kraut','nip','paki','raghead','terrorist',
+  'nigger','nigga','niggers','migger','chink','chinks','spic','spics','kike','kikes','gook','gooks','towelhead','towelheads','fag','faggot','faggots','homo','homos','retard','retards','tranny','trannies','jewboy','sandnigger','beaner','wetback','kraut','nip','paki','raghead','terrorist',
 
   // === Sexual / NSFW / Explicit ===
   'sex','porn','porno','hentai','cum','cumming','cums','tits','boobs','boob','tit','dildo','anal','gangbang','threesome','blowjob','handjob','creampie','orgasm','piss','scat','rape','raped','rapist','incest','pedo','pedophile','loli','shota','milf','daddy','mommy','nsfw','xxx','nude','naked','horny','thot','simp','coomer',
@@ -1133,6 +1133,8 @@ const LEET_MAP = {
   '#':'h',
   '1':'i','!':'i','|':'i','l':'i',
   '_':'l',
+  'n':'m', '^':'m',
+  'm':'n',
   '0':'o',
   'p':'p',
   '9':'q',
@@ -1168,24 +1170,21 @@ function buildFlexibleRegex(word){
   return new RegExp(word.split('').map(c => `${c}+[^a-z]*`).join(''), 'gi');
 }
 
-// Filter chat
-function filterChat(text){
-  let normalizedText = normalize(text);
-  let filteredText = text.split('');
 
-  BAD_WORDS.forEach(word => {
-    const regex = buildFlexibleRegex(word);
-    let match;
-    while((match = regex.exec(normalizedText)) !== null){
-      // replace matched portion in original text with ***
-      for(let i = match.index; i < match.index + match[0].length; i++){
-        if(filteredText[i] !== undefined) filteredText[i] = '';
-      }
-      filteredText[match.index] = '***';
-    }
+// Simple and reliable bad word filter
+function filterChat(text) {
+  if (!text) return '';
+  
+  let filtered = text;
+
+  BAD_WORDS.forEach(badWord => {
+    // Escape special regex characters and match whole words (case insensitive)
+    const escaped = badWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp('\\b' + escaped + '\\b', 'gi');
+    filtered = filtered.replace(regex, '***');
   });
 
-  return filteredText.join('');
+  return filtered;
 }
   
 // Usage in sendChat()
