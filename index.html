@@ -1724,20 +1724,14 @@ function listenToChat(){
 document.getElementById('chat-send').addEventListener('click',sendChat);
 document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
 
-async function sendChat(){
-  const input=document.getElementById('chat-input');
-  const rawText = input.value.slice(0,200);
-  if(!rawText || !S.user || !S.profile) return;
+function sendChat() {
+  const message = document.getElementById("chatInput").value;
 
-  const text = filterChat(rawText);
-  if(!text||!S.user||!S.profile)return;
-  input.value='';
-  try{
-    await rtdb.ref('chat').push({
-      username:S.profile.username, text, isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP,
-    });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
+  if (!message) return;
+
+  handleChat(currentPlayerId, message);
+
+  document.getElementById("chatInput").value = "";
 }
 
 function appendChatMessage(username,text,isSystem=false,cls=''){
