@@ -2894,6 +2894,7 @@ function startGame(){
 
 // ── Canvas Resize ────────────────────────────────────────────
 function resizeCanvas(){
+  if(!canvas || !canvas.parentElement) return;
   const wrap = canvas.parentElement;
   canvas.width = wrap.clientWidth;
   canvas.height = wrap.clientHeight;
