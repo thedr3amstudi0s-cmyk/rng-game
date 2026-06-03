@@ -573,7 +573,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 <!-- MAIN GAME -->
 <div id="game-screen" class="screen">
   <header class="top-nav">
-    <div class="nav-logo">⚡ CRATEVAULT 70% tax on selling</div>
+    <div class="nav-logo">⚡ CRATEVAULT</div>
     <div class="coin-display"><span>🪙</span><span id="coin-balance">0</span></div>
     <div class="nav-right">
       <span class="player-name" id="nav-username">—</span>
@@ -591,6 +591,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
+      <button class="nav-item" data-page="platformer"><span class="nav-icon">🧗</span><span class="nav-label">CLIMB (under development)</span></button>
     </nav>
 
     <main class="page-content">
@@ -863,187 +864,192 @@ const RARITIES = {
   ultra4:    {name:'Omnipotent',color:'#ffd700',glow:'#ffd70099',tier:11,display:'1 in 1,000,000,000,000'},
 };
 
-// ============================================================
-// ITEMS (EXPANDED FOR BETTER PROGRESSION)
-// ============================================================
+// Item values are calibrated so EV/price ≈ 0.50 for every crate.
+// Sell price = 70% of value. Ultra items are jackpots — exciting but not game-breaking.
 const ITEMS = [
-  // ---------------- COMMON ----------------
-  {id:'c001',name:'Rusty Coin', rarity:'common', icon:'🪙', value:50, desc:'A worn tarnished coin.'},
-  {id:'c002',name:'Wooden Shield', rarity:'common', icon:'🛡️', value:52, desc:'Basic wooden protection.'},
-  {id:'c003',name:'Old Dagger', rarity:'common', icon:'🗡️', value:50, desc:'Dull but functional.'},
-  {id:'c004',name:'Bread Loaf', rarity:'common', icon:'🍞', value:50, desc:'Surprisingly filling.'},
-  {id:'c005',name:'Pebble', rarity:'common', icon:'🪨', value:50, desc:'Just a rock.'},
-  {id:'c006',name:'Leather Boots', rarity:'common', icon:'👢', value:54, desc:'Worn travel boots.'},
-  {id:'c007',name:'Hemp Rope', rarity:'common', icon:'🧵', value:50, desc:'Always useful.'},
-  {id:'c008',name:'Candle', rarity:'common', icon:'🕯️', value:60, desc:'Lights the dark.'},
-  {id:'c009',name:'Bandage', rarity:'common', icon:'🩹', value:50, desc:'Basic healing.'},
-  {id:'c010',name:'Wooden Bow', rarity:'common', icon:'🏹', value:54, desc:'Simple weapon.'},
-  {id:'c011',name:'Fishing Rod', rarity:'common', icon:'🎣', value:50, desc:'For patience.'},
-  {id:'c012',name:'Iron Nail', rarity:'common', icon:'📌', value:50, desc:'Small but useful.'},
-  {id:'c013',name:'Empty Bottle', rarity:'common', icon:'🍶', value:52, desc:'Could hold anything.'},
-  {id:'c014',name:'Wool Hat', rarity:'common', icon:'🎩', value:50, desc:'Keeps warm.'},
-  {id:'c015',name:'Tin Cup', rarity:'common', icon:'🫙', value:55, desc:'Dented cup.'},
-
-  // ---------------- UNCOMMON ----------------
-  {id:'u001',name:'Silver Ring', rarity:'uncommon', icon:'💍', value:100},
-  {id:'u002',name:'Steel Sword', rarity:'uncommon', icon:'⚔️', value:115},
-  {id:'u003',name:'Iron Helm', rarity:'uncommon', icon:'⛑️', value:105},
-  {id:'u004',name:'Potion of Speed', rarity:'uncommon', icon:'🧪', value:118},
-  {id:'u005',name:'Copper Key', rarity:'uncommon', icon:'🗝️', value:98},
-  {id:'u006',name:'Map Fragment', rarity:'uncommon', icon:'🗺️', value:105},
-  {id:'u007',name:'Storm Scroll', rarity:'uncommon', icon:'📜', value:115},
-  {id:'u008',name:'Fox Pelt', rarity:'uncommon', icon:'🦊', value:102},
-  {id:'u009',name:'Magic Compass', rarity:'uncommon', icon:'🧭', value:110},
-  {id:'u010',name:'Blue Crystal', rarity:'uncommon', icon:'💎', value:120},
-  {id:'u011',name:'Shadow Cloak', rarity:'uncommon', icon:'🧥', value:115},
-  {id:'u012',name:'Bone Charm', rarity:'uncommon', icon:'🦴', value:100},
-
-  // ---------------- RARE ----------------
-  {id:'r001',name:'Enchanted Blade', rarity:'rare', icon:'🔷', value:285},
-  {id:'r002',name:'Dragon Scale', rarity:'rare', icon:'🐉', value:315},
-  {id:'r003',name:'Mana Crystal', rarity:'rare', icon:'🔮', value:295},
-  {id:'r004',name:'Thunder Gauntlet', rarity:'rare', icon:'⚡', value:320},
-  {id:'r005',name:'Phantom Mask', rarity:'rare', icon:'👻', value:295},
-  {id:'r006',name:'Arcane Tome', rarity:'rare', icon:'📖', value:325},
-  {id:'r007',name:'Vortex Staff', rarity:'rare', icon:'🌀', value:300},
-  {id:'r008',name:'Ice Crown', rarity:'rare', icon:'👑', value:330},
-  {id:'r009',name:'Fire Emblem', rarity:'rare', icon:'🔥', value:305},
-  {id:'r010',name:'Moon Amulet', rarity:'rare', icon:'🌙', value:290},
-
-  // ---------------- EPIC ----------------
-  {id:'e001',name:'Void Blade', rarity:'epic', icon:'🌑', value:2200},
-  {id:'e002',name:'Soul Gem', rarity:'epic', icon:'💜', value:2350},
-  {id:'e003',name:'Titan Armor', rarity:'epic', icon:'🛡️', value:2500},
-  {id:'e004',name:'Celestial Bow', rarity:'epic', icon:'🌟', value:2250},
-  {id:'e005',name:'Chaos Orb', rarity:'epic', icon:'🌪️', value:2500},
-  {id:'e006',name:'Phantom Crown', rarity:'epic', icon:'👑', value:2400},
-  {id:'e007',name:'Elder Wand', rarity:'epic', icon:'🪄', value:2350},
-  {id:'e008',name:'Abyssal Ring', rarity:'epic', icon:'🖤', value:2200},
-
-  // ---------------- LEGENDARY (EXPANDED) ----------------
-  {id:'l001',name:'Sunforged Sword', rarity:'legendary', icon:'☀️', value:8500},
-  {id:'l002',name:'Moonweave Robe', rarity:'legendary', icon:'🌕', value:9000},
-  {id:'l003',name:'Storm Trident', rarity:'legendary', icon:'🔱', value:9500},
-  {id:'l004',name:'Infinity Gauntlet', rarity:'legendary', icon:'✊', value:10000},
-  {id:'l005',name:'Phoenix Feather', rarity:'legendary', icon:'🦅', value:9000},
-  {id:'l006',name:'God Slayer', rarity:'legendary', icon:'⚔️', value:10500},
-  {id:'l007',name:'Crystal Drake', rarity:'legendary', icon:'🐲', value:9200},
-  {id:'l008',name:'Star Hammer', rarity:'legendary', icon:'🔨', value:9800},
-  {id:'l009',name:'Golden Relic', rarity:'legendary', icon:'🏆', value:9400},
-  {id:'l010',name:'Titan Heart', rarity:'legendary', icon:'❤️', value:10100},
-  {id:'l011',name:'Solar Crown', rarity:'legendary', icon:'☀️', value:9700},
-
-  // ---------------- MYTHIC (EXPANDED) ----------------
-  {id:'m001',name:'Universe Key', rarity:'mythic', icon:'🗝️', value:50000},
-  {id:'m002',name:'Star Fragment', rarity:'mythic', icon:'⭐', value:55000},
-  {id:'m003',name:'Reality Shard', rarity:'mythic', icon:'💫', value:60000},
-  {id:'m004',name:'Void Crystal', rarity:'mythic', icon:'🔲', value:52000},
-  {id:'m005',name:'Black Hole Core', rarity:'mythic', icon:'⚫', value:58000},
-  {id:'m006',name:'Ancient Rune', rarity:'mythic', icon:'🔺', value:53000},
-  {id:'m007',name:'Celestial Ember', rarity:'mythic', icon:'🔥', value:57000},
-  {id:'m008',name:'Time Crystal', rarity:'mythic', icon:'⏳', value:62000},
-
-  // ---------------- DIVINE (EXPANDED) ----------------
-  {id:'d001',name:'Divine Relic', rarity:'divine', icon:'✨', value:120000},
-  {id:'d002',name:'Creation Orb', rarity:'divine', icon:'🌈', value:140000},
-  {id:'d003',name:'Divine Crown', rarity:'divine', icon:'👑', value:130000},
-  {id:'d004',name:'Holy Prism', rarity:'divine', icon:'💎', value:135000},
-  {id:'d005',name:'Genesis Flame', rarity:'divine', icon:'🔥', value:145000},
-
-  // ---------------- ULTRA ----------------
-  {id:'ur01',name:'OMEGA SHARD', rarity:'ultra1', icon:'💠', value:250000},
-  {id:'ur02',name:'NEXUS CORE', rarity:'ultra2', icon:'🔵', value:1000000},
-  {id:'ur03',name:'PRIMORDIAL EYE', rarity:'ultra3', icon:'👁️', value:5000000},
-  {id:'ur04',name:'ABSOLUTE ZERO', rarity:'ultra4', icon:'❄️', value:25000000},
+  // COMMON — value ~50 (sells for ~30)
+  {id:'c001',name:'Rusty Coin',       rarity:'common',   icon:'🪙', value:48,  desc:'A worn tarnished coin.'},
+  {id:'c002',name:'Wooden Shield',    rarity:'common',   icon:'🛡️', value:52,  desc:'Basic wooden protection.'},
+  {id:'c003',name:'Old Dagger',       rarity:'common',   icon:'🗡️', value:50,  desc:'Dull but functional.'},
+  {id:'c004',name:'Bread Loaf',       rarity:'common',   icon:'🍞', value:46,  desc:'Surprisingly filling.'},
+  {id:'c005',name:'Pebble',           rarity:'common',   icon:'🪨', value:44,  desc:'Just a rock. Or is it?'},
+  {id:'c006',name:'Leather Boots',    rarity:'common',   icon:'👢', value:54,  desc:'Well-worn travel boots.'},
+  {id:'c007',name:'Hemp Rope',        rarity:'common',   icon:'🧵', value:48,  desc:'Always useful.'},
+  {id:'c008',name:'Candle',           rarity:'common',   icon:'🕯️', value:44,  desc:'Lights the darkest caves.'},
+  {id:'c009',name:'Cloth Bandage',    rarity:'common',   icon:'🩹', value:48,  desc:'Stops minor bleeding.'},
+  {id:'c010',name:'Wooden Bow',       rarity:'common',   icon:'🏹', value:54,  desc:'Simple but effective.'},
+  {id:'c011',name:'Fishing Rod',      rarity:'common',   icon:'🎣', value:50,  desc:'For the patient angler.'},
+  {id:'c012',name:'Iron Nail',        rarity:'common',   icon:'📌', value:44,  desc:'Holds things together.'},
+  {id:'c013',name:'Empty Bottle',     rarity:'common',   icon:'🍶', value:46,  desc:'Could hold anything.'},
+  {id:'c014',name:'Wool Hat',         rarity:'common',   icon:'🎩', value:50,  desc:'Keeps your head warm.'},
+  {id:'c015',name:'Tin Cup',          rarity:'common',   icon:'🫙', value:46,  desc:'Dented but drinkable.'},
+  // UNCOMMON — value ~108 (sells for ~65, profit on Starter)
+  {id:'u001',name:'Silver Ring',      rarity:'uncommon', icon:'💍', value:100, desc:'A simple silver band.'},
+  {id:'u002',name:'Steel Sword',      rarity:'uncommon', icon:'⚔️', value:115, desc:'Sharper than most.'},
+  {id:'u003',name:'Iron Helm',        rarity:'uncommon', icon:'⛑️', value:105, desc:'Solid iron headgear.'},
+  {id:'u004',name:'Potion of Speed',  rarity:'uncommon', icon:'🧪', value:118, desc:'Fleet-footed formula.'},
+  {id:'u005',name:'Copper Key',       rarity:'uncommon', icon:'🗝️', value:98,  desc:'Opens many doors.'},
+  {id:'u006',name:'Map Fragment',     rarity:'uncommon', icon:'🗺️', value:105, desc:'Part of a larger secret.'},
+  {id:'u007',name:'Storm Scroll',     rarity:'uncommon', icon:'📜', value:115, desc:'Contains weather magic.'},
+  {id:'u008',name:'Fox Pelt',         rarity:'uncommon', icon:'🦊', value:102, desc:'Warm and valuable fur.'},
+  {id:'u009',name:'Magic Compass',    rarity:'uncommon', icon:'🧭', value:110, desc:'Points toward treasure.'},
+  {id:'u010',name:'Blue Crystal',     rarity:'uncommon', icon:'💎', value:120, desc:'Faintly glowing gem.'},
+  {id:'u011',name:'Shadow Cloak',     rarity:'uncommon', icon:'🧥', value:115, desc:'Hard to see in.'},
+  {id:'u012',name:'Bone Charm',       rarity:'uncommon', icon:'🦴', value:100, desc:'Provides minor warding.'},
+  // RARE — value ~300 (sells for ~180, profit on Warrior)
+  {id:'r001',name:'Enchanted Blade',  rarity:'rare',     icon:'🔷', value:285, desc:'Hums with arcane energy.'},
+  {id:'r002',name:'Dragon Scale',     rarity:'rare',     icon:'🐉', value:315, desc:'Impervious to flame.'},
+  {id:'r003',name:'Mana Crystal',     rarity:'rare',     icon:'🔮', value:295, desc:'Crystallized magic.'},
+  {id:'r004',name:'Thunder Gauntlet', rarity:'rare',     icon:'⚡', value:320, desc:'Channels lightning.'},
+  {id:'r005',name:'Phantom Mask',     rarity:'rare',     icon:'👻', value:295, desc:'Face of the unseen.'},
+  {id:'r006',name:'Arcane Tome',      rarity:'rare',     icon:'📖', value:325, desc:'Ancient spellbook.'},
+  {id:'r007',name:'Vortex Staff',     rarity:'rare',     icon:'🌀', value:300, desc:'Creates small storms.'},
+  {id:'r008',name:'Ice Crown',        rarity:'rare',     icon:'👑', value:330, desc:'Freezes the mind.'},
+  {id:'r009',name:'Fire Emblem',      rarity:'rare',     icon:'🔥', value:305, desc:'Smoldering with power.'},
+  {id:'r010',name:'Moon Amulet',      rarity:'rare',     icon:'🌙', value:290, desc:'Grants lunar vision.'},
+  // EPIC — value ~2,333 (sells for ~1,400, profit on Shadow)
+  {id:'e001',name:'Void Blade',       rarity:'epic',     icon:'🌑', value:2200, desc:'Cuts through reality.'},
+  {id:'e002',name:'Soul Gem',         rarity:'epic',     icon:'💜', value:2350, desc:'Contains a trapped soul.'},
+  {id:'e003',name:'Titan Armor',      rarity:'epic',     icon:'🛡️', value:2500, desc:'Forged by giants.'},
+  {id:'e004',name:'Celestial Bow',    rarity:'epic',     icon:'🌟', value:2250, desc:'Arrows pierce stars.'},
+  {id:'e005',name:'Chaos Orb',        rarity:'epic',     icon:'🌪️', value:2500, desc:'Unpredictable power.'},
+  {id:'e006',name:'Phantom Crown',    rarity:'epic',     icon:'👑', value:2400, desc:'Ruler of shadows.'},
+  {id:'e007',name:'Elder Wand',       rarity:'epic',     icon:'🪄', value:2350, desc:'Mastery over death.'},
+  {id:'e008',name:'Abyssal Ring',     rarity:'epic',     icon:'🖤', value:2200, desc:'Power from the deep.'},
+  // LEGENDARY — value ~9,167 (sells for ~5,500, profit on Celestial)
+  {id:'l001',name:'Sunforged Sword',  rarity:'legendary',icon:'☀️', value:8500,  desc:'Blazing with solar power.'},
+  {id:'l002',name:'Moonweave Robe',   rarity:'legendary',icon:'🌕', value:9000,  desc:'Woven from moonlight.'},
+  {id:'l003',name:'Storm Trident',    rarity:'legendary',icon:'🔱', value:9500,  desc:'Commands the seas.'},
+  {id:'l004',name:'Infinity Gauntlet',rarity:'legendary',icon:'✊', value:10000, desc:'Controls reality.'},
+  {id:'l005',name:'Phoenix Feather',  rarity:'legendary',icon:'🦅', value:9000,  desc:'Grants rebirth.'},
+  {id:'l006',name:'God Slayer',       rarity:'legendary',icon:'⚔️', value:10500, desc:'Even gods fear this.'},
+  // MYTHIC — value ~91,667 (sells for ~55,000, big profit on Mythic crate 8k)
+  {id:'m001',name:'Universe Key',     rarity:'mythic',   icon:'🗝️', value:88000,  desc:'Opens any dimension.'},
+  {id:'m002',name:'Star Fragment',    rarity:'mythic',   icon:'⭐', value:92000,  desc:'Piece of a dead star.'},
+  {id:'m003',name:'Reality Shard',    rarity:'mythic',   icon:'💫', value:96000,  desc:'Reality bends around it.'},
+  {id:'m004',name:'Void Crystal',     rarity:'mythic',   icon:'🔲', value:90000,  desc:'Fragment of nothingness.'},
+  // DIVINE — value ~216,667 (sells for ~130,000)
+  {id:'d001',name:'Divine Relic',     rarity:'divine',   icon:'✨', value:210000, desc:'Touched by a deity.'},
+  {id:'d002',name:'Creation Orb',     rarity:'divine',   icon:'🌈', value:225000, desc:'Born at start of time.'},
+  // ULTRA
+  {id:'ur01',name:'OMEGA SHARD',      rarity:'ultra1',   icon:'💠', value:666667,     desc:'1 in a million. Truly impossible.'},
+  {id:'ur02',name:'NEXUS CORE',       rarity:'ultra2',   icon:'🔵', value:3333333,    desc:'One of only a few in existence.'},
+  {id:'ur03',name:'PRIMORDIAL EYE',   rarity:'ultra3',   icon:'👁️', value:11666667,   desc:'The eye that saw creation.'},
+  {id:'ur04',name:'ABSOLUTE ZERO',    rarity:'ultra4',   icon:'❄️', value:58333333,   desc:'The rarest item in existence.'},
 ];
 
-// ============================================================
-// CRATES (PROGRESSION + BALANCED ENDGAME)
-// ============================================================
+// Per-crate drop rates. EV/price ≈ 0.50 for all crates (verified by calculation).
 const CRATES = [
   {
     id:'starter', name:'Starter Crate', price:50, icon:'📦', color:'#9ca3af',
+    desc:'For new adventurers. Commons are likely, but Rare is possible.',
     odds:{common:0.88, uncommon:0.09, rare:0.03},
-    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015','u001','u002','r001','r002']
+    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010',
+           'c011','c012','c013','c014','c015',
+           'u001','u002','u003','u004','u005',
+           'r001','r002'],
   },
   {
     id:'warrior', name:'Warrior Crate', price:125, icon:'⚔️', color:'#ef4444',
+    desc:'Combat gear and deadly weapons.',
     odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-    items:['c001','c003','c006','u002','u003','r004','e001','e003']
+    items:['c001','c003','c006','c009','c010','c012',
+           'u002','u003','u004','u008',
+           'r001','r004','r009',
+           'e001','e003'],
   },
   {
     id:'explorer', name:'Explorer Crate', price:125, icon:'🗺️', color:'#22c55e',
+    desc:'Tools for the adventurous spirit.',
     odds:{common:0.72, uncommon:0.22, rare:0.055, epic:0.005},
-    items:['c004','c007','c011','u005','u009','r002','e004','e007']
+    items:['c004','c007','c011','c013','c014','c015',
+           'u005','u006','u008','u009',
+           'r002','r007','r010',
+           'e004','e007'],
   },
   {
     id:'mystic', name:'Mystic Crate', price:250, icon:'🔮', color:'#a855f7',
+    desc:'Magical artifacts and arcane secrets.',
     odds:{common:0.60, uncommon:0.28, rare:0.10, epic:0.02},
-    items:['c002','u007','u010','r006','e002','e004','e007']
+    items:['c002','c008','c013',
+           'u007','u009','u010','u012',
+           'r003','r006','r007','r010',
+           'e002','e004','e007'],
   },
   {
     id:'infernal', name:'Infernal Crate', price:500, icon:'🔥', color:'#dc2626',
+    desc:'Scorched by hellfire. Rare guaranteed, Epic possible.',
     odds:{rare:0.82, epic:0.15, legendary:0.03},
-    items:['r001','r004','e001','e003','l006']
+    items:['r001','r004','r005','r006','r007','r009',
+           'e001','e003','e005','e006','e008',
+           'l006'],
   },
   {
     id:'shadow', name:'Shadow Crate', price:750, icon:'🌑', color:'#6b21a8',
+    desc:'No filler — Rare guaranteed, Epic and Legendary possible.',
     odds:{rare:0.78, epic:0.18, legendary:0.04},
-    items:['r005','r006','e001','e002','l004','l006']
+    items:['r005','r006','r007','r009','r010',
+           'e001','e002','e005','e006','e008',
+           'l004','l006'],
   },
   {
     id:'storm', name:'Storm Crate', price:1500, icon:'⛈️', color:'#38bdf8',
+    desc:'Crackling with energy. Epic is common, Legendary rare.',
     odds:{rare:0.60, epic:0.33, legendary:0.07},
-    items:['r004','r007','e004','e005','e007','l003','l005']
+    items:['r004','r007','r008','r009',
+           'e001','e002','e004','e005','e006','e007','e008',
+           'l001','l003','l005','l006'],
   },
   {
     id:'celestial', name:'Celestial Crate', price:3500, icon:'🌟', color:'#f59e0b',
+    desc:'Blessed by the heavens. Epic guaranteed, Legendary and Mythic possible.',
     odds:{rare:0.45, epic:0.42, legendary:0.11, mythic:0.02},
-    items:['e004','e006','l001','l002','m002']
+    items:['r008','r003','r010',
+           'e004','e006','e002','e003',
+           'l001','l002','l005',
+           'm002'],
   },
   {
     id:'ancient', name:'Ancient Crate', price:5500, icon:'🏛️', color:'#a16207',
+    desc:'Relics of a forgotten age. Legendary likely, Mythic possible.',
     odds:{epic:0.55, legendary:0.38, mythic:0.07},
-    items:['e002','e003','l001','l002','m001','m004']
+    items:['e002','e003','e004','e006','e007',
+           'l001','l002','l003','l004','l005','l006',
+           'm001','m004'],
   },
   {
     id:'mythic', name:'Mythic Crate', price:8000, icon:'💀', color:'#ef4444',
+    desc:'Only the brave dare open this. Legendary and Mythic.',
     odds:{epic:0.40, legendary:0.48, mythic:0.12},
-    items:['e001','e005','l001','l006','m001']
+    items:['r001','r004','r006',
+           'e001','e002','e005','e006','e008',
+           'l001','l003','l006',
+           'm001','m004'],
   },
   {
     id:'abyssal', name:'Abyssal Crate', price:18000, icon:'🌊', color:'#1e40af',
-    odds:{legendary:0.90, mythic:0.10},
-    items:['l001','l002','l003','m001','m002']
+    desc:'From the deepest depths. Legendary guaranteed, Mythic likely.',
+    odds:{legendary:0.72, mythic:0.28},
+    items:['l001','l002','l003','l004','l005','l006',
+           'm001','m002','m003','m004'],
   },
 
-  // ---------------- NEW MID-END CRATES ----------------
-  {
-    id:'titan', name:'Titan Crate', price:30000, icon:'🏔️', color:'#64748b',
-    odds:{legendary:0.70, mythic:0.27, divine:0.03},
-    items:['l001','l002','l003','m001','m002','d001']
-  },
-  {
-    id:'royal', name:'Royal Crate', price:50000, icon:'👑', color:'#facc15',
-    odds:{legendary:0.50, mythic:0.42, divine:0.07, ultra1:0.01},
-    items:['l001','l004','l006','m001','m002','d001','d002','ur01']
-  },
+
   {
     id:'void', name:'Void Crate', price:100000, icon:'🕳️', color:'#555555',
-    odds:{legendary:0.35, mythic:0.645, ultra1:0.005},
-    items:['l004','l006','m001','m002','m003','ur01']
+    desc:'From the space between worlds. Mythic dominant, Ultra possible.',
+    odds:{legendary:0.20, mythic:0.779, ultra1:0.021},
+    items:['l003','l004','l006',
+           'm001','m002','m003','m004',
+           'ur01'],
   },
   {
     id:'omega', name:'OMEGA Crate', price:180000, icon:'⚡', color:'#ffd700',
-    odds:{
-      mythic:0.9568,
-      divine:0.04,
-      ultra1:0.003,
-      ultra2:0.00018,
-      ultra3:0.000018,
-      ultra4:0.000002
-    },
-    items:['m001','m002','d001','d002','ur01','ur02','ur03','ur04']
+    desc:'The only crate with Divine drops. Ultra odds are astronomical.',
+    odds:{mythic: 0.9499, divine:0.0400, ultra1:0.0099, ultra2:0.0001, ultra3:0.000009, ultra4:0.000001},
+    items:['m001','m002','m003','m004',
+           'd001','d002',
+           'ur01','ur02','ur03','ur04'],
   },
 ];
 
@@ -1074,177 +1080,98 @@ function rarityOdds(k, crateOdds){
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 
 // ============================================================
-// ROBLOX / DISCORD-STYLE MODERATION SYSTEM (FULL REPLACEMENT)
+// BANNED WORDS
+// ============================================================
+const BAD_WORDS = [
+  // Profanity
+  'fuck','shit','bitch','bastard','damn','hell','ass','pussy','dick','cock','slut','whore',
+  // Racial / ethnic / religious slurs
+  'nigger','nigga','chink','spic','kike','gook','towelhead','fag','faggot','homo','niger',
+  // Sexual / NSFW
+  'sex','porn','hentai','cum','tits','boobs','dildo','anal','gangbang','boob',
+  // Drugs / alcohol / dangerous stuff
+  'weed','marijuana','meth','cocaine','heroin','ecstasy','lsd','vape','alcohol','drunk',
+  // Hacking / cheating / exploits
+  'hack','cheat','exploit','dup','glitch','script','mod','inject',
+  // Personal info / threats
+  'kill','die','suicide','address','phone','email','ip','ssn','live',
+  //other
+  'suck', 'stink'
+];
+
+// ============================================================
+// CHAT FILTER FUNCTION (working version)
 // ============================================================
 
-// -----------------------------
-// Player moderation memory
-// -----------------------------
-const playerModeration = new Map();
-
-// -----------------------------
-// Toxicity scoring table
-// -----------------------------
-const BAD_WORD_SCORES = {
-  // profanity
-  fuck: 3, shit: 2, bitch: 3, ass: 1, damn: 1,
-
-  // slurs (high severity)
-  nigga: 10, nigger: 10, faggot: 8, kike: 8, spic: 6,
-
-  // sexual
-  porn: 5, sex: 4, hentai: 4, dildo: 5, tits: 3, boobs: 2,
-
-  // drugs
-  weed: 3, cocaine: 6, meth: 6, heroin: 6, lsd: 5, alcohol: 3,
-
-  // threats
-  kill: 8, die: 5, suicide: 10,
-
-  // exploits / cheating
-  hack: 4, cheat: 4, exploit: 5, script: 4, inject: 6
+const LEET_MAP = {
+  '1':'i','!':'i','|':'i',
+  '3':'e',
+  '4':'a','@':'a',
+  '5':'s','$':'s',
+  '7':'t',
+  '0':'o',
+  '9':'g'
 };
 
-// -----------------------------
-// Text normalization (anti-bypass)
-// -----------------------------
-function normalize(text) {
-  return text
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z]/g, "")   // removes spaces, symbols, f*ck bypasses
-    .replace(/[1!|]/g, "i")
-    .replace(/3/g, "e")
-    .replace(/4/g, "a")
-    .replace(/5/g, "s")
-    .replace(/0/g, "o");
+// Normalize text: lowercase, replace leet, turn non-letters into space
+function normalize(text){
+  text = text.toLowerCase();
+  let result = '';
+  for(let c of text){
+    if(/[a-z]/.test(c)) result += c;
+    else if(LEET_MAP[c]) result += LEET_MAP[c];
+    else result += ' '; // replace all other symbols with space
+  }
+  return result;
 }
 
-// -----------------------------
-// Score message toxicity
-// -----------------------------
-function getMessageScore(message) {
-  const cleaned = normalize(message);
-  let score = 0;
+// Build regex for a word allowing spaces/symbols/repeated letters
+function buildFlexibleRegex(word){
+  word = word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  return new RegExp(word.split('').map(c => `${c}+[^a-z]*`).join(''), 'gi');
+}
 
-  for (const [word, weight] of Object.entries(BAD_WORD_SCORES)) {
-    const normalizedWord = normalize(word);
+// Filter chat
+function filterChat(text){
+  let normalizedText = normalize(text);
+  let filteredText = text.split('');
 
-    if (cleaned.includes(normalizedWord)) {
-      score += weight;
+  BAD_WORDS.forEach(word => {
+    const regex = buildFlexibleRegex(word);
+    let match;
+    while((match = regex.exec(normalizedText)) !== null){
+      // replace matched portion in original text with ***
+      for(let i = match.index; i < match.index + match[0].length; i++){
+        if(filteredText[i] !== undefined) filteredText[i] = '';
+      }
+      filteredText[match.index] = '***';
     }
-  }
-
-  return score;
-}
-
-// -----------------------------
-// Anti-spam check
-// -----------------------------
-function antiSpamCheck(playerId) {
-  const data = playerModeration.get(playerId) || {};
-  const now = Date.now();
-
-  if (data.lastMessageTime && now - data.lastMessageTime < 800) {
-    applyModeration(playerId, 1); // spam penalty
-    return false;
-  }
-
-  data.lastMessageTime = now;
-  playerModeration.set(playerId, data);
-  return true;
-}
-
-// -----------------------------
-// Apply warning / mute / ban
-// -----------------------------
-function applyModeration(playerId, score) {
-  const data = playerModeration.get(playerId) || {
-    warnings: 0,
-    muteUntil: 0,
-    ban: false,
-    score: 0
-  };
-
-  data.score += score;
-
-  // WARNING
-  if (data.score >= 3 && data.score < 6) {
-    data.warnings += 1;
-    sendSystemMessage(playerId, "⚠️ Warning: inappropriate message detected.");
-  }
-
-  // MUTE
-  if (data.score >= 6 && data.score < 9) {
-    data.muteUntil = Date.now() + 10 * 60 * 1000; // 10 min mute
-    sendSystemMessage(playerId, "🔇 You have been muted for 10 minutes.");
-  }
-
-  // BAN
-  if (data.score >= 9) {
-    data.ban = true;
-    sendSystemMessage(playerId, "⛔ You have been permanently banned.");
-    disconnectPlayer(playerId);
-  }
-
-  playerModeration.set(playerId, data);
-}
-
-// -----------------------------
-// MAIN CHAT HANDLER (REPLACE EVERYTHING WITH THIS)
-// -----------------------------
-function handleChat(playerId, message) {
-  const data = playerModeration.get(playerId);
-
-  // banned
-  if (data?.ban) return;
-
-  // muted
-  if (data?.muteUntil && data.muteUntil > Date.now()) {
-    sendSystemMessage(playerId, "🔇 You are currently muted.");
-    return;
-  }
-
-  // anti-spam
-  if (!antiSpamCheck(playerId)) return;
-
-  // scoring
-  const score = getMessageScore(message);
-
-  if (score > 0) {
-    applyModeration(playerId, score);
-  }
-
-  // send message normally
-  broadcastMessage(playerId, message);
-}
-
-// -----------------------------
-// REQUIRED GAME HOOKS (YOU MUST HAVE THESE)
-// -----------------------------
-function sendSystemMessage(playerId, text) {
-  firebase.database().ref("chat").push({
-    playerId: "SYSTEM",
-    message: text,
-    timestamp: Date.now()
   });
-}
 
-function broadcastMessage(playerId, message) {
-  firebase.database().ref("chat").push({
-    playerId,
-    message,
-    timestamp: Date.now()
-  });
+  return filteredText.join('');
 }
-
-function disconnectPlayer(playerId) {
-  console.log(`[BAN] ${playerId} was disconnected`);
+  
+// Usage in sendChat()
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  let text = input.value.slice(0,200); // allow spaces
+  if(!text||!S.user||!S.profile) return;
+  text = filterChat(text); // filter bad words
+  input.value='';
+  try{
+    await rtdb.ref('chat').push({
+      username: S.profile.username,
+      text,
+      isSystem:false,
+      ts:firebase.database.ServerValue.TIMESTAMP
+    });
+  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
 }
   
 // ============================================================
 // FIREBASE INIT
 // ============================================================
+let db, auth, rtdb;
 
 function initFirebase(cfg){
   if (firebase.apps.length > 0) return;
@@ -1343,31 +1270,12 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
   if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-btn').click(); });
 });
 
-// ====================== IMPROVED LOGOUT ======================
+// ====================== LOGOUT ======================
 document.getElementById('logout-btn').addEventListener('click', async () => {
-  if (!S.user || !window.db) {
-    location.reload();
-    return;
-  }
-
-  // Final save before logout
   try {
-    await window.db.collection('users').doc(S.user.uid).update({
-      coins: S.profile.coins || 400,
-      inventory: S.inventory || [],
-      totalValue: S.profile.totalValue || 0
-    });
-    toast('Saving progress...', 'success');
-  } catch (e) {
-    console.error("Final save failed:", e);
-  }
-
-  // Now sign out
-  try {
-    await window.auth.signOut();
-    toast('Logged out successfully.', 'success');
-  } catch (e) {
-    console.error(e);
+    if(window.auth) await window.auth.signOut();
+    toast('Logged out.', 'success');
+  } catch(e) {
     location.reload();
   }
 });
@@ -1476,7 +1384,12 @@ function friendlyAuthError(code) {
 }
 
 // ============================================================
-// AUTH STATE OBSERVER - COMPLETE FIXED VERSION
+// AUTH STATE OBSERVER
+// FIX: Show game screen immediately, load profile in background
+// FIX: Only set up realtime listeners once per session
+// ============================================================
+// ============================================================
+// AUTH STATE OBSERVER - FIXED
 // ============================================================
 function startAuthObserver(){
   if (!window.auth) {
@@ -1493,59 +1406,42 @@ function startAuthObserver(){
       hideLoadingOverlay();
       loadCratesPage();
       showPage('crates');
-
-      try {
-        const doc = await window.db.collection('users').doc(user.uid).get();
-
-        if (doc.exists) {
-          S.profile = doc.data();
-          S.inventory = [...(S.profile.inventory || [])];
-          
-          // After S.profile is set and inventory loaded...
-          document.getElementById('nav-username').textContent = S.profile.username || 'Player';
-          updateCoinDisplay(S.profile.coins || 400);
-          
-          // ADD THESE:
-          setupPresence();
-          listenToPresence();
-          listenToChat();
-          listenToTradeRequests();
-          setupTradeInviteListener();
-          
-          toast('Welcome back!', 'success', 1500);
-          
-          toast('Welcome back!', 'success', 1500);
-        } else {
-          // Create new profile for first-time login
-          const newProfile = {
-            uid: user.uid,
-            username: "Player" + Math.floor(10000 + Math.random()*90000),
-            usernameLower: ("player" + Math.floor(10000 + Math.random()*90000)).toLowerCase(),
-            coins: 400,
-            inventory: [],
-            cratesOpened: 0,
-            totalValue: 0,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          };
-          
-          await window.db.collection('users').doc(user.uid).set(newProfile);
-          
-          S.profile = newProfile;
-          S.inventory = [];
-          document.getElementById('nav-username').textContent = newProfile.username;
-          updateCoinDisplay(400);
-          toast('New account created! Welcome!', 'success');
-        }
-      } catch (e) {
-        console.error("Profile load error:", e);
-        toast('Login successful but profile failed to load. Try again.', 'error');
-      }
-
-      // Start passive income
       startPassiveIncome();
 
+      // Load profile
+      try {
+  let doc = await window.db.collection('users').doc(user.uid).get();
+
+  if (doc.exists) {
+    S.profile = doc.data();
+    S.inventory = [...(S.profile.inventory || [])];
+    document.getElementById('nav-username').textContent = S.profile.username || 'Player';
+    updateCoinDisplay(S.profile.coins || 400);
+  } else {
+    // Create new profile for first-time users
+    const newProfile = {
+      uid: user.uid,
+      username: "Player" + Math.floor(1000 + Math.random() * 9000),
+      usernameLower: ("player" + Math.floor(1000 + Math.random() * 9000)).toLowerCase(),
+      coins: 400,
+      inventory: [],
+      cratesOpened: 0,
+      totalValue: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    await window.db.collection('users').doc(user.uid).set(newProfile);
+    S.profile = newProfile;
+    S.inventory = [];
+    document.getElementById('nav-username').textContent = newProfile.username;
+    updateCoinDisplay(400);
+    toast('Welcome to CrateVault! 🎉', 'success');
+  }
+} catch (e) {
+  console.error("Profile load error:", e);
+  toast('Login successful but profile failed to load.', 'error');
+}
     } else {
-      // Logged out
       S.user = null;
       S.profile = null;
       hideLoadingOverlay();
@@ -1724,14 +1620,20 @@ function listenToChat(){
 document.getElementById('chat-send').addEventListener('click',sendChat);
 document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
 
-function sendChat() {
-  const input = document.getElementById("chat-input");
-  if (!input) return console.error("chat-input not found");
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const rawText = input.value.slice(0,200);
+  if(!rawText || !S.user || !S.profile) return;
 
-  const msg = input.value.trim();
-  if (!msg) return;
-
-  input.value = "";
+  const text = filterChat(rawText);
+  if(!text||!S.user||!S.profile)return;
+  input.value='';
+  try{
+    await rtdb.ref('chat').push({
+      username:S.profile.username, text, isSystem:false,
+      ts:firebase.database.ServerValue.TIMESTAMP,
+    });
+  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
 }
 
 function appendChatMessage(username,text,isSystem=false,cls=''){
@@ -2996,15 +2898,10 @@ function startGame(){
 }
 
 // ── Canvas Resize ────────────────────────────────────────────
-function resizeCanvas() {
-  const canvas = document.getElementById("plat-canvas");
-  if (!canvas) return;
-
-  const parent = canvas.parentElement;
-  if (!parent) return;
-
-  canvas.width = parent.clientWidth;
-  canvas.height = parent.clientHeight;
+function resizeCanvas(){
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
 }
 
 // ── Input ─────────────────────────────────────────────────────
