@@ -1052,6 +1052,17 @@ const CRATES = [
   },
 ];
 
+  auth.onAuthStateChanged(async user=>{
+    if(!user) return;
+
+    S.user = user;
+
+    setupPresence();
+    listenToPresence();
+    listenToTradeRequests();
+    setupTradeInviteListener();
+});
+
 function getItem(id){return ITEMS.find(i=>i.id===id);}
 function getRarity(k){return RARITIES[k]||RARITIES.common;}
 function fmtNum(n){
