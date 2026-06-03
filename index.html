@@ -1725,13 +1725,13 @@ document.getElementById('chat-send').addEventListener('click',sendChat);
 document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
 
 function sendChat() {
-  const message = document.getElementById("chatInput").value;
+  const input = document.getElementById("chat-input");
+  if (!input) return console.error("chat-input not found");
 
-  if (!message) return;
+  const msg = input.value.trim();
+  if (!msg) return;
 
-  handleChat(currentPlayerId, message);
-
-  document.getElementById("chatInput").value = "";
+  input.value = "";
 }
 
 function appendChatMessage(username,text,isSystem=false,cls=''){
@@ -2996,10 +2996,15 @@ function startGame(){
 }
 
 // ── Canvas Resize ────────────────────────────────────────────
-function resizeCanvas(){
-  const wrap = canvas.parentElement;
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
+function resizeCanvas() {
+  const canvas = document.getElementById("plat-canvas");
+  if (!canvas) return;
+
+  const parent = canvas.parentElement;
+  if (!parent) return;
+
+  canvas.width = parent.clientWidth;
+  canvas.height = parent.clientHeight;
 }
 
 // ── Input ─────────────────────────────────────────────────────
