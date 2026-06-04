@@ -1283,20 +1283,46 @@ function hideLoadingOverlay(){
   ol.style.display='none';
 }
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id)?.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const page=btn.dataset.page;
-    showPage(page);
-    if(page==='inventory') renderInventory();
-    if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
-    if(page==='leaderboard') loadLeaderboard();
-    if(page==='history') renderTradeHistory();
-    if(page==='achievements') renderAchievements();
-  });
-});
+
+  document.querySelectorAll('.page')
+    .forEach(p=>p.classList.remove('active'));
+
+  document.getElementById('page-'+id)
+    ?.classList.add('active');
+
+  document.querySelectorAll('.nav-item')
+    .forEach(btn=>{
+
+      btn.classList.toggle(
+        'active',
+        btn.dataset.page===id
+      );
+
+    });
 }
+  document.querySelectorAll('.nav-item')
+  .forEach(btn=>{
+
+    btn.addEventListener('click',()=>{
+
+      const page=btn.dataset.page;
+
+      if(!page) return;
+
+      showPage(page);
+
+      if(page==='inventory') renderInventory();
+      if(page==='trade'){
+        renderOnlinePlayers();
+        if(S.tradeRoomId) renderTradeUI();
+      }
+      if(page==='leaderboard') loadLeaderboard();
+      if(page==='history') renderTradeHistory();
+      if(page==='achievements') renderAchievements();
+
+    });
+
+  });
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
   el.className='toast '+(type||'');
@@ -1665,8 +1691,14 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // CRATES PAGE
 // ============================================================
 function loadCratesPage(){
-  const grid=document.getElementById('crates-grid');
-  grid.innerHTML='';
+  const grid=document.getElementById('achievements-grid');
+
+  if(!grid){
+    console.warn('achGrid not found');
+    return;
+  }
+  
+  grid.innerHTML = '';
   CRATES.forEach(crate=>{
     const c=document.createElement('div');
     c.className='crate-card';
@@ -2869,7 +2901,11 @@ let unlockedAchs={};     // claimed
 let claimableAchs={};    // ready to claim
   
 function renderAchievements(){
-  const grid=document.getElementById('achGrid');
+  const grid =
+    document.getElementById('achievements-grid');
+
+  if(!grid) return;
+  
   grid.innerHTML='';
 
   ACHIEVEMENTS.forEach(ach=>{
