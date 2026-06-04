@@ -522,49 +522,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-color:var(--gold);
   box-shadow:0 0 20px var(--gold-g);
 }
-  .ach-progress-bar{
-  height:6px;
-  background:rgba(255,255,255,.08);
-  border-radius:4px;
-  overflow:hidden;
-  margin-top:8px;
-}
-
-.ach-progress-fill{
-  height:100%;
-  background:linear-gradient(
-    90deg,
-    var(--accent),
-    var(--gold)
-  );
-  transition:width .3s;
-}
-
-.ach-status{
-  margin-top:6px;
-  font-size:11px;
-  font-weight:700;
-}
-
-.ach-status.claimed{
-  color:var(--green);
-}
-
-.ach-status.claimable{
-  color:var(--gold);
-}
-
-.claim-btn{
-  margin-top:8px;
-  width:100%;
-  padding:6px;
-  border:none;
-  border-radius:6px;
-  background:var(--gold);
-  color:#000;
-  font-weight:700;
-  cursor:pointer;
-}
 </style>
 <body>
 
@@ -1283,37 +1240,20 @@ function hideLoadingOverlay(){
   ol.style.display='none';
 }
 function showPage(id){
-  document.querySelectorAll('.page')
-    .forEach(p => p.classList.remove('active'));
-
-  document.getElementById('page-' + id)
-    ?.classList.add('active');
-
-  document.querySelectorAll('.nav-item')
-    .forEach(btn => {
-      btn.classList.toggle(
-        'active',
-        btn.dataset.page === id
-      );
-    });
-}
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const page=btn.dataset.page;
-
     showPage(page);
-
-    if(page==='crates') loadCratesPage();
     if(page==='inventory') renderInventory();
-    if(page==='trade'){
-      renderOnlinePlayers();
-      if(S.tradeRoomId) renderTradeUI();
-    }
+    if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
     if(page==='leaderboard') loadLeaderboard();
     if(page==='history') renderTradeHistory();
     if(page==='achievements') renderAchievements();
   });
 });
+}
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
   el.className='toast '+(type||'');
@@ -1451,7 +1391,7 @@ function startAuthObserver(){
       }
       if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
       S.profile=doc.data();
-      S.inventory = S.profile.inventory || [];
+      S.inventory=[...S.profile.inventory||[]];
       document.getElementById('nav-username').textContent=S.profile.username;
       // Show admin button for admin user
       if(S.profile.username==='Dreamcrusher'){
@@ -1682,14 +1622,8 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // CRATES PAGE
 // ============================================================
 function loadCratesPage(){
-  const grid=document.getElementById('achievements-grid');
-
-  if(!grid){
-    console.warn('achGrid not found');
-    return;
-  }
-  
-  grid.innerHTML = '';
+  const grid=document.getElementById('crates-grid');
+  grid.innerHTML='';
   CRATES.forEach(crate=>{
     const c=document.createElement('div');
     c.className='crate-card';
@@ -2401,7 +2335,7 @@ function renderTradeInventoryMini(){
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
   const rarityOrder={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
 
-  let items = [...S.inventory];
+  let items=[...S.inventory];
   if(S.tradeSortBy==='rarity'){
     items.sort((a,b)=>{
       const ia=getItem(a.itemId), ib=getItem(b.itemId);
@@ -2614,7 +2548,7 @@ async function handleTradeComplete(room){
     const doc=await db.collection('users').doc(S.user.uid).get();
     if(doc.exists){
       S.profile=doc.data();
-      S.inventory = S.profile.inventory || [];
+      S.inventory=[...S.profile.inventory||[]];
       updateCoinDisplay(S.profile.coins);
     }
   }catch(e){}
@@ -2887,103 +2821,21 @@ function closeLuckyWheel(){
   // ============================================================
 // ACHIEVEMENTS
 // ============================================================
-
-let unlockedAchs={};     // claimed
-let claimableAchs={};    // ready to claim
-  
 function renderAchievements(){
-  const grid =
-    document.getElementById('achievements-grid');
+  const grid = document.getElementById('achievements-grid');
+  if(!grid) {
+    console.error("Achievements grid not found!");
+    return;
+  }
 
-  if(!grid) return;
-  
-  grid.innerHTML='';
-
-  ACHIEVEMENTS.forEach(ach=>{
-
-    const claimed = !!unlockedAchs[ach.id];
-    const claimable = !!claimableAchs[ach.id];
-
-    const value = achStats[ach.stat] || 0;
-    const progress = Math.min(value, ach.target);
-
-    const percent = Math.min(
-      100,
-      (progress / ach.target) * 100
-    );
-
-    const card=document.createElement('div');
-
-    card.className=
-      'ach-card '+
-      (claimed ? 'unlocked' : '');
-
-    card.innerHTML=`
-      <div class="ach-icon">
-        ${claimed ? ach.icon : claimable ? '🎁' : '🔒'}
-      </div>
-
-      <div class="ach-name">${ach.name}</div>
-
-      <div class="ach-desc">${ach.desc}</div>
-
-      <div class="ach-prog">
-        ${fmt(progress)} / ${fmt(ach.target)}
-      </div>
-
-      <div class="ach-progress-bar">
-        <div
-          class="ach-progress-fill"
-          style="width:${percent}%"
-        ></div>
-      </div>
-
-      ${
-        claimed
-        ? `<div class="ach-status claimed">✓ Claimed</div>`
-        : claimable
-        ? `
-          <div class="ach-status claimable">
-            Ready To Claim
-          </div>
-          <button
-            class="claim-btn"
-            data-ach="${ach.id}"
-          >
-            Claim
-          </button>
-          `
-        : `<div class="ach-status">In Progress</div>`
-      }
-    `;
-
-    grid.appendChild(card);
-  });
-
-  document.querySelectorAll('.claim-btn')
-    .forEach(btn=>{
-      btn.onclick=()=>{
-
-        const id=btn.dataset.ach;
-        const ach=ACHIEVEMENTS.find(
-          a=>a.id===id
-        );
-
-        delete claimableAchs[id];
-        unlockedAchs[id]=true;
-
-        money += 1000;
-
-        document.getElementById('money')
-          .textContent=fmt(money);
-
-        showAchievementPopup(ach);
-
-        renderAchievements();
-
-        saveProgressOnline().catch(()=>{});
-      };
-    });
+  grid.innerHTML = ACHIEVEMENTS.map(a => `
+    <div class="achievement-card">
+      <div style="font-size:3rem;margin-bottom:12px">${a.icon}</div>
+      <strong>${a.name}</strong>
+      <p style="color:var(--text-2);margin:8px 0">${a.desc}</p>
+      <div style="color:var(--gold);font-weight:700">Reward: 🪙 ${a.reward}</div>
+    </div>
+  `).join('');
 }
   
 </script>
