@@ -2727,7 +2727,7 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 })();
 
 let isSpinning = false;
-let lastSpinTime = 0;   // timestamp of last spin
+let lastSpinTime = 0;
 
 function showLuckyWheel(){
   if(isSpinning) return;
@@ -2738,11 +2738,9 @@ function showLuckyWheel(){
 function updateCooldownDisplay(){
   const btn = document.getElementById('spin-btn');
   const display = document.getElementById('cooldown-display');
-  
+  const cooldown = 24 * 60 * 60 * 1000;
   const timeSinceLastSpin = Date.now() - lastSpinTime;
-  const cooldown = 24 * 60 * 60 * 1000; // 24 hours
-
-  if(timeSinceLastSpin >= cooldown || lastSpinTime === 0){
+  if(lastSpinTime === 0 || timeSinceLastSpin >= cooldown){
     btn.disabled = false;
     btn.textContent = "SPIN WHEEL (FREE)";
     display.innerHTML = `<span style="color:#22c55e">✅ Ready to Spin!</span>`;
@@ -2750,32 +2748,41 @@ function updateCooldownDisplay(){
     const timeLeft = cooldown - timeSinceLastSpin;
     const hours = Math.floor(timeLeft / (1000*60*60));
     const minutes = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
-    
     btn.disabled = true;
-    btn.textContent = "SPIN WHEEL (FREE)";
     display.textContent = `Next spin in ${hours}h ${minutes}m`;
   }
 }
 
 function spinLuckyWheel(){
   if(isSpinning) return;
-
   const cooldown = 24 * 60 * 60 * 1000;
-  if(Date.now() - lastSpinTime < cooldown && lastSpinTime !== 0){
+  if(lastSpinTime !== 0 && Date.now() - lastSpinTime < cooldown){
     toast("You can only spin once every 24 hours!", "error");
     return;
   }
-
   isSpinning = true;
   lastSpinTime = Date.now();
-
+  const btn = document.getElementById('spin-btn');
+  btn.disabled = true;
+  btn.textContent = 'Spinning...';
   const wheel = document.getElementById('lucky-wheel');
   const labels = document.getElementById('wheel-labels');
   const resultEl = document.getElementById('wheel-result');
+  resultEl.textContent = '';
 
-  const spins = 12 + Math.floor(Math.random() * 8);
-  const finalDegree = Math.floor(Math.random() * 360);
-  const totalRotation = spins * 360 + finalDegree;
+  const prizes = [
+    {text: "🪙 200 coins",  amount: 200},
+    {text: "🪙 450 coins",  amount: 450},
+    {text: "🪙 900 coins",  amount: 900},
+    {text: "🪙 1800 coins", amount: 1800},
+    {text: "🎁 FREE CRATE", amount: "free"},
+  ];
+  const prizeIndex = Math.floor(Math.random() * prizes.length);
+  const segSize = 72; // 360 / 5 segments
+  // Land in the middle of the chosen segment
+  const targetRemainder = prizeIndex * segSize + segSize / 2;
+  const fullSpins = 10 + Math.floor(Math.random() * 6);
+  const totalDeg = fullSpins * 360 + targetRemainder;
 
   wheel.style.transition = 'none';
   labels.style.transition = 'none';
@@ -2785,38 +2792,34 @@ function spinLuckyWheel(){
 
   wheel.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
   labels.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
-  wheel.style.transform = `rotate(${totalRotation}deg)`;
-  labels.style.transform = `rotate(${totalRotation}deg)`;
+  wheel.style.transform = `rotate(${totalDeg}deg)`;
+  labels.style.transform = `rotate(${totalDeg}deg)`;
 
   setTimeout(() => {
-    const prizes = [
-      {text: "🪙 200 coins", amount: 200},
-      {text: "🪙 450 coins", amount: 450},
-      {text: "🪙 900 coins", amount: 900},
-      {text: "🪙 1800 coins", amount: 1800},
-      {text: "🎁 FREE CRATE", amount: "free"}
-    ];
-    
-    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    const prize = prizes[prizeIndex];
     resultEl.textContent = prize.text;
-
     if(prize.amount === "free"){
       toast("🎁 You won a FREE CRATE!", "gold", 5000);
     } else {
-      S.profile.coins += prize.amount;
-      updateCoinDisplay(S.profile.coins);
-      toast(`Won ${prize.text}!`, "gold");
+      if(S.profile){
+        S.profile.coins += prize.amount;
+        updateCoinDisplay(S.profile.coins);
+        if(S.user) db.collection('users').doc(S.user.uid)
+          .update({coins: firebase.firestore.FieldValue.increment(prize.amount)})
+          .catch(()=>{});
+      }
+      toast(`🎉 You won ${prize.text}!`, "gold", 4000);
     }
-
     isSpinning = false;
     updateCooldownDisplay();
-  }, 5900);
+  }, 6000);
 }
 
 function closeLuckyWheel(){
   document.getElementById('lucky-wheel-modal').classList.add('hidden');
-  isSpinning = false;
 }
+
+document.getElementById('spin-btn').addEventListener('click', spinLuckyWheel);
 
 function renderAchievements(){
   const grid = document.getElementById('achievements-grid');
