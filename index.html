@@ -522,6 +522,49 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-color:var(--gold);
   box-shadow:0 0 20px var(--gold-g);
 }
+  .ach-progress-bar{
+  height:6px;
+  background:rgba(255,255,255,.08);
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:8px;
+}
+
+.ach-progress-fill{
+  height:100%;
+  background:linear-gradient(
+    90deg,
+    var(--accent),
+    var(--gold)
+  );
+  transition:width .3s;
+}
+
+.ach-status{
+  margin-top:6px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.ach-status.claimed{
+  color:var(--green);
+}
+
+.ach-status.claimable{
+  color:var(--gold);
+}
+
+.claim-btn{
+  margin-top:8px;
+  width:100%;
+  padding:6px;
+  border:none;
+  border-radius:6px;
+  background:var(--gold);
+  color:#000;
+  font-weight:700;
+  cursor:pointer;
+}
 </style>
 <body>
 
@@ -2821,21 +2864,99 @@ function closeLuckyWheel(){
   // ============================================================
 // ACHIEVEMENTS
 // ============================================================
-function renderAchievements(){
-  const grid = document.getElementById('achievements-grid');
-  if(!grid) {
-    console.error("Achievements grid not found!");
-    return;
-  }
 
-  grid.innerHTML = ACHIEVEMENTS.map(a => `
-    <div class="achievement-card">
-      <div style="font-size:3rem;margin-bottom:12px">${a.icon}</div>
-      <strong>${a.name}</strong>
-      <p style="color:var(--text-2);margin:8px 0">${a.desc}</p>
-      <div style="color:var(--gold);font-weight:700">Reward: 🪙 ${a.reward}</div>
-    </div>
-  `).join('');
+let unlockedAchs={};     // claimed
+let claimableAchs={};    // ready to claim
+  
+function renderAchievements(){
+  const grid=document.getElementById('achGrid');
+  grid.innerHTML='';
+
+  ACHIEVEMENTS.forEach(ach=>{
+
+    const claimed = !!unlockedAchs[ach.id];
+    const claimable = !!claimableAchs[ach.id];
+
+    const value = achStats[ach.stat] || 0;
+    const progress = Math.min(value, ach.target);
+
+    const percent = Math.min(
+      100,
+      (progress / ach.target) * 100
+    );
+
+    const card=document.createElement('div');
+
+    card.className=
+      'ach-card '+
+      (claimed ? 'unlocked' : '');
+
+    card.innerHTML=`
+      <div class="ach-icon">
+        ${claimed ? ach.icon : claimable ? '🎁' : '🔒'}
+      </div>
+
+      <div class="ach-name">${ach.name}</div>
+
+      <div class="ach-desc">${ach.desc}</div>
+
+      <div class="ach-prog">
+        ${fmt(progress)} / ${fmt(ach.target)}
+      </div>
+
+      <div class="ach-progress-bar">
+        <div
+          class="ach-progress-fill"
+          style="width:${percent}%"
+        ></div>
+      </div>
+
+      ${
+        claimed
+        ? `<div class="ach-status claimed">✓ Claimed</div>`
+        : claimable
+        ? `
+          <div class="ach-status claimable">
+            Ready To Claim
+          </div>
+          <button
+            class="claim-btn"
+            data-ach="${ach.id}"
+          >
+            Claim
+          </button>
+          `
+        : `<div class="ach-status">In Progress</div>`
+      }
+    `;
+
+    grid.appendChild(card);
+  });
+
+  document.querySelectorAll('.claim-btn')
+    .forEach(btn=>{
+      btn.onclick=()=>{
+
+        const id=btn.dataset.ach;
+        const ach=ACHIEVEMENTS.find(
+          a=>a.id===id
+        );
+
+        delete claimableAchs[id];
+        unlockedAchs[id]=true;
+
+        money += 1000;
+
+        document.getElementById('money')
+          .textContent=fmt(money);
+
+        showAchievementPopup(ach);
+
+        renderAchievements();
+
+        saveProgressOnline().catch(()=>{});
+      };
+    });
 }
   
 </script>
