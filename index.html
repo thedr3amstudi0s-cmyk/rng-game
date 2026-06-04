@@ -817,7 +817,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div style="position:absolute;top:55%;left:74%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">FREE</div>
       </div>
       
-      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:60px solid #fff;z-index:20;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.7));"></div>
+      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-top:60px solid #fff;z-index:20;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.7));"></div>
     </div>
 
     <p id="wheel-result" style="min-height:40px;font-size:1.25rem;font-weight:700;color:var(--gold);margin:15px 0;"></p>
@@ -2749,6 +2749,7 @@ function updateCooldownDisplay(){
     const hours = Math.floor(timeLeft / (1000*60*60));
     const minutes = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
     btn.disabled = true;
+    btn.textContent = 'Wait';
     display.textContent = `Next spin in ${hours}h ${minutes}m`;
   }
 }
@@ -2770,6 +2771,15 @@ function spinLuckyWheel(){
   const resultEl = document.getElementById('wheel-result');
   resultEl.textContent = '';
 
+  // Segments in conic-gradient order (starting from 3 o'clock, going clockwise):
+  // red 0-72=200, orange 72-144=450, yellow 144-216=900, green 216-288=1800, blue 288-360=FREE
+  // Pointer is at 12 o'clock = 270° offset from CSS conic start.
+  // Segment under pointer when wheel has rotated R degrees:
+  //   pointerAngle = (270 - R % 360 + 360) % 360
+  //   segment = floor(pointerAngle / 72)
+  // To land prize segment P in center: pointerAngle = P*72 + 36
+  //   => R % 360 = (270 - (P*72+36) + 360) % 360
+
   const prizes = [
     {text: "🪙 200 coins",  amount: 200},
     {text: "🪙 450 coins",  amount: 450},
@@ -2778,9 +2788,7 @@ function spinLuckyWheel(){
     {text: "🎁 FREE CRATE", amount: "free"},
   ];
   const prizeIndex = Math.floor(Math.random() * prizes.length);
-  const segSize = 72; // 360 / 5 segments
-  // Land in the middle of the chosen segment
-  const targetRemainder = prizeIndex * segSize + segSize / 2;
+  const targetRemainder = (270 - (prizeIndex * 72 + 36) + 720) % 360;
   const fullSpins = 10 + Math.floor(Math.random() * 6);
   const totalDeg = fullSpins * 360 + targetRemainder;
 
