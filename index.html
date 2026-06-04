@@ -797,12 +797,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   </div>
 </div>
 
-<!-- Lucky Wheel Modal - Fixed + 24h Cooldown -->
+<!-- Lucky Wheel Modal - FREE + 24h Timer -->
 <div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--bg-card);padding:30px;border-radius:var(--rl);text-align:center;max-width:400px;border:3px solid var(--gold);">
     <h2 style="color:var(--gold);margin-bottom:15px;">🎰 LUCKY WHEEL</h2>
     
-    <div id="cooldown-display" style="color:#f59e0b;font-weight:700;margin-bottom:15px;min-height:24px;"></div>
+    <div id="cooldown-display" style="color:#f59e0b;font-weight:700;margin-bottom:20px;min-height:28px;font-size:1.1rem;"></div>
     
     <div id="wheel-container" style="position:relative;width:290px;height:290px;margin:0 auto 20px;">
       <div id="lucky-wheel" 
@@ -821,7 +821,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     </div>
 
     <p id="wheel-result" style="min-height:40px;font-size:1.25rem;font-weight:700;color:var(--gold);margin:15px 0;"></p>
-    <button id="spin-btn" class="btn-primary" style="width:100%;">SPIN WHEEL (100 🪙)</button>
+    <button id="spin-btn" class="btn-primary" style="width:100%;">SPIN WHEEL (FREE)</button>
     <button class="btn-ghost" onclick="closeLuckyWheel()" style="width:100%;margin-top:10px;">CLOSE</button>
   </div>
 </div>
@@ -2727,7 +2727,7 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 })();
 
 let isSpinning = false;
-let lastSpinTime = null;
+let lastSpinTime = 0;   // timestamp of last spin
 
 function showLuckyWheel(){
   if(isSpinning) return;
@@ -2739,44 +2739,35 @@ function updateCooldownDisplay(){
   const btn = document.getElementById('spin-btn');
   const display = document.getElementById('cooldown-display');
   
-  if(!lastSpinTime){
-    btn.disabled = false;
-    btn.textContent = "SPIN WHEEL (100 🪙)";
-    display.textContent = "Ready to Spin!";
-    return;
-  }
+  const timeSinceLastSpin = Date.now() - lastSpinTime;
+  const cooldown = 24 * 60 * 60 * 1000; // 24 hours
 
-  const timeLeft = 24*60*60*1000 - (Date.now() - lastSpinTime);
-  
-  if(timeLeft <= 0){
+  if(timeSinceLastSpin >= cooldown || lastSpinTime === 0){
     btn.disabled = false;
-    btn.textContent = "SPIN WHEEL (100 🪙)";
-    display.textContent = "Ready to Spin!";
-    lastSpinTime = null;
+    btn.textContent = "SPIN WHEEL (FREE)";
+    display.innerHTML = `<span style="color:#22c55e">✅ Ready to Spin!</span>`;
   } else {
-    btn.disabled = true;
+    const timeLeft = cooldown - timeSinceLastSpin;
     const hours = Math.floor(timeLeft / (1000*60*60));
     const minutes = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
+    
+    btn.disabled = true;
+    btn.textContent = "SPIN WHEEL (FREE)";
     display.textContent = `Next spin in ${hours}h ${minutes}m`;
   }
 }
 
 function spinLuckyWheel(){
-  if(isSpinning || !S.profile || S.profile.coins < 100) {
-    if(S.profile && S.profile.coins < 100) toast("Need 100 coins!", "error");
-    return;
-  }
+  if(isSpinning) return;
 
-  // Check cooldown
-  if(lastSpinTime && (Date.now() - lastSpinTime) < 24*60*60*1000){
-    toast("You can only spin once per day!", "error");
+  const cooldown = 24 * 60 * 60 * 1000;
+  if(Date.now() - lastSpinTime < cooldown && lastSpinTime !== 0){
+    toast("You can only spin once every 24 hours!", "error");
     return;
   }
 
   isSpinning = true;
   lastSpinTime = Date.now();
-  S.profile.coins -= 100;
-  updateCoinDisplay(S.profile.coins);
 
   const wheel = document.getElementById('lucky-wheel');
   const labels = document.getElementById('wheel-labels');
