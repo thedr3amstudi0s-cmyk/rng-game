@@ -797,17 +797,18 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   </div>
 </div>
 
-<!-- Lucky Wheel Modal - FIXED -->
+<!-- Lucky Wheel Modal - Fixed + 24h Cooldown -->
 <div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--bg-card);padding:30px;border-radius:var(--rl);text-align:center;max-width:400px;border:3px solid var(--gold);">
-    <h2 style="color:var(--gold);margin-bottom:20px;">🎰 LUCKY WHEEL</h2>
+    <h2 style="color:var(--gold);margin-bottom:15px;">🎰 LUCKY WHEEL</h2>
     
-    <div id="wheel-container" style="position:relative;width:290px;height:290px;margin:0 auto 25px;">
+    <div id="cooldown-display" style="color:#f59e0b;font-weight:700;margin-bottom:15px;min-height:24px;"></div>
+    
+    <div id="wheel-container" style="position:relative;width:290px;height:290px;margin:0 auto 20px;">
       <div id="lucky-wheel" 
            style="width:290px;height:290px;border:22px solid var(--gold);border-radius:50%;background:conic-gradient(#ef4444 0deg 72deg, #f59e0b 72deg 144deg, #eab308 144deg 216deg, #22c55e 216deg 288deg, #4f8ef7 288deg 360deg);transition:transform 5.8s cubic-bezier(0.23, 1, 0.32, 1);cursor:pointer;box-shadow:0 0 50px rgba(245,158,11,0.7);">
       </div>
       
-      <!-- Rotating Labels -->
       <div id="wheel-labels" style="position:absolute;inset:0;transition:transform 5.8s cubic-bezier(0.23, 1, 0.32, 1);">
         <div style="position:absolute;top:26%;left:67%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">200</div>
         <div style="position:absolute;top:26%;left:24%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">450</div>
@@ -816,12 +817,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div style="position:absolute;top:55%;left:74%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">FREE</div>
       </div>
       
-      <!-- Pointer (now correctly pointing down) -->
       <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:60px solid #fff;z-index:20;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.7));"></div>
     </div>
 
     <p id="wheel-result" style="min-height:40px;font-size:1.25rem;font-weight:700;color:var(--gold);margin:15px 0;"></p>
-    <button class="btn-primary" onclick="closeLuckyWheel()" style="width:100%;">CLOSE WHEEL</button>
+    <button id="spin-btn" class="btn-primary" style="width:100%;">SPIN WHEEL (100 🪙)</button>
+    <button class="btn-ghost" onclick="closeLuckyWheel()" style="width:100%;margin-top:10px;">CLOSE</button>
   </div>
 </div>
   
@@ -2726,20 +2727,54 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 })();
 
 let isSpinning = false;
+let lastSpinTime = null;
 
 function showLuckyWheel(){
   if(isSpinning) return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-  document.getElementById('wheel-result').textContent = 'Click the wheel to spin!';
+  updateCooldownDisplay();
+}
+
+function updateCooldownDisplay(){
+  const btn = document.getElementById('spin-btn');
+  const display = document.getElementById('cooldown-display');
+  
+  if(!lastSpinTime){
+    btn.disabled = false;
+    btn.textContent = "SPIN WHEEL (100 🪙)";
+    display.textContent = "Ready to Spin!";
+    return;
+  }
+
+  const timeLeft = 24*60*60*1000 - (Date.now() - lastSpinTime);
+  
+  if(timeLeft <= 0){
+    btn.disabled = false;
+    btn.textContent = "SPIN WHEEL (100 🪙)";
+    display.textContent = "Ready to Spin!";
+    lastSpinTime = null;
+  } else {
+    btn.disabled = true;
+    const hours = Math.floor(timeLeft / (1000*60*60));
+    const minutes = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
+    display.textContent = `Next spin in ${hours}h ${minutes}m`;
+  }
 }
 
 function spinLuckyWheel(){
   if(isSpinning || !S.profile || S.profile.coins < 100) {
-    if(S.profile && S.profile.coins < 100) toast("Need 100 coins to spin!", "error");
+    if(S.profile && S.profile.coins < 100) toast("Need 100 coins!", "error");
+    return;
+  }
+
+  // Check cooldown
+  if(lastSpinTime && (Date.now() - lastSpinTime) < 24*60*60*1000){
+    toast("You can only spin once per day!", "error");
     return;
   }
 
   isSpinning = true;
+  lastSpinTime = Date.now();
   S.profile.coins -= 100;
   updateCoinDisplay(S.profile.coins);
 
@@ -2783,6 +2818,7 @@ function spinLuckyWheel(){
     }
 
     isSpinning = false;
+    updateCooldownDisplay();
   }, 5900);
 }
 
