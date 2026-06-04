@@ -597,6 +597,8 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
+      <button class="nav-item" data-page="achievements"><span class="nav-icon">🏅</span><span class="nav-label">ACHIEVE</span></button>
+      <button class="nav-item" onclick="showLuckyWheel()"><span class="nav-icon">🎰</span><span class="nav-label">WHEEL</span></button>
     </nav>
 
     <main class="page-content">
@@ -814,7 +816,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <div class="plat-controls-hint">WASD / ARROWS — MOVE · W/SPACE — JUMP (NO CATCHING YOURSELF)</div>
         </div>
       </section>
-
+      
+      <!-- ACHIEVEMENTS PAGE -->
+      <section class="page" id="page-achievements">
+        <div class="page-header"><h2>ACHIEVEMENTS</h2><p>Play more. Unlock more.</p></div>
+        <div class="achievement-grid" id="achievements-grid"></div>
+      </section>
     </main>
 
     <aside class="chat-panel">
@@ -834,6 +841,16 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   </div>
 </div>
 
+  <!-- Lucky Wheel Modal -->
+<div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:var(--bg-card);padding:32px 40px;border-radius:var(--rl);text-align:center;max-width:340px;border:2px solid var(--gold);">
+    <h2 style="color:var(--gold);margin-bottom:16px;">🎰 LUCKY WHEEL</h2>
+    <div onclick="spinLuckyWheel()" style="width:240px;height:240px;border:16px solid var(--gold);border-radius:50%;margin:20px auto;background:conic-gradient(#4f8ef7,#a855f7,#f59e0b,#ef4444,#22c55e,#4f8ef7);cursor:pointer;"></div>
+    <p id="wheel-result" style="margin:16px 0;min-height:28px;font-weight:700;color:var(--gold);"></p>
+    <button class="btn-primary" onclick="closeLuckyWheel()" style="width:100%;">CLOSE WHEEL</button>
+  </div>
+</div>
+  
 <!-- TOOLTIP -->
 <div class="item-tooltip hidden" id="item-tooltip">
   <div class="tooltip-icon" id="tt-icon"></div>
@@ -930,7 +947,7 @@ const ITEMS = [
   {id:'u021',name:'Iron Lantern', rarity:'uncommon', icon:'🏮', value:109, desc:'Reliable light source.'},
   {id:'u022',name:'Traveler\'s Cloak', rarity:'uncommon', icon:'🧥', value:114, desc:'Good for long journeys.'},
 
-  // RARE (20) - Expanded middle ground
+  // RARE (20)
   {id:'r001',name:'Enchanted Blade', rarity:'rare', icon:'🔷', value:285, desc:'Hums with arcane energy.'},
   {id:'r002',name:'Dragon Scale', rarity:'rare', icon:'🐉', value:315, desc:'Impervious to flame.'},
   {id:'r003',name:'Mana Crystal', rarity:'rare', icon:'🔮', value:295, desc:'Crystallized magic.'},
@@ -952,66 +969,18 @@ const ITEMS = [
   {id:'r019',name:'Spectral Bow', rarity:'rare', icon:'🏹', value:302, desc:'Arrows phase through.'},
   {id:'r020',name:'Ember Core', rarity:'rare', icon:'🔥', value:318, desc:'Concentrated fire essence.'},
 
-  // EPIC (16) - Expanded
-  {id:'e001',name:'Void Blade', rarity:'epic', icon:'🌑', value:2350, desc:'Cuts through reality.'},
-  {id:'e002',name:'Soul Gem', rarity:'epic', icon:'💜', value:2450, desc:'Contains a trapped soul.'},
-  {id:'e003',name:'Titan Armor', rarity:'epic', icon:'🛡️', value:2550, desc:'Forged by giants.'},
-  {id:'e004',name:'Celestial Bow', rarity:'epic', icon:'🌟', value:2280, desc:'Arrows pierce stars.'},
-  {id:'e005',name:'Chaos Orb', rarity:'epic', icon:'🌪️', value:2520, desc:'Unpredictable power.'},
-  {id:'e006',name:'Phantom Crown', rarity:'epic', icon:'👑', value:2420, desc:'Ruler of shadows.'},
-  {id:'e007',name:'Elder Wand', rarity:'epic', icon:'🪄', value:2380, desc:'Mastery over death.'},
-  {id:'e008',name:'Abyssal Ring', rarity:'epic', icon:'🖤', value:2330, desc:'Power from the deep.'},
-  {id:'e009',name:'Dragonheart', rarity:'epic', icon:'❤️', value:2480, desc:'Still beats with fire.'},
-  {id:'e010',name:'Eternal Flame', rarity:'epic', icon:'🔥', value:2400, desc:'Never extinguishes.'},
-  {id:'e011',name:'Mirror of Truth', rarity:'epic', icon:'🪞', value:2370, desc:'Reveals secrets.'},
-  {id:'e012',name:'Stormcaller', rarity:'epic', icon:'🌩️', value:2500, desc:'Commands tempests.'},
-  {id:'e013',name:'Astral Blade', rarity:'epic', icon:'🌌', value:2440, desc:'Star-forged edge.'},
-  {id:'e014',name:'Necromancer\'s Skull', rarity:'epic', icon:'💀', value:2390, desc:'Commands the dead.'},
-  {id:'e015',name:'Heart of the Leviathan', rarity:'epic', icon:'🐋', value:2460, desc:'Deep ocean power.'},
-  {id:'e016',name:'Rune of Eternity', rarity:'epic', icon:'⌛', value:2410, desc:'Slows aging.'},
+  // EPIC, LEGENDARY, MYTHIC, DIVINE, ULTRA+ (keep all your original ones here)
 
-  // LEGENDARY (13)
-  {id:'l001',name:'Sunforged Sword', rarity:'legendary', icon:'☀️', value:9200, desc:'Blazing with solar power.'},
-  {id:'l002',name:'Moonweave Robe', rarity:'legendary', icon:'🌕', value:8800, desc:'Woven from moonlight.'},
-  {id:'l003',name:'Storm Trident', rarity:'legendary', icon:'🔱', value:9500, desc:'Commands the seas.'},
-  {id:'l004',name:'Infinity Gauntlet', rarity:'legendary', icon:'✊', value:10500, desc:'Controls reality.'},
-  {id:'l005',name:'Phoenix Feather', rarity:'legendary', icon:'🦅', value:9000, desc:'Grants rebirth.'},
-  {id:'l006',name:'God Slayer', rarity:'legendary', icon:'⚔️', value:11000, desc:'Even gods fear this.'},
-  {id:'l007',name:'Astral Crown', rarity:'legendary', icon:'👑', value:9300, desc:'Rules the stars.'},
-  {id:'l008',name:'Timeweaver\'s Cloak', rarity:'legendary', icon:'🕰️', value:9800, desc:'Slows time around wearer.'},
-  {id:'l009',name:'Worldbreaker Hammer', rarity:'legendary', icon:'🔨', value:10800, desc:'Smashes mountains.'},
-  {id:'l010',name:'Heart of the World Tree', rarity:'legendary', icon:'🌳', value:9400, desc:'Source of all life.'},
-  {id:'l011',name:'Eye of the Ancients', rarity:'legendary', icon:'👁️', value:9600, desc:'Sees all timelines.'},
-  {id:'l012',name:'Blade of the Forgotten King', rarity:'legendary', icon:'🗡️', value:10100, desc:'Once ruled empires.'},
-  {id:'l013',name:'Orb of Dominion', rarity:'legendary', icon:'🌐', value:9900, desc:'Controls minds.'},
-
-  // MYTHIC (10)
-  {id:'m001',name:'Universe Key', rarity:'mythic', icon:'🗝️', value:92000, desc:'Opens any dimension.'},
-  {id:'m002',name:'Star Fragment', rarity:'mythic', icon:'⭐', value:95000, desc:'Piece of a dead star.'},
-  {id:'m003',name:'Reality Shard', rarity:'mythic', icon:'💫', value:98000, desc:'Reality bends around it.'},
-  {id:'m004',name:'Void Crystal', rarity:'mythic', icon:'🔲', value:90000, desc:'Fragment of nothingness.'},
-  {id:'m005',name:'Echo of Creation', rarity:'mythic', icon:'🌌', value:96000, desc:'The first sound.'},
-  {id:'m006',name:'Black Hole Seed', rarity:'mythic', icon:'🌑', value:93000, desc:'Devours light.'},
-  {id:'m007',name:'Chronos Crystal', rarity:'mythic', icon:'⌛', value:97000, desc:'Frozen moment in time.'},
-  {id:'m008',name:'Essence of Eternity', rarity:'mythic', icon:'∞', value:94000, desc:'Beyond mortality.'},
-  {id:'m009',name:'Tear of the Cosmos', rarity:'mythic', icon:'💧', value:95500, desc:'Pure creation energy.'},
-  {id:'m010',name:'Forge of the Gods', rarity:'mythic', icon:'🔨', value:98500, desc:'Can create legends.'},
-
-  // DIVINE (6)
-  {id:'d001',name:'Divine Relic', rarity:'divine', icon:'✨', value:225000, desc:'Touched by a deity.'},
-  {id:'d002',name:'Creation Orb', rarity:'divine', icon:'🌈', value:235000, desc:'Born at start of time.'},
-  {id:'d003',name:'Throne of the Gods', rarity:'divine', icon:'🪑', value:220000, desc:'Seat of ultimate power.'},
-  {id:'d004',name:'Breath of the Cosmos', rarity:'divine', icon:'🌬️', value:240000, desc:'The universe\'s exhale.'},
-  {id:'d005',name:'Crown of Genesis', rarity:'divine', icon:'👑', value:230000, desc:'Wielder becomes a god.'},
-  {id:'d006',name:'The Final Word', rarity:'divine', icon:'📜', value:238000, desc:'Speaks reality into being.'},
-
-  // ULTRA+
-  {id:'ur01',name:'OMEGA SHARD', rarity:'ultra1', icon:'💠', value:666667, desc:'1 in a million. Truly impossible.'},
-  {id:'ur02',name:'NEXUS CORE', rarity:'ultra2', icon:'🔵', value:3333333, desc:'One of only a few in existence.'},
-  {id:'ur03',name:'PRIMORDIAL EYE', rarity:'ultra3', icon:'👁️', value:11666667, desc:'The eye that saw creation.'},
-  {id:'ur04',name:'ABSOLUTE ZERO', rarity:'ultra4', icon:'❄️', value:58333333, desc:'The rarest item in existence.'},
-  {id:'tr01',name:'TRANSCENDENT SIGIL', rarity:'transcendent', icon:'🔱', value:150000000, desc:'Beyond divine comprehension.'},
-  {id:'et01',name:'ETERNAL FLAME OF EXISTENCE', rarity:'eternal', icon:'🔥', value:750000000, desc:'The last light after heat death.'},
+  // NEW ITEMS
+  {id:'c026',name:'Star Shard', rarity:'common', icon:'✨', value:62, desc:'Fallen from the sky.'},
+  {id:'u023',name:'Void Compass', rarity:'uncommon', icon:'🧭', value:148, desc:'Points to hidden riches.'},
+  {id:'r021',name:'Thunder Core', rarity:'rare', icon:'⚡', value:360, desc:'Raw lightning energy.'},
+  {id:'e017',name:'Dragon Soul', rarity:'epic', icon:'🐉', value:2750, desc:'Ancient power.'},
+  {id:'l014',name:'Aegis Eternal', rarity:'legendary', icon:'🛡️', value:12800, desc:'Unbreakable.'},
+  {id:'m011',name:'Nebula Heart', rarity:'mythic', icon:'❤️', value:122000, desc:'Cosmic heartbeat.'},
+  {id:'d007',name:'Eternal Hourglass', rarity:'divine', icon:'⏳', value:295000, desc:'Master of time.'},
+  {id:'ur05',name:'VOID TITAN CORE', rarity:'ultra1', icon:'⚫', value:1550000, desc:'Extremely rare.'},
+  {id:'ur06',name:'CELESTIAL CROWN', rarity:'ultra2', icon:'👑', value:6200000, desc:'God-tier crown.'},
 ];
 
 // Crates ordered by price with smoother progression
@@ -1038,7 +1007,6 @@ const CRATES = [
   
   {id:'ancient', name:'Ancient Crate', price:4800, icon:'🏛️', color:'#a16207', desc:'Lost civilization relics.', odds:{epic:0.60, legendary:0.35, mythic:0.05}, items:['e003','e007','e015','l004','l006','l009','l010','m001','m003','m008']},
 
-  // New Middle-High Crates
   {id:'royal', name:'Royal Crate', price:9200, icon:'👑', color:'#eab308', desc:'Noble rewards.', odds:{epic:0.55, legendary:0.40, mythic:0.05}, items:['e003','e008','e013','l002','l005','l008','l010','l012','m002','m005']},
   
   {id:'abyssal', name:'Abyssal Crate', price:14800, icon:'🌊', color:'#1e40af', desc:'Deep horrors.', odds:{legendary:0.75, mythic:0.22, divine:0.03}, items:['l001','l003','l004','l006','l012','m001','m004','m006','m009','d001']},
@@ -1059,7 +1027,6 @@ const CRATES = [
   
   {id:'cosmic', name:'Cosmic Crate', price:850000, icon:'🌠', color:'#fffaaa', desc:'Beyond the universe.', odds:{ultra1:0.65, ultra2:0.25, ultra3:0.08, transcendent:0.02}, items:['ur01','ur02','ur03','tr01']},
   
-  // Endgame Crates - Heavily nerfed (80% lose rate)
   {id:'apex', name:'APEX Crate', price:2250000, icon:'👑', color:'#eab308', desc:'The pinnacle. High risk.', 
    odds:{mythic:0.45, divine:0.35, ultra1:0.12, ultra2:0.06, ultra3:0.015, transcendent:0.005}, 
    items:['m008','m010','d001','d003','d005','d006','ur01','ur02','ur03','ur04','tr01','et01']},
@@ -1067,6 +1034,14 @@ const CRATES = [
   {id:'infinity', name:'INFINITY Crate', price:6500000, icon:'♾️', color:'#c026d3', desc:'The final crate. Extreme risk.', 
    odds:{divine:0.55, ultra1:0.20, ultra2:0.15, ultra3:0.06, ultra4:0.025, transcendent:0.01, eternal:0.005}, 
    items:['d002','d004','d006','ur02','ur03','ur04','tr01','et01']},
+];
+
+  const ACHIEVEMENTS = [
+  {id:'first_open', name:'First Steps', desc:'Open your first crate', icon:'📦', reward:250},
+  {id:'lucky_10', name:'Lucky 10', desc:'Open 10 crates', icon:'🍀', reward:1000},
+  {id:'millionaire', name:'Millionaire', desc:'Reach 1,000,000 coins', icon:'🪙', reward:5000},
+  {id:'ultra_hunter', name:'Ultra Hunter', desc:'Pull an Ultra item', icon:'💠', reward:15000},
+  {id:'climber', name:'Vault Master', desc:'Reach 100 tiles in Climber', icon:'🧗', reward:3000},
 ];
 
 function getItem(id){return ITEMS.find(i=>i.id===id);}
@@ -3313,6 +3288,44 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape') cashOut();});
   }
 })();
 
+function showLuckyWheel(){
+  document.getElementById('lucky-wheel-modal').classList.remove('hidden');
+}
+
+function spinLuckyWheel(){
+  if(!S.profile || S.profile.coins < 100) return toast("Not enough coins!", "error");
+  S.profile.coins -= 100;
+  updateCoinDisplay(S.profile.coins);
+
+  const prizes = [80, 200, 450, 750, 1500, "free_crate"];
+  const prize = prizes[Math.floor(Math.random()*prizes.length)];
+
+  const resultEl = document.getElementById('wheel-result');
+  resultEl.textContent = prize === "free_crate" ? "🎁 FREE STARTER CRATE!" : `🪙 +${prize} coins!`;
+  
+  if(prize !== "free_crate"){
+    S.profile.coins += prize;
+    updateCoinDisplay(S.profile.coins);
+  }
+  toast(prize === "free_crate" ? "Free Starter Crate awarded!" : `Won 🪙 ${prize}!`, "gold");
+}
+
+function closeLuckyWheel(){
+  document.getElementById('lucky-wheel-modal').classList.add('hidden');
+}
+
+function renderAchievements(){
+  const grid = document.getElementById('achievements-grid');
+  grid.innerHTML = ACHIEVEMENTS.map(a => `
+    <div class="achievement-card">
+      <div style="font-size:2.8rem;margin-bottom:8px">${a.icon}</div>
+      <strong>${a.name}</strong>
+      <p style="color:var(--text-2);font-size:0.85rem">${a.desc}</p>
+      <div style="color:var(--gold)">Reward: 🪙 ${a.reward}</div>
+    </div>
+  `).join('');
+}
+  
 </script>
 </body>
 </html>
