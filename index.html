@@ -1306,12 +1306,13 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
     }
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
     // Write profile — onAuthStateChanged will pick it up
-    await db.collection('users').doc(cred.user.uid).set({
-      uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
-      coins:400, inventory:[], tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
-      totalValue:0, rarestItem:null, rarestTier:0,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    // In the register-btn click handler, add lastWheelSpin to the .set() call:
+  await db.collection('users').doc(cred.user.uid).set({
+    uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
+    coins:400, inventory:[], tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
+    totalValue:0, rarestItem:null, rarestTier:0, lastWheelSpin:0,  // ← add this
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+  });
   }catch(e){
     err.textContent=friendlyAuthError(e.code)||e.message;
     btn.disabled=false; btn.textContent='CREATE ACCOUNT';
@@ -2735,6 +2736,10 @@ let lastSpinTime = 0;
 function showLuckyWheel(){
   if(isSpinning) return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
+  // Load last spin time from Firestore if available
+  if(S.profile && S.profile.lastWheelSpin){
+    lastSpinTime = S.profile.lastWheelSpin;
+  }
   updateCooldownDisplay();
 }
 
@@ -2742,8 +2747,11 @@ function updateCooldownDisplay(){
   const btn = document.getElementById('spin-btn');
   const display = document.getElementById('cooldown-display');
   const cooldown = 24 * 60 * 60 * 1000;
-  const timeSinceLastSpin = Date.now() - lastSpinTime;
-  if(lastSpinTime === 0 || timeSinceLastSpin >= cooldown){
+  // Always check Firestore value too
+  const savedTime = S.profile?.lastWheelSpin || 0;
+  const effectiveLastSpin = Math.max(lastSpinTime, savedTime);
+  const timeSinceLastSpin = Date.now() - effectiveLastSpin;
+  if(effectiveLastSpin === 0 || timeSinceLastSpin >= cooldown){
     btn.disabled = false;
     btn.textContent = "SPIN WHEEL (FREE)";
     display.innerHTML = `<span style="color:#22c55e">✅ Ready to Spin!</span>`;
@@ -2760,12 +2768,21 @@ function updateCooldownDisplay(){
 function spinLuckyWheel(){
   if(isSpinning) return;
   const cooldown = 24 * 60 * 60 * 1000;
-  if(lastSpinTime !== 0 && Date.now() - lastSpinTime < cooldown){
+  const savedTime = S.profile?.lastWheelSpin || 0;
+  const effectiveLastSpin = Math.max(lastSpinTime, savedTime);
+  if(effectiveLastSpin !== 0 && Date.now() - effectiveLastSpin < cooldown){
     toast("You can only spin once every 24 hours!", "error");
     return;
   }
+
+  const now = Date.now();
   isSpinning = true;
-  lastSpinTime = Date.now();
+  lastSpinTime = now;
+  // Save to Firestore immediately so refresh can't bypass it
+  if(S.user && S.profile){
+    S.profile.lastWheelSpin = now;
+    db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
+  }
 
   const btn = document.getElementById('spin-btn');
   btn.disabled = true;
@@ -2776,14 +2793,13 @@ function spinLuckyWheel(){
   resultEl.textContent = '';
 
   const prizes = [
-    {text: "🪙 200 coins",  amount: 200,   color: [239, 68,  68]},   // #ef4444 red
-    {text: "🪙 450 coins",  amount: 450,   color: [245, 158, 11]},   // #f59e0b orange
-    {text: "🪙 900 coins",  amount: 900,   color: [234, 179, 8]},    // #eab308 yellow
-    {text: "🪙 1800 coins", amount: 1800,  color: [34,  197, 94]},   // #22c55e green
-    {text: "🎁 FREE CRATE", amount: "free",color: [79,  142, 247]},  // #4f8ef7 blue
+    {text: "🪙 200 coins",  amount: 200,   color: [239, 68,  68]},
+    {text: "🪙 450 coins",  amount: 450,   color: [245, 158, 11]},
+    {text: "🪙 900 coins",  amount: 900,   color: [234, 179, 8]},
+    {text: "🪙 1800 coins", amount: 1800,  color: [34,  197, 94]},
+    {text: "🎁 FREE CRATE", amount: "free",color: [79,  142, 247]},
   ];
 
-  // Pick random prize and spin to it
   const prizeIndex = Math.floor(Math.random() * prizes.length);
   const segSize = 72;
   const targetRemainder = (270 - (prizeIndex * segSize + 36) + 612) % 360;
@@ -2802,7 +2818,6 @@ function spinLuckyWheel(){
   labels.style.transform = `rotate(${totalDeg}deg)`;
 
   setTimeout(() => {
-    // Sample the pixel color at the pointer tip to determine actual segment
     const detected = detectWheelSegment(wheel, prizes);
     const prize = detected !== null ? prizes[detected] : prizes[prizeIndex];
 
@@ -2822,6 +2837,39 @@ function spinLuckyWheel(){
     isSpinning = false;
     updateCooldownDisplay();
   }, 6000);
+}
+function detectWheelSegment(wheelEl, prizes) {
+  try {
+    // Get the wheel's position and size
+    const rect = wheelEl.getBoundingClientRect();
+    const border = 22; // border width in px
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + border + 6; // pointer tip is just inside the top border
+
+    // Use a temporary canvas to sample color at the pointer tip
+    const canvas = document.createElement('canvas');
+    canvas.width = 1; canvas.height = 1;
+    const ctx = canvas.getContext('2d');
+
+    // Draw the wheel element onto the canvas at the sample point
+    // We offset so the sample point maps to pixel 0,0
+    ctx.drawImage(wheelEl, -(cx - rect.left), -(cy - rect.top), rect.width, rect.height);
+    const px = ctx.getImageData(0, 0, 1, 1).data; // [r, g, b, a]
+
+    // Find closest matching prize color
+    let bestMatch = null, bestDist = Infinity;
+    prizes.forEach((prize, i) => {
+      const [pr, pg, pb] = prize.color;
+      const dist = Math.abs(px[0]-pr) + Math.abs(px[1]-pg) + Math.abs(px[2]-pb);
+      if(dist < bestDist){ bestDist = dist; bestMatch = i; }
+    });
+
+    // Only trust it if it's a close match (within threshold)
+    return bestDist < 80 ? bestMatch : null;
+  } catch(e) {
+    // Canvas tainted or unavailable — fall back to math
+    return null;
+  }
 }
 
 function detectWheelSegment(wheelEl, prizes) {
