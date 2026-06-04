@@ -160,6 +160,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
   letter-spacing:.1em;transition:var(--t);}
 .chat-input-row button:hover{background:#6ba3ff;}
+.chat-input-row input {
+  white-space: normal !important;
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+  font-feature-settings: normal;
+}
 
 /* ── CRATES PAGE ─────────────────────────────────────────── */
 .crates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
@@ -815,7 +821,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <div class="chat-header">💬 GLOBAL CHAT</div>
       <div class="chat-messages" id="chat-messages"></div>
       <div class="chat-input-row">
-        <input type="text" id="chat-input" placeholder="Type message..." maxlength="200" style="white-space: pre-wrap; word-spacing: normal;"/>
+        <input 
+          type="text" 
+          id="chat-input" 
+          placeholder="Type message..." 
+          maxlength="200"
+          style="white-space: normal !important; word-spacing: normal !important; letter-spacing: normal !important;"
+        />
         <button id="chat-send">SEND</button>
       </div>
     </aside>
