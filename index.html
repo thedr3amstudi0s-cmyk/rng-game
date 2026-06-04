@@ -1319,6 +1319,8 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
 });
 
 document.getElementById('logout-btn').addEventListener('click',async()=>{
+  if (_puzzleTimeout) clearTimeout(_puzzleTimeout); 
+  if (_puzzleInterval) clearInterval(_puzzleInterval);
   await leavePresence();
   S.listenersInitialized=false;
   await auth.signOut();
@@ -1387,6 +1389,7 @@ function startAuthObserver(){
       }
       checkLuckMilestone(null);
       updateLuckBar(null);
+      schedulePuzzle(); // start AFK puzzle timer
     } else {
       S.user=null; S.profile=null; S.listenersInitialized=false;
       hideLoadingOverlay();
@@ -2763,6 +2766,7 @@ function spinLuckyWheel(){
   }
   isSpinning = true;
   lastSpinTime = Date.now();
+
   const btn = document.getElementById('spin-btn');
   btn.disabled = true;
   btn.textContent = 'Spinning...';
@@ -2771,25 +2775,19 @@ function spinLuckyWheel(){
   const resultEl = document.getElementById('wheel-result');
   resultEl.textContent = '';
 
-  // Segments in conic-gradient order (starting from 3 o'clock, going clockwise):
-  // red 0-72=200, orange 72-144=450, yellow 144-216=900, green 216-288=1800, blue 288-360=FREE
-  // Pointer is at 12 o'clock = 270° offset from CSS conic start.
-  // Segment under pointer when wheel has rotated R degrees:
-  //   pointerAngle = (270 - R % 360 + 360) % 360
-  //   segment = floor(pointerAngle / 72)
-  // To land prize segment P in center: pointerAngle = P*72 + 36
-  //   => R % 360 = (270 - (P*72+36) + 360) % 360
-
   const prizes = [
-    {text: "🪙 200 coins",  amount: 200},
-    {text: "🪙 450 coins",  amount: 450},
-    {text: "🪙 900 coins",  amount: 900},
-    {text: "🪙 1800 coins", amount: 1800},
-    {text: "🎁 FREE CRATE", amount: "free"},
+    {text: "🪙 200 coins",  amount: 200,   color: [239, 68,  68]},   // #ef4444 red
+    {text: "🪙 450 coins",  amount: 450,   color: [245, 158, 11]},   // #f59e0b orange
+    {text: "🪙 900 coins",  amount: 900,   color: [234, 179, 8]},    // #eab308 yellow
+    {text: "🪙 1800 coins", amount: 1800,  color: [34,  197, 94]},   // #22c55e green
+    {text: "🎁 FREE CRATE", amount: "free",color: [79,  142, 247]},  // #4f8ef7 blue
   ];
+
+  // Pick random prize and spin to it
   const prizeIndex = Math.floor(Math.random() * prizes.length);
-  const targetRemainder = (270 - (prizeIndex * 72 + 36) + 612) % 360;
-  const fullSpins = 10 + Math.floor(Math.floor(Math.random() * 3) * 3 * Math.random());
+  const segSize = 72;
+  const targetRemainder = (270 - (prizeIndex * segSize + 36) + 612) % 360;
+  const fullSpins = 10 + Math.floor(Math.random() * 6);
   const totalDeg = fullSpins * 360 + targetRemainder;
 
   wheel.style.transition = 'none';
@@ -2804,7 +2802,10 @@ function spinLuckyWheel(){
   labels.style.transform = `rotate(${totalDeg}deg)`;
 
   setTimeout(() => {
-    const prize = prizes[prizeIndex];
+    // Sample the pixel color at the pointer tip to determine actual segment
+    const detected = detectWheelSegment(wheel, prizes);
+    const prize = detected !== null ? prizes[detected] : prizes[prizeIndex];
+
     resultEl.textContent = prize.text;
     if(prize.amount === "free"){
       toast("🎁 You won a FREE CRATE!", "gold", 5000);
@@ -2821,6 +2822,40 @@ function spinLuckyWheel(){
     isSpinning = false;
     updateCooldownDisplay();
   }, 6000);
+}
+
+function detectWheelSegment(wheelEl, prizes) {
+  try {
+    // Get the wheel's position and size
+    const rect = wheelEl.getBoundingClientRect();
+    const border = 22; // border width in px
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + border + 6; // pointer tip is just inside the top border
+
+    // Use a temporary canvas to sample color at the pointer tip
+    const canvas = document.createElement('canvas');
+    canvas.width = 1; canvas.height = 1;
+    const ctx = canvas.getContext('2d');
+
+    // Draw the wheel element onto the canvas at the sample point
+    // We offset so the sample point maps to pixel 0,0
+    ctx.drawImage(wheelEl, -(cx - rect.left), -(cy - rect.top), rect.width, rect.height);
+    const px = ctx.getImageData(0, 0, 1, 1).data; // [r, g, b, a]
+
+    // Find closest matching prize color
+    let bestMatch = null, bestDist = Infinity;
+    prizes.forEach((prize, i) => {
+      const [pr, pg, pb] = prize.color;
+      const dist = Math.abs(px[0]-pr) + Math.abs(px[1]-pg) + Math.abs(px[2]-pb);
+      if(dist < bestDist){ bestDist = dist; bestMatch = i; }
+    });
+
+    // Only trust it if it's a close match (within threshold)
+    return bestDist < 80 ? bestMatch : null;
+  } catch(e) {
+    // Canvas tainted or unavailable — fall back to math
+    return null;
+  }
 }
 
 function closeLuckyWheel(){
@@ -2840,7 +2875,177 @@ function renderAchievements(){
     </div>
   `).join('');
 }
-  
+  // ============================================================
+// AFK PUZZLE SYSTEM
+// ============================================================
+const PUZZLES = [
+  // Math
+  { q: 'What is 17 × 4?', a: '68' },
+  { q: 'What is 144 ÷ 12?', a: '12' },
+  { q: 'What is 25 + 37?', a: '62' },
+  { q: 'What is 100 - 63?', a: '37' },
+  { q: 'What is 8 × 9?', a: '72' },
+  { q: 'What is 256 ÷ 8?', a: '32' },
+  { q: 'What is 13 × 7?', a: '91' },
+  { q: 'What is 200 - 84?', a: '116' },
+  { q: 'What is 15 × 6?', a: '90' },
+  { q: 'What is 81 ÷ 9?', a: '9' },
+  // Word
+  { q: 'Type the word: VAULT', a: 'VAULT' },
+  { q: 'Type the word: CRATE', a: 'CRATE' },
+  { q: 'Type the word: UNLOCK', a: 'UNLOCK' },
+  { q: 'Type the word: LEGENDARY', a: 'LEGENDARY' },
+  { q: 'Type the word: FORTUNE', a: 'FORTUNE' },
+  // Logic
+  { q: 'How many sides does a hexagon have?', a: '6' },
+  { q: 'How many days in a week?', a: '7' },
+  { q: 'How many hours in a day?', a: '24' },
+  { q: 'How many months in a year?', a: '12' },
+  { q: 'What is 3 squared?', a: '9' },
+];
+
+let _puzzleTimeout = null;
+let _puzzleInterval = null;
+
+function schedulePuzzle() {
+  if (_puzzleTimeout) clearTimeout(_puzzleTimeout);
+  // Random delay between 45 and 60 minutes
+  const delay = (45 + Math.random() * 15) * 60 * 1000;
+  _puzzleTimeout = setTimeout(showAfkPuzzle, delay);
+}
+
+function showAfkPuzzle() {
+  // Don't interrupt an active trade
+  if (S.tradeRoomId) { schedulePuzzle(); return; }
+
+  const puzzle = PUZZLES[Math.floor(Math.random() * PUZZLES.length)];
+  let timeLeft = 60;
+
+  // Build modal
+  const overlay = document.createElement('div');
+  overlay.id = 'afk-puzzle-overlay';
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;
+    display:flex;align-items:center;justify-content:center;
+    animation:ultra-fade-in .4s ease;
+  `;
+
+  overlay.innerHTML = `
+    <div style="background:var(--bg-card);border:2px solid var(--accent);border-radius:var(--rl);
+      padding:36px 32px;max-width:420px;width:90%;text-align:center;
+      box-shadow:0 0 60px var(--accent-g);display:flex;flex-direction:column;gap:18px;">
+      <div style="font-size:2.5rem">🧠</div>
+      <div style="font-family:var(--font-d);font-size:.8rem;letter-spacing:.2em;color:var(--text-2)">
+        AFK CHECK
+      </div>
+      <div style="font-family:var(--font-d);font-size:1.15rem;font-weight:700;color:var(--text-1);line-height:1.4">
+        ${puzzle.q}
+      </div>
+      <input id="afk-answer" type="text" placeholder="Your answer..."
+        style="background:var(--bg-dark);border:2px solid var(--border);border-radius:var(--r);
+        padding:12px 16px;font-size:1rem;color:var(--text-1);text-align:center;
+        font-family:var(--font-m);width:100%;outline:none;transition:border-color .2s;"
+        autocomplete="off" autocorrect="off" spellcheck="false"/>
+      <button id="afk-submit" style="background:linear-gradient(135deg,var(--accent),#7c3aed);
+        color:#fff;padding:13px;border-radius:var(--r);font-family:var(--font-d);
+        font-size:.85rem;font-weight:700;letter-spacing:.1em;cursor:pointer;border:none;
+        box-shadow:0 4px 20px var(--accent-g);transition:transform .1s;">
+        SUBMIT
+      </button>
+      <div style="color:var(--text-2);font-size:.8rem;font-family:var(--font-d)">
+        Prove you're here or get marked offline in
+        <span id="afk-timer" style="color:var(--gold);font-weight:700">${timeLeft}s</span>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('#afk-answer');
+  const submitBtn = overlay.querySelector('#afk-submit');
+  const timerEl = overlay.querySelector('#afk-timer');
+
+  // Focus input
+  setTimeout(() => input.focus(), 100);
+
+  // Style input focus
+  input.addEventListener('focus', () => input.style.borderColor = 'var(--accent)');
+  input.addEventListener('blur',  () => input.style.borderColor = 'var(--border)');
+
+  function checkAnswer() {
+    const userAnswer = input.value.trim().toUpperCase();
+    const correct = puzzle.a.toUpperCase();
+    if (userAnswer === correct) {
+      clearInterval(_puzzleInterval);
+      overlay.remove();
+      toast('✅ Puzzle solved! Stay frosty.', 'success', 3000);
+      schedulePuzzle(); // schedule next one
+    } else {
+      input.style.borderColor = '#ef4444';
+      input.value = '';
+      input.placeholder = 'Wrong! Try again...';
+      setTimeout(() => {
+        input.style.borderColor = 'var(--border)';
+        input.placeholder = 'Your answer...';
+        input.focus();
+      }, 600);
+    }
+  }
+
+  submitBtn.addEventListener('click', checkAnswer);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+
+  // Countdown timer
+  _puzzleInterval = setInterval(() => {
+    timeLeft--;
+    if (timerEl) timerEl.textContent = timeLeft + 's';
+    if (timeLeft <= 10 && timerEl) timerEl.style.color = '#ef4444';
+
+    if (timeLeft <= 0) {
+      clearInterval(_puzzleInterval);
+      overlay.remove();
+      handleAfkFail();
+    }
+  }, 1000);
+}
+
+async function handleAfkFail() {
+  toast('⏰ AFK check failed — marked offline!', 'error', 5000);
+  // Remove from presence so they disappear from online list
+  await leavePresence();
+  // Show a re-engage modal
+  const rejoin = document.createElement('div');
+  rejoin.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;
+    display:flex;align-items:center;justify-content:center;
+  `;
+  rejoin.innerHTML = `
+    <div style="background:var(--bg-card);border:2px solid #ef4444;border-radius:var(--rl);
+      padding:32px;max-width:380px;width:90%;text-align:center;
+      box-shadow:0 0 60px #ef444444;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-size:2.5rem">💤</div>
+      <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#ef4444;letter-spacing:.1em">
+        YOU WENT AFK
+      </div>
+      <div style="color:var(--text-2);font-size:.9rem">
+        You were removed from the online list. Click below to rejoin.
+      </div>
+      <button id="afk-rejoin" style="background:linear-gradient(135deg,#22c55e,#16a34a);
+        color:#fff;padding:13px;border-radius:var(--r);font-family:var(--font-d);
+        font-size:.85rem;font-weight:700;letter-spacing:.1em;cursor:pointer;border:none;">
+        I'M BACK — REJOIN
+      </button>
+    </div>
+  `;
+  document.body.appendChild(rejoin);
+  rejoin.querySelector('#afk-rejoin').addEventListener('click', () => {
+    rejoin.remove();
+    // Re-establish presence
+    setupPresence();
+    toast('👋 Welcome back!', 'success');
+    schedulePuzzle(); // restart puzzle timer
+  });
+}
 </script>
 </body>
 </html>
