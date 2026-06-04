@@ -812,7 +812,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   </div>
 </div>
   
-<!-- Lucky Wheel Modal - FIXED -->
+<!-- Lucky Wheel Modal - Fixed with Click Listener -->
 <div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--bg-card);padding:30px;border-radius:var(--rl);text-align:center;max-width:400px;border:3px solid var(--gold);">
     <h2 style="color:var(--gold);margin-bottom:20px;">🎰 LUCKY WHEEL</h2>
@@ -829,7 +829,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <div style="position:absolute;top:78%;left:48%;transform:rotate(180deg);color:white;font-weight:900;font-size:1.1rem;text-shadow:0 2px 4px black;">1800</div>
       <div style="position:absolute;top:58%;left:75%;transform:rotate(252deg);color:white;font-weight:900;font-size:1.1rem;text-shadow:0 2px 4px black;">FREE</div>
       
-      <!-- Correct Pointer (pointing down) -->
+      <!-- Pointer -->
       <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:28px solid transparent;border-right:28px solid transparent;border-bottom:56px solid #fff;z-index:20;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));"></div>
     </div>
 
@@ -2754,6 +2754,15 @@ function showLuckyWheel(){
   if(isSpinning) return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
   document.getElementById('wheel-result').textContent = 'Click the wheel to spin!';
+  initWheelListener();   // ← This ensures the click works
+}
+
+// Add click listener when modal opens
+function initWheelListener(){
+  const wheel = document.getElementById('lucky-wheel');
+  if(wheel) {
+    wheel.onclick = spinLuckyWheel;
+  }
 }
 
 function spinLuckyWheel(){
@@ -2769,14 +2778,13 @@ function spinLuckyWheel(){
   const wheel = document.getElementById('lucky-wheel');
   const resultEl = document.getElementById('wheel-result');
 
-  // Strong spin
   const spins = 12 + Math.floor(Math.random() * 8);
   const finalDegree = Math.floor(Math.random() * 360);
   const totalRotation = spins * 360 + finalDegree;
 
   wheel.style.transition = 'none';
   wheel.style.transform = 'rotate(0deg)';
-  void wheel.offsetWidth; // force reflow
+  void wheel.offsetWidth;
 
   wheel.style.transition = 'transform 5.5s cubic-bezier(0.23, 1, 0.32, 1)';
   wheel.style.transform = `rotate(${totalRotation}deg)`;
@@ -2808,6 +2816,7 @@ function spinLuckyWheel(){
 
 function closeLuckyWheel(){
   document.getElementById('lucky-wheel-modal').classList.add('hidden');
+  isSpinning = false;
 }
   // ============================================================
 // ACHIEVEMENTS
