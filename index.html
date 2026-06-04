@@ -1283,46 +1283,37 @@ function hideLoadingOverlay(){
   ol.style.display='none';
 }
 function showPage(id){
-
   document.querySelectorAll('.page')
-    .forEach(p=>p.classList.remove('active'));
+    .forEach(p => p.classList.remove('active'));
 
-  document.getElementById('page-'+id)
+  document.getElementById('page-' + id)
     ?.classList.add('active');
 
   document.querySelectorAll('.nav-item')
-    .forEach(btn=>{
-
+    .forEach(btn => {
       btn.classList.toggle(
         'active',
-        btn.dataset.page===id
+        btn.dataset.page === id
       );
-
     });
 }
-  document.querySelectorAll('.nav-item')
-  .forEach(btn=>{
+  document.querySelectorAll('.nav-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const page=btn.dataset.page;
 
-    btn.addEventListener('click',()=>{
+    showPage(page);
 
-      const page=btn.dataset.page;
-
-      if(!page) return;
-
-      showPage(page);
-
-      if(page==='inventory') renderInventory();
-      if(page==='trade'){
-        renderOnlinePlayers();
-        if(S.tradeRoomId) renderTradeUI();
-      }
-      if(page==='leaderboard') loadLeaderboard();
-      if(page==='history') renderTradeHistory();
-      if(page==='achievements') renderAchievements();
-
-    });
-
+    if(page==='crates') loadCratesPage();
+    if(page==='inventory') renderInventory();
+    if(page==='trade'){
+      renderOnlinePlayers();
+      if(S.tradeRoomId) renderTradeUI();
+    }
+    if(page==='leaderboard') loadLeaderboard();
+    if(page==='history') renderTradeHistory();
+    if(page==='achievements') renderAchievements();
   });
+});
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
   el.className='toast '+(type||'');
@@ -1460,7 +1451,7 @@ function startAuthObserver(){
       }
       if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
       S.profile=doc.data();
-      S.inventory=[...S.profile.inventory||[]];
+      S.inventory = S.profile.inventory || [];
       document.getElementById('nav-username').textContent=S.profile.username;
       // Show admin button for admin user
       if(S.profile.username==='Dreamcrusher'){
@@ -2410,7 +2401,7 @@ function renderTradeInventoryMini(){
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
   const rarityOrder={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
 
-  let items=[...S.inventory];
+  let items = [...S.inventory];
   if(S.tradeSortBy==='rarity'){
     items.sort((a,b)=>{
       const ia=getItem(a.itemId), ib=getItem(b.itemId);
@@ -2623,7 +2614,7 @@ async function handleTradeComplete(room){
     const doc=await db.collection('users').doc(S.user.uid).get();
     if(doc.exists){
       S.profile=doc.data();
-      S.inventory=[...S.profile.inventory||[]];
+      S.inventory = S.profile.inventory || [];
       updateCoinDisplay(S.profile.coins);
     }
   }catch(e){}
