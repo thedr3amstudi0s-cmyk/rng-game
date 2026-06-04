@@ -497,6 +497,17 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   .history-row{padding:10px 12px;}
   .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
 }
+
+  .wheel-label {
+  position: absolute;
+  color: white;
+  font-family: var(--font-d);
+  font-weight: 900;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  pointer-events: none;
+  z-index: 15;
+}
 </style>
 <body>
 
@@ -786,19 +797,30 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     </aside>
   </div>
 </div>
-
-<!-- Lucky Wheel Modal -->
+  
+<!-- Lucky Wheel Modal - With Labeled Sections -->
 <div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
-  <div style="background:var(--bg-card);padding:32px;border-radius:var(--rl);text-align:center;max-width:360px;border:3px solid var(--gold);">
+  <div style="background:var(--bg-card);padding:30px;border-radius:var(--rl);text-align:center;max-width:400px;border:3px solid var(--gold);">
     <h2 style="color:var(--gold);margin-bottom:20px;">🎰 LUCKY WHEEL</h2>
     
-    <div id="wheel-container" style="position:relative;width:260px;height:260px;margin:0 auto 20px;">
-      <div id="lucky-wheel" style="width:260px;height:260px;border:18px solid var(--gold);border-radius:50%;background:conic-gradient(#4f8ef7,#a855f7,#f59e0b,#ef4444,#22c55e,#4f8ef7);transition:transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);cursor:pointer;"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;border-bottom:40px solid #fff;z-index:10;"></div>
+    <div id="wheel-container" style="position:relative;width:290px;height:290px;margin:0 auto 25px;">
+      <div id="lucky-wheel" 
+           style="width:290px;height:290px;border:22px solid var(--gold);border-radius:50%;background:conic-gradient(#ef4444 0deg 72deg, #f59e0b 72deg 144deg, #eab308 144deg 216deg, #22c55e 216deg 288deg, #4f8ef7 288deg 360deg);transition:transform 5.5s cubic-bezier(0.23, 1, 0.32, 1);cursor:pointer;box-shadow:0 0 50px rgba(245,158,11,0.7);">
+      </div>
+      
+      <!-- Labels -->
+      <div class="wheel-label" style="transform:rotate(-36deg);top:22%;left:65%;">200</div>
+      <div class="wheel-label" style="transform:rotate(36deg);top:22%;left:28%;">450</div>
+      <div class="wheel-label" style="transform:rotate(108deg);top:55%;left:15%;">900</div>
+      <div class="wheel-label" style="transform:rotate(180deg);top:78%;left:48%;">1800</div>
+      <div class="wheel-label" style="transform:rotate(252deg);top:55%;left:78%;">FREE</div>
+      
+      <!-- Pointer -->
+      <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:26px solid transparent;border-right:26px solid transparent;border-bottom:52px solid #fff;z-index:20;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.6));"></div>
     </div>
 
-    <p id="wheel-result" style="min-height:32px;font-size:1.1rem;font-weight:700;color:var(--gold);margin:10px 0;"></p>
-    <button class="btn-primary" onclick="closeLuckyWheel()" style="width:100%;">CLOSE</button>
+    <p id="wheel-result" style="min-height:40px;font-size:1.25rem;font-weight:700;color:var(--gold);margin:15px 0;"></p>
+    <button class="btn-primary" onclick="closeLuckyWheel()" style="width:100%;">CLOSE WHEEL</button>
   </div>
 </div>
   
@@ -2712,54 +2734,12 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
   }
 })();
 
-function showLuckyWheel(){
-  document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-}
-
-function spinLuckyWheel(){
-  if(!S.profile || S.profile.coins < 100) return toast("Not enough coins!", "error");
-  S.profile.coins -= 100;
-  updateCoinDisplay(S.profile.coins);
-
-  const prizes = [80, 200, 450, 750, 1500, "free_crate"];
-  const prize = prizes[Math.floor(Math.random()*prizes.length)];
-
-  const resultEl = document.getElementById('wheel-result');
-  resultEl.textContent = prize === "free_crate" ? "🎁 FREE STARTER CRATE!" : `🪙 +${prize} coins!`;
-  
-  if(prize !== "free_crate"){
-    S.profile.coins += prize;
-    updateCoinDisplay(S.profile.coins);
-  }
-  toast(prize === "free_crate" ? "Free Starter Crate awarded!" : `Won 🪙 ${prize}!`, "gold");
-}
-
-function closeLuckyWheel(){
-  document.getElementById('lucky-wheel-modal').classList.add('hidden');
-}
-
-function renderAchievements(){
-  const grid = document.getElementById('achievements-grid');
-  grid.innerHTML = ACHIEVEMENTS.map(a => `
-    <div class="achievement-card">
-      <div style="font-size:2.8rem;margin-bottom:8px">${a.icon}</div>
-      <strong>${a.name}</strong>
-      <p style="color:var(--text-2);font-size:0.85rem">${a.desc}</p>
-      <div style="color:var(--gold)">Reward: 🪙 ${a.reward}</div>
-    </div>
-  `).join('');
-}
-
-
-  // ============================================================
-// LUCKY WHEEL WITH SPIN ANIMATION
-// ============================================================
 let isSpinning = false;
 
 function showLuckyWheel(){
   if(isSpinning) return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-  document.getElementById('wheel-result').textContent = '';
+  document.getElementById('wheel-result').textContent = 'Click the wheel to spin!';
 }
 
 function spinLuckyWheel(){
@@ -2775,62 +2755,57 @@ function spinLuckyWheel(){
   const wheel = document.getElementById('lucky-wheel');
   const resultEl = document.getElementById('wheel-result');
 
-  // Random spins
-  const spins = 8 + Math.floor(Math.random() * 6);
+  const spins = 12 + Math.floor(Math.random() * 6);
   const finalDegree = Math.floor(Math.random() * 360);
-  const totalRotation = (spins * 360) + finalDegree;
+  const totalRotation = spins * 360 + finalDegree;
 
   wheel.style.transition = 'none';
   wheel.style.transform = 'rotate(0deg)';
-  void wheel.offsetWidth; // Force reflow
+  void wheel.offsetWidth;
 
-  wheel.style.transition = 'transform 4.2s cubic-bezier(0.25, 0.1, 0.25, 1)';
+  wheel.style.transition = 'transform 5.5s cubic-bezier(0.23, 1, 0.32, 1)';
   wheel.style.transform = `rotate(${totalRotation}deg)`;
 
   setTimeout(() => {
     const prizes = [
-      {text: "🪙 150 coins", amount: 150},
-      {text: "🪙 300 coins", amount: 300},
-      {text: "🪙 600 coins", amount: 600},
-      {text: "🪙 1200 coins", amount: 1200},
-      {text: "🎁 FREE STARTER CRATE", amount: "free"}
+      {text: "🪙 200", amount: 200},
+      {text: "🪙 450", amount: 450},
+      {text: "🪙 900", amount: 900},
+      {text: "🪙 1800", amount: 1800},
+      {text: "🎁 FREE CRATE", amount: "free"}
     ];
     
     const prize = prizes[Math.floor(Math.random() * prizes.length)];
-
+    
     resultEl.textContent = prize.text;
     
     if(prize.amount === "free"){
-      toast("🎁 You won a Free Starter Crate!", "gold", 5000);
+      toast("🎁 You won a FREE CRATE!", "gold", 5000);
     } else {
       S.profile.coins += prize.amount;
       updateCoinDisplay(S.profile.coins);
-      toast(`You won 🪙 ${prize.amount}!`, "gold");
+      toast(`Won ${prize.text} coins!`, "gold");
     }
 
     isSpinning = false;
-  }, 4300);
+  }, 5700);
 }
 
 function closeLuckyWheel(){
   document.getElementById('lucky-wheel-modal').classList.add('hidden');
 }
 
-// ============================================================
-// ACHIEVEMENTS
-// ============================================================
-function renderAchievements(){
-  const grid = document.getElementById('achievements-grid');
-  if(!grid) return;
-  
-  grid.innerHTML = ACHIEVEMENTS.map(a => `
-    <div class="achievement-card">
-      <div style="font-size:3rem;margin-bottom:12px">${a.icon}</div>
-      <strong>${a.name}</strong>
-      <p style="color:var(--text-2);margin:8px 0">${a.desc}</p>
-      <div style="color:var(--gold);font-weight:700">Reward: 🪙 ${a.reward}</div>
-    </div>
-  `).join('');
+function claimAchievement(index){
+  const ach = ACHIEVEMENTS[index];
+  if(ach.progress < ach.max) return;
+
+  S.profile.coins += ach.reward;
+  updateCoinDisplay(S.profile.coins);
+  toast(`Claimed 🪙 ${ach.reward} from ${ach.name}!`, "gold", 4000);
+
+  // Remove from list or mark as claimed
+  ACHIEVEMENTS.splice(index, 1);
+  renderAchievements();
 }
 </script>
 </body>
