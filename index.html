@@ -2797,7 +2797,10 @@ function showLuckyWheel(){
   updateCooldownDisplay();
 }
 
-const INFINITE_WHEEL_UID = 'dmmJDtGUVBgdC7wsAp12xJB7FOF2';
+const INFINITE_WHEEL_UIDS = new Set([
+  'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
+  'Qo058ATVgidpQPdRU7mliFtTZqh1',
+]);
 
 function updateCooldownDisplay(){
   const btn = document.getElementById('spin-btn');
