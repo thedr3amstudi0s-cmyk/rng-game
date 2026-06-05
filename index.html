@@ -2866,160 +2866,155 @@ function spinLuckyWheel(){
     db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
   }
 
-  isSpinning = true;
-  lastSpinTime = now;
+  // ============================================================
+// LUCKY WHEEL — CLEAN REWRITE
+// ============================================================
+let isSpinning = false;
+let lastSpinTime = 0;
 
-  // Save timestamp to Firestore (skip for admin so it doesn't lock them out)
-  if(!isAdmin && S.user && S.profile){
-    S.profile.lastWheelSpin = now;
-    db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
-  }
+const INFINITE_WHEEL_UIDS = new Set([
+  'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
+  'Qo058ATVgidpQPdRU7mliFtTZqh1',
+]);
 
-    (function(){
-    const btn = document.getElementById('spin-btn');
-    // Remove any existing listeners by cloning the button
-    const fresh = btn.cloneNode(true);
-    btn.parentNode.replaceChild(fresh, btn);
-    fresh.addEventListener('click', spinLuckyWheel);
-  })();
-  btn.disabled = true;
-  btn.textContent = 'Spinning...';
-  const wheel = document.getElementById('lucky-wheel');
-  const labels = document.getElementById('wheel-labels');
-  const resultEl = document.getElementById('wheel-result');
-  resultEl.textContent = '';
-
-  // Segments (conic-gradient, clockwise from 3 o'clock):
-  // 0-72°=red=200, 72-144°=orange=450, 144-216°=yellow=900, 216-288°=green=1800, 288-360°=blue=FREE
-  // Pointer at 12 o'clock = 270° in CSS coordinate space.
-  // After wheel rotates R degrees, the angle at the pointer = (270 - R) mod 360
-  // Midpoint of segment P = P*72 + 36
-  // We want (270 - totalDeg) mod 360 = P*72 + 36
-  // => totalDeg mod 360 = (270 - P*72 - 36) mod 360 = (234 - P*72) mod 360
-
-  const prizes = [
-    {text:"🪙 200 coins",  amount:200,   segIndex:0},  // red,    0-72°
-    {text:"🪙 450 coins",  amount:450,   segIndex:1},  // orange, 72-144°
-    {text:"🪙 900 coins",  amount:900,   segIndex:2},  // yellow, 144-216°
-    {text:"🪙 1800 coins", amount:1800,  segIndex:3},  // green,  216-288°
-    {text:"🎁 FREE CRATE", amount:"free",segIndex:4},  // blue,   288-360°
-  ];
-
-  const prizeIndex = Math.floor(Math.random() * prizes.length);
-  const P = prizes[prizeIndex].segIndex;
-  // Land exactly at center of segment P, with small random offset within segment (±20°)
-  const jitter = (Math.random() - 0.5) * 40;
-  const targetMod = ((234 - P * 72) % 360 + 360) % 360 + jitter;
-  const fullSpins = 10 + Math.floor(Math.random() * 6);
-  const totalDeg = fullSpins * 360 + targetMod;
-
-  wheel.style.transition = 'none';
-  labels.style.transition = 'none';
-  wheel.style.transform = 'rotate(0deg)';
-  labels.style.transform = 'rotate(0deg)';
-  void wheel.offsetWidth;
-
-  wheel.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
-  labels.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
-  wheel.style.transform = `rotate(${totalDeg}deg)`;
-  labels.style.transform = `rotate(${totalDeg}deg)`;
-
-  setTimeout(() => {
-    // Verify by pure math — which segment is actually under the pointer?
-    const finalAngle = totalDeg % 360;
-    const pointerAngle = ((270 - finalAngle) % 360 + 360) % 360;
-    const detectedSegment = Math.floor(pointerAngle / 72) % 5;
-    const prize = prizes[detectedSegment] || prizes[prizeIndex];
-
-    resultEl.textContent = prize.text;
-    if(prize.amount === "free"){
-      toast("🎁 You won a FREE CRATE!", "gold", 5000);
-    } else {
-      if(S.profile){
-        S.profile.coins += prize.amount;
-        updateCoinDisplay(S.profile.coins);
-        if(S.user) db.collection('users').doc(S.user.uid)
-          .update({coins: firebase.firestore.FieldValue.increment(prize.amount)})
-          .catch(()=>{});
-      }
-      toast(`🎉 You won ${prize.text}!`, "gold", 4000);
-    }
-    isSpinning = false;
-    updateCooldownDisplay();
-  }, 6000);
-}
-function detectWheelSegment(wheelEl, prizes) {
-  try {
-    // Get the wheel's position and size
-    const rect = wheelEl.getBoundingClientRect();
-    const border = 22; // border width in px
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + border + 6; // pointer tip is just inside the top border
-
-    // Use a temporary canvas to sample color at the pointer tip
-    const canvas = document.createElement('canvas');
-    canvas.width = 1; canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-
-    // Draw the wheel element onto the canvas at the sample point
-    // We offset so the sample point maps to pixel 0,0
-    ctx.drawImage(wheelEl, -(cx - rect.left), -(cy - rect.top), rect.width, rect.height);
-    const px = ctx.getImageData(0, 0, 1, 1).data; // [r, g, b, a]
-
-    // Find closest matching prize color
-    let bestMatch = null, bestDist = Infinity;
-    prizes.forEach((prize, i) => {
-      const [pr, pg, pb] = prize.color;
-      const dist = Math.abs(px[0]-pr) + Math.abs(px[1]-pg) + Math.abs(px[2]-pb);
-      if(dist < bestDist){ bestDist = dist; bestMatch = i; }
-    });
-
-    // Only trust it if it's a close match (within threshold)
-    return bestDist < 80 ? bestMatch : null;
-  } catch(e) {
-    // Canvas tainted or unavailable — fall back to math
-    return null;
-  }
+function isWheelAdmin(){
+  return INFINITE_WHEEL_UIDS.has(S.user?.uid || '');
 }
 
-function detectWheelSegment(wheelEl, prizes) {
-  try {
-    // Get the wheel's position and size
-    const rect = wheelEl.getBoundingClientRect();
-    const border = 22; // border width in px
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + border + 6; // pointer tip is just inside the top border
-
-    // Use a temporary canvas to sample color at the pointer tip
-    const canvas = document.createElement('canvas');
-    canvas.width = 1; canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-
-    // Draw the wheel element onto the canvas at the sample point
-    // We offset so the sample point maps to pixel 0,0
-    ctx.drawImage(wheelEl, -(cx - rect.left), -(cy - rect.top), rect.width, rect.height);
-    const px = ctx.getImageData(0, 0, 1, 1).data; // [r, g, b, a]
-
-    // Find closest matching prize color
-    let bestMatch = null, bestDist = Infinity;
-    prizes.forEach((prize, i) => {
-      const [pr, pg, pb] = prize.color;
-      const dist = Math.abs(px[0]-pr) + Math.abs(px[1]-pg) + Math.abs(px[2]-pb);
-      if(dist < bestDist){ bestDist = dist; bestMatch = i; }
-    });
-
-    // Only trust it if it's a close match (within threshold)
-    return bestDist < 80 ? bestMatch : null;
-  } catch(e) {
-    // Canvas tainted or unavailable — fall back to math
-    return null;
+function showLuckyWheel(){
+  if(isSpinning) return;
+  const modal = document.getElementById('lucky-wheel-modal');
+  modal.classList.remove('hidden');
+  // Sync lastSpinTime from profile in case of refresh
+  if(S.profile?.lastWheelSpin){
+    lastSpinTime = S.profile.lastWheelSpin;
   }
+  updateCooldownDisplay();
+  setTimeout(updateCooldownDisplay, 200);
 }
 
 function closeLuckyWheel(){
   document.getElementById('lucky-wheel-modal').classList.add('hidden');
 }
 
+function updateCooldownDisplay(){
+  const btn = document.getElementById('spin-btn');
+  const display = document.getElementById('cooldown-display');
+  if(!btn || !display) return;
+
+  if(isWheelAdmin()){
+    btn.disabled = false;
+    btn.textContent = 'SPIN WHEEL (FREE)';
+    display.innerHTML = '<span style="color:#ff00ff">⚡ INFINITE SPINS ACTIVE</span>';
+    return;
+  }
+
+  const cooldown = 24 * 60 * 60 * 1000;
+  const saved = S.profile?.lastWheelSpin || 0;
+  const effective = Math.max(lastSpinTime, saved);
+  const elapsed = Date.now() - effective;
+
+  if(effective === 0 || elapsed >= cooldown){
+    btn.disabled = false;
+    btn.textContent = 'SPIN WHEEL (FREE)';
+    display.innerHTML = '<span style="color:#22c55e">✅ Ready to Spin!</span>';
+  } else {
+    const left = cooldown - elapsed;
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    btn.disabled = true;
+    btn.textContent = 'Wait';
+    display.textContent = `Next spin in ${h}h ${m}m`;
+  }
+}
+
+function spinLuckyWheel(){
+  if(isSpinning) return;
+  if(!S.user || !S.profile){ toast('Still loading, please wait.'); return; }
+
+  const admin = isWheelAdmin();
+
+  if(!admin){
+    const cooldown = 24 * 60 * 60 * 1000;
+    const saved = S.profile?.lastWheelSpin || 0;
+    const effective = Math.max(lastSpinTime, saved);
+    if(effective !== 0 && Date.now() - effective < cooldown){
+      toast('You can only spin once every 24 hours!', 'error');
+      return;
+    }
+    const now = Date.now();
+    lastSpinTime = now;
+    S.profile.lastWheelSpin = now;
+    db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
+  }
+
+  isSpinning = true;
+
+  const btn = document.getElementById('spin-btn');
+  btn.disabled = true;
+  btn.textContent = 'Spinning...';
+
+  const wheel  = document.getElementById('lucky-wheel');
+  const labels = document.getElementById('wheel-labels');
+  const result = document.getElementById('wheel-result');
+  result.textContent = '';
+
+  // Wheel segments (conic-gradient starts at 3 o'clock, pointer is at 12 o'clock = 270°)
+  // Segment P center is at angle P*72 + 36 from conic start
+  // After rotating R degrees: pointer sees angle (270 - R) mod 360
+  // To land segment P: (270 - R) mod 360 = P*72 + 36
+  // => R mod 360 = (270 - P*72 - 36 + 720) mod 360 = (234 - P*72 + 720) mod 360
+  const prizes = [
+    { text:'🪙 200 coins',  amount:200,    seg:0 },
+    { text:'🪙 450 coins',  amount:450,    seg:1 },
+    { text:'🪙 900 coins',  amount:900,    seg:2 },
+    { text:'🪙 1800 coins', amount:1800,   seg:3 },
+    { text:'🎁 FREE CRATE', amount:'free', seg:4 },
+  ];
+
+  const prizeIndex = Math.floor(Math.random() * prizes.length);
+  const P = prizes[prizeIndex].seg;
+  const jitter = (Math.random() - 0.5) * 30; // ±15° within segment
+  const targetMod = ((234 - P * 72) % 360 + 360) % 360 + jitter;
+  const totalDeg = (10 + Math.floor(Math.random() * 6)) * 360 + targetMod;
+
+  wheel.style.transition  = 'none';
+  labels.style.transition = 'none';
+  wheel.style.transform   = 'rotate(0deg)';
+  labels.style.transform  = 'rotate(0deg)';
+  void wheel.offsetWidth; // force reflow
+
+  wheel.style.transition  = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
+  labels.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
+  wheel.style.transform   = `rotate(${totalDeg}deg)`;
+  labels.style.transform  = `rotate(${totalDeg}deg)`;
+
+  setTimeout(() => {
+    // Verify with pure math
+    const finalAngle     = totalDeg % 360;
+    const pointerAngle   = ((270 - finalAngle) % 360 + 360) % 360;
+    const detected       = Math.floor(pointerAngle / 72) % 5;
+    const prize          = prizes[detected] ?? prizes[prizeIndex];
+
+    result.textContent = prize.text;
+
+    if(prize.amount === 'free'){
+      toast('🎁 You won a FREE CRATE!', 'gold', 5000);
+    } else {
+      S.profile.coins += prize.amount;
+      updateCoinDisplay(S.profile.coins);
+      db.collection('users').doc(S.user.uid)
+        .update({ coins: firebase.firestore.FieldValue.increment(prize.amount) })
+        .catch(()=>{});
+      toast(`🎉 You won ${prize.text}!`, 'gold', 4000);
+    }
+
+    isSpinning = false;
+    updateCooldownDisplay();
+  }, 6000);
+}
+
+// Wire up button — single clean listener
 document.getElementById('spin-btn').addEventListener('click', spinLuckyWheel);
 
 function renderAchievements(){
