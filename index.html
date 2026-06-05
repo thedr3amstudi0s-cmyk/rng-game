@@ -508,6 +508,12 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   pointer-events: none;
   z-index: 15;
 }
+
+  #cip-odds { 
+  max-height: 420px; 
+  overflow-y: auto; 
+  padding-right: 12px; 
+}
 </style>
 <body>
 
@@ -1094,34 +1100,34 @@ const ITEMS = [
 //   - 40% of pulls come from rarities AT/ABOVE crate price → win
 // ============================================================
 const CRATES = [
-  // ─── TIER 1: ENTRY LEVEL ($10–$65) ───
+  // ─── TIER 1: ENTRY LEVEL ($10–$65) ─── ~70-75% loss
   {id:'tin', name:'Tin Miner Crate', price:10, icon:'⛏️', color:'#6b7280', desc:'Scrap from old mines.',
-   odds:{common:0.88, uncommon:0.12},
+   odds:{common:0.75, uncommon:0.25},
    items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','c011','c012','c013','c014','c015','c016','c017','c018','c019','c020','u001','u002','u003','u010']},
 
   {id:'copper', name:'Copper Vein Crate', price:18, icon:'🪙', color:'#b45309', desc:'Freshly dug riches.',
-   odds:{common:0.82, uncommon:0.18},
+   odds:{common:0.72, uncommon:0.28},
    items:['c001','c003','c005','c006','c008','c010','c013','c014','c015','c016','c018','c020','u001','u002','u003','u004','u010']},
 
   {id:'bronze', name:'Bronze Age Crate', price:30, icon:'🥉', color:'#c97d4b', desc:'Relics of ancient tribes.',
-   odds:{common:0.75, uncommon:0.23, rare:0.02},
+   odds:{common:0.68, uncommon:0.30, rare:0.02},
    items:['c004','c006','c010','c013','c014','c019','c020','u001','u002','u003','u004','u006','u009','u010','r001','r005']},
 
   {id:'iron', name:'Iron Fortress Crate', price:45, icon:'🏰', color:'#78716c', desc:'Defensive war spoils.',
-   odds:{common:0.68, uncommon:0.28, rare:0.04},
+   odds:{common:0.65, uncommon:0.32, rare:0.03},
    items:['c006','c010','c014','c020','u001','u002','u003','u004','u005','u006','u007','u009','u010','r001','r002','r003','r005','r008']},
 
   {id:'woodland', name:'Woodland Forager Crate', price:65, icon:'🌲', color:'#4ade80', desc:'Gifts from the deep forest.',
-   odds:{common:0.60, uncommon:0.35, rare:0.05},
+   odds:{common:0.62, uncommon:0.35, rare:0.03},
    items:['c004','c006','c011','c013','c014','c019','c020','u002','u006','u009','u012','u013','r001','r005','r011']},
 
-  // ─── TIER 2: BEGINNER ($80–$280) ───
+  // ─── TIER 2: BEGINNER ($80–$280) ─── ~75% loss
   {id:'steel', name:'Steel Legion Crate', price:80, icon:'🛡️', color:'#94a3b8', desc:'Armory of fallen soldiers.',
-   odds:{common:0.55, uncommon:0.36, rare:0.09},
+   odds:{common:0.55, uncommon:0.38, rare:0.07},
    items:['c010','c014','c020','u001','u002','u003','u004','u005','u006','u007','u008','u009','u010','u011','u012','u014','r001','r002','r003','r004','r005','r008']},
 
   {id:'silver', name:'Silver Moon Crate', price:120, icon:'🌕', color:'#cbd5e1', desc:'Lunar blessings.',
-   odds:{common:0.47, uncommon:0.40, rare:0.13},
+   odds:{common:0.48, uncommon:0.40, rare:0.12},
    items:['c014','c020','u001','u002','u003','u004','u005','u006','u007','u008','u009','u010','u011','u012','u013','u014','u015','u016','r001','r002','r003','r004','r005','r006','r007','r008','r009']},
 
   {id:'crystal', name:'Crystal Cavern Crate', price:175, icon:'💎', color:'#7dd3fc', desc:'Glowing underground treasures.',
@@ -1133,45 +1139,45 @@ const CRATES = [
    items:['u007','u008','u009','u011','u014','u015','u017','r001','r002','r003','r004','r005','r006','r007','r008','r009','r010','r011','r012','r013','r014','r015','r016','sp01','sp02','sp04','sp06']},
 
   {id:'stormborn', name:'Stormborn Crate', price:280, icon:'🌩️', color:'#3b82f6', desc:'Rage of the skies.',
-   odds:{uncommon:0.40, rare:0.48, spectral:0.12},
+   odds:{uncommon:0.42, rare:0.48, spectral:0.10},
    items:['u004','u011','u013','u015','r001','r002','r003','r004','r005','r006','r007','r008','r009','r010','r011','r012','r013','r014','r015','r016','r018','sp01','sp03','sp05']},
 
-  // ─── TIER 3: INTERMEDIATE ($350–$1,200) ───
+  // ─── TIER 3: INTERMEDIATE ($350–$1,200) ─── ~80% loss
   {id:'runic', name:'Runic Temple Crate', price:350, icon:'🔯', color:'#f97316', desc:'Forgotten god runes.',
    odds:{rare:0.55, spectral:0.37, epic:0.08},
    items:['r001','r002','r003','r004','r005','r006','r007','r008','r009','r010','r011','r012','r013','r014','r015','r016','r017','r018','sp01','sp02','sp03','sp04','sp05','sp06','sp07','sp08','e001','e013','e015']},
 
   {id:'spectral', name:'Spectral Hollow Crate', price:520, icon:'👻', color:'#38bdf8', desc:'Haunted graveyard spoils.',
-   odds:{rare:0.42, spectral:0.48, epic:0.10},
+   odds:{rare:0.45, spectral:0.45, epic:0.10},
    items:['r006','r007','r008','r009','r010','r011','r012','r013','r014','r015','r016','r017','r018','sp01','sp02','sp03','sp04','sp05','sp06','sp07','sp08','e001','e003','e005','e010','e013','e015']},
 
   {id:'warrior', name:'Warrior\'s Glory Crate', price:680, icon:'⚔️', color:'#ef4444', desc:'Battlefield trophies.',
-   odds:{spectral:0.50, epic:0.42, runic:0.08},
+   odds:{spectral:0.52, epic:0.43, runic:0.05},
    items:['sp01','sp02','sp03','sp04','sp05','sp06','sp07','sp08','e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e012','e013','e014','e015','e016','ru01','ru03','ru06']},
 
   {id:'shadow', name:'Shadow Syndicate Crate', price:850, icon:'🌑', color:'#6b21a8', desc:'Thieves guild secrets.',
-   odds:{spectral:0.40, epic:0.50, runic:0.10},
+   odds:{spectral:0.42, epic:0.50, runic:0.08},
    items:['sp01','sp02','sp03','sp04','sp05','sp06','sp07','sp08','e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e012','e013','e014','e015','e016','ru01','ru02','ru03','ru04','ru06']},
 
   {id:'flame', name:'Flameheart Crate', price:1050, icon:'🔥', color:'#dc2626', desc:'Volcanic forge goods.',
-   odds:{spectral:0.35, epic:0.52, runic:0.13},
+   odds:{spectral:0.38, epic:0.52, runic:0.10},
    items:['sp01','sp02','sp06','sp07','e001','e002','e004','e005','e006','e008','e012','e014','e016','ru01','ru03','ru06','ru07']},
 
   {id:'ocean', name:'Abyssal Depths Crate', price:1200, icon:'🌊', color:'#1e40af', desc:'Sunken pirate treasures.',
-   odds:{epic:0.45, spectral:0.40, runic:0.15},
+   odds:{epic:0.48, spectral:0.42, runic:0.10},
    items:['sp02','sp04','sp05','e003','e005','e007','e015','ru02','ru05','ru07']},
 
-  // ─── TIER 4: ADVANCED ($1.5k–$5k) ───
+  // ─── TIER 4: ADVANCED ($1.5k–$5k) ─── ~82-85% loss
   {id:'infernal', name:'Infernal Pit Crate', price:1500, icon:'🪦', color:'#b91c1c', desc:'Demonic underworld loot.',
-   odds:{epic:0.60, runic:0.32, legendary:0.08},
+   odds:{epic:0.62, runic:0.30, legendary:0.08},
    items:['e001','e002','e003','e004','e005','e006','e007','e008','e009','e010','e011','e012','e013','e014','e015','e016','ru01','ru02','ru03','ru04','ru05','ru06','ru07','l001','l003','l007']},
 
   {id:'celestial', name:'Celestial Observatory Crate', price:2100, icon:'🌠', color:'#f59e0b', desc:'Star-fallen relics.',
-   odds:{epic:0.48, runic:0.40, legendary:0.12},
+   odds:{epic:0.50, runic:0.38, legendary:0.12},
    items:['e002','e004','e006','e007','e008','e009','e011','e012','e016','ru01','ru02','ru03','ru04','ru05','ru06','ru07','l001','l002','l003','l004','l005','l007','l012']},
 
   {id:'ancient', name:'Ancient Ruins Crate', price:2900, icon:'🏛️', color:'#a16207', desc:'Lost empire artifacts.',
-   odds:{epic:0.38, runic:0.45, legendary:0.17},
+   odds:{epic:0.40, runic:0.45, legendary:0.15},
    items:['e001','e003','e006','e010','e013','e014','ru01','ru02','ru03','ru04','ru05','ru06','ru07','l001','l002','l003','l004','l005','l006','l007','l008','l009','l010','l011','l012']},
 
   {id:'dragon', name:'Dragon Hoard Crate', price:3700, icon:'🐉', color:'#b91c1c', desc:'Guardian dragon\'s stash.',
@@ -1182,13 +1188,13 @@ const CRATES = [
    odds:{runic:0.35, legendary:0.50, cursed:0.15},
    items:['ru01','ru03','ru06','ru07','l001','l003','l005','l007','l009','l012','cu01','cu02','cu03','cu05']},
 
-  // ─── TIER 5: ELITE ($6.5k–$24k) ───
+  // ─── TIER 5: ELITE ($6.5k–$24k) ─── ~85% loss
   {id:'royal', name:'Royal Vault Crate', price:6500, icon:'👑', color:'#eab308', desc:'King\'s private collection.',
-   odds:{runic:0.30, legendary:0.52, cursed:0.18},
+   odds:{runic:0.32, legendary:0.52, cursed:0.16},
    items:['ru04','ru05','ru06','ru07','l001','l002','l003','l004','l005','l006','l007','l008','l009','l010','l011','l012','cu01','cu02','cu03','cu04','cu05','cu06']},
 
   {id:'void', name:'Void Rift Crate', price:9200, icon:'🕳️', color:'#555555', desc:'Tears in reality.',
-   odds:{legendary:0.52, cursed:0.38, mythic:0.10},
+   odds:{legendary:0.55, cursed:0.35, mythic:0.10},
    items:['l001','l002','l003','l004','l005','l006','l007','l008','l009','l010','l011','l012','cu01','cu02','cu03','cu04','cu05','cu06','m001','m005','m009']},
 
   {id:'abyssal', name:'Leviathan\'s Lair Crate', price:13500, icon:'🐙', color:'#1e40af', desc:'Deep sea titan treasures.',
@@ -1196,20 +1202,20 @@ const CRATES = [
    items:['l004','l006','l008','l009','l010','l011','l012','cu01','cu02','cu03','cu04','cu05','cu06','m001','m002','m004','m005','m006','m007','m009']},
 
   {id:'titan', name:'Titan\'s Fall Crate', price:18500, icon:'🏔️', color:'#dc2626', desc:'Fallen giant relics.',
-   odds:{cursed:0.40, mythic:0.48, astral:0.12},
+   odds:{cursed:0.42, mythic:0.48, astral:0.10},
    items:['cu03','cu04','cu06','m001','m002','m003','m004','m005','m006','m007','m008','m009','m010','as01','as02','as03','as06']},
 
   {id:'nebula', name:'Nebula Birth Crate', price:24000, icon:'🌌', color:'#7c3aed', desc:'Stardust cradle.',
-   odds:{mythic:0.55, astral:0.38, divine:0.07},
+   odds:{mythic:0.58, astral:0.35, divine:0.07},
    items:['m001','m002','m003','m004','m005','m006','m007','m008','m009','m010','as01','as02','as03','as04','as06','d001','d007']},
 
-  // ─── TIER 6: MASTER ($28k–$85k) ───
+  // ─── TIER 6: MASTER ($28k–$85k) ─── ~87% loss
   {id:'singularity', name:'Singularity Crate', price:28000, icon:'⚫', color:'#1e2937', desc:'Point of no return.',
-   odds:{mythic:0.48, astral:0.42, divine:0.10},
+   odds:{mythic:0.50, astral:0.40, divine:0.10},
    items:['m003','m004','m006','m007','m008','m009','m010','as01','as02','as03','as04','as05','as06','d001','d002','d003','d007']},
 
   {id:'aether', name:'Aether Weave Crate', price:41000, icon:'🌫️', color:'#67e8f9', desc:'Pure magic fabric.',
-   odds:{mythic:0.40, astral:0.45, divine:0.15},
+   odds:{mythic:0.42, astral:0.45, divine:0.13},
    items:['m007','m008','m009','m010','as01','as02','as03','as04','as05','as06','d001','d002','d003','d004','d005','d006','d007']},
 
   {id:'eternal', name:'Eternal Cycle Crate', price:55000, icon:'♾️', color:'#22d3ee', desc:'Timeless loops.',
@@ -1217,62 +1223,62 @@ const CRATES = [
    items:['as01','as02','as03','as04','as05','as06','d001','d002','d003','d004','d005','d006','d007','pr01','pr05']},
 
   {id:'divine', name:'Divine Pantheon Crate', price:72000, icon:'💠', color:'#ddddff', desc:'Gods\' discarded gifts.',
-   odds:{astral:0.35, divine:0.52, primordial:0.13},
+   odds:{astral:0.38, divine:0.52, primordial:0.10},
    items:['as03','as04','as05','as06','d001','d002','d003','d004','d005','d006','d007','pr01','pr02','pr05']},
 
   {id:'godrealm', name:'God Realm Breach Crate', price:85000, icon:'🌤️', color:'#fde68a', desc:'Heavenly frontier.',
    odds:{divine:0.55, primordial:0.38, ultra:0.07},
    items:['d001','d002','d003','d004','d005','d006','d007','pr01','pr02','pr03','pr05','ur01']},
 
-  // ─── TIER 7: GRANDMASTER ($110k–$450k) ───
+  // ─── TIER 7: GRANDMASTER ($110k–$450k) ─── ~90% loss
   {id:'primordial', name:'Primordial Chaos Crate', price:110000, icon:'🌋', color:'#10b981', desc:'Before creation.',
-   odds:{divine:0.40, primordial:0.48, ultra:0.12},
+   odds:{divine:0.42, primordial:0.48, ultra:0.10},
    items:['d004','d005','d006','d007','pr01','pr02','pr03','pr04','pr05','ur01','ur04']},
 
   {id:'cosmos', name:'Cosmic Forge Crate', price:160000, icon:'🌠', color:'#fffaaa', desc:'Birth of stars.',
-   odds:{primordial:0.52, ultra:0.40, hyper:0.08},
+   odds:{primordial:0.55, ultra:0.38, hyper:0.07},
    items:['pr01','pr02','pr03','pr04','pr05','ur01','ur02','ur03','ur04','ur05','hy01']},
 
   {id:'ultra', name:'Ultra Horizon Crate', price:230000, icon:'🌐', color:'#00ffff', desc:'Beyond mortal limits.',
-   odds:{primordial:0.38, ultra:0.50, hyper:0.12},
+   odds:{primordial:0.40, ultra:0.50, hyper:0.10},
    items:['pr02','pr03','pr04','pr05','ur01','ur02','ur03','ur04','ur05','hy01','hy02']},
 
   {id:'apex', name:'Apex Predator Crate', price:310000, icon:'🔱', color:'#f97316', desc:'Top of the food chain.',
-   odds:{ultra:0.48, hyper:0.42, cosmic:0.10},
+   odds:{ultra:0.50, hyper:0.40, cosmic:0.10},
    items:['ur01','ur02','ur03','ur04','ur05','hy01','hy02','hy03','co01']},
 
   {id:'omega', name:'Omega Protocol Crate', price:450000, icon:'🔴', color:'#dc2626', desc:'Final protocol.',
-   odds:{ultra:0.35, hyper:0.52, cosmic:0.13},
+   odds:{ultra:0.38, hyper:0.50, cosmic:0.12},
    items:['ur02','ur03','ur04','ur05','hy01','hy02','hy03','hy04','co01','co02']},
 
-  // ─── TIER 8: LEGEND ($580k–$2.4M) ───
+  // ─── TIER 8: LEGEND ($580k–$2.4M) ─── ~92% loss
   {id:'voidlord', name:'Void Lord Throne Crate', price:580000, icon:'🌑', color:'#4c1d95', desc:'Ruler of the nothing.',
-   odds:{hyper:0.45, cosmic:0.40, ultra:0.15},
+   odds:{hyper:0.48, cosmic:0.42, ultra:0.10},
    items:['hy01','hy02','hy03','hy04','co01','co02','co03','ur01','ur02','ur03']},
 
   {id:'hyper', name:'Hypernova Crate', price:820000, icon:'💥', color:'#ff00ff', desc:'Exploding realities.',
-   odds:{hyper:0.55, cosmic:0.38, transcendent:0.07},
+   odds:{hyper:0.58, cosmic:0.35, transcendent:0.07},
    items:['hy01','hy02','hy03','hy04','co01','co02','co03','tr01']},
 
   {id:'stellar', name:'Stellar Dominion Crate', price:1150000, icon:'⭐', color:'#fbbf24', desc:'Rule over suns.',
-   odds:{cosmic:0.50, transcendent:0.42, eternal:0.08},
+   odds:{cosmic:0.55, transcendent:0.38, eternal:0.07},
    items:['co01','co02','co03','co04','tr01','tr02','tr03','et01']},
 
   {id:'transcendent', name:'Transcendent Veil Crate', price:1600000, icon:'🌟', color:'#c026d3', desc:'Beyond all knowing.',
-   odds:{cosmic:0.40, transcendent:0.50, eternal:0.10},
+   odds:{cosmic:0.42, transcendent:0.50, eternal:0.08},
    items:['co02','co03','co04','tr01','tr02','tr03','et01','et02']},
 
   {id:'eternal', name:'Eternal Flame Crate', price:2400000, icon:'🔥', color:'#22d3ee', desc:'Never-ending blaze.',
    odds:{transcendent:0.52, eternal:0.40, genesis:0.08},
    items:['tr01','tr02','tr03','et01','et02','ge01']},
 
-  // ─── TIER 9: MYTHICAL ($3.2M–$14M) ───
+  // ─── TIER 9: MYTHICAL ($3.2M–$14M) ─── ~93% loss
   {id:'genesis', name:'Genesis Seed Crate', price:3200000, icon:'🌱', color:'#fbbf24', desc:'Origin of everything.',
-   odds:{transcendent:0.45, eternal:0.45, genesis:0.10},
+   odds:{transcendent:0.48, eternal:0.45, genesis:0.07},
    items:['tr01','tr02','tr03','et01','et02','ge01']},
 
   {id:'cosmic', name:'Cosmic Egg Crate', price:4800000, icon:'🥚', color:'#fffaaa', desc:'Universe in embryo.',
-   odds:{transcendent:0.38, eternal:0.52, genesis:0.10},
+   odds:{transcendent:0.42, eternal:0.50, genesis:0.08},
    items:['tr01','tr02','tr03','et01','et02','ge01']},
 
   {id:'infinite', name:'Infinite Spiral Crate', price:7200000, icon:'🌀', color:'#ffffff', desc:'Endless recursion.',
@@ -1280,32 +1286,32 @@ const CRATES = [
    items:['et01','et02','ge01','in01']},
 
   {id:'reality', name:'Reality Weaver Crate', price:9800000, icon:'🧶', color:'#e0f2fe', desc:'Threads of existence.',
-   odds:{eternal:0.45, genesis:0.45, infinite:0.10},
+   odds:{eternal:0.48, genesis:0.45, infinite:0.07},
    items:['et01','et02','ge01','in01','tr02','tr03']},
 
   {id:'supreme', name:'Supreme Being Crate', price:14000000, icon:'👁️', color:'#c4b5fd', desc:'The watcher of all.',
-   odds:{genesis:0.60, infinite:0.40},
+   odds:{genesis:0.70, infinite:0.30},
    items:['ge01','in01','tr02','tr03','et02']},
 
-  // ─── TIER 10: TRANSCENDENT ($18M–$55M) ───
+  // ─── TIER 10: TRANSCENDENT ($18M–$55M) ─── ~93-95% loss
   {id:'eternal_high', name:'Eternal Sovereign Crate', price:18000000, icon:'♾️', color:'#22d3ee', desc:'Ruler of forever.',
-   odds:{transcendent:0.35, eternal:0.50, genesis:0.13, infinite:0.02},
+   odds:{transcendent:0.38, eternal:0.52, genesis:0.08, infinite:0.02},
    items:['tr01','tr02','tr03','et01','et02','ge01','in01']},
 
   {id:'void_eternal', name:'Eternal Void Crate', price:24000000, icon:'🌑', color:'#1f2937', desc:'Endless emptiness.',
-   odds:{eternal:0.45, genesis:0.45, infinite:0.10},
+   odds:{eternal:0.45, genesis:0.48, infinite:0.07},
    items:['et01','et02','ge01','in01','tr02','tr03']},
 
   {id:'genesis_high', name:'True Genesis Crate', price:31000000, icon:'🌅', color:'#fbbf24', desc:'The absolute beginning.',
-   odds:{eternal:0.38, genesis:0.52, infinite:0.10},
+   odds:{eternal:0.40, genesis:0.55, infinite:0.05},
    items:['et01','et02','ge01','in01','tr01','tr03']},
 
   {id:'omnipotent', name:'Omnipotent Crate', price:39000000, icon:'🌌', color:'#e0e7ff', desc:'All-powerful essence.',
-   odds:{genesis:0.55, infinite:0.45},
+   odds:{genesis:0.65, infinite:0.35},
    items:['ge01','in01','tr02','tr03','et02']},
 
   {id:'infinite_final', name:'INFINITE Crate', price:55000000, icon:'♾️', color:'#ffffff', desc:'The final limit breaker.',
-   odds:{eternal:0.40, genesis:0.45, infinite:0.15},
+   odds:{eternal:0.35, genesis:0.45, infinite:0.20},  // ~80% loss on decent wins, very hard to profit
    items:['ge01','in01','et01','et02','tr03']},
 ];
 
