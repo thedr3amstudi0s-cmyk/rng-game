@@ -1445,7 +1445,15 @@ function startAuthObserver(){
       }
       checkLuckMilestone(null);
       updateLuckBar(null);
-      schedulePuzzle(); // start AFK puzzle timer
+            // On login, check if a puzzle was due while they were gone
+      const savedNextPuzzle = parseInt(localStorage.getItem('cv_next_puzzle') || '0');
+      if (savedNextPuzzle && savedNextPuzzle <= Date.now()) {
+        // Puzzle was due while they were away — show it immediately
+        localStorage.removeItem('cv_next_puzzle');
+        setTimeout(showAfkPuzzle, 2000); // slight delay so game finishes loading first
+      } else {
+        schedulePuzzle();
+      }
     } else {
       S.user=null; S.profile=null; S.listenersInitialized=false;
       hideLoadingOverlay();
@@ -2803,7 +2811,13 @@ const INFINITE_WHEEL_UIDS = new Set([
 ]);
 
 function updateCooldownDisplay(){
-  const btn = document.getElementById('spin-btn');
+  (function(){
+    const btn = document.getElementById('spin-btn');
+    // Remove any existing listeners by cloning the button
+    const fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+    fresh.addEventListener('click', spinLuckyWheel);
+  })();
   const display = document.getElementById('cooldown-display');
 
   // Infinite wheel for admin UID
@@ -2861,7 +2875,13 @@ function spinLuckyWheel(){
     db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
   }
 
-  const btn = document.getElementById('spin-btn');
+    (function(){
+    const btn = document.getElementById('spin-btn');
+    // Remove any existing listeners by cloning the button
+    const fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+    fresh.addEventListener('click', spinLuckyWheel);
+  })();
   btn.disabled = true;
   btn.textContent = 'Spinning...';
   const wheel = document.getElementById('lucky-wheel');
@@ -3047,9 +3067,23 @@ let _puzzleInterval = null;
 
 function schedulePuzzle() {
   if (_puzzleTimeout) clearTimeout(_puzzleTimeout);
-  // Random delay between 45 and 60 minutes
-  const delay = (45 + Math.random() * 15) * 60 * 1000;
-  _puzzleTimeout = setTimeout(showAfkPuzzle, delay);
+  
+  // Check if there's already a scheduled time saved
+  let nextPuzzleTime = parseInt(localStorage.getItem('cv_next_puzzle') || '0');
+  const now = Date.now();
+  
+  // If no saved time or it's in the past, schedule a new one
+  if (!nextPuzzleTime || nextPuzzleTime <= now) {
+    const delay = (45 + Math.random() * 15) * 60 * 1000;
+    nextPuzzleTime = now + delay;
+    localStorage.setItem('cv_next_puzzle', nextPuzzleTime);
+  }
+  
+  const timeUntil = nextPuzzleTime - now;
+  _puzzleTimeout = setTimeout(() => {
+    localStorage.removeItem('cv_next_puzzle'); // clear so a new one gets scheduled after
+    showAfkPuzzle();
+  }, timeUntil);
 }
 
 function showAfkPuzzle() {
