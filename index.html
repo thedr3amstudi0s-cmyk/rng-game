@@ -2834,16 +2834,24 @@ function updateCooldownDisplay(){
 
 function spinLuckyWheel(){
   if(isSpinning) return;
-  const isAdmin = S.user && S.user.uid === INFINITE_WHEEL_UID;
-  const cooldown = 24 * 60 * 60 * 1000;
-  const savedTime = S.profile?.lastWheelSpin || 0;
-  const effectiveLastSpin = Math.max(lastSpinTime, savedTime);
-  if(!isAdmin && effectiveLastSpin !== 0 && Date.now() - effectiveLastSpin < cooldown){
-    toast("You can only spin once every 24 hours!", "error");
-    return;
+  
+  const isAdmin = INFINITE_WHEEL_UIDS.has(S.user?.uid || '');
+  
+  if(!isAdmin){
+    const cooldown = 24 * 60 * 60 * 1000;
+    const savedTime = S.profile?.lastWheelSpin || 0;
+    const effectiveLastSpin = Math.max(lastSpinTime, savedTime);
+    if(effectiveLastSpin !== 0 && Date.now() - effectiveLastSpin < cooldown){
+      toast("You can only spin once every 24 hours!", "error");
+      return;
+    }
+    // Only save timestamp for non-admins
+    const now = Date.now();
+    lastSpinTime = now;
+    S.profile.lastWheelSpin = now;
+    db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
   }
 
-  const now = Date.now();
   isSpinning = true;
   lastSpinTime = now;
 
