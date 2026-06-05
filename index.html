@@ -2791,7 +2791,6 @@ let lastSpinTime = 0;
 function showLuckyWheel(){
   if(isSpinning) return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-  // Load last spin time from Firestore if available
   if(S.profile && S.profile.lastWheelSpin){
     lastSpinTime = S.profile.lastWheelSpin;
   }
