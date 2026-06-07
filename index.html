@@ -45,12 +45,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 ::-webkit-scrollbar-track{background:var(--bg-dark);}
 ::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px;}
 
-/* ── SCREENS ─────────────────────────────────────────────── */
-/* ── SCREENS ─────────────────────────────────────────────── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;}
 
-/* ── AUTH ────────────────────────────────────────────────── */
+/* AUTH */
 #auth-screen{align-items:center;justify-content:center;position:relative;
   background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1533 0%,#050810 100%);}
 .auth-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
@@ -78,7 +76,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .auth-note{color:var(--text-2);font-size:.85rem;text-align:center;}
 .auth-note strong{color:var(--gold);}
 
-/* ── BUTTONS ─────────────────────────────────────────────── */
+/* BUTTONS */
 .btn-primary{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;
   padding:13px 24px;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;
   font-weight:700;letter-spacing:.1em;transition:var(--t);
@@ -104,7 +102,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   letter-spacing:.05em;transition:var(--t);}
 .btn-back:hover{border-color:var(--accent);color:var(--accent);}
 
-/* ── LOADING OVERLAY ─────────────────────────────────────── */
+/* LOADING */
 #loading-overlay{position:fixed;inset:0;background:var(--bg-deep);z-index:9999;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
   transition:opacity .4s ease;}
@@ -115,7 +113,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text-2);font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;}
 
-/* ── GAME LAYOUT ─────────────────────────────────────────── */
+/* GAME LAYOUT */
 #game-screen{flex-direction:column;height:100vh;overflow:hidden;}
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;
   height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);
@@ -140,7 +138,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .page-header h2{font-family:var(--font-d);font-size:1.4rem;font-weight:900;letter-spacing:.1em;}
 .page-header p{color:var(--text-2);font-size:.9rem;margin-top:4px;}
 
-/* ── CHAT ────────────────────────────────────────────────── */
+/* CHAT */
 .chat-panel{background:var(--bg-card);border-left:1px solid var(--border);
   display:flex;flex-direction:column;overflow:hidden;}
 .chat-header{padding:14px 16px;border-bottom:1px solid var(--border);
@@ -158,14 +156,8 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-radius:var(--r);font-family:var(--font-d);font-size:.65rem;font-weight:700;
   letter-spacing:.1em;transition:var(--t);}
 .chat-input-row button:hover{background:#6ba3ff;}
-.chat-input-row input {
-  white-space: normal !important;
-  word-spacing: normal !important;
-  letter-spacing: normal !important;
-  font-feature-settings: normal;
-}
 
-/* ── CRATES PAGE ─────────────────────────────────────────── */
+/* CRATES PAGE */
 .crates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
 .crate-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);
   padding:20px 16px;text-align:center;cursor:pointer;transition:var(--t);
@@ -181,7 +173,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border:1px solid var(--border);border-radius:20px;padding:4px 12px;
   font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--gold);}
 
-/* ── CRATE OPENING ───────────────────────────────────────── */
+/* CRATE OPENING */
 .crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
 .crate-open-header h2{font-family:var(--font-d);font-size:1.3rem;font-weight:900;letter-spacing:.15em;}
 .crate-info-panel{background:var(--bg-card);border:1px solid var(--border);
@@ -241,7 +233,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .btn-sell-result:hover{background:var(--gold);color:#000;}
 .btn-open-again:hover{border-color:var(--text-2);color:var(--text-1);}
 
-/* ── INVENTORY ───────────────────────────────────────────── */
+/* INVENTORY */
 .inv-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
 .search-input,.sort-select{background:var(--bg-card);border:1px solid var(--border);
   border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);transition:var(--t);}
@@ -282,7 +274,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .item-name{font-size:.6rem;font-family:var(--font-d);letter-spacing:.04em;color:var(--text-2);line-height:1.2;}
 .item-value-small{font-size:.6rem;color:var(--gold);margin-top:2px;font-family:var(--font-m);}
 
-/* ── TRADE ───────────────────────────────────────────────── */
+/* TRADE */
 .trade-players-panel{background:var(--bg-card);border:1px solid var(--border);
   border-radius:var(--rl);padding:16px 20px;margin-bottom:20px;}
 .trade-players-panel h3{font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;
@@ -332,7 +324,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .btn-cancel-trade:hover{background:#ef4444;color:#fff;}
 .trade-message{padding:10px;font-size:.85rem;color:var(--gold);text-align:center;min-height:20px;}
 
-/* ── FINAL TRADE MODAL ───────────────────────────────────── */
+/* FINAL TRADE MODAL */
 .trade-final-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);
   display:flex;align-items:center;justify-content:center;z-index:1000;}
 .trade-final-inner{background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);
@@ -353,7 +345,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   letter-spacing:.08em;transition:var(--t);}
 .btn-cancel-final:hover{border-color:#ef4444;color:#ef4444;}
 
-/* ── LEADERBOARD ─────────────────────────────────────────── */
+/* LEADERBOARD */
 .lb-tabs{display:flex;gap:6px;margin-bottom:20px;}
 .lb-tab{padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);
   border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
@@ -371,7 +363,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .lb-sub{color:var(--text-2);font-size:.78rem;margin-top:2px;}
 .lb-value{font-family:var(--font-m);font-size:.9rem;color:var(--gold);font-weight:700;}
 
-/* ── TRADE HISTORY ───────────────────────────────────────── */
+/* TRADE HISTORY */
 .history-list{display:flex;flex-direction:column;gap:10px;}
 .history-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;}
 .history-header{display:flex;justify-content:space-between;margin-bottom:8px;font-size:.8rem;}
@@ -381,14 +373,14 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .history-items-list{display:flex;gap:4px;flex-wrap:wrap;}
 .history-item-chip{padding:3px 8px;border-radius:12px;border:1px solid;font-size:.7rem;}
 
-/* ── GLOBAL BANNER ───────────────────────────────────────── */
+/* GLOBAL BANNER */
 .global-banner{position:fixed;top:56px;left:0;right:0;z-index:500;
   background:linear-gradient(135deg,#7c3aed,#4f8ef7);padding:10px 20px;text-align:center;
   font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.08em;color:#fff;
   animation:banner-slide .4s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 @keyframes banner-slide{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
 
-/* ── TOOLTIP ─────────────────────────────────────────────── */
+/* TOOLTIP */
 .item-tooltip{position:fixed;z-index:900;background:var(--bg-card);border:1px solid var(--border-b);
   border-radius:var(--r);padding:12px 14px;min-width:160px;max-width:220px;
   pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.5);}
@@ -398,7 +390,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .tooltip-desc{font-size:.78rem;color:var(--text-2);text-align:center;margin-bottom:6px;}
 .tooltip-value{font-family:var(--font-m);font-size:.75rem;color:var(--gold);text-align:center;}
 
-/* ── TOASTS ──────────────────────────────────────────────── */
+/* TOASTS */
 #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
 .toast{background:var(--bg-card);border:1px solid var(--border-b);border-left:3px solid var(--accent);
   border-radius:var(--r);padding:12px 16px;min-width:220px;font-size:.85rem;color:var(--text-1);
@@ -407,7 +399,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @keyframes toast-in{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
 
-/* ── ULTRA OVERLAY ───────────────────────────────────────── */
+/* ULTRA OVERLAY */
 .ultra-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;
   display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .5s ease;}
 @keyframes ultra-fade-in{from{opacity:0}to{opacity:1}}
@@ -430,7 +422,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   font-weight:900;letter-spacing:.15em;transition:var(--t);}
 .btn-ultra-close:hover{transform:scale(1.05);}
 
-/* ── INCOMING TRADE ──────────────────────────────────────── */
+/* INCOMING TRADE */
 .incoming-trade-modal{position:fixed;bottom:80px;right:24px;background:var(--bg-card);
   border:1px solid var(--accent);border-radius:var(--rl);padding:16px 20px;z-index:800;
   max-width:280px;box-shadow:0 0 30px var(--accent-g);animation:toast-in .3s ease;}
@@ -443,7 +435,16 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border-radius:var(--r);font-family:var(--font-d);font-size:.7rem;font-weight:700;
   letter-spacing:.08em;transition:var(--t);}
 
-/* ── ANIMATIONS ──────────────────────────────────────────── */
+/* SETTINGS PAGE */
+.settings-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:20px 24px;margin-bottom:16px;}
+.settings-section-title{font-family:var(--font-d);font-size:.75rem;font-weight:700;letter-spacing:.15em;color:var(--text-2);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;padding-bottom:0;}
+.settings-row-info{flex:1;}
+.settings-row-label{font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1);letter-spacing:.04em;}
+.settings-row-desc{font-size:.78rem;color:var(--text-3);margin-top:3px;}
+
+/* ANIMATIONS */
 @keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 8px var(--accent))}50%{filter:drop-shadow(0 0 20px var(--accent))}}
 @keyframes rainbow-border{
   0%{border-color:#ff0000;box-shadow:0 0 20px #ff000044}
@@ -456,8 +457,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 }
 .rarity-divine{animation:rainbow-border 2s linear infinite!important;}
 
-/* ── RESPONSIVE ──────────────────────────────────────────── */
-/* ── MOBILE RESPONSIVE ───────────────────────────────────── */
+/* RESPONSIVE */
 @media(max-width:900px){
   .game-layout{grid-template-columns:72px 1fr}
   .chat-panel{display:none}
@@ -498,23 +498,9 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   .history-header{flex-direction:column;gap:2px;align-items:flex-start;}
 }
 
-   .wheel-label {
-  position: absolute;
-  color: white;
-  font-family: var(--font-d);
-  font-weight: 900;
-  font-size: 1.1rem;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-  pointer-events: none;
-  z-index: 15;
-}
-
-  #cip-odds { 
-  max-height: 420px; 
-  overflow-y: auto; 
-  padding-right: 12px; 
-}
+#cip-odds{max-height:420px;overflow-y:auto;padding-right:12px;}
 </style>
+</head>
 <body>
 
 <!-- LOADING OVERLAY -->
@@ -582,6 +568,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
+      <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span class="nav-label">SETTINGS</span></button>
     </nav>
 
     <main class="page-content">
@@ -752,7 +739,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
           <div class="trade-message" id="trade-message"></div>
         </div>
-        <!-- FINAL MODAL lives inside page-trade so it's always accessible -->
         <div class="trade-final-modal hidden" id="trade-final-modal">
           <div class="trade-final-inner">
             <h3>⚠️ FINAL CONFIRMATION</h3>
@@ -781,43 +767,105 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="page-header"><h2>TRADE HISTORY</h2></div>
         <div class="history-list" id="history-list"></div>
       </section>
-      
-      <!-- ACHIEVEMENTS PAGE -->
+
+      <!-- ACHIEVEMENTS -->
       <section class="page" id="page-achievements">
         <div class="page-header"><h2>ACHIEVEMENTS</h2><p>Play more. Unlock more.</p></div>
         <div class="achievement-grid" id="achievements-grid"></div>
       </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings">
+        <div class="page-header"><h2>SETTINGS</h2><p>Customize your CrateVault experience.</p></div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">🎬 VISUAL EFFECTS</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Ultra Rare Cutscene</div>
+              <div class="settings-row-desc">Show the full-screen cinematic when pulling an ultra-rare item</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="setting-cutscene" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Spin Animation</div>
+              <div class="settings-row-desc">Animate the crate spinner (disable for instant results)</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="setting-spin-anim" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">💬 CHAT</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Mute All Chat</div>
+              <div class="settings-row-desc">Hide all messages in global chat</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="setting-mute-chat"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Mute Pull Announcements</div>
+              <div class="settings-row-desc">Hide "Player X pulled [item]!" messages only — regular chat still shows</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="setting-mute-pulls"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">ℹ️ ACCOUNT</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Username</div>
+              <div class="settings-row-desc" id="settings-username-display">—</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Lucky Wheel</div>
+              <div class="settings-row-desc">Free daily coin reward</div>
+            </div>
+            <button class="btn-ghost" onclick="showLuckyWheel()" style="white-space:nowrap">🎰 OPEN WHEEL</button>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <aside class="chat-panel">
       <div class="chat-header">💬 GLOBAL CHAT</div>
       <div class="chat-messages" id="chat-messages"></div>
       <div class="chat-input-row">
-        <input 
-          type="text" 
-          id="chat-input" 
-          placeholder="Type message..." 
-          maxlength="200"
-          style="white-space: normal !important; word-spacing: normal !important; letter-spacing: normal !important;"
-        />
+        <input type="text" id="chat-input" placeholder="Type message..." maxlength="200"/>
         <button id="chat-send">SEND</button>
       </div>
     </aside>
   </div>
 </div>
 
-<!-- Lucky Wheel Modal - FREE + 24h Timer -->
+<!-- Lucky Wheel Modal -->
 <div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--bg-card);padding:30px;border-radius:var(--rl);text-align:center;max-width:400px;border:3px solid var(--gold);">
     <h2 style="color:var(--gold);margin-bottom:15px;">🎰 LUCKY WHEEL</h2>
-    
     <div id="cooldown-display" style="color:#f59e0b;font-weight:700;margin-bottom:20px;min-height:28px;font-size:1.1rem;"></div>
-    
     <div id="wheel-container" style="position:relative;width:290px;height:290px;margin:0 auto 20px;">
-      <div id="lucky-wheel" 
+      <div id="lucky-wheel"
            style="width:290px;height:290px;border:22px solid var(--gold);border-radius:50%;background:conic-gradient(#ef4444 0deg 72deg, #f59e0b 72deg 144deg, #eab308 144deg 216deg, #22c55e 216deg 288deg, #4f8ef7 288deg 360deg);transition:transform 5.8s cubic-bezier(0.23, 1, 0.32, 1);cursor:pointer;box-shadow:0 0 50px rgba(245,158,11,0.7);">
       </div>
-      
       <div id="wheel-labels" style="position:absolute;inset:0;transition:transform 5.8s cubic-bezier(0.23, 1, 0.32, 1);">
         <div style="position:absolute;top:26%;left:67%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">200</div>
         <div style="position:absolute;top:26%;left:24%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">450</div>
@@ -825,16 +873,14 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div style="position:absolute;top:76%;left:47%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">1800</div>
         <div style="position:absolute;top:55%;left:74%;color:white;font-weight:900;font-size:1.15rem;text-shadow:0 2px 4px black;">FREE</div>
       </div>
-      
       <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-top:60px solid #fff;z-index:20;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.7));"></div>
     </div>
-
     <p id="wheel-result" style="min-height:40px;font-size:1.25rem;font-weight:700;color:var(--gold);margin:15px 0;"></p>
     <button id="spin-btn" class="btn-primary" style="width:100%;">SPIN WHEEL (FREE)</button>
     <button class="btn-ghost" onclick="closeLuckyWheel()" style="width:100%;margin-top:10px;">CLOSE</button>
   </div>
 </div>
-  
+
 <!-- TOOLTIP -->
 <div class="item-tooltip hidden" id="item-tooltip">
   <div class="tooltip-icon" id="tt-icon"></div>
@@ -859,16 +905,53 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 </div>
 
 <script>
-// =============================================
-// cratevault_data_patch.js
-// Drop-in replacement for RARITIES, ITEMS, CRATES
-// 50 crates | 40% win rate | 60% loss rate
-// 19 rarity tiers | values calibrated for days-long grind
-// =============================================
 // ============================================================
-// RARITY SYSTEM — 17 tiers
-// Win threshold: item.value >= crate.price  → "win"
-// Target: 40% win rate per crate
+// SETTINGS — persisted to localStorage
+// ============================================================
+const SETTINGS = {
+  cutscene: true,
+  spinAnim: true,
+  muteChat: false,
+  mutePulls: false,
+};
+
+function loadSettings(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('cv_settings') || '{}');
+    Object.assign(SETTINGS, saved);
+  }catch(e){}
+  // Apply to UI toggles
+  document.getElementById('setting-cutscene').checked  = SETTINGS.cutscene;
+  document.getElementById('setting-spin-anim').checked = SETTINGS.spinAnim;
+  document.getElementById('setting-mute-chat').checked = SETTINGS.muteChat;
+  document.getElementById('setting-mute-pulls').checked= SETTINGS.mutePulls;
+}
+
+function saveSettings(){
+  localStorage.setItem('cv_settings', JSON.stringify(SETTINGS));
+}
+
+document.getElementById('setting-cutscene').addEventListener('change', e=>{
+  SETTINGS.cutscene = e.target.checked; saveSettings();
+  toast(e.target.checked ? 'Ultra cutscenes ON' : 'Ultra cutscenes OFF');
+});
+document.getElementById('setting-spin-anim').addEventListener('change', e=>{
+  SETTINGS.spinAnim = e.target.checked; saveSettings();
+  toast(e.target.checked ? 'Spin animation ON' : 'Spin animation OFF (instant results)');
+});
+document.getElementById('setting-mute-chat').addEventListener('change', e=>{
+  SETTINGS.muteChat = e.target.checked; saveSettings();
+  const msgs = document.getElementById('chat-messages');
+  msgs.style.display = e.target.checked ? 'none' : '';
+  toast(e.target.checked ? 'Chat muted' : 'Chat unmuted');
+});
+document.getElementById('setting-mute-pulls').addEventListener('change', e=>{
+  SETTINGS.mutePulls = e.target.checked; saveSettings();
+  toast(e.target.checked ? 'Pull announcements muted' : 'Pull announcements visible');
+});
+
+// ============================================================
+// RARITY / ITEMS / CRATES DATA
 // ============================================================
 const RARITIES = {
   common:       {name:'Common',       color:'#9ca3af', glow:'#9ca3af44', tier:1},
@@ -892,158 +975,82 @@ const RARITIES = {
   infinite:     {name:'Infinite',     color:'#ffffff', glow:'#ffffff99', tier:19},
 };
 
-// ============================================================
-// ITEMS — values set so each rarity has a clear price band
-// ============================================================
 const ITEMS = [
-  // COMMON (~10–90)
-  {id:'c001',name:'Rusty Coin', rarity:'common', icon:'🪙', value:15, desc:'A worn, tarnished coin.'},
-  {id:'c002',name:'Wooden Shield', rarity:'common', icon:'🛡️', value:24, desc:'Basic wooden protection.'},
-  {id:'c003',name:'Dull Dagger', rarity:'common', icon:'🗡️', value:19, desc:'Still gets the job done.'},
-  {id:'c004',name:'Hardtack Bread', rarity:'common', icon:'🍞', value:12, desc:'Survives anything.'},
-  {id:'c005',name:'River Pebble', rarity:'common', icon:'🪨', value:11, desc:'Smooth and oddly lucky.'},
-  {id:'c006',name:'Leather Boots', rarity:'common', icon:'🥾', value:28, desc:'Well-traveled.'},
-  {id:'c007',name:'Hemp Rope', rarity:'common', icon:'🧵', value:17, desc:'Always useful.'},
-  {id:'c008',name:'Wax Candle', rarity:'common', icon:'🕯️', value:13, desc:'Lights the darkest paths.'},
-  {id:'c009',name:'Linen Bandage', rarity:'common', icon:'🩹', value:16, desc:'Stops minor bleeding.'},
-  {id:'c010',name:'Crude Bow', rarity:'common', icon:'🏹', value:32, desc:'Simple but effective.'},
-
-  // UNCOMMON (~80–280)
-  {id:'u001',name:'Silver Ring', rarity:'uncommon', icon:'💍', value:95, desc:'Modest elegance.'},
-  {id:'u002',name:'Steel Sword', rarity:'uncommon', icon:'⚔️', value:105, desc:'Reliable and sharp.'},
-  {id:'u003',name:'Iron Helm', rarity:'uncommon', icon:'⛑️', value:110, desc:'Solid head protection.'},
-  {id:'u004',name:'Swift Potion', rarity:'uncommon', icon:'🧪', value:120, desc:'Increases speed.'},
-  {id:'u005',name:'Shadow Cloak', rarity:'uncommon', icon:'🧥', value:85, desc:'Blends into darkness.'},
-  {id:'u006',name:'Healing Salve', rarity:'uncommon', icon:'🧴', value:105, desc:'Closes wounds quickly.'},
-
-  // RARE (~250–750)
-  {id:'r001',name:'Enchanted Blade', rarity:'rare', icon:'🔷', value:340, desc:'Hums with arcane energy.'},
-  {id:'r002',name:'Dragon Scale', rarity:'rare', icon:'🐉', value:420, desc:'Flame resistant.'},
-  {id:'r003',name:'Mana Crystal', rarity:'rare', icon:'🔮', value:380, desc:'Pure crystallized magic.'},
-  {id:'r004',name:'Thunder Gauntlet', rarity:'rare', icon:'⚡', value:480, desc:'Channels lightning.'},
-
-  // SPECTRAL (~800–2,200)
-  {id:'sp01',name:'Specter Blade', rarity:'spectral', icon:'🌫️', value:980, desc:'Phases through armor.'},
-  {id:'sp02',name:'Phantom Armor', rarity:'spectral', icon:'👻', value:1450, desc:'Ghost-forged plate.'},
-
-  // EPIC (~2k–7k)
-  {id:'e001',name:'Shadow Blade', rarity:'epic', icon:'🌑', value:2000, desc:'Cuts through shadows.'},
-  {id:'e002',name:'Storm Caller', rarity:'epic', icon:'⛈️', value:2500, desc:'Summons tempests.'},
-  {id:'e003',name:'Void Eye', rarity:'epic', icon:'👁️', value:3000, desc:'Sees hidden truths.'},
-
-  // RUNIC (~6k–22k)
-  {id:'ru01',name:'Rune Good Sword', rarity:'runic', icon:'⚔️', value:9800, desc:'Inscribed by ancient people.'},
-  {id:'ru02',name:'Elder Wand', rarity:'runic', icon:'🪄', value:15800, desc:'Bends fate itself.'},
-
-  // LEGENDARY (~18k–55k)
-  {id:'l001',name:'Dragon Emperor Crown', rarity:'legendary', icon:'👑', value:26500, desc:'Worn by dragon kings.'},
-  {id:'l002',name:'Void Reaper', rarity:'legendary', icon:'💀', value:43500, desc:'Harvests souls.'},
-
-  // CURSED (~45k–95k)
-  {id:'cu01',name:'Cursed Deathmask', rarity:'cursed', icon:'💀', value:58000, desc:'Damns the wearer.'},
-
-  // MYTHIC (~90k–220k)
-  {id:'m001',name:'World Ender Blade', rarity:'mythic', icon:'⚔️', value:135000, desc:'Destroys worlds.'},
-  {id:'m002',name:'Celestial Throne', rarity:'mythic', icon:'🪑', value:185000, desc:'Seat of the sky people.'},
-
-  // ASTRAL (~250k–650k)
-  {id:'as01',name:'Astral Catalyst', rarity:'astral', icon:'🌠', value:380000, desc:'Bends starlight.'},
-
-  // DIVINE (~600k–1.8M)
-  {id:'d001',name:'Reality Shatter', rarity:'divine', icon:'💠', value:950000, desc:'Breaks the rules of existence.'},
-
-  // PRIMORDIAL (~1.8M–3.2M)
-  {id:'pr01',name:'First Flame', rarity:'primordial', icon:'🔥', value:2800000, desc:'The original fire of creation.'},
-
-  // ULTRA (~3.2M–4.2M)
-  {id:'ur01',name:'UNIVERSE CORE', rarity:'ultra', icon:'🌌', value:4200000, desc:'The heart of the universe.'},
-
-  // HYPER (~4.2M–4.8M)
-  {id:'hy01',name:'HYPER BLADE', rarity:'hyper', icon:'⚔️', value:4230000, desc:'Slays the unkillable.'},
-
-  // COSMIC (~4.8M–5.4M)
-  {id:'co01',name:'COSMIC WILL', rarity:'cosmic', icon:'🌌', value:4250000, desc:'The will of all reality.'},
-
-  // TRANSCENDENT (~5.4M–5.7M)
-  {id:'tr01',name:'TRANSCENDENT WILL', rarity:'transcendent', icon:'🌟', value:4300000, desc:'Beyond all comprehension.'},
-
-  // ETERNAL (~5.7M–5.9M)
-  {id:'et01',name:'ETERNAL FLAME', rarity:'eternal', icon:'🔥', value:4500000, desc:'Burns across eternity.'},
-
-  // GENESIS & INFINITE (Top Tier)
-  {id:'ge01',name:'GENESIS', rarity:'genesis', icon:'🌅', value:5000000, desc:'The beginning and the end.'},
-  {id:'in01',name:'∞ INFINITE', rarity:'infinite', icon:'♾️', value:6000000, desc:'True limitless power.'},   // ← Maximum value
+  {id:'c001',name:'Rusty Coin',       rarity:'common',   icon:'🪙', value:15,       desc:'A worn, tarnished coin.'},
+  {id:'c002',name:'Wooden Shield',    rarity:'common',   icon:'🛡️', value:24,       desc:'Basic wooden protection.'},
+  {id:'c003',name:'Dull Dagger',      rarity:'common',   icon:'🗡️', value:19,       desc:'Still gets the job done.'},
+  {id:'c004',name:'Hardtack Bread',   rarity:'common',   icon:'🍞', value:12,       desc:'Survives anything.'},
+  {id:'c005',name:'River Pebble',     rarity:'common',   icon:'🪨', value:11,       desc:'Smooth and oddly lucky.'},
+  {id:'c006',name:'Leather Boots',    rarity:'common',   icon:'🥾', value:28,       desc:'Well-traveled.'},
+  {id:'c007',name:'Hemp Rope',        rarity:'common',   icon:'🧵', value:17,       desc:'Always useful.'},
+  {id:'c008',name:'Wax Candle',       rarity:'common',   icon:'🕯️', value:13,       desc:'Lights the darkest paths.'},
+  {id:'c009',name:'Linen Bandage',    rarity:'common',   icon:'🩹', value:16,       desc:'Stops minor bleeding.'},
+  {id:'c010',name:'Crude Bow',        rarity:'common',   icon:'🏹', value:32,       desc:'Simple but effective.'},
+  {id:'u001',name:'Silver Ring',      rarity:'uncommon', icon:'💍', value:95,       desc:'Modest elegance.'},
+  {id:'u002',name:'Steel Sword',      rarity:'uncommon', icon:'⚔️', value:105,      desc:'Reliable and sharp.'},
+  {id:'u003',name:'Iron Helm',        rarity:'uncommon', icon:'⛑️', value:110,      desc:'Solid head protection.'},
+  {id:'u004',name:'Swift Potion',     rarity:'uncommon', icon:'🧪', value:120,      desc:'Increases speed.'},
+  {id:'u005',name:'Shadow Cloak',     rarity:'uncommon', icon:'🧥', value:85,       desc:'Blends into darkness.'},
+  {id:'u006',name:'Healing Salve',    rarity:'uncommon', icon:'🧴', value:105,      desc:'Closes wounds quickly.'},
+  {id:'r001',name:'Enchanted Blade',  rarity:'rare',     icon:'🔷', value:340,      desc:'Hums with arcane energy.'},
+  {id:'r002',name:'Dragon Scale',     rarity:'rare',     icon:'🐉', value:420,      desc:'Flame resistant.'},
+  {id:'r003',name:'Mana Crystal',     rarity:'rare',     icon:'🔮', value:380,      desc:'Pure crystallized magic.'},
+  {id:'r004',name:'Thunder Gauntlet', rarity:'rare',     icon:'⚡', value:480,      desc:'Channels lightning.'},
+  {id:'sp01',name:'Specter Blade',    rarity:'spectral', icon:'🌫️', value:980,      desc:'Phases through armor.'},
+  {id:'sp02',name:'Phantom Armor',    rarity:'spectral', icon:'👻', value:1450,     desc:'Ghost-forged plate.'},
+  {id:'e001',name:'Shadow Blade',     rarity:'epic',     icon:'🌑', value:2000,     desc:'Cuts through shadows.'},
+  {id:'e002',name:'Storm Caller',     rarity:'epic',     icon:'⛈️', value:2500,     desc:'Summons tempests.'},
+  {id:'e003',name:'Void Eye',         rarity:'epic',     icon:'👁️', value:3000,     desc:'Sees hidden truths.'},
+  {id:'ru01',name:'Rune Good Sword',  rarity:'runic',    icon:'⚔️', value:9800,     desc:'Inscribed by ancient people.'},
+  {id:'ru02',name:'Elder Wand',       rarity:'runic',    icon:'🪄', value:15800,    desc:'Bends fate itself.'},
+  {id:'l001',name:'Dragon Emperor Crown',rarity:'legendary',icon:'👑',value:26500,  desc:'Worn by dragon kings.'},
+  {id:'l002',name:'Void Reaper',      rarity:'legendary',icon:'💀', value:43500,    desc:'Harvests souls.'},
+  {id:'cu01',name:'Cursed Deathmask', rarity:'cursed',   icon:'💀', value:58000,    desc:'Damns the wearer.'},
+  {id:'m001',name:'World Ender Blade',rarity:'mythic',   icon:'⚔️', value:135000,   desc:'Destroys worlds.'},
+  {id:'m002',name:'Celestial Throne', rarity:'mythic',   icon:'🪑', value:185000,   desc:'Seat of the sky people.'},
+  {id:'as01',name:'Astral Catalyst',  rarity:'astral',   icon:'🌠', value:380000,   desc:'Bends starlight.'},
+  {id:'d001',name:'Reality Shatter',  rarity:'divine',   icon:'💠', value:950000,   desc:'Breaks the rules of existence.'},
+  {id:'pr01',name:'First Flame',      rarity:'primordial',icon:'🔥',value:2800000,  desc:'The original fire of creation.'},
+  {id:'ur01',name:'UNIVERSE CORE',    rarity:'ultra',    icon:'🌌', value:4200000,  desc:'The heart of the universe.'},
+  {id:'hy01',name:'HYPER BLADE',      rarity:'hyper',    icon:'⚔️', value:4230000,  desc:'Slays the unkillable.'},
+  {id:'co01',name:'COSMIC WILL',      rarity:'cosmic',   icon:'🌌', value:4250000,  desc:'The will of all reality.'},
+  {id:'tr01',name:'TRANSCENDENT WILL',rarity:'transcendent',icon:'🌟',value:4300000,desc:'Beyond all comprehension.'},
+  {id:'et01',name:'ETERNAL FLAME',    rarity:'eternal',  icon:'🔥', value:4500000,  desc:'Burns across eternity.'},
+  {id:'ge01',name:'GENESIS',          rarity:'genesis',  icon:'🌅', value:5000000,  desc:'The beginning and the end.'},
+  {id:'in01',name:'∞ INFINITE',       rarity:'infinite', icon:'♾️', value:6000000,  desc:'True limitless power.'},
 ];
 
-// ============================================================
-// 50 CRATES — balanced at 40% win rate, 60% loss rate
-// Win = item value >= crate price
-// EV ≈ 0.40 × (avg_win_value) + 0.60 × (avg_loss_value)
-// Each crate's EV should be ~55-65% of price (house edge 35-45%)
-//
-// Crate progression:
-// $10 → $50M
-// Tier 1-10:   $10–$1,000       (casual play, hours to grind)
-// Tier 11-25:  $1,000–$50,000   (daily grinder territory)
-// Tier 26-38:  $50,000–$2M      (serious grinder, weeks)
-// Tier 39-45:  $2M–$20M         (millionaire tier, months)
-// Tier 46-50:  $20M–$50M+       (extreme endgame, legendary)
-//
-// Odds design:
-//   - 60% of pulls come from rarities BELOW crate price → loss
-//   - 40% of pulls come from rarities AT/ABOVE crate price → win
-// ============================================================
 const CRATES = [
-  // ─── TIER 1: ENTRY (~210% Return) ───
-  {id:'tin', name:'Tin Crate', price:12, icon:'🔩', color:'#6b7280', desc:'Barely worth opening.', odds:{common:0.82, uncommon:0.18}, items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','u001','u002']},
-  {id:'copper', name:'Copper Crate', price:25, icon:'🪙', color:'#b45309', desc:'A humble start.', odds:{common:0.74, uncommon:0.26}, items:['c001','c003','c006','c010','u001','u002','u003','u004']},
-  {id:'bronze', name:'Bronze Crate', price:45, icon:'🥉', color:'#c97d4b', desc:'Entry tier loot.', odds:{common:0.65, uncommon:0.32, rare:0.03}, items:['c006','c010','u001','u002','u004','u005','r001']},
-  {id:'iron', name:'Iron Crate', price:65, icon:'⚙️', color:'#78716c', desc:'Solid beginner value.', odds:{common:0.55, uncommon:0.38, rare:0.07}, items:['u002','u003','u004','u005','r001','r002','r003']},
-
-  // ─── TIER 2: BEGINNER (~200% Return) ───
-  {id:'steel', name:'Steel Crate', price:95, icon:'🗡️', color:'#94a3b8', desc:'A real step up.', odds:{uncommon:0.62, rare:0.35, spectral:0.03}, items:['u003','u004','u005','r001','r002','r003','r004','sp01']},
-  {id:'silver', name:'Silver Crate', price:180, icon:'🌙', color:'#cbd5e1', desc:'Silvery promise.', odds:{uncommon:0.52, rare:0.42, spectral:0.06}, items:['u004','u005','r001','r002','r003','r004','sp01','sp02']},
-  {id:'crystal', name:'Crystal Crate', price:280, icon:'💎', color:'#7dd3fc', desc:'Gleaming with potential.', odds:{uncommon:0.48, rare:0.45, spectral:0.07}, items:['u005','r001','r002','r003','r004','sp01','sp02']},
-
-  // ─── TIER 3: INTERMEDIATE (~190% Return) ───
-  {id:'arcane', name:'Arcane Crate', price:650, icon:'🔮', color:'#a78bfa', desc:'Mana infused.', odds:{rare:0.55, spectral:0.38, epic:0.07}, items:['r001','r002','r003','r004','sp01','sp02','e001','e002']},
-  {id:'runic', name:'Runic Crate', price:950, icon:'🔯', color:'#f97316', desc:'Ancient power stirs.', odds:{rare:0.48, spectral:0.42, epic:0.10}, items:['r002','r003','r004','sp01','sp02','e001','e002','e003']},
-
-  // ─── TIER 4: ADVANCED (~180% Return) ───
-  {id:'infernal', name:'Infernal Crate', price:2800, icon:'🔥', color:'#dc2626', desc:'Fire & destruction.', odds:{spectral:0.42, epic:0.48, runic:0.10}, items:['sp02','e001','e002','e003','ru01']},
-  {id:'storm', name:'Storm Crate', price:4800, icon:'⛈️', color:'#3b82f6', desc:'Elemental fury.', odds:{epic:0.55, runic:0.38, legendary:0.07}, items:['e001','e002','e003','ru01','ru02']},
-
-  // ─── TIER 5: ELITE (~170% Return) ───
-  {id:'royal', name:'Royal Crate', price:14500, icon:'👑', color:'#eab308', desc:'Noble prestige.', odds:{epic:0.45, runic:0.45, legendary:0.10}, items:['e002','e003','ru01','ru02','l001']},
-  {id:'void', name:'Void Crate', price:24000, icon:'🕳️', color:'#555555', desc:'Nothingness calls.', odds:{runic:0.38, legendary:0.52, cursed:0.10}, items:['ru02','l001','l002','cu01']},
-
-  // ─── TIER 6: MASTER (~160% Return) ───
-  {id:'abyssal', name:'Abyssal Crate', price:65000, icon:'🌊', color:'#1e40af', desc:'Deep sea horrors.', odds:{legendary:0.48, cursed:0.42, mythic:0.10}, items:['l001','l002','cu01','m001']},
-  {id:'dragon', name:'Dragon Crate', price:95000, icon:'🐉', color:'#b91c1c', desc:'Draconic power.', odds:{legendary:0.40, cursed:0.45, mythic:0.15}, items:['l002','cu01','m001','m002']},
-
-  // ─── TIER 7: GRANDMASTER (~150% Return) ───
-  {id:'celestial', name:'Celestial Crate', price:280000, icon:'🌟', color:'#f59e0b', desc:'Heavenly power.', odds:{cursed:0.35, mythic:0.50, astral:0.15}, items:['cu01','m001','m002','as01']},
-  {id:'divine', name:'Divine Crate', price:380000, icon:'💠', color:'#ddddff', desc:'Touch of good.', odds:{mythic:0.48, astral:0.42, primordial:0.10}, items:['m002','as01','pr01']},
-
-  // ─── TIER 8: LEGEND (~140% Return) ───
-  {id:'primordial', name:'Primordial Crate', price:950000, icon:'🌋', color:'#10b981', desc:'Ancient beyond measure.', odds:{astral:0.40, divine:0.45, primordial:0.15}, items:['as01','d001','pr01']},
-  {id:'ultra', name:'Ultra Crate', price:1450000, icon:'🌌', color:'#00ffff', desc:'Transcends limits.', odds:{divine:0.38, primordial:0.48, ultra:0.14}, items:['d001','pr01','ur01']},
-
-  // ─── TIER 9: MYTHICAL (~130% Return) ───
-  {id:'cosmic', name:'Cosmic Crate', price:2200000, icon:'🌌', color:'#fffaaa', desc:'The universe calls.', odds:{primordial:0.42, ultra:0.45, hyper:0.13}, items:['pr01','ur01','hy01']},
-
-  // ─── TIER 10: TRANSCENDENT (~120% Return) ───
-  {id:'transcendent', name:'Transcendent Crate', price:3200000, icon:'🌟', color:'#c026d3', desc:'Beyond human measure.', odds:{ultra:0.40, hyper:0.45, cosmic:0.15}, items:['ur01','hy01','co01']},
-  {id:'eternal', name:'Eternal Crate', price:4200000, icon:'♾️', color:'#22d3ee', desc:'Eternal riches await.', odds:{hyper:0.42, cosmic:0.45, transcendent:0.13}, items:['hy01','co01','tr01']},
-  {id:'genesis', name:'Genesis Crate', price:5000000, icon:'🌅', color:'#fbbf24', desc:'The beginning and end.', odds:{cosmic:0.40, transcendent:0.45, eternal:0.12, genesis:0.03}, items:['co01','tr01','et01','ge01','in01']},
+  {id:'tin',      name:'Tin Crate',          price:12,      icon:'🔩', color:'#6b7280', desc:'Barely worth opening.',     odds:{common:0.82,uncommon:0.18},             items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','u001','u002']},
+  {id:'copper',   name:'Copper Crate',       price:25,      icon:'🪙', color:'#b45309', desc:'A humble start.',           odds:{common:0.74,uncommon:0.26},             items:['c001','c003','c006','c010','u001','u002','u003','u004']},
+  {id:'bronze',   name:'Bronze Crate',       price:45,      icon:'🥉', color:'#c97d4b', desc:'Entry tier loot.',          odds:{common:0.65,uncommon:0.32,rare:0.03},   items:['c006','c010','u001','u002','u004','u005','r001']},
+  {id:'iron',     name:'Iron Crate',         price:65,      icon:'⚙️', color:'#78716c', desc:'Solid beginner value.',     odds:{common:0.55,uncommon:0.38,rare:0.07},   items:['u002','u003','u004','u005','r001','r002','r003']},
+  {id:'steel',    name:'Steel Crate',        price:95,      icon:'🗡️', color:'#94a3b8', desc:'A real step up.',           odds:{uncommon:0.62,rare:0.35,spectral:0.03}, items:['u003','u004','u005','r001','r002','r003','r004','sp01']},
+  {id:'silver',   name:'Silver Crate',       price:180,     icon:'🌙', color:'#cbd5e1', desc:'Silvery promise.',          odds:{uncommon:0.52,rare:0.42,spectral:0.06}, items:['u004','u005','r001','r002','r003','r004','sp01','sp02']},
+  {id:'crystal',  name:'Crystal Crate',      price:280,     icon:'💎', color:'#7dd3fc', desc:'Gleaming with potential.',  odds:{uncommon:0.48,rare:0.45,spectral:0.07}, items:['u005','r001','r002','r003','r004','sp01','sp02']},
+  {id:'arcane',   name:'Arcane Crate',       price:650,     icon:'🔮', color:'#a78bfa', desc:'Mana infused.',             odds:{rare:0.55,spectral:0.38,epic:0.07},     items:['r001','r002','r003','r004','sp01','sp02','e001','e002']},
+  {id:'runic',    name:'Runic Crate',        price:950,     icon:'🔯', color:'#f97316', desc:'Ancient power stirs.',      odds:{rare:0.48,spectral:0.42,epic:0.10},     items:['r002','r003','r004','sp01','sp02','e001','e002','e003']},
+  {id:'infernal', name:'Infernal Crate',     price:2800,    icon:'🔥', color:'#dc2626', desc:'Fire & destruction.',       odds:{spectral:0.42,epic:0.48,runic:0.10},    items:['sp02','e001','e002','e003','ru01']},
+  {id:'storm',    name:'Storm Crate',        price:4800,    icon:'⛈️', color:'#3b82f6', desc:'Elemental fury.',           odds:{epic:0.55,runic:0.38,legendary:0.07},   items:['e001','e002','e003','ru01','ru02']},
+  {id:'royal',    name:'Royal Crate',        price:14500,   icon:'👑', color:'#eab308', desc:'Noble prestige.',           odds:{epic:0.45,runic:0.45,legendary:0.10},   items:['e002','e003','ru01','ru02','l001']},
+  {id:'void',     name:'Void Crate',         price:24000,   icon:'🕳️', color:'#555555', desc:'Nothingness calls.',        odds:{runic:0.38,legendary:0.52,cursed:0.10}, items:['ru02','l001','l002','cu01']},
+  {id:'abyssal',  name:'Abyssal Crate',      price:65000,   icon:'🌊', color:'#1e40af', desc:'Deep sea horrors.',         odds:{legendary:0.48,cursed:0.42,mythic:0.10},items:['l001','l002','cu01','m001']},
+  {id:'dragon',   name:'Dragon Crate',       price:95000,   icon:'🐉', color:'#b91c1c', desc:'Draconic power.',           odds:{legendary:0.40,cursed:0.45,mythic:0.15},items:['l002','cu01','m001','m002']},
+  {id:'celestial',name:'Celestial Crate',    price:280000,  icon:'🌟', color:'#f59e0b', desc:'Heavenly power.',           odds:{cursed:0.35,mythic:0.50,astral:0.15},   items:['cu01','m001','m002','as01']},
+  {id:'divine',   name:'Divine Crate',       price:380000,  icon:'💠', color:'#ddddff', desc:'Touch of good.',            odds:{mythic:0.48,astral:0.42,primordial:0.10},items:['m002','as01','pr01']},
+  {id:'primordial',name:'Primordial Crate',  price:950000,  icon:'🌋', color:'#10b981', desc:'Ancient beyond measure.',   odds:{astral:0.40,divine:0.45,primordial:0.15},items:['as01','d001','pr01']},
+  {id:'ultra',    name:'Ultra Crate',        price:1450000, icon:'🌌', color:'#00ffff', desc:'Transcends limits.',        odds:{divine:0.38,primordial:0.48,ultra:0.14},items:['d001','pr01','ur01']},
+  {id:'cosmic',   name:'Cosmic Crate',       price:2200000, icon:'🌌', color:'#fffaaa', desc:'The universe calls.',       odds:{primordial:0.42,ultra:0.45,hyper:0.13}, items:['pr01','ur01','hy01']},
+  {id:'transcendent',name:'Transcendent Crate',price:3200000,icon:'🌟',color:'#c026d3',desc:'Beyond human measure.',     odds:{ultra:0.40,hyper:0.45,cosmic:0.15},     items:['ur01','hy01','co01']},
+  {id:'eternal',  name:'Eternal Crate',      price:4200000, icon:'♾️', color:'#22d3ee', desc:'Eternal riches await.',     odds:{hyper:0.42,cosmic:0.45,transcendent:0.13},items:['hy01','co01','tr01']},
+  {id:'genesis',  name:'Genesis Crate',      price:5000000, icon:'🌅', color:'#fbbf24', desc:'The beginning and end.',   odds:{cosmic:0.40,transcendent:0.45,eternal:0.12,genesis:0.03},items:['co01','tr01','et01','ge01','in01']},
 ];
 
-  const ACHIEVEMENTS = [
-  {id:'first_open', name:'First Steps', desc:'Open your first crate', icon:'📦', reward:250},
-  {id:'lucky_10', name:'Lucky 10', desc:'Open 10 crates', icon:'🍀', reward:1000},
-  {id:'millionaire', name:'Millionaire', desc:'Reach 1,000,000 coins', icon:'🪙', reward:5000},
-  {id:'ultra_hunter', name:'Ultra Hunter', desc:'Pull an Ultra item', icon:'💠', reward:15000},
-  {id:'climber', name:'Vault Master', desc:'Reach 100 tiles in Climber', icon:'🧗', reward:3000},
+const ACHIEVEMENTS = [
+  {id:'first_open', name:'First Steps',    desc:'Open your first crate',   icon:'📦', reward:250},
+  {id:'lucky_10',   name:'Lucky 10',       desc:'Open 10 crates',          icon:'🍀', reward:1000},
+  {id:'millionaire',name:'Millionaire',    desc:'Reach 1,000,000 coins',   icon:'🪙', reward:5000},
+  {id:'ultra_hunter',name:'Ultra Hunter', desc:'Pull an Ultra item',       icon:'💠', reward:15000},
 ];
 
 function getItem(id){return ITEMS.find(i=>i.id===id);}
@@ -1055,15 +1062,9 @@ function fmtNum(n){
   if(n>=1e3) return(n/1e3).toFixed(1)+'K';
   return String(Math.floor(n));
 }
-function rarityOdds(k, crateOdds){
-  // If called with crate-specific odds, use those
-  const pct = crateOdds ? crateOdds[k] : null;
-  if(pct == null) {
-    const r=RARITIES[k]; if(!r)return'';
-    if(r.display)return r.display;
-    return'—';
-  }
-  if(RARITIES[k]?.display) return RARITIES[k].display; // ultra tiers always show display
+function rarityOdds(k,crateOdds){
+  const pct=crateOdds?crateOdds[k]:null;
+  if(pct==null){const r=RARITIES[k];if(!r)return'';return r.display||'—';}
   const p=pct*100;
   if(p>=1)return p.toFixed(0)+'%';
   if(p>=.1)return p.toFixed(1)+'%';
@@ -1071,133 +1072,63 @@ function rarityOdds(k, crateOdds){
   return'1 in '+Math.round(1/pct).toLocaleString();
 }
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
-  
+
+// ============================================================
+// PROFANITY FILTER — Fixed version
+// Normalizes leet speak, checks whole-word and substring matches
+// ============================================================
 const BAD_WORDS = [
-  // === Profanity & Swears ===
-  'fuck','fucking','fucked','fucker','fuckyou','fuckoff','shit','shitty','bullshit','bitch','bitches','bitchy','bastard','damn','damnit','hell','ass','asshole','assholes','pussy','dick','dickhead','cock','cocksucker','slut','whore','cunt','twat','wank','wanker','prick','bollocks','tosser','bugger','bloody','arse','arsehole','chode',
-
-  // === Racial / Ethnic / Religious Slurs ===
-  'nigger','nigga','niggers','migger','chink','chinks','spic','spics','kike','kikes','gook','gooks','towelhead','towelheads','fag','faggot','faggots','fagot','fagots','homo','homos','retard','retards','tranny','trannies','jewboy','sandnigger','beaner','wetback','kraut','nip','paki','raghead','terrorist',
-
-  // === Sexual / NSFW / Explicit ===
-  'sex','porn','porno','hentai','cum','cumming','cums','tits','boobs','boob','tit','dildo','anal','gangbang','threesome','blowjob','handjob','creampie','orgasm','piss','scat','rape','raped','rapist','incest','pedo','pedophile','loli','shota','milf','daddy','mommy','nsfw','xxx','nude','naked','horny','thot','simp','coomer',
-
-  // === Drugs / Alcohol / Substances ===
-  'weed','marijuana','meth','methamphetamine','cocaine','coke','heroin','ecstasy','lsd','acid','vape','vaping','alcohol','drunk','drunken','beer','vodka','whiskey','opioid','fentanyl','xanax','oxy','ketamine','shrooms','mushrooms','crack','speed','high','stoned','blazed',
-
-  // === Hacking / Cheating / Exploits ===
-  'hack','hacking','hacker','cheat','cheating','cheater','exploit','exploiting','dup','dupe','duping','glitch','glitching','script','scripting','mod','modding','inject','injection','aimbot','wallhack','triggerbot','esp','ddos','bot','bots','crack','keygen','warez',
-
-  // === Threats / Violence / Self-Harm ===
-  'kill','killing','killer','die','dying','suicide','suicidal','kys','murder','rape','raping','bomb','terrorist','shoot','shooting','stab','stabbing','hurt','torture','threat','threaten','dox','doxing','swat','kill yourself','end yourself',
-
-  // === Personal Info / Doxxing ===
-  'address','phone','phonenumber','email','gmail','ip','ipaddress','ssn','socialsecurity','password','pass','bank','creditcard','location','live','where do you live','what is your address',
-
-  // === Other Offensive / Toxic ===
-  'suck','sucks','stink','stinks','loser','idiot','moron','stupid','retarded','noob','noobz','cancer','kill yourself','kys','fagg','nazi','hitler','trump','biden','cuntface','dumbass','dumb','fucktard','shithead','motherfucker','mf','lmfao','lmao','kek','based','cringe','simp','incel','virgin','beta','cuck','autist','spaz','mong','spastic','libtard','conservatard',
-  
-  // Common combinations / variants
-  'fuck you','go fuck yourself','eat shit','suck my dick','suck my cock','bitch ass','ass hat','dick head','pussy ass','mother fucker','son of a bitch','piece of shit'
+  'fuck','fucking','fucked','fucker','shit','bullshit','bitch','bitches','bastard','ass','asshole',
+  'pussy','dick','dickhead','cock','cocksucker','slut','whore','cunt','twat','wank','wanker',
+  'prick','bollocks','tosser','bugger','arse','arsehole','chode','nigger','nigga','chink','spic',
+  'kike','gook','towelhead','fag','faggot','homo','retard','tranny','jewboy','sandnigger','beaner',
+  'wetback','paki','raghead','nip','motherfucker','mf','dumbass','fucktard','shithead','cuntface',
+  'rape','rapist','pedophile','pedo','nazi','hitler','kys','kill yourself',
 ];
 
-// ============================================================
-// CHAT FILTER FUNCTION (working version)
-// ============================================================
-const LEET_MAP = {
-  // Numbers & Symbols
-  '0':'o','1':'i','2':'z','3':'e','4':'a','5':'s','6':'g','7':'t','8':'b','9':'g',
-  '!':'i','@':'a','#':'h','$':'s','%':'x','&':'and','*':'x','(':'c',')':'c','-':'','_':'','+':'t','=':'','[':'','{':'','\\':'','|':'l',']':'','}':'',';':'','\'':'','"':'','<':'','>':'','?':'','/':'','`':'','~':'',
+// Characters that look like letters (leet speak normalization)
+const LEET = {'0':'o','1':'i','3':'e','4':'a','5':'s','6':'g','7':'t','8':'b','@':'a','$':'s','!':'i'};
 
-  // Common letter replacements
-  'a':'a','b':'b','c':'c','d':'d','e':'e','f':'f','g':'g','h':'h','i':'i','j':'j','k':'k','l':'l','m':'m','n':'n','o':'o','p':'p','q':'q','r':'r','s':'s','t':'t','u':'u','v':'v','w':'w','x':'x','y':'y','z':'z',
-
-  // Advanced leetspeak
-  '@':'a','4':'a','&':'a','p':'a','o':'a',
-  '8':'b','13':'b',
-  '(': 'c', '<':'c','{':'c',
-  '3':'e','€':'e',
-  'ph':'f',
-  '6':'g','9':'g',
-  '#':'h',
-  '1':'i','!':'i','|':'i','l':'i',
-  '_':'l',
-  'n':'m', '^':'m',
-  'm':'n',
-  '0':'o',
-  'p':'p',
-  '9':'q',
-  '2':'r','®':'r',
-  '5':'s','$':'s',
-  '7':'t','+':'t',
-  'u':'u',
-  'v':'v',
-  'w':'w',
-  'x':'x',
-  'y':'y',
-  '2':'z',
-
-  // Multi-character common replacements
-  'to':'2','for':'4','and':'&','you':'u','at':'@','ck':'x','er':'r','oo':'00','ll':'11'
-};
-
-// Normalize text: lowercase, replace leet, turn non-letters into space
-function normalize(text){
-  text = text.toLowerCase();
-  let result = '';
-  for(let c of text){
-    if(/[a-z]/.test(c)) result += c;
-    else if(LEET_MAP[c]) result += LEET_MAP[c];
-    else result += ' '; // replace all other symbols with space
-  }
-  return result;
+function normalizeLeet(str){
+  return str.toLowerCase().split('').map(c=>LEET[c]||c).join('');
 }
 
-// Build regex for a word allowing spaces/symbols/repeated letters
-function buildFlexibleRegex(word){
-  word = word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  return new RegExp(word.split('').map(c => `${c}+[^a-z]*`).join(''), 'gi');
-}
-
-
-// Simple and reliable bad word filter
-function filterChat(text) {
-  if (!text) return '';
-  
+function filterChat(text){
+  if(!text) return '';
+  const norm = normalizeLeet(text);
   let filtered = text;
+  let filteredNorm = norm;
 
-  BAD_WORDS.forEach(badWord => {
-    // Escape special regex characters and match whole words (case insensitive)
-    const escaped = badWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp('\\b' + escaped + '\\b', 'gi');
-    filtered = filtered.replace(regex, '***');
-  });
-
+  for(const word of BAD_WORDS){
+    // Build pattern: allow optional non-letter chars between each letter (for s.p.a.c.e.d tricks)
+    // e.g. "f u c k" or "f*ck"
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    // Match on the NORMALIZED string, replace positions back in original
+    // Approach: find matches in norm, replace same char ranges in filtered
+    const regex = new RegExp(escaped, 'gi');
+    // Check normalized version
+    if(regex.test(filteredNorm)){
+      // Replace in both
+      filteredNorm = filteredNorm.replace(new RegExp(escaped,'gi'), m=>'*'.repeat(m.length));
+      // For the original, do a loose version: just replace exact (case insensitive)
+      filtered = filtered.replace(new RegExp(escaped,'gi'), m=>'*'.repeat(m.length));
+    }
+    // Also check spaced-out: "f u c k" → strip spaces and check
+    const strippedNorm = filteredNorm.replace(/\s+/g,'');
+    if(!regex.test(filteredNorm) && new RegExp(escaped,'gi').test(strippedNorm)){
+      filtered = filtered.replace(/\S+/gi, token=>{
+        if(normalizeLeet(token.replace(/\s/g,'')).includes(word)) return '***';
+        return token;
+      });
+    }
+  }
   return filtered;
 }
-  
-// Usage in sendChat()
-async function sendChat(){
-  const input=document.getElementById('chat-input');
-  let text = input.value.slice(0,200); // allow spaces
-  if(!text||!S.user||!S.profile) return;
-  text = filterChat(text); // filter bad words
-  input.value='';
-  try{
-    await rtdb.ref('chat').push({
-      username: S.profile.username,
-      text,
-      isSystem:false,
-      ts:firebase.database.ServerValue.TIMESTAMP
-    });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
-}
-  
+
 // ============================================================
 // FIREBASE INIT
 // ============================================================
 let db, auth, rtdb;
-
 function initFirebase(cfg){
   if(firebase.apps.length) firebase.apps.forEach(a=>a.delete());
   firebase.initializeApp(cfg);
@@ -1210,35 +1141,20 @@ function initFirebase(cfg){
 // STATE
 // ============================================================
 const S = {
-  user: null,
-  profile: null,
-  inventory: [],
-  selectedItems: new Set(),
-  currentCrate: null,
-  currentLbTab: 'richest',
-  lbData: {},
-  tradeRoomId: null,
-  tradeMyItems: [],
-  tradeTheirItems: [],
-  tradeMyAccepted: false,
-  tradeTheirAccepted: false,
-  tradeCountdownActive: false,
-  tradePartnerUid: null,
-  onlinePlayers: [],
-  presenceRef: null,
-  presenceHeartbeat: null,
-  tradeMyCoins: 0,
-  tradeTheirCoins: 0,
-  tradeSortBy: 'rarity',
-  luckBoost: null,      // 'minor' | 'huge' | null
-  luckBoostUsed: false,
-  autoSell: false,
-  autoSellMode: 'rarity',
-  autoSellRarity: 'common',
-  autoSellPrice: 0,
+  user: null, profile: null, inventory: [],
+  selectedItems: new Set(), currentCrate: null,
+  currentLbTab: 'richest', lbData: {},
+  tradeRoomId: null, tradeMyItems: [], tradeTheirItems: [],
+  tradeMyAccepted: false, tradeTheirAccepted: false,
+  tradeCountdownActive: false, tradePartnerUid: null,
+  onlinePlayers: [], presenceRef: null, presenceHeartbeat: null,
+  tradeMyCoins: 0, tradeTheirCoins: 0, tradeSortBy: 'rarity',
+  luckBoost: null, luckBoostUsed: false,
+  autoSell: false, autoSellMode: 'rarity', autoSellRarity: 'common', autoSellPrice: 0,
   lastOpenedInvItem: null,
-  // FIX: track whether realtime listeners have been set up to avoid duplicates
   listenersInitialized: false,
+  // FIX: track per-session which trade rooms we've already executed, prevents double execution on refresh
+  executedTradeIds: new Set(),
 };
 
 // ============================================================
@@ -1249,15 +1165,16 @@ function showScreen(id){
   document.getElementById(id)?.classList.add('active');
 }
 function hideLoadingOverlay(){
-  const ol = document.getElementById('loading-overlay');
-  ol.style.opacity='0';
-  ol.style.pointerEvents='none';
-  ol.style.display='none';
+  const ol=document.getElementById('loading-overlay');
+  ol.style.opacity='0'; ol.style.pointerEvents='none'; ol.style.display='none';
 }
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+  if(id==='settings' && S.profile){
+    document.getElementById('settings-username-display').textContent=S.profile.username;
+  }
 }
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
@@ -1283,14 +1200,12 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
     document.getElementById('register-form').classList.toggle('hidden',tab.dataset.tab!=='register');
   });
 });
-
-// Enter key on login fields
 ['login-email','login-password'].forEach(id=>{
   document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('login-btn').click(); });
 });
 
 // ============================================================
-// LOGIN — FIX: no polling loop, just sign in and let observer handle it
+// LOGIN
 // ============================================================
 document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
@@ -1300,13 +1215,8 @@ document.getElementById('login-btn').addEventListener('click',async()=>{
   err.textContent='';
   if(!email||!pass){err.textContent='Please enter email and password.';return;}
   btn.disabled=true; btn.textContent='LOADING...';
-  try{
-    await auth.signInWithEmailAndPassword(email,pass);
-    // onAuthStateChanged handles the rest
-  }catch(e){
-    err.textContent=friendlyAuthError(e.code)||'Login failed. Check your details.';
-    btn.disabled=false; btn.textContent='ENTER THE VAULT';
-  }
+  try{ await auth.signInWithEmailAndPassword(email,pass); }
+  catch(e){ err.textContent=friendlyAuthError(e.code)||'Login failed.'; btn.disabled=false; btn.textContent='ENTER THE VAULT'; }
 });
 
 // ============================================================
@@ -1324,31 +1234,21 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
   if(!pass||pass.length<6){err.textContent='Password must be at least 6 characters.';return;}
   btn.disabled=true; btn.textContent='CREATING...';
   try{
-    // Check username first, then create auth
     const snap=await db.collection('users').where('usernameLower','==',username.toLowerCase()).limit(1).get();
-    if(!snap.empty){
-      err.textContent='Username already taken.';
-      btn.disabled=false; btn.textContent='CREATE ACCOUNT';
-      return;
-    }
+    if(!snap.empty){err.textContent='Username already taken.';btn.disabled=false;btn.textContent='CREATE ACCOUNT';return;}
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    // Write profile — onAuthStateChanged will pick it up
-    // In the register-btn click handler, add lastWheelSpin to the .set() call:
-  await db.collection('users').doc(cred.user.uid).set({
-    uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
-    coins:400, inventory:[], tradeHistory:[], cratesOpened:0, luckCoinsPerCrate:{},
-    totalValue:0, rarestItem:null, rarestTier:0, lastWheelSpin:0,  // ← add this
-    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-  });
-  }catch(e){
-    err.textContent=friendlyAuthError(e.code)||e.message;
-    btn.disabled=false; btn.textContent='CREATE ACCOUNT';
-  }
+    await db.collection('users').doc(cred.user.uid).set({
+      uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
+      coins:400, inventory:[], tradeHistory:[], cratesOpened:0,
+      luckCoinsPerCrate:{}, totalValue:0, rarestItem:null, rarestTier:0, lastWheelSpin:0,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  }catch(e){ err.textContent=friendlyAuthError(e.code)||e.message; btn.disabled=false; btn.textContent='CREATE ACCOUNT'; }
 });
 
 document.getElementById('logout-btn').addEventListener('click',async()=>{
-  if (_puzzleTimeout) clearTimeout(_puzzleTimeout); 
-  if (_puzzleInterval) clearInterval(_puzzleInterval);
+  if(_puzzleTimeout) clearTimeout(_puzzleTimeout);
+  if(_puzzleInterval) clearInterval(_puzzleInterval);
   await leavePresence();
   S.listenersInitialized=false;
   await auth.signOut();
@@ -1373,24 +1273,20 @@ function friendlyAuthError(code){
 
 // ============================================================
 // AUTH STATE OBSERVER
-// FIX: Show game screen immediately, load profile in background
-// FIX: Only set up realtime listeners once per session
 // ============================================================
 function startAuthObserver(){
   auth.onAuthStateChanged(async user=>{
     if(user){
       S.user=user;
-      // Show game immediately — don't wait for profile
       showScreen('game-screen');
       hideLoadingOverlay();
+      loadSettings();
       loadCratesPage();
       showPage('crates');
-      // Reset auth button states
       const lb=document.getElementById('login-btn');
       const rb=document.getElementById('register-btn');
       if(lb){lb.disabled=false;lb.textContent='ENTER THE VAULT';}
       if(rb){rb.disabled=false;rb.textContent='CREATE ACCOUNT';}
-      // Load profile — retry a few times for new registrations
       let doc=null;
       for(let i=0;i<5;i++){
         try{ doc=await db.collection('users').doc(user.uid).get(); }catch(e){ break; }
@@ -1401,12 +1297,10 @@ function startAuthObserver(){
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       document.getElementById('nav-username').textContent=S.profile.username;
-      // Show admin button for admin user
       if(S.profile.username==='Dreamcrusher'){
         document.getElementById('admin-refresh-btn').classList.remove('hidden');
       }
       updateCoinDisplay(S.profile.coins);
-      // FIX: Only initialize realtime listeners once to avoid duplicate handlers
       if(!S.listenersInitialized){
         S.listenersInitialized=true;
         setupPresence();
@@ -1417,15 +1311,11 @@ function startAuthObserver(){
       }
       checkLuckMilestone(null);
       updateLuckBar(null);
-            // On login, check if a puzzle was due while they were gone
-      const savedNextPuzzle = parseInt(localStorage.getItem('cv_next_puzzle') || '0');
-      if (savedNextPuzzle && savedNextPuzzle <= Date.now()) {
-        // Puzzle was due while they were away — show it immediately
+      const savedNextPuzzle=parseInt(localStorage.getItem('cv_next_puzzle')||'0');
+      if(savedNextPuzzle&&savedNextPuzzle<=Date.now()){
         localStorage.removeItem('cv_next_puzzle');
-        setTimeout(showAfkPuzzle, 2000); // slight delay so game finishes loading first
-      } else {
-        schedulePuzzle();
-      }
+        setTimeout(showAfkPuzzle,2000);
+      } else { schedulePuzzle(); }
     } else {
       S.user=null; S.profile=null; S.listenersInitialized=false;
       hideLoadingOverlay();
@@ -1441,17 +1331,7 @@ function updateCoinDisplay(coins){
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
 }
 
-// Daily login bonus — scales with login streak
-// Luck milestone: every 10 crates = minor boost, every 100 = huge boost
-// Luck milestones based on COINS SPENT (not crates opened)
-// Minor boost every 1,000 coins spent; Huge boost every 10,000 coins spent
-// Opening a Starter (50c) adds 50 luck; Omega (180k) adds 180,000 luck
-// Luck thresholds are per-crate: minor = 10x price, huge = 100x price
-// This prevents cheap crate grinding from boosting expensive crate rolls.
-
-function getLuckThresholds(crate){
-  return { minor: crate.price*10, huge: crate.price*100 };
-}
+function getLuckThresholds(crate){ return {minor:crate.price*10,huge:crate.price*100}; }
 
 function checkLuckMilestone(crate){
   if(!S.profile||!crate) return;
@@ -1460,14 +1340,10 @@ function checkLuckMilestone(crate){
   const prev=total-crate.price;
   const {minor,huge}=getLuckThresholds(crate);
   if(Math.floor(total/huge)>Math.floor(prev/huge)){
-    S.luckBoost='huge';
-    S.luckBoostCrate=crate.id;
-    S.luckBoostUsed=false;
+    S.luckBoost='huge'; S.luckBoostCrate=crate.id; S.luckBoostUsed=false;
     toast('🌟 HUGE LUCK BOOST on '+crate.name+'! Next open has massively improved odds!','gold',6000);
   } else if(Math.floor(total/minor)>Math.floor(prev/minor)){
-    S.luckBoost='minor';
-    S.luckBoostCrate=crate.id;
-    S.luckBoostUsed=false;
+    S.luckBoost='minor'; S.luckBoostCrate=crate.id; S.luckBoostUsed=false;
     toast('✨ Luck Boost on '+crate.name+'! Next open has better odds!','gold',4000);
   }
   updateLuckBar(crate);
@@ -1478,61 +1354,40 @@ function updateLuckBar(crate){
   const count=document.getElementById('luck-bar-count');
   const status=document.getElementById('luck-bar-status');
   if(!fill||!count||!status) return;
-
   if(!crate){
-    fill.style.width='0%';
-    fill.className='luck-bar-fill';
-    count.textContent='';
-    status.textContent='Open a crate to build luck';
-    status.style.color='var(--text-3)';
-    return;
+    fill.style.width='0%'; fill.className='luck-bar-fill';
+    count.textContent=''; status.textContent='Open a crate to build luck';
+    status.style.color='var(--text-3)'; return;
   }
-
   const {minor,huge}=getLuckThresholds(crate);
   const perCrate=S.profile?.luckCoinsPerCrate||{};
   const total=perCrate[crate.id]||0;
-  const boostActive=S.luckBoost && S.luckBoostCrate===crate.id;
-
-  if(boostActive && S.luckBoost==='huge'){
-    fill.style.width='100%';
-    fill.className='luck-bar-fill boost-huge';
-    count.textContent='🌟 HUGE BOOST READY';
-    status.textContent='🌟 HUGE BOOST READY — open now!';
-    status.style.color='#ff00ff';
-    return;
+  const boostActive=S.luckBoost&&S.luckBoostCrate===crate.id;
+  if(boostActive&&S.luckBoost==='huge'){
+    fill.style.width='100%'; fill.className='luck-bar-fill boost-huge';
+    count.textContent='🌟 HUGE BOOST READY'; status.textContent='🌟 HUGE BOOST READY — open now!';
+    status.style.color='#ff00ff'; return;
   }
-  if(boostActive && S.luckBoost==='minor'){
-    fill.style.width='100%';
-    fill.className='luck-bar-fill boost-minor';
-    count.textContent='✨ BOOST READY';
-    status.textContent='✨ LUCK BOOST READY — open now!';
-    status.style.color='#f59e0b';
-    return;
+  if(boostActive&&S.luckBoost==='minor'){
+    fill.style.width='100%'; fill.className='luck-bar-fill boost-minor';
+    count.textContent='✨ BOOST READY'; status.textContent='✨ LUCK BOOST READY — open now!';
+    status.style.color='#f59e0b'; return;
   }
-
   const minorProgress=total%minor;
   const hugeProgress=total%huge;
   const minorPct=minorProgress/minor*100;
   const hugeRatio=hugeProgress/huge;
-
-  fill.style.width=minorPct+'%';
-  fill.className='luck-bar-fill';
+  fill.style.width=minorPct+'%'; fill.className='luck-bar-fill';
   fill.style.background='linear-gradient(90deg,#3b82f6,'+(hugeRatio>0.7?'#f59e0b':'#a855f7')+')';
-
   count.textContent='🪙 '+fmtNum(minorProgress)+' / '+fmtNum(minor)+'  ('+fmtNum(hugeProgress)+' / '+fmtNum(huge)+' for 🌟)';
   const toMinor=minor-minorProgress;
   const toHuge=huge-hugeProgress;
-  if(hugeRatio>=0.9){
-    status.textContent='🌟 '+fmtNum(toHuge)+' coins to HUGE BOOST!';
-    status.style.color='#f59e0b';
-  } else {
-    status.textContent='✨ '+fmtNum(toMinor)+' coins to next boost';
-    status.style.color='var(--text-3)';
-  }
+  if(hugeRatio>=0.9){ status.textContent='🌟 '+fmtNum(toHuge)+' coins to HUGE BOOST!'; status.style.color='#f59e0b'; }
+  else { status.textContent='✨ '+fmtNum(toMinor)+' coins to next boost'; status.style.color='var(--text-3)'; }
 }
 
 // ============================================================
-// REALTIME PRESENCE
+// PRESENCE
 // ============================================================
 function setupPresence(){
   if(!S.user||!S.profile)return;
@@ -1540,35 +1395,27 @@ function setupPresence(){
     const uid=S.user.uid;
     const ref=rtdb.ref('presence/'+uid);
     S.presenceRef=ref;
-
-    // Re-register presence every time Firebase reports (re)connection
-    rtdb.ref('.info/connected').on('value', snap=>{
-      if(!snap.val()) return; // disconnected — onDisconnect handles cleanup
-      const data={uid, username:S.profile.username, online:true, ts:firebase.database.ServerValue.TIMESTAMP, tradeRoomId:S.tradeRoomId||null};
+    rtdb.ref('.info/connected').on('value',snap=>{
+      if(!snap.val())return;
+      const data={uid,username:S.profile.username,online:true,ts:firebase.database.ServerValue.TIMESTAMP,tradeRoomId:S.tradeRoomId||null};
       ref.set(data);
       ref.onDisconnect().remove();
     });
-
-    // Heartbeat: rewrite presence every 30s to prove we're alive
     if(S.presenceHeartbeat) clearInterval(S.presenceHeartbeat);
-    S.presenceHeartbeat = setInterval(()=>{
-      if(!S.user||!S.presenceRef) return;
-      S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP});
-    }, 30000);
-
+    S.presenceHeartbeat=setInterval(()=>{ if(!S.user||!S.presenceRef)return; S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP}); },30000);
   }catch(e){ console.warn('Presence unavailable:',e.message); }
 }
 
 function updatePresenceTradeStatus(roomId){
-  if(!S.presenceRef) return;
-  S.presenceRef.update({tradeRoomId: roomId||null});
+  if(!S.presenceRef)return;
+  S.presenceRef.update({tradeRoomId:roomId||null});
 }
 
 async function leavePresence(){
   try{
-    if(S.presenceHeartbeat){ clearInterval(S.presenceHeartbeat); S.presenceHeartbeat=null; }
-    if(S.presenceRef){ await S.presenceRef.remove(); S.presenceRef=null; }
-    rtdb.ref('.info/connected').off(); // detach reconnect listener
+    if(S.presenceHeartbeat){clearInterval(S.presenceHeartbeat);S.presenceHeartbeat=null;}
+    if(S.presenceRef){await S.presenceRef.remove();S.presenceRef=null;}
+    rtdb.ref('.info/connected').off();
   }catch(e){}
 }
 
@@ -1576,14 +1423,12 @@ function listenToPresence(){
   try{
     rtdb.ref('presence').on('value',snap=>{
       const data=snap.val()||{};
-      // Filter out stale entries (no heartbeat in 90s)
       const now=Date.now();
       S.onlinePlayers=Object.values(data).filter(p=>{
-        if(p.uid===S.user?.uid) return false;
-        if(p.ts && (now - p.ts) > 90000) return false; // stale
+        if(p.uid===S.user?.uid)return false;
+        if(p.ts&&(now-p.ts)>90000)return false;
         return true;
       });
-      // Always update the trade page list, even if it's not visible right now
       renderOnlinePlayers();
     });
   }catch(e){ console.warn('Presence listen unavailable:',e.message); }
@@ -1596,7 +1441,7 @@ function listenToChat(){
   try{
     rtdb.ref('chat').limitToLast(50).on('child_added',snap=>{
       const msg=snap.val();
-      if(msg) appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'');
+      if(msg) appendChatMessage(msg.username,msg.text,msg.isSystem,msg.cls||'',msg.isPull||false);
     });
   }catch(e){ console.warn('Chat unavailable:',e.message); }
 }
@@ -1606,28 +1451,33 @@ document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==
 
 async function sendChat(){
   const input=document.getElementById('chat-input');
-  const rawText = input.value.slice(0,200);
-  if(!rawText || !S.user || !S.profile) return;
-
-  const text = filterChat(rawText);
-  if(!text||!S.user||!S.profile)return;
+  const rawText=input.value.slice(0,200);
+  if(!rawText||!S.user||!S.profile)return;
+  const text=filterChat(rawText);
+  if(!text)return;
   input.value='';
   try{
     await rtdb.ref('chat').push({
-      username:S.profile.username, text, isSystem:false,
+      username:S.profile.username,text,isSystem:false,isPull:false,
       ts:firebase.database.ServerValue.TIMESTAMP,
     });
-  }catch(e){ appendChatMessage(S.profile.username,text,false,''); }
+  }catch(e){ appendChatMessage(S.profile.username,text,false,'',false); }
 }
 
-function appendChatMessage(username,text,isSystem=false,cls=''){
+// isPull: true = this is a "player pulled X" announcement (filterable separately)
+function appendChatMessage(username,text,isSystem=false,cls='',isPull=false){
+  // Mute all chat
+  if(SETTINGS.muteChat) return;
+  // Mute pull announcements specifically
+  if(isPull && SETTINGS.mutePulls) return;
+
   const msgs=document.getElementById('chat-messages');
   const el=document.createElement('div');
   el.className='chat-msg';
   const spanCls=cls||'system';
   el.innerHTML=isSystem
-    ? `<span class="chat-msg-${spanCls}">${escHtml(username)}:</span> ${escHtml(text)}`
-    : `<span class="chat-msg-user">${escHtml(username)}:</span> ${escHtml(text)}`;
+    ?`<span class="chat-msg-${spanCls}">${escHtml(username)}:</span> ${escHtml(text)}`
+    :`<span class="chat-msg-user">${escHtml(username)}:</span> ${escHtml(text)}`;
   msgs.appendChild(el);
   msgs.scrollTop=msgs.scrollHeight;
   while(msgs.children.length>100) msgs.removeChild(msgs.firstChild);
@@ -1651,8 +1501,7 @@ function loadCratesPage(){
       <div class="crate-desc">${crate.desc}</div>
       <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
     c.addEventListener('click',()=>{
-      // FIX: Guard — don't allow opening if profile not loaded yet
-      if(!S.profile){ toast('Still loading your profile, please wait...'); return; }
+      if(!S.profile){toast('Still loading your profile, please wait...');return;}
       openCratePage(crate);
     });
     grid.appendChild(c);
@@ -1681,7 +1530,7 @@ function buildCrateInfoPanel(crate){
   const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
   const grouped={};
   crateItems.forEach(item=>{ if(!grouped[item.rarity])grouped[item.rarity]=[]; grouped[item.rarity].push(item); });
-  const order=['ultra4','ultra3','ultra2','ultra1','divine','mythic','legendary','epic','rare','uncommon','common'];
+  const order=['ultra','hyper','cosmic','transcendent','eternal','genesis','infinite','divine','primordial','mythic','legendary','cursed','runic','epic','spectral','rare','uncommon','common'];
   panel.innerHTML=`
     <div style="flex:1">
       <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div>
@@ -1693,10 +1542,8 @@ function buildCrateInfoPanel(crate){
     </div>`;
   const itemsEl=document.getElementById('cip-items');
   const oddsEl=document.getElementById('cip-odds');
-  const shownRar=new Set();
   order.forEach(rar=>{
     if(!grouped[rar])return;
-    shownRar.add(rar);
     const r=getRarity(rar);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
     grouped[rar].forEach(item=>{
@@ -1707,25 +1554,23 @@ function buildCrateInfoPanel(crate){
       itemsEl.appendChild(pill);
     });
   });
-  // Show odds for each rarity tier present in this crate's odds table
   order.filter(r=>crate.odds[r]!=null).forEach(rar=>{
     const r=getRarity(rar);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem';
     row.innerHTML=`<span style="color:${col};font-family:var(--font-d);font-size:.65rem;letter-spacing:.05em">${r.name}</span>
-      <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar, crate.odds)}</span>`;
+      <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar,crate.odds)}</span>`;
     oddsEl.appendChild(row);
   });
 }
 
-function buildSpinTrack(crate, winningItem, landIdx){
+function buildSpinTrack(crate,winningItem,landIdx){
   const track=document.getElementById('spin-track');
   track.innerHTML=''; track.style.transform='translateX(0)'; track.style.transition='none';
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-  // Generate 60 items; place winning item exactly at landIdx
   for(let i=0;i<60;i++){
-    const item=(winningItem && i===landIdx) ? winningItem : pool[Math.floor(Math.random()*pool.length)];
+    const item=(winningItem&&i===landIdx)?winningItem:pool[Math.floor(Math.random()*pool.length)];
     const r=getRarity(item.rarity);
     const col=r.color==='#ffffff'?'#e0e0ff':r.color;
     const el=document.createElement('div');
@@ -1740,51 +1585,26 @@ function rollItem(crateId){
   const crate=CRATES.find(c=>c.id===crateId);
   if(!crate)return null;
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-
-  // Apply luck boost by biasing odds toward higher rarities
-  const rarityTier={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
   let odds={...crate.odds};
-
-  if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate===crateId){
+  if(S.luckBoost&&!S.luckBoostUsed&&S.luckBoostCrate===crateId){
     const entries=Object.entries(odds);
-    const maxTier=Math.max(...entries.map(([r])=>rarityTier[r]||0));
-    const minTier=Math.min(...entries.map(([r])=>rarityTier[r]||0));
-
-    if(S.luckBoost==='minor'){
-      // Shift 30% weight from bottom half rarities to top half
-      entries.forEach(([r])=>{
-        const t=rarityTier[r]||0;
-        const mid=(maxTier+minTier)/2;
-        if(t<=mid) odds[r]*=0.5;   // halve lower rarities
-        else odds[r]*=1.5;          // boost higher rarities
-      });
-    } else if(S.luckBoost==='huge'){
-      // Massively shift — bottom rarities down to 10%, upper rarities up 4x
-      entries.forEach(([r])=>{
-        const t=rarityTier[r]||0;
-        const mid=(maxTier+minTier)/2;
-        if(t<=mid) odds[r]*=0.1;
-        else odds[r]*=4;
-      });
-    }
-    // Consume boost
-    S.luckBoost=null;
-    S.luckBoostUsed=true;
+    const tiers=entries.map(([r])=>getRarity(r).tier||0);
+    const maxTier=Math.max(...tiers); const minTier=Math.min(...tiers);
+    const mid=(maxTier+minTier)/2;
+    entries.forEach(([r])=>{
+      const t=getRarity(r).tier||0;
+      if(S.luckBoost==='minor'){ odds[r]*=t<=mid?0.5:1.5; }
+      else { odds[r]*=t<=mid?0.1:4; }
+    });
+    S.luckBoost=null; S.luckBoostUsed=true;
   }
-
-  // Pick rarity
   const rarityEntries=Object.entries(odds);
   const total=rarityEntries.reduce((s,[,v])=>s+v,0);
   let rand=Math.random()*total;
   let chosenRarity=rarityEntries[rarityEntries.length-1][0];
-  for(const[rarity,weight] of rarityEntries){
-    rand-=weight;
-    if(rand<=0){ chosenRarity=rarity; break; }
-  }
-
-  // Pick random item of that rarity
+  for(const[rarity,weight] of rarityEntries){rand-=weight;if(rand<=0){chosenRarity=rarity;break;}}
   const matching=pool.filter(i=>i.rarity===chosenRarity);
-  if(matching.length) return matching[Math.floor(Math.random()*matching.length)];
+  if(matching.length)return matching[Math.floor(Math.random()*matching.length)];
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
@@ -1797,11 +1617,17 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   document.getElementById('result-panel').classList.add('hidden');
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
-  // Deduct coins immediately before spin starts
   S.profile.coins-=crate.price;
   updateCoinDisplay(S.profile.coins);
-  await animateSpin(crate,item);
-  // Save to Firestore
+
+  // Run animation or skip based on settings
+  if(SETTINGS.spinAnim){
+    await animateSpin(crate,item);
+  } else {
+    // Instant: just show the winning item in the track center
+    buildSpinTrack(crate,item,30);
+  }
+
   const invItem={itemId:item.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
   S.inventory.push(invItem);
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
@@ -1823,14 +1649,13 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
     });
   }catch(e){ toast('Save error: '+e.message,'error'); }
   showResult(item,r,invItem);
-  // Ultra rare announcement
   if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(item.rarity)){
-    setTimeout(()=>showUltraOverlay(item),800);
-    const desc=r.display?`(${r.display})`:'';
-    const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name} ${desc}!`;
+    if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(item),800);
+    const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name}!`;
     showGlobalBanner(msg);
     try{
-      await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',ts:firebase.database.ServerValue.TIMESTAMP});
+      // isPull:true so per-pull muting works
+      await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',isPull:true,ts:firebase.database.ServerValue.TIMESTAMP});
     }catch(e){}
   }
   btn.disabled=false;
@@ -1838,17 +1663,13 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
 
 function animateSpin(crate,winningItem){
   return new Promise(resolve=>{
-    const iW=108; // exactly matches .spin-item width
-    // Land somewhere in the middle-right of the track for a convincing spin
+    const iW=108;
     const landIdx=40+Math.floor(Math.random()*6);
     buildSpinTrack(crate,winningItem,landIdx);
     const track=document.getElementById('spin-track');
     const containerW=document.getElementById('spin-container').offsetWidth;
-    // Center of item at landIdx = landIdx*iW + iW/2
-    // We want that to align with the indicator at containerW/2
-    // So: translateX = containerW/2 - (landIdx*iW + iW/2)
-    const targetX = containerW/2 - (landIdx*iW + iW/2);
-    void track.offsetWidth; // Force reflow before transition
+    const targetX=containerW/2-(landIdx*iW+iW/2);
+    void track.offsetWidth;
     track.style.transition='transform 4s cubic-bezier(0.08,0,0.06,1)';
     track.style.transform=`translateX(${targetX}px)`;
     setTimeout(()=>{
@@ -1867,8 +1688,6 @@ function animateSpin(crate,winningItem){
 
 function showResult(item,r,invItem){
   S.lastOpenedInvItem=invItem;
-
-  // Auto-sell check
   if(S.autoSell){
     let shouldSell=false;
     if(S.autoSellMode==='rarity'){
@@ -1881,8 +1700,7 @@ function showResult(item,r,invItem){
     if(shouldSell){
       const earned=Math.floor(item.value*.90);
       toast(`⚡ Auto-sold ${item.icon} ${item.name} for 🪙 ${fmtNum(earned)}`,'gold',3000);
-      sellItems([invItem.uniqueId]);
-      return; // skip showing result panel
+      sellItems([invItem.uniqueId]); return;
     }
   }
   const col=r.color==='#ffffff'?'#aaa':r.color;
@@ -1893,24 +1711,17 @@ function showResult(item,r,invItem){
   document.getElementById('result-icon').textContent=item.icon;
   document.getElementById('result-name').textContent=item.name;
   const rarEl=document.getElementById('result-rarity');
-  rarEl.textContent=r.name.toUpperCase();
-  rarEl.style.color=col; rarEl.style.borderColor=col+'88';
+  rarEl.textContent=r.name.toUpperCase(); rarEl.style.color=col; rarEl.style.borderColor=col+'88';
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
   panel.classList.remove('hidden');
 }
 
-document.getElementById('btn-keep-item').addEventListener('click',()=>{
-  document.getElementById('result-panel').classList.add('hidden');
-  toast('Item kept!','success');
-});
-
+document.getElementById('btn-keep-item').addEventListener('click',()=>{ document.getElementById('result-panel').classList.add('hidden'); toast('Item kept!','success'); });
 document.getElementById('btn-sell-result').addEventListener('click',async()=>{
-  const invItem=S.lastOpenedInvItem;
-  if(!invItem)return;
+  const invItem=S.lastOpenedInvItem; if(!invItem)return;
   await sellItems([invItem.uniqueId]);
   document.getElementById('result-panel').classList.add('hidden');
 });
-
 document.getElementById('btn-open-again').addEventListener('click',()=>{
   document.getElementById('result-panel').classList.add('hidden');
   document.getElementById('btn-open-crate').click();
@@ -1922,9 +1733,8 @@ document.getElementById('btn-open-again').addEventListener('click',()=>{
 document.getElementById('inv-search').addEventListener('input',renderInventory);
 document.getElementById('inv-sort').addEventListener('change',renderInventory);
 
-// ── AUTO-SELL UI ────────────────────────────────────────────────────────────
 const rarityTierOrder=['common','uncommon','rare','spectral','epic','runic','legendary','cursed','mythic','astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'];
-  
+
 document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   S.autoSell=e.target.checked;
   const status=document.getElementById('auto-sell-status');
@@ -1933,7 +1743,6 @@ document.getElementById('auto-sell-toggle').addEventListener('change',e=>{
   status.className=S.autoSell?'auto-sell-on':'auto-sell-off';
   config.style.display=S.autoSell?'flex':'none';
 });
-// Start with config hidden
 document.getElementById('auto-sell-config').style.display='none';
 
 document.querySelectorAll('input[name="auto-sell-mode"]').forEach(radio=>{
@@ -1952,9 +1761,7 @@ document.querySelectorAll('.rarity-chip').forEach(chip=>{
   });
 });
 
-document.getElementById('auto-sell-price-input').addEventListener('input',e=>{
-  S.autoSellPrice=parseInt(e.target.value)||0;
-});
+document.getElementById('auto-sell-price-input').addEventListener('input',e=>{ S.autoSellPrice=parseInt(e.target.value)||0; });
 
 function renderInventory(){
   const grid=document.getElementById('inventory-grid');
@@ -1972,9 +1779,7 @@ function renderInventory(){
   grid.innerHTML='';
   if(!items.length){
     grid.innerHTML='<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">Your inventory is empty. Open some crates!</div>';
-  } else {
-    items.forEach(inv=>makeItemCard(inv,grid,true));
-  }
+  } else { items.forEach(inv=>makeItemCard(inv,grid,true)); }
   const total=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
   document.getElementById('inv-count').textContent=S.inventory.length+' items';
   document.getElementById('inv-total-value').textContent='Total: '+fmtNum(total)+' 🪙';
@@ -2056,7 +1861,7 @@ async function sellItems(uniqueIds){
 // LEADERBOARD
 // ============================================================
 async function loadLeaderboard(){
-  const list = document.getElementById('leaderboard-list');
+  const list=document.getElementById('leaderboard-list');
   list.innerHTML='<div style="color:var(--text-2);padding:16px">Loading...</div>';
   try{
     const [r1,r2,r3]=await Promise.all([
@@ -2072,15 +1877,13 @@ async function loadLeaderboard(){
     S.lbData={richest:enrich(r1),mostCrates:enrich(r2),mostValue:enrich(r3)};
     renderLeaderboard(S.currentLbTab||'richest');
   }catch(e){
-    list.innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard. Make sure Firestore indexes are created.</div>';
-    console.error('Leaderboard error:',e);
+    list.innerHTML='<div style="color:#ef4444;padding:16px">Error loading leaderboard.</div>';
   }
 }
 
 function renderLeaderboard(tab){
   S.currentLbTab=tab;
   const list=document.getElementById('leaderboard-list');
-  if(!list){ console.error('[CV] leaderboard-list not found!'); return; }
   const rows=S.lbData[tab]||[];
   list.innerHTML='';
   rows.forEach((p,i)=>{
@@ -2114,16 +1917,10 @@ document.querySelectorAll('.lb-tab').forEach(tab=>{
 // ============================================================
 function renderTradeHistory(){
   const list=document.getElementById('history-list');
-  if(!S.profile){
-    list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">Sign in to see your trade history.</div>';
-    return;
-  }
+  if(!S.profile){ list.innerHTML='<div style="color:var(--text-3);font-style:italic;padding:16px">Sign in to see your trade history.</div>'; return; }
   const history=[...(S.profile.tradeHistory||[])].reverse();
   list.innerHTML='';
-  if(!history.length){
-    list.innerHTML='<div style="color:var(--text-3);font-style:italic">No trades yet.</div>';
-    return;
-  }
+  if(!history.length){ list.innerHTML='<div style="color:var(--text-3);font-style:italic">No trades yet.</div>'; return; }
   history.forEach(trade=>{
     const row=document.createElement('div');
     row.className='history-row';
@@ -2150,11 +1947,9 @@ function listenToTradeRequests(){
   if(!S.user)return;
   const loginTime=Date.now();
   rtdb.ref('tradeRequests/'+S.user.uid).on('child_added',snap=>{
-    const req=snap.val();
-    if(!req)return;
+    const req=snap.val(); if(!req)return;
     snap.ref.remove();
-    // Ignore requests that were queued before we logged in
-    if(req.ts && req.ts < loginTime - 5000) return;
+    if(req.ts&&req.ts<loginTime-5000)return;
     showIncomingTradeModal(req.fromUid,req.fromUsername);
   });
 }
@@ -2162,7 +1957,6 @@ function listenToTradeRequests(){
 function renderOnlinePlayers(){
   const list=document.getElementById('online-players-list');
   list.innerHTML='';
-  // If YOU are already in a trade, show a notice instead of player list
   if(S.tradeRoomId){
     list.innerHTML='<div class="no-players" style="color:var(--gold)">⚔️ You are currently in a trade.</div>';
     return;
@@ -2176,8 +1970,8 @@ function renderOnlinePlayers(){
     chip.innerHTML=`<div class="online-dot"></div>
       <span class="online-player-name">${escHtml(p.username)}</span>
       ${inTrade
-        ? '<span style="font-size:.65rem;font-family:var(--font-d);color:var(--text-3);padding:4px 10px">IN TRADE</span>'
-        : `<button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`
+        ?'<span style="font-size:.65rem;font-family:var(--font-d);color:var(--text-3);padding:4px 10px">IN TRADE</span>'
+        :`<button class="btn-trade-request" data-uid="${p.uid}">TRADE</button>`
       }`;
     if(!inTrade) chip.querySelector('.btn-trade-request').addEventListener('click',()=>sendTradeRequest(p.uid,p.username));
     list.appendChild(chip);
@@ -2186,7 +1980,7 @@ function renderOnlinePlayers(){
 
 async function sendTradeRequest(toUid,toUsername){
   if(!S.user||!S.profile)return;
-  if(S.tradeRoomId){ toast('You are already in a trade!','error'); return; }
+  if(S.tradeRoomId){toast('You are already in a trade!','error');return;}
   try{
     await rtdb.ref('tradeRequests/'+toUid).push({
       fromUid:S.user.uid,fromUsername:S.profile.username,
@@ -2197,7 +1991,7 @@ async function sendTradeRequest(toUid,toUsername){
 }
 
 function showIncomingTradeModal(fromUid,fromUsername){
-  if(S.tradeRoomId){ return; } // already in a trade — silently ignore
+  if(S.tradeRoomId)return;
   document.querySelectorAll('.incoming-trade-modal').forEach(e=>e.remove());
   const modal=document.createElement('div');
   modal.className='incoming-trade-modal';
@@ -2216,24 +2010,20 @@ async function createTradeRoom(partnerUid,partnerUsername){
   const roomId=genUID();
   S.tradeRoomId=roomId;
   S.tradePartnerUid=partnerUid;
-  S.tradeMyItems=[];
-  S.tradeTheirItems=[];
-  S.tradeMyAccepted=false;
-  S.tradeTheirAccepted=false;
-  S.tradeCountdownActive=false;
-  S.tradeExecuting=false;
-  S.tradeMyCoins=0;
-  S.tradeTheirCoins=0;
+  S.tradeMyItems=[]; S.tradeTheirItems=[];
+  S.tradeMyAccepted=false; S.tradeTheirAccepted=false;
+  S.tradeCountdownActive=false; S.tradeExecuting=false;
+  S.tradeMyCoins=0; S.tradeTheirCoins=0;
   const room={
     roomId,
     players:{
       [S.user.uid]:{uid:S.user.uid,username:S.profile.username,items:[],accepted:false,finalAccepted:false},
       [partnerUid]:{uid:partnerUid,username:partnerUsername,items:[],accepted:false,finalAccepted:false},
     },
-    locked:false,createdAt:firebase.database.ServerValue.TIMESTAMP,
+    locked:false,completed:false,executing:false,
+    createdAt:firebase.database.ServerValue.TIMESTAMP,
   };
   await rtdb.ref('tradeRooms/'+roomId).set(room);
-  // Notify partner
   await rtdb.ref('tradeInvites/'+partnerUid).push({roomId,fromUid:S.user.uid,fromUsername:S.profile.username,ts:firebase.database.ServerValue.TIMESTAMP});
   listenToTradeRoom(roomId);
   updatePresenceTradeStatus(roomId);
@@ -2245,7 +2035,6 @@ async function createTradeRoom(partnerUid,partnerUsername){
   toast('Trade room created!','success');
 }
 
-// FIX: partner receives invite via this listener (was incorrectly a standalone function called again from boot)
 function setupTradeInviteListener(){
   if(!S.user)return;
   rtdb.ref('tradeInvites/'+S.user.uid).on('child_added',snap=>{
@@ -2253,14 +2042,10 @@ function setupTradeInviteListener(){
     snap.ref.remove();
     S.tradeRoomId=inv.roomId;
     S.tradePartnerUid=inv.fromUid;
-    S.tradeMyItems=[];
-    S.tradeTheirItems=[];
-    S.tradeMyAccepted=false;
-    S.tradeTheirAccepted=false;
-    S.tradeCountdownActive=false;
-    S.tradeExecuting=false;
-    S.tradeMyCoins=0;
-    S.tradeTheirCoins=0;
+    S.tradeMyItems=[]; S.tradeTheirItems=[];
+    S.tradeMyAccepted=false; S.tradeTheirAccepted=false;
+    S.tradeCountdownActive=false; S.tradeExecuting=false;
+    S.tradeMyCoins=0; S.tradeTheirCoins=0;
     listenToTradeRoom(inv.roomId);
     updatePresenceTradeStatus(inv.roomId);
     showPage('trade');
@@ -2274,11 +2059,23 @@ function setupTradeInviteListener(){
 
 let tradeRoomListener=null;
 function listenToTradeRoom(roomId){
-  if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
+  if(tradeRoomListener){tradeRoomListener();tradeRoomListener=null;}
   const ref=rtdb.ref('tradeRooms/'+roomId);
   const handler=snap=>{
     const room=snap.val();
-    if(!room){ resetTradeState(); return; }
+    if(!room){resetTradeState();return;}
+
+    // ── FIX: If the room is already marked completed, clean up and exit ──
+    // This prevents re-executing a trade after refresh/reconnect
+    if(room.completed){
+      // Only handle completion once per session for this room
+      if(!S.executedTradeIds.has(roomId)){
+        S.executedTradeIds.add(roomId);
+        handleTradeComplete(room);
+      }
+      return;
+    }
+
     const players=room.players||{};
     const myData=players[S.user.uid];
     const theirData=players[S.tradePartnerUid];
@@ -2299,24 +2096,21 @@ function listenToTradeRoom(roomId){
     renderTradeItems('trade-items-them',S.tradeTheirItems,false);
     renderTradeInventoryMini();
     updateTradeStatus();
-    // Both accepted → lock room. Only run if not already locked/locking.
-    const allAccepted = Object.values(players).length>=2 && Object.values(players).every(p=>p.accepted);
-    if(allAccepted && !room.locked){
+
+    const allAccepted=Object.values(players).length>=2&&Object.values(players).every(p=>p.accepted);
+    if(allAccepted&&!room.locked){
       rtdb.ref(`tradeRooms/${S.tradeRoomId}`).update({locked:true});
     }
-    // room.locked → show final modal exactly once per trade session
-    if(room.locked && !S.tradeCountdownActive){
+    if(room.locked&&!S.tradeCountdownActive){
       S.tradeCountdownActive=true;
       showFinalModal(S.tradeMyItems,S.tradeTheirItems);
     }
-    // Both finalAccepted → execute trade (only the first player whose listener fires handles it)
-    const allFinal = Object.values(players).length>=2 && Object.values(players).every(p=>p.finalAccepted);
-    if(allFinal && !room.completed && !room.executing && !S.tradeExecuting){
+
+    const allFinal=Object.values(players).length>=2&&Object.values(players).every(p=>p.finalAccepted);
+    // FIX: Check executing flag on the room AND local S.tradeExecuting to prevent double-fire
+    if(allFinal&&!room.executing&&!S.tradeExecuting&&!S.executedTradeIds.has(roomId)){
       S.tradeExecuting=true;
       executeTrade();
-    }
-    if(room.completed){
-      handleTradeComplete(room);
     }
   };
   ref.on('value',handler);
@@ -2339,7 +2133,7 @@ function renderTradeItems(containerId,items,isYours){
     card.style.setProperty('--ic',col+'aa');
     card.style.setProperty('--ig',r.glow||'#9ca3af33');
     card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
-    if(isYours){ card.title='Click to remove'; card.addEventListener('click',()=>removeFromTrade(item.uniqueId)); }
+    if(isYours){card.title='Click to remove';card.addEventListener('click',()=>removeFromTrade(item.uniqueId));}
     card.addEventListener('mouseenter',e=>showTip(e,item,r));
     card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
     el.appendChild(card);
@@ -2350,26 +2144,10 @@ function renderTradeInventoryMini(){
   const grid=document.getElementById('trade-inventory-mini');
   grid.innerHTML='';
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
-  const rarityOrder={common:1,uncommon:2,rare:3,epic:4,legendary:5,mythic:6,divine:7,ultra1:8,ultra2:9,ultra3:10,ultra4:11};
-
   let items=[...S.inventory];
-  if(S.tradeSortBy==='rarity'){
-    items.sort((a,b)=>{
-      const ia=getItem(a.itemId), ib=getItem(b.itemId);
-      return (rarityOrder[ib?.rarity]||0)-(rarityOrder[ia?.rarity]||0);
-    });
-  } else if(S.tradeSortBy==='value'){
-    items.sort((a,b)=>{
-      const ia=getItem(a.itemId), ib=getItem(b.itemId);
-      return (ib?.value||0)-(ia?.value||0);
-    });
-  } else if(S.tradeSortBy==='name'){
-    items.sort((a,b)=>{
-      const ia=getItem(a.itemId), ib=getItem(b.itemId);
-      return (ia?.name||'').localeCompare(ib?.name||'');
-    });
-  }
-
+  if(S.tradeSortBy==='rarity') items.sort((a,b)=>{const ia=getItem(a.itemId),ib=getItem(b.itemId);return(getRarity(ib?.rarity).tier||0)-(getRarity(ia?.rarity).tier||0);});
+  else if(S.tradeSortBy==='value') items.sort((a,b)=>{const ia=getItem(a.itemId),ib=getItem(b.itemId);return(ib?.value||0)-(ia?.value||0);});
+  else if(S.tradeSortBy==='name') items.sort((a,b)=>{const ia=getItem(a.itemId),ib=getItem(b.itemId);return(ia?.name||'').localeCompare(ib?.name||'');});
   items.forEach(inv=>{
     const item=getItem(inv.itemId); if(!item)return;
     const r=getRarity(item.rarity);
@@ -2410,7 +2188,7 @@ async function removeFromTrade(uniqueId){
 async function setTradeCoins(amount){
   if(!S.tradeRoomId)return;
   const coins=Math.max(0,Math.floor(amount)||0);
-  if(coins>(S.profile?.coins||0)){ toast('Not enough coins!','error'); return; }
+  if(coins>(S.profile?.coins||0)){toast('Not enough coins!','error');return;}
   S.tradeMyCoins=coins;
   document.getElementById('trade-coin-offer-display').textContent=coins>0?`🪙 ${fmtNum(coins)} offered`:'';
   document.getElementById('trade-coin-input').value=coins||'';
@@ -2434,11 +2212,8 @@ async function resetTradeAccepts(message){
 
 document.getElementById('btn-accept-trade').addEventListener('click',async()=>{
   if(!S.tradeRoomId)return;
-  try{
-    await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true});
-    toast('Waiting for partner to accept...');
-    // The live listener will detect when both accepted and set locked:true
-  }catch(e){ toast('Error accepting trade','error'); }
+  try{ await rtdb.ref(`tradeRooms/${S.tradeRoomId}/players/${S.user.uid}`).update({accepted:true}); toast('Waiting for partner to accept...'); }
+  catch(e){ toast('Error accepting trade','error'); }
 });
 
 document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
@@ -2448,16 +2223,9 @@ document.getElementById('btn-cancel-trade').addEventListener('click',async()=>{
   toast('Trade cancelled.','error');
 });
 
-// Coin offer SET button
-document.getElementById('btn-set-coins').addEventListener('click',()=>{
-  const val=parseInt(document.getElementById('trade-coin-input').value)||0;
-  setTradeCoins(val);
-});
-document.getElementById('trade-coin-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter') setTradeCoins(parseInt(e.target.value)||0);
-});
+document.getElementById('btn-set-coins').addEventListener('click',()=>{ setTradeCoins(parseInt(document.getElementById('trade-coin-input').value)||0); });
+document.getElementById('trade-coin-input').addEventListener('keydown',e=>{ if(e.key==='Enter') setTradeCoins(parseInt(e.target.value)||0); });
 
-// Sort buttons
 document.querySelectorAll('.trade-sort-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.trade-sort-btn').forEach(b=>b.classList.remove('active'));
@@ -2472,10 +2240,8 @@ document.getElementById('btn-final-accept').addEventListener('click',async()=>{
   if(btn.disabled||btn.classList.contains('disabled'))return;
   if(!S.tradeRoomId)return;
   btn.disabled=true; btn.textContent='Waiting for partner...';
-  try{
-    // Just write our finalAccepted — the tradeRoomListener will detect when both are true and call executeTrade()
-    await rtdb.ref('tradeRooms/'+S.tradeRoomId+'/players/'+S.user.uid).update({finalAccepted:true});
-  }catch(e){ toast('Error finalizing trade','error'); btn.disabled=false; btn.textContent='FINAL ACCEPT'; }
+  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId+'/players/'+S.user.uid).update({finalAccepted:true}); }
+  catch(e){ toast('Error finalizing trade','error'); btn.disabled=false; btn.textContent='FINAL ACCEPT'; }
 });
 
 document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
@@ -2487,19 +2253,32 @@ document.getElementById('btn-cancel-final').addEventListener('click',async()=>{
 
 async function executeTrade(){
   if(!S.tradeRoomId||!S.tradePartnerUid)return;
+  const roomIdSnap=S.tradeRoomId; // capture before any async
   try{
-    // Mark room completed in RTDB first — prevents double execution if both listeners fire
-    await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({executing:true});
-    // Re-read agreed terms from RTDB at execution time
-    const roomSnap=await rtdb.ref('tradeRooms/'+S.tradeRoomId).get();
+    // ── FIX: Atomically mark room as executing in RTDB using a transaction
+    // This prevents both clients from executing simultaneously
+    const execRef=rtdb.ref('tradeRooms/'+roomIdSnap+'/executing');
+    const txResult=await execRef.transaction(current=>{
+      if(current===true) return; // abort — already executing
+      return true;
+    });
+    if(!txResult.committed){
+      // Another client got there first — just wait for completed event
+      S.tradeExecuting=false;
+      return;
+    }
+
+    const roomSnap=await rtdb.ref('tradeRooms/'+roomIdSnap).get();
     const room=roomSnap.val();
-    if(!room){ toast('Trade room gone — trade cancelled.','error'); resetTradeState(); return; }
+    if(!room||room.completed){
+      S.tradeExecuting=false; return;
+    }
+
     const myAgreedItems=(room.players?.[S.user.uid]?.items)||[];
     const theirAgreedItems=(room.players?.[S.tradePartnerUid]?.items)||[];
     const myAgreedCoins=(room.players?.[S.user.uid]?.coins)||0;
     const theirAgreedCoins=(room.players?.[S.tradePartnerUid]?.coins)||0;
 
-    // Firestore transaction — reads and writes are atomic, preventing duplication
     await db.runTransaction(async tx=>{
       const myRef=db.collection('users').doc(S.user.uid);
       const theirRef=db.collection('users').doc(S.tradePartnerUid);
@@ -2511,23 +2290,18 @@ async function executeTrade(){
       let myCoins=myData.coins||0;
       let theirCoins=theirData.coins||0;
 
-      // Move my items to partner
       for(const ti of myAgreedItems){
-        const idx = myInv.findIndex(i => i.uniqueId === ti.uniqueId);
-        if(idx === -1) throw new Error('Item "'+ti.name+'" not in your inventory');
+        const idx=myInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+        if(idx===-1)throw new Error('Item "'+ti.name+'" not in your inventory');
         myInv.splice(idx,1);
-        // Transfer the same uniqueId instead of generating a new one
-        theirInv.push({...ti, obtainedAt: new Date().toISOString()});
+        theirInv.push({...ti,obtainedAt:new Date().toISOString()});
       }
-      
-      // Move partner items to me
       for(const ti of theirAgreedItems){
-        const idx = theirInv.findIndex(i => i.uniqueId === ti.uniqueId);
-        if(idx === -1) throw new Error('Item "'+ti.name+'" not in partner inventory');
+        const idx=theirInv.findIndex(i=>i.uniqueId===ti.uniqueId);
+        if(idx===-1)throw new Error('Item "'+ti.name+'" not in partner inventory');
         theirInv.splice(idx,1);
-        myInv.push({...ti, obtainedAt: new Date().toISOString()});
+        myInv.push({...ti,obtainedAt:new Date().toISOString()});
       }
-      // Validate and transfer coins
       if(myAgreedCoins>myCoins) throw new Error('Not enough coins to complete trade');
       if(theirAgreedCoins>theirCoins) throw new Error("Partner doesn't have enough coins");
       myCoins=myCoins-myAgreedCoins+theirAgreedCoins;
@@ -2547,39 +2321,42 @@ async function executeTrade(){
       tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
       tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
     });
-    await rtdb.ref('tradeRooms/'+S.tradeRoomId).update({completed:true});
+
+    // ── FIX: Mark completed and DELETE room immediately to prevent re-trigger ──
+    S.executedTradeIds.add(roomIdSnap);
+    await rtdb.ref('tradeRooms/'+roomIdSnap).update({completed:true,executing:true});
+    // Give partner's listener time to see completed:true, then delete
+    setTimeout(()=>{ rtdb.ref('tradeRooms/'+roomIdSnap).remove().catch(()=>{}); },3000);
+
+    // Refresh local state from Firestore
+    const doc=await db.collection('users').doc(S.user.uid).get();
+    if(doc.exists){ S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]]; updateCoinDisplay(S.profile.coins); }
+    resetTradeState();
+    toast('🎉 Trade completed successfully!','success');
+    if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
+
   }catch(e){
     console.error('Trade error:',e);
-    if(e.message&&e.message.startsWith('DUPE_DETECTED')){
-      toast('⛔ '+e.message.replace('DUPE_DETECTED: ',''),'error');
-    } else {
-      toast('Trade failed: '+e.message,'error');
-    }
-    try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(_){}
+    toast('Trade failed: '+e.message,'error');
+    try{ await rtdb.ref('tradeRooms/'+roomIdSnap).remove(); }catch(_){}
     resetTradeState();
   }
 }
 
 async function handleTradeComplete(room){
+  // Called when we see completed:true on a room we didn't execute ourselves
   try{
     const doc=await db.collection('users').doc(S.user.uid).get();
-    if(doc.exists){
-      S.profile=doc.data();
-      S.inventory=[...S.profile.inventory||[]];
-      updateCoinDisplay(S.profile.coins);
-    }
+    if(doc.exists){ S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]]; updateCoinDisplay(S.profile.coins); }
   }catch(e){}
-  try{ await rtdb.ref('tradeRooms/'+S.tradeRoomId).remove(); }catch(e){}
   resetTradeState();
   toast('🎉 Trade completed successfully!','success');
   if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
 
-// FIX: showFinalModal - countdown properly enables the button and doesn't use wrong element ID
 let _finalModalCd=null;
 function showFinalModal(myItems,theirItems){
-  // Clear any previous countdown interval to prevent double-firing
-  if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
+  if(_finalModalCd){clearInterval(_finalModalCd);_finalModalCd=null;}
   const modal=document.getElementById('trade-final-modal');
   const theirName=document.getElementById('trade-them-name').textContent;
   const iList=(items,coins)=>{
@@ -2594,30 +2371,20 @@ function showFinalModal(myItems,theirItems){
   modal.classList.remove('hidden');
   const btn=document.getElementById('btn-final-accept');
   const cdDisplay=modal.querySelector('.countdown-display');
-  // Reset button state
-  btn.disabled=true;
-  btn.className='btn-final-accept disabled';
-  btn.textContent='FINAL ACCEPT';
+  btn.disabled=true; btn.className='btn-final-accept disabled'; btn.textContent='FINAL ACCEPT';
   let count=5;
-  // Write count directly into a plain element — no innerHTML rewrites during countdown
   cdDisplay.textContent='';
   const prefix=document.createTextNode('Final accept available in ');
   const numSpan=document.createElement('span');
-  numSpan.style.color='var(--gold)';
-  numSpan.style.fontSize='1.4rem';
-  numSpan.style.fontWeight='900';
+  numSpan.style.color='var(--gold)'; numSpan.style.fontSize='1.4rem'; numSpan.style.fontWeight='900';
   numSpan.textContent=count;
   const suffix=document.createTextNode('s...');
-  cdDisplay.appendChild(prefix);
-  cdDisplay.appendChild(numSpan);
-  cdDisplay.appendChild(suffix);
+  cdDisplay.appendChild(prefix); cdDisplay.appendChild(numSpan); cdDisplay.appendChild(suffix);
   _finalModalCd=setInterval(()=>{
-    count--;
-    numSpan.textContent=count;
+    count--; numSpan.textContent=count;
     if(count<=0){
       clearInterval(_finalModalCd); _finalModalCd=null;
-      btn.disabled=false;
-      btn.className='btn-final-accept';
+      btn.disabled=false; btn.className='btn-final-accept';
       cdDisplay.innerHTML='<span style="color:#22c55e">✓ You may now FINAL ACCEPT!</span>';
     }
   },1000);
@@ -2633,10 +2400,11 @@ function updateTradeStatus(){
 }
 
 function resetTradeState(){
-  if(_finalModalCd){ clearInterval(_finalModalCd); _finalModalCd=null; }
-  if(tradeRoomListener){ tradeRoomListener(); tradeRoomListener=null; }
+  if(_finalModalCd){clearInterval(_finalModalCd);_finalModalCd=null;}
+  if(tradeRoomListener){tradeRoomListener();tradeRoomListener=null;}
   S.tradeRoomId=null; S.tradeMyItems=[]; S.tradeTheirItems=[];
-  S.tradeMyAccepted=false; S.tradeTheirAccepted=false; S.tradeCountdownActive=false; S.tradeExecuting=false;
+  S.tradeMyAccepted=false; S.tradeTheirAccepted=false;
+  S.tradeCountdownActive=false; S.tradeExecuting=false;
   S.tradeMyCoins=0; S.tradeTheirCoins=0;
   const coinInput=document.getElementById('trade-coin-input');
   if(coinInput) coinInput.value='';
@@ -2658,7 +2426,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     const page=btn.dataset.page;
     showPage(page);
     if(page==='inventory') renderInventory();
-    if(page==='trade'){ renderOnlinePlayers(); if(S.tradeRoomId) renderTradeUI(); }
+    if(page==='trade'){renderOnlinePlayers();if(S.tradeRoomId)renderTradeUI();}
     if(page==='leaderboard') loadLeaderboard();
     if(page==='history') renderTradeHistory();
   });
@@ -2679,7 +2447,7 @@ function showUltraOverlay(item){
   const r=getRarity(item.rarity);
   document.getElementById('ultra-icon').textContent=item.icon;
   document.getElementById('ultra-text').textContent=r.name.toUpperCase()+' DROP!';
-  document.getElementById('ultra-sub').textContent=r.display?'Odds: '+r.display:'You pulled a '+r.name+'!';
+  document.getElementById('ultra-sub').textContent='You pulled a '+r.name+'!';
   document.getElementById('ultra-overlay').classList.remove('hidden');
 }
 document.getElementById('btn-ultra-close').addEventListener('click',()=>{
@@ -2705,386 +2473,171 @@ function spawnParticles(){
 }
 
 // ============================================================
-// BOOT
+// ADMIN
 // ============================================================
-// Admin force-refresh button
 document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
-  const btn = document.getElementById('admin-refresh-btn');
-  btn.disabled = true;
-  btn.textContent = 'Refreshing...';
+  const btn=document.getElementById('admin-refresh-btn');
+  btn.disabled=true; btn.textContent='Refreshing...';
   try{
-    await rtdb.ref('admin/forceRefresh').set({
-      ts: firebase.database.ServerValue.TIMESTAMP,
-      by: S.profile?.username || 'admin',
-    });
-    toast('Force refresh sent to all clients!','success');
-  }catch(e){
-    toast('Error: '+e.message,'error');
-  }
-  setTimeout(()=>{ btn.disabled=false; btn.textContent='⚡ REFRESH ALL'; }, 2000);
+    await rtdb.ref('admin/forceRefresh').set({ts:firebase.database.ServerValue.TIMESTAMP,by:S.profile?.username||'admin'});
+    toast('Force refresh sent!','success');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+  setTimeout(()=>{btn.disabled=false;btn.textContent='⚡ REFRESH ALL';},2000);
 });
 
-(function boot(){
-  const cfg = {
-    apiKey:            "AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM",
-    authDomain:        "rng-game-13854.firebaseapp.com",
-    projectId:         "rng-game-13854",
-    storageBucket:     "rng-game-13854.firebasestorage.app",
-    messagingSenderId: "60292248542",
-    appId:             "1:60292248542:web:2942a3a407dab5d51a234f",
-    measurementId:     "G-PH8Q3YGWZ3",
-    databaseURL:       "https://rng-game-13854-default-rtdb.firebaseio.com",
-  };
-  try{
-    initFirebase(cfg);
-    startAuthObserver();
-    // Re-announce presence when tab becomes visible again (e.g. alt-tab back)
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible' && S.user && S.presenceRef){
-        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP, online:true});
-      }
-    });
-    // Admin force-refresh: listen for reload signal on RTDB
-    const refreshRef = rtdb.ref('admin/forceRefresh');
-    let lastRefreshTs = 0;
-    refreshRef.on('value', snap=>{
-      const val = snap.val();
-      if(!val || !val.ts) return;
-      // Only reload if this is a NEW signal (not one from before we loaded)
-      if(val.ts > lastRefreshTs && lastRefreshTs !== 0){
-        setTimeout(()=>location.reload(), 500);
-      }
-      lastRefreshTs = val.ts;
-    });
-    // Particles shown after auth observer fires for non-logged-in state
-  }catch(e){
-    console.error('Firebase init error:',e);
-    hideLoadingOverlay();
-    showScreen('auth-screen');
-    spawnParticles();
-  }
-})();
-
-let isSpinning = false;
-let lastSpinTime = 0;
+// ============================================================
+// LUCKY WHEEL
+// ============================================================
+let isSpinning=false;
+let lastSpinTime=0;
+const INFINITE_WHEEL_UIDS=new Set(['dmmJDtGUVBgdC7wsAp12xJB7FOF2','Qo058ATVgidpQPdRU7mliFtTZqh1']);
 
 function showLuckyWheel(){
-  if(isSpinning) return;
+  if(isSpinning)return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-  if(S.profile && S.profile.lastWheelSpin){
-    lastSpinTime = S.profile.lastWheelSpin;
-  }
+  if(S.profile&&S.profile.lastWheelSpin) lastSpinTime=S.profile.lastWheelSpin;
   updateCooldownDisplay();
 }
 
-const INFINITE_WHEEL_UIDS = new Set([
-  'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
-  'Qo058ATVgidpQPdRU7mliFtTZqh1',
-]);
-
 function updateCooldownDisplay(){
-  (function(){
-    const btn = document.getElementById('spin-btn');
-    // Remove any existing listeners by cloning the button
-    const fresh = btn.cloneNode(true);
-    btn.parentNode.replaceChild(fresh, btn);
-    fresh.addEventListener('click', spinLuckyWheel);
-  })();
-  const display = document.getElementById('cooldown-display');
-
-  // Infinite wheel for admin UID
-  if(S.user && S.user.uid === INFINITE_WHEEL_UID){
-    btn.disabled = false;
-    btn.textContent = "SPIN WHEEL (FREE)";
-    display.innerHTML = `<span style="color:#ff00ff">⚡ INFINITE SPINS</span>`;
+  const btn=document.getElementById('spin-btn');
+  const display=document.getElementById('cooldown-display');
+  if(S.user&&INFINITE_WHEEL_UIDS.has(S.user.uid)){
+    btn.disabled=false; btn.textContent='SPIN WHEEL (FREE)';
+    display.innerHTML=`<span style="color:#ff00ff">⚡ INFINITE SPINS</span>`;
     return;
   }
-
-  const cooldown = 24 * 60 * 60 * 1000;
-  const savedTime = S.profile?.lastWheelSpin || 0;
-  const effectiveLastSpin = Math.max(lastSpinTime, savedTime);
-  const timeSinceLastSpin = Date.now() - effectiveLastSpin;
-  if(effectiveLastSpin === 0 || timeSinceLastSpin >= cooldown){
-    btn.disabled = false;
-    btn.textContent = "SPIN WHEEL (FREE)";
-    display.innerHTML = `<span style="color:#22c55e">✅ Ready to Spin!</span>`;
+  const cooldown=24*60*60*1000;
+  const savedTime=S.profile?.lastWheelSpin||0;
+  const effectiveLastSpin=Math.max(lastSpinTime,savedTime);
+  const timeSinceLastSpin=Date.now()-effectiveLastSpin;
+  if(effectiveLastSpin===0||timeSinceLastSpin>=cooldown){
+    btn.disabled=false; btn.textContent='SPIN WHEEL (FREE)';
+    display.innerHTML=`<span style="color:#22c55e">✅ Ready to Spin!</span>`;
   } else {
-    const timeLeft = cooldown - timeSinceLastSpin;
-    const hours = Math.floor(timeLeft / (1000*60*60));
-    const minutes = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
-    btn.disabled = true;
-    btn.textContent = 'Wait';
-    display.textContent = `Next spin in ${hours}h ${minutes}m`;
+    const timeLeft=cooldown-timeSinceLastSpin;
+    const hours=Math.floor(timeLeft/(1000*60*60));
+    const minutes=Math.floor((timeLeft%(1000*60*60))/(1000*60));
+    btn.disabled=true; btn.textContent='Wait';
+    display.textContent=`Next spin in ${hours}h ${minutes}m`;
   }
 }
 
 function spinLuckyWheel(){
-  if(isSpinning) return;
-  
-  const isAdmin = INFINITE_WHEEL_UIDS.has(S.user?.uid || '');
-  
+  if(isSpinning)return;
+  const isAdmin=INFINITE_WHEEL_UIDS.has(S.user?.uid||'');
   if(!isAdmin){
-    const cooldown = 24 * 60 * 60 * 1000;
-    const savedTime = S.profile?.lastWheelSpin || 0;
-    const effectiveLastSpin = Math.max(lastSpinTime, savedTime);
-    if(effectiveLastSpin !== 0 && Date.now() - effectiveLastSpin < cooldown){
-      toast("You can only spin once every 24 hours!", "error");
+    const cooldown=24*60*60*1000;
+    const savedTime=S.profile?.lastWheelSpin||0;
+    const effectiveLastSpin=Math.max(lastSpinTime,savedTime);
+    if(effectiveLastSpin!==0&&Date.now()-effectiveLastSpin<cooldown){
+      toast('You can only spin once every 24 hours!','error');
       return;
     }
-    // Only save timestamp for non-admins
-    const now = Date.now();
-    lastSpinTime = now;
-    S.profile.lastWheelSpin = now;
-    db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
   }
-
-  isSpinning = true;
-  lastSpinTime = now;
-
-  // Save timestamp to Firestore (skip for admin so it doesn't lock them out)
-  if(!isAdmin && S.user && S.profile){
-    S.profile.lastWheelSpin = now;
-    db.collection('users').doc(S.user.uid).update({ lastWheelSpin: now }).catch(()=>{});
+  isSpinning=true;
+  const now=Date.now();
+  if(!isAdmin&&S.user&&S.profile){
+    lastSpinTime=now;
+    S.profile.lastWheelSpin=now;
+    db.collection('users').doc(S.user.uid).update({lastWheelSpin:now}).catch(()=>{});
   }
-
-    (function(){
-    const btn = document.getElementById('spin-btn');
-    // Remove any existing listeners by cloning the button
-    const fresh = btn.cloneNode(true);
-    btn.parentNode.replaceChild(fresh, btn);
-    fresh.addEventListener('click', spinLuckyWheel);
-  })();
-  btn.disabled = true;
-  btn.textContent = 'Spinning...';
-  const wheel = document.getElementById('lucky-wheel');
-  const labels = document.getElementById('wheel-labels');
-  const resultEl = document.getElementById('wheel-result');
-  resultEl.textContent = '';
-
-  // Segments (conic-gradient, clockwise from 3 o'clock):
-  // 0-72°=red=200, 72-144°=orange=450, 144-216°=yellow=900, 216-288°=green=1800, 288-360°=blue=FREE
-  // Pointer at 12 o'clock = 270° in CSS coordinate space.
-  // After wheel rotates R degrees, the angle at the pointer = (270 - R) mod 360
-  // Midpoint of segment P = P*72 + 36
-  // We want (270 - totalDeg) mod 360 = P*72 + 36
-  // => totalDeg mod 360 = (270 - P*72 - 36) mod 360 = (234 - P*72) mod 360
-
-  const prizes = [
-    {text:"🪙 200 coins",  amount:200,   segIndex:0},  // red,    0-72°
-    {text:"🪙 450 coins",  amount:450,   segIndex:1},  // orange, 72-144°
-    {text:"🪙 900 coins",  amount:900,   segIndex:2},  // yellow, 144-216°
-    {text:"🪙 1800 coins", amount:1800,  segIndex:3},  // green,  216-288°
-    {text:"🎁 FREE CRATE", amount:"free",segIndex:4},  // blue,   288-360°
+  const btn=document.getElementById('spin-btn');
+  btn.disabled=true; btn.textContent='Spinning...';
+  const wheel=document.getElementById('lucky-wheel');
+  const labels=document.getElementById('wheel-labels');
+  const resultEl=document.getElementById('wheel-result');
+  resultEl.textContent='';
+  const prizes=[
+    {text:'🪙 200 coins', amount:200,  segIndex:0},
+    {text:'🪙 450 coins', amount:450,  segIndex:1},
+    {text:'🪙 900 coins', amount:900,  segIndex:2},
+    {text:'🪙 1800 coins',amount:1800, segIndex:3},
+    {text:'🎁 FREE CRATE',amount:'free',segIndex:4},
   ];
-
-  const prizeIndex = Math.floor(Math.random() * prizes.length);
-  const P = prizes[prizeIndex].segIndex;
-  // Land exactly at center of segment P, with small random offset within segment (±20°)
-  const jitter = (Math.random() - 0.5) * 40;
-  const targetMod = ((234 - P * 72) % 360 + 360) % 360 + jitter;
-  const fullSpins = 10 + Math.floor(Math.random() * 6);
-  const totalDeg = fullSpins * 360 + targetMod;
-
-  wheel.style.transition = 'none';
-  labels.style.transition = 'none';
-  wheel.style.transform = 'rotate(0deg)';
-  labels.style.transform = 'rotate(0deg)';
+  const prizeIndex=Math.floor(Math.random()*prizes.length);
+  const P=prizes[prizeIndex].segIndex;
+  const jitter=(Math.random()-0.5)*40;
+  const targetMod=((234-P*72)%360+360)%360+jitter;
+  const fullSpins=10+Math.floor(Math.random()*6);
+  const totalDeg=fullSpins*360+targetMod;
+  wheel.style.transition='none'; labels.style.transition='none';
+  wheel.style.transform='rotate(0deg)'; labels.style.transform='rotate(0deg)';
   void wheel.offsetWidth;
-
-  wheel.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
-  labels.style.transition = 'transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
-  wheel.style.transform = `rotate(${totalDeg}deg)`;
-  labels.style.transform = `rotate(${totalDeg}deg)`;
-
-  setTimeout(() => {
-    // Verify by pure math — which segment is actually under the pointer?
-    const finalAngle = totalDeg % 360;
-    const pointerAngle = ((270 - finalAngle) % 360 + 360) % 360;
-    const detectedSegment = Math.floor(pointerAngle / 72) % 5;
-    const prize = prizes[detectedSegment] || prizes[prizeIndex];
-
-    resultEl.textContent = prize.text;
-    if(prize.amount === "free"){
-      toast("🎁 You won a FREE CRATE!", "gold", 5000);
+  wheel.style.transition='transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
+  labels.style.transition='transform 5.8s cubic-bezier(0.23, 1, 0.32, 1)';
+  wheel.style.transform=`rotate(${totalDeg}deg)`;
+  labels.style.transform=`rotate(${totalDeg}deg)`;
+  setTimeout(()=>{
+    const finalAngle=totalDeg%360;
+    const pointerAngle=((270-finalAngle)%360+360)%360;
+    const detectedSegment=Math.floor(pointerAngle/72)%5;
+    const prize=prizes[detectedSegment]||prizes[prizeIndex];
+    resultEl.textContent=prize.text;
+    if(prize.amount==='free'){
+      toast('🎁 You won a FREE CRATE!','gold',5000);
     } else {
       if(S.profile){
-        S.profile.coins += prize.amount;
+        S.profile.coins+=prize.amount;
         updateCoinDisplay(S.profile.coins);
-        if(S.user) db.collection('users').doc(S.user.uid)
-          .update({coins: firebase.firestore.FieldValue.increment(prize.amount)})
-          .catch(()=>{});
+        if(S.user) db.collection('users').doc(S.user.uid).update({coins:firebase.firestore.FieldValue.increment(prize.amount)}).catch(()=>{});
       }
-      toast(`🎉 You won ${prize.text}!`, "gold", 4000);
+      toast(`🎉 You won ${prize.text}!`,'gold',4000);
     }
-    isSpinning = false;
+    isSpinning=false;
     updateCooldownDisplay();
-  }, 6000);
-}
-function detectWheelSegment(wheelEl, prizes) {
-  try {
-    // Get the wheel's position and size
-    const rect = wheelEl.getBoundingClientRect();
-    const border = 22; // border width in px
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + border + 6; // pointer tip is just inside the top border
-
-    // Use a temporary canvas to sample color at the pointer tip
-    const canvas = document.createElement('canvas');
-    canvas.width = 1; canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-
-    // Draw the wheel element onto the canvas at the sample point
-    // We offset so the sample point maps to pixel 0,0
-    ctx.drawImage(wheelEl, -(cx - rect.left), -(cy - rect.top), rect.width, rect.height);
-    const px = ctx.getImageData(0, 0, 1, 1).data; // [r, g, b, a]
-
-    // Find closest matching prize color
-    let bestMatch = null, bestDist = Infinity;
-    prizes.forEach((prize, i) => {
-      const [pr, pg, pb] = prize.color;
-      const dist = Math.abs(px[0]-pr) + Math.abs(px[1]-pg) + Math.abs(px[2]-pb);
-      if(dist < bestDist){ bestDist = dist; bestMatch = i; }
-    });
-
-    // Only trust it if it's a close match (within threshold)
-    return bestDist < 80 ? bestMatch : null;
-  } catch(e) {
-    // Canvas tainted or unavailable — fall back to math
-    return null;
-  }
+  },6000);
 }
 
-function detectWheelSegment(wheelEl, prizes) {
-  try {
-    // Get the wheel's position and size
-    const rect = wheelEl.getBoundingClientRect();
-    const border = 22; // border width in px
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + border + 6; // pointer tip is just inside the top border
+function closeLuckyWheel(){ document.getElementById('lucky-wheel-modal').classList.add('hidden'); }
+document.getElementById('spin-btn').addEventListener('click',spinLuckyWheel);
 
-    // Use a temporary canvas to sample color at the pointer tip
-    const canvas = document.createElement('canvas');
-    canvas.width = 1; canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-
-    // Draw the wheel element onto the canvas at the sample point
-    // We offset so the sample point maps to pixel 0,0
-    ctx.drawImage(wheelEl, -(cx - rect.left), -(cy - rect.top), rect.width, rect.height);
-    const px = ctx.getImageData(0, 0, 1, 1).data; // [r, g, b, a]
-
-    // Find closest matching prize color
-    let bestMatch = null, bestDist = Infinity;
-    prizes.forEach((prize, i) => {
-      const [pr, pg, pb] = prize.color;
-      const dist = Math.abs(px[0]-pr) + Math.abs(px[1]-pg) + Math.abs(px[2]-pb);
-      if(dist < bestDist){ bestDist = dist; bestMatch = i; }
-    });
-
-    // Only trust it if it's a close match (within threshold)
-    return bestDist < 80 ? bestMatch : null;
-  } catch(e) {
-    // Canvas tainted or unavailable — fall back to math
-    return null;
-  }
-}
-
-function closeLuckyWheel(){
-  document.getElementById('lucky-wheel-modal').classList.add('hidden');
-}
-
-document.getElementById('spin-btn').addEventListener('click', spinLuckyWheel);
-
-function renderAchievements(){
-  const grid = document.getElementById('achievements-grid');
-  grid.innerHTML = ACHIEVEMENTS.map(a => `
-    <div class="achievement-card">
-      <div style="font-size:2.8rem;margin-bottom:8px">${a.icon}</div>
-      <strong>${a.name}</strong>
-      <p style="color:var(--text-2);font-size:0.85rem">${a.desc}</p>
-      <div style="color:var(--gold)">Reward: 🪙 ${a.reward}</div>
-    </div>
-  `).join('');
-}
-  // ============================================================
+// ============================================================
 // AFK PUZZLE SYSTEM
 // ============================================================
-const PUZZLES = [
-  // Math
-  { q: 'What is 17 × 4?', a: '68' },
-  { q: 'What is 144 ÷ 12?', a: '12' },
-  { q: 'What is 25 + 37?', a: '62' },
-  { q: 'What is 100 - 63?', a: '37' },
-  { q: 'What is 8 × 9?', a: '72' },
-  { q: 'What is 256 ÷ 8?', a: '32' },
-  { q: 'What is 13 × 7?', a: '91' },
-  { q: 'What is 200 - 84?', a: '116' },
-  { q: 'What is 15 × 6?', a: '90' },
-  { q: 'What is 81 ÷ 9?', a: '9' },
-  // Word
-  { q: 'Type the word: VAULT', a: 'VAULT' },
-  { q: 'Type the word: CRATE', a: 'CRATE' },
-  { q: 'Type the word: UNLOCK', a: 'UNLOCK' },
-  { q: 'Type the word: LEGENDARY', a: 'LEGENDARY' },
-  { q: 'Type the word: FORTUNE', a: 'FORTUNE' },
-  // Logic
-  { q: 'How many sides does a hexagon have?', a: '6' },
-  { q: 'How many days in a week?', a: '7' },
-  { q: 'How many hours in a day?', a: '24' },
-  { q: 'How many months in a year?', a: '12' },
-  { q: 'What is 3 squared?', a: '9' },
+const PUZZLES=[
+  {q:'What is 17 × 4?',a:'68'},{q:'What is 144 ÷ 12?',a:'12'},
+  {q:'What is 25 + 37?',a:'62'},{q:'What is 100 - 63?',a:'37'},
+  {q:'What is 8 × 9?',a:'72'},{q:'What is 256 ÷ 8?',a:'32'},
+  {q:'What is 13 × 7?',a:'91'},{q:'What is 200 - 84?',a:'116'},
+  {q:'What is 15 × 6?',a:'90'},{q:'What is 81 ÷ 9?',a:'9'},
+  {q:'Type the word: VAULT',a:'VAULT'},{q:'Type the word: CRATE',a:'CRATE'},
+  {q:'Type the word: UNLOCK',a:'UNLOCK'},{q:'Type the word: LEGENDARY',a:'LEGENDARY'},
+  {q:'Type the word: FORTUNE',a:'FORTUNE'},{q:'How many sides does a hexagon have?',a:'6'},
+  {q:'How many days in a week?',a:'7'},{q:'How many hours in a day?',a:'24'},
+  {q:'How many months in a year?',a:'12'},{q:'What is 3 squared?',a:'9'},
 ];
 
-let _puzzleTimeout = null;
-let _puzzleInterval = null;
+let _puzzleTimeout=null;
+let _puzzleInterval=null;
 
-function schedulePuzzle() {
-  if (_puzzleTimeout) clearTimeout(_puzzleTimeout);
-  
-  // Check if there's already a scheduled time saved
-  let nextPuzzleTime = parseInt(localStorage.getItem('cv_next_puzzle') || '0');
-  const now = Date.now();
-  
-  // If no saved time or it's in the past, schedule a new one
-  if (!nextPuzzleTime || nextPuzzleTime <= now) {
-    const delay = (45 + Math.random() * 15) * 60 * 1000;
-    nextPuzzleTime = now + delay;
-    localStorage.setItem('cv_next_puzzle', nextPuzzleTime);
+function schedulePuzzle(){
+  if(_puzzleTimeout) clearTimeout(_puzzleTimeout);
+  let nextPuzzleTime=parseInt(localStorage.getItem('cv_next_puzzle')||'0');
+  const now=Date.now();
+  if(!nextPuzzleTime||nextPuzzleTime<=now){
+    const delay=(45+Math.random()*15)*60*1000;
+    nextPuzzleTime=now+delay;
+    localStorage.setItem('cv_next_puzzle',nextPuzzleTime);
   }
-  
-  const timeUntil = nextPuzzleTime - now;
-  _puzzleTimeout = setTimeout(() => {
-    localStorage.removeItem('cv_next_puzzle'); // clear so a new one gets scheduled after
-    showAfkPuzzle();
-  }, timeUntil);
+  const timeUntil=nextPuzzleTime-now;
+  _puzzleTimeout=setTimeout(()=>{ localStorage.removeItem('cv_next_puzzle'); showAfkPuzzle(); },timeUntil);
 }
 
-function showAfkPuzzle() {
-  // Don't interrupt an active trade
-  if (S.tradeRoomId) { schedulePuzzle(); return; }
-
-  const puzzle = PUZZLES[Math.floor(Math.random() * PUZZLES.length)];
-  let timeLeft = 60;
-
-  // Build modal
-  const overlay = document.createElement('div');
-  overlay.id = 'afk-puzzle-overlay';
-  overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;
-    display:flex;align-items:center;justify-content:center;
-    animation:ultra-fade-in .4s ease;
-  `;
-
-  overlay.innerHTML = `
+function showAfkPuzzle(){
+  if(S.tradeRoomId){schedulePuzzle();return;}
+  const puzzle=PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
+  let timeLeft=60;
+  const overlay=document.createElement('div');
+  overlay.id='afk-puzzle-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .4s ease;';
+  overlay.innerHTML=`
     <div style="background:var(--bg-card);border:2px solid var(--accent);border-radius:var(--rl);
       padding:36px 32px;max-width:420px;width:90%;text-align:center;
       box-shadow:0 0 60px var(--accent-g);display:flex;flex-direction:column;gap:18px;">
       <div style="font-size:2.5rem">🧠</div>
-      <div style="font-family:var(--font-d);font-size:.8rem;letter-spacing:.2em;color:var(--text-2)">
-        AFK CHECK
-      </div>
-      <div style="font-family:var(--font-d);font-size:1.15rem;font-weight:700;color:var(--text-1);line-height:1.4">
-        ${puzzle.q}
-      </div>
+      <div style="font-family:var(--font-d);font-size:.8rem;letter-spacing:.2em;color:var(--text-2)">AFK CHECK</div>
+      <div style="font-family:var(--font-d);font-size:1.15rem;font-weight:700;color:var(--text-1);line-height:1.4">${puzzle.q}</div>
       <input id="afk-answer" type="text" placeholder="Your answer..."
         style="background:var(--bg-dark);border:2px solid var(--border);border-radius:var(--r);
         padding:12px 16px;font-size:1rem;color:var(--text-1);text-align:center;
@@ -3092,104 +2645,88 @@ function showAfkPuzzle() {
         autocomplete="off" autocorrect="off" spellcheck="false"/>
       <button id="afk-submit" style="background:linear-gradient(135deg,var(--accent),#7c3aed);
         color:#fff;padding:13px;border-radius:var(--r);font-family:var(--font-d);
-        font-size:.85rem;font-weight:700;letter-spacing:.1em;cursor:pointer;border:none;
-        box-shadow:0 4px 20px var(--accent-g);transition:transform .1s;">
-        SUBMIT
-      </button>
+        font-size:.85rem;font-weight:700;letter-spacing:.1em;cursor:pointer;border:none;">SUBMIT</button>
       <div style="color:var(--text-2);font-size:.8rem;font-family:var(--font-d)">
         Prove you're here or get marked offline in
         <span id="afk-timer" style="color:var(--gold);font-weight:700">${timeLeft}s</span>
       </div>
-    </div>
-  `;
-
+    </div>`;
   document.body.appendChild(overlay);
-
-  const input = overlay.querySelector('#afk-answer');
-  const submitBtn = overlay.querySelector('#afk-submit');
-  const timerEl = overlay.querySelector('#afk-timer');
-
-  // Focus input
-  setTimeout(() => input.focus(), 100);
-
-  // Style input focus
-  input.addEventListener('focus', () => input.style.borderColor = 'var(--accent)');
-  input.addEventListener('blur',  () => input.style.borderColor = 'var(--border)');
-
-  function checkAnswer() {
-    const userAnswer = input.value.trim().toUpperCase();
-    const correct = puzzle.a.toUpperCase();
-    if (userAnswer === correct) {
-      clearInterval(_puzzleInterval);
-      overlay.remove();
-      toast('✅ Puzzle solved! Stay frosty.', 'success', 3000);
-      schedulePuzzle(); // schedule next one
-    } else {
-      input.style.borderColor = '#ef4444';
-      input.value = '';
-      input.placeholder = 'Wrong! Try again...';
-      setTimeout(() => {
-        input.style.borderColor = 'var(--border)';
-        input.placeholder = 'Your answer...';
-        input.focus();
-      }, 600);
-    }
+  const input=overlay.querySelector('#afk-answer');
+  const submitBtn=overlay.querySelector('#afk-submit');
+  const timerEl=overlay.querySelector('#afk-timer');
+  setTimeout(()=>input.focus(),100);
+  input.addEventListener('focus',()=>input.style.borderColor='var(--accent)');
+  input.addEventListener('blur',()=>input.style.borderColor='var(--border)');
+  function checkAnswer(){
+    const userAnswer=input.value.trim().toUpperCase();
+    const correct=puzzle.a.toUpperCase();
+    if(userAnswer===correct){ clearInterval(_puzzleInterval); overlay.remove(); toast('✅ Puzzle solved! Stay frosty.','success',3000); schedulePuzzle(); }
+    else{ input.style.borderColor='#ef4444'; input.value=''; input.placeholder='Wrong! Try again...'; setTimeout(()=>{input.style.borderColor='var(--border)';input.placeholder='Your answer...';input.focus();},600); }
   }
-
-  submitBtn.addEventListener('click', checkAnswer);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
-
-  // Countdown timer
-  _puzzleInterval = setInterval(() => {
+  submitBtn.addEventListener('click',checkAnswer);
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter') checkAnswer(); });
+  _puzzleInterval=setInterval(()=>{
     timeLeft--;
-    if (timerEl) timerEl.textContent = timeLeft + 's';
-    if (timeLeft <= 10 && timerEl) timerEl.style.color = '#ef4444';
-
-    if (timeLeft <= 0) {
-      clearInterval(_puzzleInterval);
-      overlay.remove();
-      handleAfkFail();
-    }
-  }, 1000);
+    if(timerEl) timerEl.textContent=timeLeft+'s';
+    if(timeLeft<=10&&timerEl) timerEl.style.color='#ef4444';
+    if(timeLeft<=0){ clearInterval(_puzzleInterval); overlay.remove(); handleAfkFail(); }
+  },1000);
 }
 
-async function handleAfkFail() {
-  toast('⏰ AFK check failed — marked offline!', 'error', 5000);
-  // Remove from presence so they disappear from online list
+async function handleAfkFail(){
+  toast('⏰ AFK check failed — marked offline!','error',5000);
   await leavePresence();
-  // Show a re-engage modal
-  const rejoin = document.createElement('div');
-  rejoin.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;
-    display:flex;align-items:center;justify-content:center;
-  `;
-  rejoin.innerHTML = `
+  const rejoin=document.createElement('div');
+  rejoin.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  rejoin.innerHTML=`
     <div style="background:var(--bg-card);border:2px solid #ef4444;border-radius:var(--rl);
       padding:32px;max-width:380px;width:90%;text-align:center;
       box-shadow:0 0 60px #ef444444;display:flex;flex-direction:column;gap:16px;">
       <div style="font-size:2.5rem">💤</div>
-      <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#ef4444;letter-spacing:.1em">
-        YOU WENT AFK
-      </div>
-      <div style="color:var(--text-2);font-size:.9rem">
-        You were removed from the online list. Click below to rejoin.
-      </div>
-      <button id="afk-rejoin" style="background:linear-gradient(135deg,#22c55e,#16a34a);
-        color:#fff;padding:13px;border-radius:var(--r);font-family:var(--font-d);
-        font-size:.85rem;font-weight:700;letter-spacing:.1em;cursor:pointer;border:none;">
-        I'M BACK — REJOIN
-      </button>
-    </div>
-  `;
+      <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#ef4444;letter-spacing:.1em">YOU WENT AFK</div>
+      <div style="color:var(--text-2);font-size:.9rem">You were removed from the online list. Click below to rejoin.</div>
+      <button id="afk-rejoin" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:13px;border-radius:var(--r);font-family:var(--font-d);font-size:.85rem;font-weight:700;letter-spacing:.1em;cursor:pointer;border:none;">I'M BACK — REJOIN</button>
+    </div>`;
   document.body.appendChild(rejoin);
-  rejoin.querySelector('#afk-rejoin').addEventListener('click', () => {
-    rejoin.remove();
-    // Re-establish presence
-    setupPresence();
-    toast('👋 Welcome back!', 'success');
-    schedulePuzzle(); // restart puzzle timer
-  });
+  rejoin.querySelector('#afk-rejoin').addEventListener('click',()=>{ rejoin.remove(); setupPresence(); toast('👋 Welcome back!','success'); schedulePuzzle(); });
 }
+
+// ============================================================
+// BOOT
+// ============================================================
+(function boot(){
+  const cfg={
+    apiKey:'AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM',
+    authDomain:'rng-game-13854.firebaseapp.com',
+    projectId:'rng-game-13854',
+    storageBucket:'rng-game-13854.firebasestorage.app',
+    messagingSenderId:'60292248542',
+    appId:'1:60292248542:web:2942a3a407dab5d51a234f',
+    measurementId:'G-PH8Q3YGWZ3',
+    databaseURL:'https://rng-game-13854-default-rtdb.firebaseio.com',
+  };
+  try{
+    initFirebase(cfg);
+    startAuthObserver();
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible'&&S.user&&S.presenceRef){
+        S.presenceRef.update({ts:firebase.database.ServerValue.TIMESTAMP,online:true});
+      }
+    });
+    let lastRefreshTs=0;
+    rtdb.ref('admin/forceRefresh').on('value',snap=>{
+      const val=snap.val(); if(!val||!val.ts)return;
+      if(val.ts>lastRefreshTs&&lastRefreshTs!==0){ setTimeout(()=>location.reload(),500); }
+      lastRefreshTs=val.ts;
+    });
+  }catch(e){
+    console.error('Firebase init error:',e);
+    hideLoadingOverlay();
+    showScreen('auth-screen');
+    spawnParticles();
+  }
+})();
 </script>
 </body>
 </html>
