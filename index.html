@@ -932,10 +932,6 @@ document.getElementById('setting-cutscene').addEventListener('change', e=>{
   SETTINGS.cutscene = e.target.checked; saveSettings();
   toast(e.target.checked ? 'Ultra cutscenes ON' : 'Ultra cutscenes OFF');
 });
-document.getElementById('setting-spin-anim').addEventListener('change', e=>{
-  SETTINGS.spinAnim = e.target.checked; saveSettings();
-  toast(e.target.checked ? 'Spin animation ON' : 'Spin animation OFF (instant results)');
-});
 document.getElementById('setting-mute-chat').addEventListener('change', e=>{
   SETTINGS.muteChat = e.target.checked; saveSettings();
   const msgs = document.getElementById('chat-messages');
