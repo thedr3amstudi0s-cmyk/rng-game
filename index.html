@@ -2486,171 +2486,270 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 // ============================================================
 // LUCKY WHEEL
 // ============================================================
-// ============================================================
 // LUCKY WHEEL — Canvas, targeted spin (prize chosen first)
+// Idle slow-rotation while open. Guaranteed landing via clean
+// baseline snap before each spin.
 // ============================================================
 const WHEEL_PRIZES=[
-  {label:'200',   amount:200,   color:'#ef4444', textColor:'#fff'},
-  {label:'450',   amount:450,   color:'#f97316', textColor:'#fff'},
-  {label:'900',   amount:900,   color:'#eab308', textColor:'#000'},
-  {label:'1800',  amount:1800,  color:'#22c55e', textColor:'#fff'},
-  {label:'FREE\nCRATE', amount:'free', color:'#4f8ef7', textColor:'#fff'},
+  {label:'200',        amount:200,   color:'#ef4444', textColor:'#fff'},
+  {label:'450',        amount:450,   color:'#f97316', textColor:'#fff'},
+  {label:'900',        amount:900,   color:'#eab308', textColor:'#000'},
+  {label:'1800',       amount:1800,  color:'#22c55e', textColor:'#fff'},
+  {label:'FREE\nCRATE',amount:'free',color:'#4f8ef7', textColor:'#fff'},
 ];
-const WHEEL_SEG_COUNT=WHEEL_PRIZES.length;
-const WHEEL_SEG_DEG=360/WHEEL_SEG_COUNT;
+const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5
+const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
 
-let wheelRotation=0;
-let isSpinning=false;
-let lastSpinTime=0;
-const INFINITE_WHEEL_UIDS=new Set(['mi9q8oDKy4XzoK4F9r3FJ6FkrRu2']);
+// The pointer sits at 12 o'clock = 270° in canvas angle space (0° = 3 o'clock).
+// Segment i occupies [i*72 , (i+1)*72) degrees of wheel-local rotation.
+// Center of segment i = i*72 + 36.
+// To land segment i under the pointer after a spin of S degrees:
+//   (S) mod 360  ===  (270 - center_i + 360) mod 360
+// We always snap wheelRotation to 0 before spinning, so the math is exact.
 
+const POINTER_DEG = 270; // 12 o'clock in canvas coords
+
+// Updated UID list
+const INFINITE_WHEEL_UIDS = new Set([
+  'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
+  'Qo058ATVgidpQPdRU7mliFtTZqh1',
+  'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2',  // new
+]);
+
+// Internal state
+let wheelRotation  = 0;   // current visual rotation (degrees), kept 0–359 during idle
+let isSpinning     = false;
+let lastSpinTime   = 0;
+let idleRafId      = null; // requestAnimationFrame handle for idle loop
+let idleStartTime  = null;
+const IDLE_DEG_PER_SEC = 18; // degrees per second for idle spin
+
+// ── Draw ─────────────────────────────────────────────────────
 function drawWheel(rotDeg){
-  const canvas=document.getElementById('wheel-canvas');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  const cx=canvas.width/2, cy=canvas.height/2, r=cx-4;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let i=0;i<WHEEL_SEG_COUNT;i++){
-    const prize=WHEEL_PRIZES[i];
-    const startRad=((i*WHEEL_SEG_DEG+rotDeg)*Math.PI)/180;
-    const endRad=(((i+1)*WHEEL_SEG_DEG+rotDeg)*Math.PI)/180;
-    // Segment
-    ctx.beginPath(); ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,startRad,endRad); ctx.closePath();
-    ctx.fillStyle=prize.color; ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.lineWidth=2; ctx.stroke();
-    // Label: translate to midpoint on arc, rotate so text reads away from center
-    const midRad=startRad+(endRad-startRad)/2;
-    const lx=cx+Math.cos(midRad)*r*0.63;
-    const ly=cy+Math.sin(midRad)*r*0.63;
+  const canvas = document.getElementById('wheel-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx  = canvas.width  / 2;
+  const cy  = canvas.height / 2;
+  const r   = cx - 4;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for(let i = 0; i < WHEEL_SEG_COUNT; i++){
+    const prize    = WHEEL_PRIZES[i];
+    const startRad = ((i * WHEEL_SEG_DEG + rotDeg) * Math.PI) / 180;
+    const endRad   = (((i + 1) * WHEEL_SEG_DEG + rotDeg) * Math.PI) / 180;
+
+    // Segment fill
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startRad, endRad);
+    ctx.closePath();
+    ctx.fillStyle = prize.color;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Label — positioned at 63% of radius along the segment midpoint
+    const midRad = startRad + (endRad - startRad) / 2;
+    const lx = cx + Math.cos(midRad) * r * 0.63;
+    const ly = cy + Math.sin(midRad) * r * 0.63;
+
     ctx.save();
-    ctx.translate(lx,ly);
-    // midRad points from center outward; subtract π/2 so text top faces the rim
-    ctx.rotate(midRad-Math.PI/2);
-    ctx.fillStyle=prize.textColor;
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-    const lines=prize.label.split('\n');
-    const lineH=18;
-    const totalOffset=(lines.length-1)*lineH/2;
-    ctx.font='bold 14px Orbitron,sans-serif';
-    lines.forEach((line,li)=>{
-      ctx.fillText(line,0,li*lineH-totalOffset);
+    ctx.translate(lx, ly);
+    // Rotate so text reads outward: midRad points outward, subtract π/2 so
+    // the text "stands up" relative to the rim (top of text faces rim)
+    ctx.rotate(midRad - Math.PI / 2);
+    ctx.fillStyle   = prize.textColor;
+    ctx.textAlign   = 'center';
+    ctx.textBaseline = 'middle';
+
+    const lines  = prize.label.split('\n');
+    const lineH  = 17;
+    const totalH = (lines.length - 1) * lineH;
+    ctx.font = 'bold 13px Orbitron,sans-serif';
+    lines.forEach((line, li) => {
+      ctx.fillText(line, 0, li * lineH - totalH / 2);
     });
     ctx.restore();
   }
+
   // Gold rim
-  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=10; ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth   = 10;
+  ctx.stroke();
+
   // Center cap
-  ctx.beginPath(); ctx.arc(cx,cy,18,0,Math.PI*2);
-  ctx.fillStyle='#0a0e1a'; ctx.fill();
-  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=3; ctx.stroke();
-  ctx.font='bold 16px sans-serif';
-  ctx.fillStyle='#f59e0b';
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('⚡',cx,cy);
+  ctx.beginPath();
+  ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+  ctx.fillStyle   = '#0a0e1a';
+  ctx.fill();
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth   = 3;
+  ctx.stroke();
+
+  // ⚡ center icon
+  ctx.font         = 'bold 16px sans-serif';
+  ctx.fillStyle    = '#f59e0b';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('⚡', cx, cy);
 }
 
-function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
-
-function animateWheelTo(targetRotation,durationMs,onComplete){
-  const startRotation=wheelRotation;
-  const delta=targetRotation-startRotation;
-  const startTime=performance.now();
-  function frame(now){
-    const t=Math.min((now-startTime)/durationMs,1);
-    wheelRotation=startRotation+delta*easeOutCubic(t);
+// ── Idle slow rotation loop ───────────────────────────────────
+function startIdleRotation(){
+  if(idleRafId) return; // already running
+  idleStartTime = performance.now() - (wheelRotation / IDLE_DEG_PER_SEC) * 1000;
+  function idleFrame(now){
+    if(isSpinning){ idleRafId = null; return; } // stop when spinning
+    const elapsed = (now - idleStartTime) / 1000; // seconds
+    wheelRotation = (elapsed * IDLE_DEG_PER_SEC) % 360;
     drawWheel(wheelRotation);
-    if(t<1){ requestAnimationFrame(frame); }
-    else{ wheelRotation=targetRotation%360; drawWheel(wheelRotation); if(onComplete)onComplete(); }
+    idleRafId = requestAnimationFrame(idleFrame);
+  }
+  idleRafId = requestAnimationFrame(idleFrame);
+}
+
+function stopIdleRotation(){
+  if(idleRafId){ cancelAnimationFrame(idleRafId); idleRafId = null; }
+}
+
+// ── Easing ───────────────────────────────────────────────────
+function easeOutQuint(t){ return 1 - Math.pow(1 - t, 5); }
+
+// ── Main spin ────────────────────────────────────────────────
+function spinLuckyWheel(){
+  if(isSpinning) return;
+
+  const isAdmin = INFINITE_WHEEL_UIDS.has(S.user?.uid || '');
+  if(!isAdmin){
+    const cooldown  = 24 * 60 * 60 * 1000;
+    const effective = Math.max(lastSpinTime, S.profile?.lastWheelSpin || 0);
+    if(effective !== 0 && Date.now() - effective < cooldown){
+      toast('You can only spin once every 24 hours!', 'error');
+      return;
+    }
+    const now = Date.now();
+    lastSpinTime = now;
+    if(S.profile) S.profile.lastWheelSpin = now;
+    db.collection('users').doc(S.user.uid).update({lastWheelSpin: now}).catch(()=>{});
+  }
+
+  isSpinning = true;
+  stopIdleRotation();
+  document.getElementById('wheel-result').textContent = '';
+  const btn = document.getElementById('spin-btn');
+  btn.disabled = true;
+  btn.textContent = 'Spinning...';
+
+  // 1. Choose prize
+  const prizeIndex = Math.floor(Math.random() * WHEEL_SEG_COUNT);
+  const prize      = WHEEL_PRIZES[prizeIndex];
+
+  // 2. SNAP wheel to 0° baseline so math is always exact
+  //    This hides the snap behind the acceleration at the start of the spin.
+  wheelRotation = 0;
+  drawWheel(0);
+
+  // 3. Calculate required total rotation
+  //    Pointer is at POINTER_DEG (270°).
+  //    Center of winning segment in wheel-local coords = prizeIndex * 72 + 36
+  //    We need: totalSpin mod 360  ===  (POINTER_DEG - segCenter + 360) mod 360
+  const segCenter  = prizeIndex * WHEEL_SEG_DEG + WHEEL_SEG_DEG / 2;
+  const neededMod  = ((POINTER_DEG - segCenter) % 360 + 360) % 360;
+
+  // Small jitter so it doesn't always land dead-center (still inside segment, max ±28°)
+  const jitter     = (Math.random() - 0.5) * 56;
+  const fullSpins  = (10 + Math.floor(Math.random() * 5)) * 360;
+  const totalSpin  = fullSpins + neededMod + jitter;
+
+  // 4. Animate
+  const duration   = 5500 + Math.random() * 800;
+  const startTime  = performance.now();
+
+  function frame(now){
+    const t      = Math.min((now - startTime) / duration, 1);
+    const eased  = easeOutQuint(t);
+    const curRot = totalSpin * eased; // always starts from 0 (snapped above)
+    drawWheel(curRot % 360);
+    if(t < 1){
+      requestAnimationFrame(frame);
+    } else {
+      // Settle: store the exact intended landing angle for idle to continue from
+      wheelRotation = ((neededMod + jitter) % 360 + 360) % 360;
+      drawWheel(wheelRotation);
+      isSpinning = false;
+
+      // Grant prize
+      if(prize.amount === 'free'){
+        document.getElementById('wheel-result').textContent = '🎁 FREE CRATE!';
+        toast('🎁 You won a FREE CRATE!', 'gold', 5000);
+      } else {
+        document.getElementById('wheel-result').textContent = `🪙 ${prize.amount.toLocaleString()} coins!`;
+        if(S.profile){
+          S.profile.coins += prize.amount;
+          updateCoinDisplay(S.profile.coins);
+          if(S.user) db.collection('users').doc(S.user.uid)
+            .update({coins: firebase.firestore.FieldValue.increment(prize.amount)})
+            .catch(()=>{});
+        }
+        toast(`🎉 You won 🪙 ${prize.amount.toLocaleString()} coins!`, 'gold', 4000);
+      }
+      updateCooldownDisplay();
+      // Resume slow idle after 1s pause so player can see where it landed
+      setTimeout(startIdleRotation, 1000);
+    }
   }
   requestAnimationFrame(frame);
 }
 
-function spinLuckyWheel(){
-  if(isSpinning)return;
-  const isAdmin=INFINITE_WHEEL_UIDS.has(S.user?.uid||'');
-  if(!isAdmin){
-    const cooldown=24*60*60*1000;
-    const effective=Math.max(lastSpinTime,S.profile?.lastWheelSpin||0);
-    if(effective!==0&&Date.now()-effective<cooldown){ toast('You can only spin once every 24 hours!','error'); return; }
-    const now=Date.now();
-    lastSpinTime=now;
-    if(S.profile) S.profile.lastWheelSpin=now;
-    db.collection('users').doc(S.user.uid).update({lastWheelSpin:now}).catch(()=>{});
-  }
-  isSpinning=true;
-  document.getElementById('wheel-result').textContent='';
-  const btn=document.getElementById('spin-btn');
-  btn.disabled=true; btn.textContent='Spinning...';
-
-  // Pick prize first, then calculate exact landing angle
-  const prizeIndex=Math.floor(Math.random()*WHEEL_SEG_COUNT);
-  const prize=WHEEL_PRIZES[prizeIndex];
-
-  // Segment center in wheel-local degrees (from 3 o'clock, clockwise)
-  const segCenter=prizeIndex*WHEEL_SEG_DEG+WHEEL_SEG_DEG/2;
-  // We need pointer (at 270° / 12 o'clock) to align with segCenter
-  // So: (wheelRotation + spin) mod 360 puts segCenter at 270°
-  // => spin mod 360 = (270 - segCenter + 360) mod 360
-  const neededMod=((270-segCenter)%360+360)%360;
-  const jitter=(Math.random()-0.5)*50; // ±25° — safe within 72° wide segment
-  const fullSpins=(8+Math.floor(Math.random()*6))*360;
-  const targetRotation=wheelRotation+fullSpins+neededMod+jitter;
-  const duration=5000+Math.random()*1000;
-
-  animateWheelTo(targetRotation,duration,()=>{
-    if(prize.amount==='free'){
-      document.getElementById('wheel-result').textContent='🎁 FREE CRATE!';
-      toast('🎁 You won a FREE CRATE!','gold',5000);
-    } else {
-      document.getElementById('wheel-result').textContent=`🪙 ${prize.amount.toLocaleString()} coins!`;
-      if(S.profile){
-        S.profile.coins+=prize.amount;
-        updateCoinDisplay(S.profile.coins);
-        if(S.user) db.collection('users').doc(S.user.uid).update({coins:firebase.firestore.FieldValue.increment(prize.amount)}).catch(()=>{});
-      }
-      toast(`🎉 You won 🪙 ${prize.amount.toLocaleString()} coins!`,'gold',4000);
-    }
-    isSpinning=false;
-    updateCooldownDisplay();
-  });
-}
-
+// ── Cooldown display ──────────────────────────────────────────
 function updateCooldownDisplay(){
-  const btn=document.getElementById('spin-btn');
-  const display=document.getElementById('cooldown-display');
-  if(!btn||!display)return;
-  if(S.user&&INFINITE_WHEEL_UIDS.has(S.user.uid)){
-    btn.disabled=false; btn.textContent='SPIN WHEEL (FREE)';
-    display.innerHTML=`<span style="color:#ff00ff">⚡ INFINITE SPINS</span>`; return;
+  const btn     = document.getElementById('spin-btn');
+  const display = document.getElementById('cooldown-display');
+  if(!btn || !display) return;
+  if(S.user && INFINITE_WHEEL_UIDS.has(S.user.uid)){
+    btn.disabled    = false;
+    btn.textContent = 'SPIN WHEEL (FREE)';
+    display.innerHTML = `<span style="color:#ff00ff">⚡ INFINITE SPINS</span>`;
+    return;
   }
-  const cooldown=24*60*60*1000;
-  const effective=Math.max(lastSpinTime,S.profile?.lastWheelSpin||0);
-  const elapsed=Date.now()-effective;
-  if(effective===0||elapsed>=cooldown){
-    btn.disabled=false; btn.textContent='SPIN WHEEL (FREE)';
-    display.innerHTML=`<span style="color:#22c55e">✅ Ready to Spin!</span>`;
+  const cooldown  = 24 * 60 * 60 * 1000;
+  const effective = Math.max(lastSpinTime, S.profile?.lastWheelSpin || 0);
+  const elapsed   = Date.now() - effective;
+  if(effective === 0 || elapsed >= cooldown){
+    btn.disabled    = false;
+    btn.textContent = 'SPIN WHEEL (FREE)';
+    display.innerHTML = `<span style="color:#22c55e">✅ Ready to Spin!</span>`;
   } else {
-    const left=cooldown-elapsed;
-    const h=Math.floor(left/(1000*60*60));
-    const m=Math.floor((left%(1000*60*60))/(1000*60));
-    btn.disabled=true; btn.textContent='Come back later';
-    display.textContent=`Next spin in ${h}h ${m}m`;
+    const left = cooldown - elapsed;
+    const h    = Math.floor(left / (1000 * 60 * 60));
+    const m    = Math.floor((left % (1000 * 60 * 60)) / (1000 * 60));
+    btn.disabled    = true;
+    btn.textContent = 'Come back later';
+    display.textContent = `Next spin in ${h}h ${m}m`;
   }
 }
 
+// ── Open / close ──────────────────────────────────────────────
 function showLuckyWheel(){
-  if(isSpinning)return;
+  if(isSpinning) return;
   document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-  if(S.profile?.lastWheelSpin) lastSpinTime=S.profile.lastWheelSpin;
+  if(S.profile?.lastWheelSpin) lastSpinTime = S.profile.lastWheelSpin;
   updateCooldownDisplay();
   drawWheel(wheelRotation);
+  startIdleRotation();
 }
 
-function closeLuckyWheel(){ document.getElementById('lucky-wheel-modal').classList.add('hidden'); }
-document.getElementById('spin-btn').addEventListener('click',spinLuckyWheel);
+function closeLuckyWheel(){
+  document.getElementById('lucky-wheel-modal').classList.add('hidden');
+  stopIdleRotation();
+}
+
+document.getElementById('spin-btn').addEventListener('click', spinLuckyWheel);
 
 // ============================================================
 // AFK PUZZLE SYSTEM
