@@ -1019,120 +1019,119 @@ const ITEMS = [
 const CRATES = [
   {id:'tin', name:'Tin Crate', price:35, icon:'🔩', color:'#6b7280',
     desc:'Barely worth opening.',
-    odds:{common:0.80,uncommon:0.20},
+    odds:{common:0.82, uncommon:0.18},
     items:['c001','c002','c003','c004','c005','c006','c007','c008','c009','c010','u001','u002']},
 
   {id:'copper', name:'Copper Crate', price:45, icon:'🪙', color:'#b45309',
     desc:'A humble start.',
-    odds:{common:0.70,uncommon:0.30},
+    odds:{common:0.72, uncommon:0.28},
     items:['c001','c003','c006','c010','u001','u002','u003','u004']},
 
   {id:'bronze', name:'Bronze Crate', price:70, icon:'🥉', color:'#c97d4b',
     desc:'Entry tier loot.',
-    odds:{common:0.60,uncommon:0.35,rare:0.05},
+    odds:{common:0.58, uncommon:0.37, rare:0.05},
     items:['c006','c010','u001','u002','u004','u005','r001']},
 
   {id:'iron', name:'Iron Crate', price:100, icon:'⚙️', color:'#78716c',
     desc:'Solid beginner value.',
-    odds:{common:0.50,uncommon:0.38,rare:0.12},
+    odds:{common:0.45, uncommon:0.43, rare:0.12},
     items:['u002','u003','u004','u005','r001','r002','r003']},
 
   {id:'steel', name:'Steel Crate', price:260, icon:'🗡️', color:'#94a3b8',
     desc:'A real step up.',
-    odds:{uncommon:0.60,rare:0.35,spectral:0.05},
+    odds:{uncommon:0.55, rare:0.38, spectral:0.07},
     items:['u003','u004','u005','r001','r002','r003','r004','sp01']},
 
   {id:'silver', name:'Silver Crate', price:320, icon:'🌙', color:'#cbd5e1',
     desc:'Silvery promise.',
-    odds:{uncommon:0.50,rare:0.40,spectral:0.10},
+    odds:{uncommon:0.48, rare:0.42, spectral:0.10},
     items:['u004','u005','r001','r002','r003','r004','sp01','sp02']},
 
   {id:'crystal', name:'Crystal Crate', price:380, icon:'💎', color:'#7dd3fc',
     desc:'Gleaming with potential.',
-    odds:{uncommon:0.40,rare:0.45,spectral:0.15},
+    odds:{uncommon:0.35, rare:0.48, spectral:0.17},
     items:['u005','r001','r002','r003','r004','sp01','sp02']},
 
   {id:'arcane', name:'Arcane Crate', price:950, icon:'🔮', color:'#a78bfa',
     desc:'Mana infused.',
-    odds:{rare:0.50,spectral:0.35,epic:0.15},
+    odds:{rare:0.48, spectral:0.37, epic:0.15},
     items:['r001','r002','r003','r004','sp01','sp02','e001','e002']},
 
   {id:'runic', name:'Runic Crate', price:1100, icon:'🔯', color:'#f97316',
     desc:'Ancient power stirs.',
-    odds:{rare:0.40,spectral:0.40,epic:0.20},
+    odds:{rare:0.35, spectral:0.42, epic:0.23},
     items:['r002','r003','r004','sp01','sp02','e001','e002','e003']},
 
   {id:'infernal', name:'Infernal Crate', price:3100, icon:'🔥', color:'#dc2626',
     desc:'Fire & destruction.',
-    odds:{spectral:0.40,epic:0.45,runic:0.15},
+    odds:{spectral:0.38, epic:0.47, runic:0.15},
     items:['sp02','e001','e002','e003','ru01']},
 
   {id:'storm', name:'Storm Crate', price:9500, icon:'⛈️', color:'#3b82f6',
     desc:'Elemental fury.',
-    odds:{epic:0.50,runic:0.35,legendary:0.15},
+    odds:{epic:0.48, runic:0.37, legendary:0.15},
     items:['e001','e002','e003','ru01','ru02']},
 
   {id:'royal', name:'Royal Crate', price:11500, icon:'👑', color:'#eab308',
     desc:'Noble prestige.',
-    odds:{epic:0.40,runic:0.40,legendary:0.20},
+    odds:{epic:0.38, runic:0.42, legendary:0.20},
     items:['e002','e003','ru01','ru02','l001']},
 
   {id:'void', name:'Void Crate', price:30000, icon:'🕳️', color:'#555555',
     desc:'Nothingness calls.',
-    odds:{runic:0.35,legendary:0.45,cursed:0.20},
+    odds:{runic:0.32, legendary:0.48, cursed:0.20},
     items:['ru02','l001','l002','cu01']},
 
   {id:'abyssal', name:'Abyssal Crate', price:68000, icon:'🌊', color:'#1e40af',
     desc:'Deep sea horrors.',
-    odds:{legendary:0.40,cursed:0.40,mythic:0.20},
+    odds:{legendary:0.42, cursed:0.38, mythic:0.20},
     items:['l001','l002','cu01','m001']},
 
   {id:'dragon', name:'Dragon Crate', price:75000, icon:'🐉', color:'#b91c1c',
     desc:'Draconic power.',
-    odds:{legendary:0.35,cursed:0.40,mythic:0.25},
+    odds:{legendary:0.38, cursed:0.37, mythic:0.25},
     items:['l002','cu01','m001','m002']},
 
   {id:'celestial', name:'Celestial Crate', price:185000, icon:'🌟', color:'#f59e0b',
     desc:'Heavenly power.',
-    odds:{cursed:0.35,mythic:0.40,astral:0.25},
+    odds:{cursed:0.32, mythic:0.43, astral:0.25},
     items:['cu01','m001','m002','as01']},
 
   {id:'divine', name:'Divine Crate', price:850000, icon:'💠', color:'#ddddff',
     desc:'Touch of good.',
-    odds:{mythic:0.35,astral:0.40,primordial:0.25},
+    odds:{mythic:0.35, astral:0.40, primordial:0.25},
     items:['m002','as01','pr01']},
 
   {id:'primordial', name:'Primordial Crate', price:1150000, icon:'🌋', color:'#10b981',
     desc:'Ancient beyond measure.',
-    odds:{astral:0.35,divine:0.40,primordial:0.25},
+    odds:{astral:0.38, divine:0.37, primordial:0.25},
     items:['as01','d001','pr01']},
 
   {id:'ultra', name:'Ultra Crate', price:2350000, icon:'🌌', color:'#00ffff',
     desc:'Transcends limits.',
-    odds:{divine:0.35,primordial:0.40,ultra:0.25},
+    odds:{divine:0.35, primordial:0.40, ultra:0.25},
     items:['d001','pr01','ur01']},
 
   {id:'cosmic', name:'Cosmic Crate', price:3600000, icon:'🌌', color:'#fffaaa',
     desc:'The universe calls.',
-    odds:{primordial:0.35,ultra:0.40,hyper:0.25},
+    odds:{primordial:0.35, ultra:0.40, hyper:0.25},
     items:['pr01','ur01','hy01']},
 
   {id:'transcendent', name:'Transcendent Crate', price:4200000, icon:'🌟', color:'#c026d3',
     desc:'Beyond human measure.',
-    odds:{ultra:0.35,hyper:0.40,cosmic:0.25},
+    odds:{ultra:0.35, hyper:0.42, cosmic:0.23},
     items:['ur01','hy01','co01']},
 
   {id:'eternal', name:'Eternal Crate', price:4400000, icon:'♾️', color:'#22d3ee',
     desc:'Eternal riches await.',
-    odds:{hyper:0.35,cosmic:0.40,transcendent:0.25},
+    odds:{hyper:0.35, cosmic:0.40, transcendent:0.25},
     items:['hy01','co01','tr01']},
 
   {id:'genesis', name:'Genesis Crate', price:4550000, icon:'🌅', color:'#fbbf24',
     desc:'The beginning and end.',
-    odds:{cosmic:0.32,transcendent:0.35,eternal:0.25,genesis:0.08},
+    odds:{cosmic:0.30, transcendent:0.35, eternal:0.25, genesis:0.08, infinite:0.02},
     items:['co01','tr01','et01','ge01','in01']},
 ];
-
 
 const ACHIEVEMENTS = [
   {id:'first_open', name:'First Steps',    desc:'Open your first crate',   icon:'📦', reward:250},
@@ -1614,45 +1613,57 @@ function openCratePage(crate){
 document.getElementById('back-from-opening').addEventListener('click',()=>showPage('crates'));
 
 function buildCrateInfoPanel(crate){
-  const panel=document.getElementById('crate-info-panel');
-  const crateItems=crate.items.map(id=>getItem(id)).filter(Boolean);
-  const grouped={};
-  crateItems.forEach(item=>{ if(!grouped[item.rarity])grouped[item.rarity]=[]; grouped[item.rarity].push(item); });
-  const order=['ultra','hyper','cosmic','transcendent','eternal','genesis','infinite','divine','primordial','mythic','legendary','cursed','runic','epic','spectral','rare','uncommon','common'];
-  panel.innerHTML=`
-    <div style="flex:1">
-      <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div>
-      <div class="crate-info-items" id="cip-items"></div>
-    </div>
-    <div style="min-width:160px">
-      <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">DROP RATES</div>
-      <div id="cip-odds" style="display:flex;flex-direction:column;gap:4px"></div>
-    </div>`;
-  const itemsEl=document.getElementById('cip-items');
-  const oddsEl=document.getElementById('cip-odds');
-  order.forEach(rar=>{
-    if(!grouped[rar])return;
-    const r=getRarity(rar);
-    const col=r.color==='#ffffff'?'#e0e0ff':r.color;
-    grouped[rar].forEach(item=>{
-      const pill=document.createElement('div');
-      pill.className='crate-item-pill';
-      pill.style.cssText=`border-color:${col}66;color:${col}`;
-      pill.innerHTML=`${item.icon} <span style="color:var(--text-2)">${item.name}</span>`;
-      itemsEl.appendChild(pill);
+  const panel = document.getElementById('crate-info-panel');
+  const crateItems = crate.items
+    .map(id => getItem(id))
+    .filter(Boolean); // remove missing items
+
+  const grouped = {};
+  crateItems.forEach(item => {
+    if(!grouped[item.rarity]) grouped[item.rarity] = [];
+    grouped[item.rarity].push(item);
+  });
+
+  const order = ['ultra','hyper','cosmic','transcendent','eternal','genesis','infinite','divine','primordial','mythic','legendary','cursed','runic','epic','spectral','rare','uncommon','common'];
+
+  let itemsHTML = '';
+  order.forEach(rar => {
+    if(!grouped[rar]) return;
+    const r = getRarity(rar);
+    const col = r.color === '#ffffff' ? '#e0e0ff' : r.color;
+    grouped[rar].forEach(item => {
+      itemsHTML += `
+        <div class="crate-item-pill" style="border-color:${col}66;color:${col}">
+          ${item.icon} <span style="color:var(--text-2)">${item.name}</span>
+        </div>`;
     });
   });
-  order.filter(r=>crate.odds[r]!=null).forEach(rar=>{
-    const r=getRarity(rar);
-    const col=r.color==='#ffffff'?'#e0e0ff':r.color;
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem';
-    row.innerHTML=`<span style="color:${col};font-family:var(--font-d);font-size:.65rem;letter-spacing:.05em">${r.name}</span>
-      <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar,crate.odds)}</span>`;
-    oddsEl.appendChild(row);
-  });
-}
 
+  let oddsHTML = '';
+  order.filter(r => crate.odds[r] != null).forEach(rar => {
+    const r = getRarity(rar);
+    const col = r.color === '#ffffff' ? '#e0e0ff' : r.color;
+    oddsHTML += `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem">
+        <span style="color:${col};font-family:var(--font-d);font-size:.65rem;letter-spacing:.05em">${r.name}</span>
+        <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar, crate.odds)}</span>
+      </div>`;
+  });
+
+  panel.innerHTML = `
+    <div style="flex:1">
+      <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">
+        POSSIBLE DROPS
+      </div>
+      <div class="crate-info-items" id="cip-items">${itemsHTML || '<span style="color:#ef4444">No items found!</span>'}</div>
+    </div>
+    <div style="min-width:160px">
+      <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">
+        DROP RATES
+      </div>
+      <div id="cip-odds" style="display:flex;flex-direction:column;gap:4px">${oddsHTML}</div>
+    </div>`;
+}
 function buildSpinTrack(crate,winningItem,landIdx){
   const track=document.getElementById('spin-track');
   track.innerHTML=''; track.style.transform='translateX(0)'; track.style.transition='none';
