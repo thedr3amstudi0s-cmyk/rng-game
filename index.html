@@ -1051,19 +1051,121 @@ const ITEMS = [
 // CRATE-SPECIFIC SECRET PETS (3 unique per crate)
 // ============================================================
 const PETS_BY_CRATE = {
-  // Add one entry per crate ID. Example below — customize names/icons as you like
-  'basic': [
-    {id:'p_basic1', name:'Fortune Kitten', rarity:'pet', icon:'🐱', value:4500000, desc:'Basic crate companion.', perk:'luck',     perkName:'Luck Surge',    perkDesc:'+50% Luck Boost power'},
-    {id:'p_basic2', name:'Speedy Tortoise', rarity:'pet', icon:'🐢', value:4500000, desc:'Surprisingly quick.', perk:'speed',    perkName:'Quick Crack',   perkDesc:'50% faster opening animations'},
-    {id:'p_basic3', name:'Coin Pig', rarity:'pet', icon:'🐷', value:4500000, desc:'Loves discounts.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  'tin': [
+    {id:'p_tin1', name:'Scrap Kitten', rarity:'pet', icon:'🐱', value:2000000, desc:'Born in the junkyard.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_tin2', name:'Rusty Snail', rarity:'pet', icon:'🐌', value:2000000, desc:'Slow but determined.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_tin3', name:'Penny Pig', rarity:'pet', icon:'🐷', value:2000000, desc:'Collects every last coin.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
   ],
-  // Duplicate and customize for other crates...
-  'rare': [
-    {id:'p_rare1', name:'Astral Owl', rarity:'pet', icon:'🦉', value:5000000, desc:'Mystic wisdom.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
-    {id:'p_rare2', name:'Lightning Fox', rarity:'pet', icon:'🦊', value:5000000, desc:'Blazing fast.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
-    {id:'p_rare3', name:'Treasure Dragon', rarity:'pet', icon:'🐉', value:5000000, desc:'Hoarder of deals.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  'copper': [
+    {id:'p_cop1', name:'Copper Cat', rarity:'pet', icon:'🐱', value:2500000, desc:'Shiny and curious.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_cop2', name:'Bolt Tortoise', rarity:'pet', icon:'🐢', value:2500000, desc:'Mechanically enhanced.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_cop3', name:'Copper Pig', rarity:'pet', icon:'🐷', value:2500000, desc:'Hoarder of shiny metals.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
   ],
-  // ... repeat for every crate ID in your CRATES array
+  'bronze': [
+    {id:'p_bro1', name:'Bronze Lion', rarity:'pet', icon:'🦁', value:2800000, desc:'Small but proud.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_bro2', name:'Bronze Hare', rarity:'pet', icon:'🐇', value:2800000, desc:'Surprisingly zippy.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_bro3', name:'Treasure Boar', rarity:'pet', icon:'🐗', value:2800000, desc:'Smells opportunity.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'iron': [
+    {id:'p_iron1', name:'Iron Wolf', rarity:'pet', icon:'🐺', value:3200000, desc:'Fierce protector.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_iron2', name:'Forge Snail', rarity:'pet', icon:'🐌', value:3200000, desc:'Heated for speed.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_iron3', name:'Iron Piglet', rarity:'pet', icon:'🐷', value:3200000, desc:'Built like a tank.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'steel': [
+    {id:'p_steel1', name:'Steel Falcon', rarity:'pet', icon:'🦅', value:3800000, desc:'Keen-eyed hunter.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_steel2', name:'Blade Rabbit', rarity:'pet', icon:'🐇', value:3800000, desc:'Lightning reflexes.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_steel3', name:'Coin Serpent', rarity:'pet', icon:'🐍', value:3800000, desc:'Loves shiny discounts.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'silver': [
+    {id:'p_silver1', name:'Moon Cat', rarity:'pet', icon:'🐱', value:4500000, desc:'Lunar fortune bringer.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_silver2', name:'Silver Fox', rarity:'pet', icon:'🦊', value:4500000, desc:'Cunning and quick.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_silver3', name:'Silver Dragon', rarity:'pet', icon:'🐉', value:4500000, desc:'Hoarder of wealth.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'crystal': [
+    {id:'p_crystal1', name:'Crystal Owl', rarity:'pet', icon:'🦉', value:5200000, desc:'Sees hidden luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_crystal2', name:'Prism Hare', rarity:'pet', icon:'🐇', value:5200000, desc:'Refracts time.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_crystal3', name:'Gem Pig', rarity:'pet', icon:'🐷', value:5200000, desc:'Attracts riches.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'arcane': [
+    {id:'p_arc1', name:'Arcane Raven', rarity:'pet', icon:'🐦‍⬛', value:6500000, desc:'Whispers of fortune.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_arc2', name:'Mana Cheetah', rarity:'pet', icon:'🐆', value:6500000, desc:'Blurs through time.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_arc3', name:'Spellbound Pig', rarity:'pet', icon:'🐷', value:6500000, desc:'Magical merchant.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'runic': [
+    {id:'p_run1', name:'Rune Wolf', rarity:'pet', icon:'🐺', value:7800000, desc:'Ancient luck runes.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_run2', name:'Rune Fox', rarity:'pet', icon:'🦊', value:7800000, desc:'Swift rune magic.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_run3', name:'Rune Boar', rarity:'pet', icon:'🐗', value:7800000, desc:'Hoarder of ancient gold.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'infernal': [
+    {id:'p_inf1', name:'Hellcat', rarity:'pet', icon:'🐱‍👤', value:9200000, desc:'Bringer of infernal luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_inf2', name:'Flame Snail', rarity:'pet', icon:'🐌', value:9200000, desc:'Burns through time.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_inf3', name:'Inferno Pig', rarity:'pet', icon:'🐷', value:9200000, desc:'Devours prices.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'storm': [
+    {id:'p_storm1', name:'Thunder Owl', rarity:'pet', icon:'🦉', value:12500000, desc:'Storm of fortune.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_storm2', name:'Lightning Fox', rarity:'pet', icon:'🦊', value:12500000, desc:'Faster than lightning.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_storm3', name:'Storm Boar', rarity:'pet', icon:'🐗', value:12500000, desc:'Brings rain of coins.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'royal': [
+    {id:'p_roy1', name:'Royal Griffin', rarity:'pet', icon:'🦅', value:14800000, desc:'Noble luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_roy2', name:'Royal Hare', rarity:'pet', icon:'🐇', value:14800000, desc:'Swift as royalty.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_roy3', name:'Golden Pig', rarity:'pet', icon:'🐷', value:14800000, desc:'Royal treasurer.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'void': [
+    {id:'p_void1', name:'Void Cat', rarity:'pet', icon:'🐱', value:18500000, desc:'Luck from the abyss.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_void2', name:'Shadow Snail', rarity:'pet', icon:'🐌', value:18500000, desc:'Slips through time.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_void3', name:'Abyssal Pig', rarity:'pet', icon:'🐷', value:18500000, desc:'Consumes costs.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'abyssal': [
+    {id:'p_abys1', name:'Deep Leviathan Cub', rarity:'pet', icon:'🐋', value:22000000, desc:'Ancient deep luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_abys2', name:'Abyssal Eel', rarity:'pet', icon:'🐍', value:22000000, desc:'Lightning fast.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_abys3', name:'Treasure Kraken', rarity:'pet', icon:'🐙', value:22000000, desc:'Guards vast wealth.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'dragon': [
+    {id:'p_dra1', name:'Baby Dragon', rarity:'pet', icon:'🐉', value:26000000, desc:'Bringer of draconic luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_dra2', name:'Wyvern Swift', rarity:'pet', icon:'🐲', value:26000000, desc:'Wings of speed.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_dra3', name:'Hoarder Drake', rarity:'pet', icon:'🐉', value:26000000, desc:'Master of deals.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'celestial': [
+    {id:'p_cel1', name:'Star Owl', rarity:'pet', icon:'🦉', value:32000000, desc:'Celestial fortune.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_cel2', name:'Comet Fox', rarity:'pet', icon:'🦊', value:32000000, desc:'Blazing speed.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_cel3', name:'Cosmic Pig', rarity:'pet', icon:'🐷', value:32000000, desc:'Star-born merchant.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'divine': [
+    {id:'p_div1', name:'Holy Seraphim Cub', rarity:'pet', icon:'👼', value:45000000, desc:'Divine blessing.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_div2', name:'Angel Swift', rarity:'pet', icon:'😇', value:45000000, desc:'Wings of light.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_div3', name:'Divine Lamb', rarity:'pet', icon:'🐑', value:45000000, desc:'Bringer of grace discounts.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'primordial': [
+    {id:'p_pri1', name:'Ancient Spirit Cat', rarity:'pet', icon:'🐱', value:52000000, desc:'Primordial luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_pri2', name:'Time Weaver', rarity:'pet', icon:'🕰️', value:52000000, desc:'Manipulates time.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_pri3', name:'Origin Boar', rarity:'pet', icon:'🐗', value:52000000, desc:'Source of all wealth.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'ultra': [
+    {id:'p_ult1', name:'Ultra Phoenix', rarity:'pet', icon:'🐦‍🔥', value:68000000, desc:'Reborn luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_ult2', name:'Hyper Cheetah', rarity:'pet', icon:'🐆', value:68000000, desc:'Beyond speed.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_ult3', name:'Cosmic Hoarder', rarity:'pet', icon:'🐷', value:68000000, desc:'Ultimate deal maker.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'cosmic': [
+    {id:'p_cos1', name:'Nebula Cat', rarity:'pet', icon:'🐱', value:75000000, desc:'Star dust fortune.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_cos2', name:'Comet Runner', rarity:'pet', icon:'☄️', value:75000000, desc:'Faster than light.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_cos3', name:'Galaxy Pig', rarity:'pet', icon:'🐷', value:75000000, desc:'Collects entire galaxies.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'transcendent': [
+    {id:'p_tra1', name:'Eternal Guardian', rarity:'pet', icon:'🛡️', value:82000000, desc:'Beyond mortal luck.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_tra2', name:'Void Dasher', rarity:'pet', icon:'⚡', value:82000000, desc:'Transcends time.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_tra3', name:'Infinite Hoarder', rarity:'pet', icon:'🐷', value:82000000, desc:'Masters all economies.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'eternal': [
+    {id:'p_ete1', name:'Timeless Sphinx', rarity:'pet', icon:'🦁', value:88000000, desc:'Eternal wisdom.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_ete2', name:'Eternal Wind', rarity:'pet', icon:'🌬️', value:88000000, desc:'Never stops moving.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_ete3', name:'Eternal Coin Dragon', rarity:'pet', icon:'🐉', value:88000000, desc:'Endless riches.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  'genesis': [
+    {id:'p_gen1', name:'Genesis Phoenix', rarity:'pet', icon:'🐦‍🔥', value:95000000, desc:'Birth of fortune.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
 };
 
 // Helper to get pets for a crate
@@ -1819,43 +1921,50 @@ function buildSpinTrack(crate,winningItem,landIdx){
 
 function rollItem(crateId){
   const crate=CRATES.find(c=>c.id===crateId);
-  if(!crate)return null;
+  if(!crate) return null;
 
-  // Crate-specific secret pet roll (1 in 1,000,000 each)
+  // Crate-specific secret pet roll — 1 in 1,000,000 chance per pet
   const cratePets = getPetsForCrate(crateId);
   for(const pet of cratePets){
     if(Math.random() < 0.000001) return pet;
   }
 
-  const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
-  let odds={...crate.odds};
+  const pool = crate.items.map(id => getItem(id)).filter(Boolean);
+  let odds = {...crate.odds};
 
-  if(S.luckBoost&&!S.luckBoostUsed&&S.luckBoostCrate===crateId){
-    const entries=Object.entries(odds);
-    const tiers=entries.map(([r])=>getRarity(r).tier||0);
-    const maxTier=Math.max(...tiers); const minTier=Math.min(...tiers);
-    const mid=(maxTier+minTier)/2;
-    const equippedPet=getEquippedPet();
-    const luckPetMult=(equippedPet&&equippedPet.perk==='luck')?1.5:1;
-    entries.forEach(([r])=>{
-      const t=getRarity(r).tier||0;
-      if(S.luckBoost==='minor'){ odds[r]*=t<=mid?0.5:1.5*luckPetMult; }
-      else { odds[r]*=t<=mid?0.1:4*luckPetMult; }
+  if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate === crateId){
+    const entries = Object.entries(odds);
+    const tiers = entries.map(([r]) => getRarity(r).tier || 0);
+    const maxTier = Math.max(...tiers);
+    const minTier = Math.min(...tiers);
+    const mid = (maxTier + minTier) / 2;
+    const equippedPet = getEquippedPet();
+    const luckPetMult = (equippedPet && equippedPet.perk === 'luck') ? 1.5 : 1;
+
+    entries.forEach(([r]) => {
+      const t = getRarity(r).tier || 0;
+      if(S.luckBoost === 'minor'){
+        odds[r] *= t <= mid ? 0.5 : 1.5 * luckPetMult;
+      } else {
+        odds[r] *= t <= mid ? 0.1 : 4 * luckPetMult;
+      }
     });
-    S.luckBoost=null; S.luckBoostUsed=true;
+    S.luckBoost = null;
+    S.luckBoostUsed = true;
   }
 
-  // normal roll logic...
-  let total = Object.values(odds).reduce((a,b)=>a+b,0);
-  let roll = Math.random()*total;
-  for(let [rar,chance] of Object.entries(odds)){
+  // Normal weighted roll
+  let total = Object.values(odds).reduce((a, b) => a + b, 0);
+  let roll = Math.random() * total;
+
+  for(let [rar, chance] of Object.entries(odds)){
     roll -= chance;
     if(roll <= 0){
-      const candidates = pool.filter(i=>i.rarity===rar);
-      return candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
+      const candidates = pool.filter(i => i.rarity === rar);
+      return candidates[Math.floor(Math.random() * candidates.length)] || pool[0];
     }
   }
-  return pool[0];
+  return pool[0] || null;
 }
   const rarityEntries=Object.entries(odds);
   const total=rarityEntries.reduce((s,[,v])=>s+v,0);
