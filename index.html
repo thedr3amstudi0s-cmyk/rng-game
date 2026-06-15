@@ -457,6 +457,33 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 }
 .rarity-divine{animation:rainbow-border 2s linear infinite!important;}
 
+/* PET RAINBOW STYLES */
+@keyframes rainbow-text-anim{to{background-position:300% 0}}
+.rainbow-text{
+  background:linear-gradient(90deg,#ff0000,#ff9900,#ffee00,#33ff00,#00ffff,#3366ff,#cc00ff,#ff0000);
+  background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;color:transparent;animation:rainbow-text-anim 2.5s linear infinite;
+}
+@keyframes rainbow-border-anim{
+  0%{border-color:#ff0000;box-shadow:0 0 16px #ff000066}
+  16%{border-color:#ff9900;box-shadow:0 0 16px #ff990066}
+  33%{border-color:#ffee00;box-shadow:0 0 16px #ffee0066}
+  50%{border-color:#33ff00;box-shadow:0 0 16px #33ff0066}
+  66%{border-color:#00ffff;box-shadow:0 0 16px #00ffff66}
+  83%{border-color:#cc00ff;box-shadow:0 0 16px #cc00ff66}
+  100%{border-color:#ff0000;box-shadow:0 0 16px #ff000066}
+}
+.pet-rainbow{animation:rainbow-border-anim 2s linear infinite!important;border-width:2px!important;}
+.pet-source-icon{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
+  background:var(--bg-dark);border:1px solid var(--border-b);display:flex;align-items:center;
+  justify-content:center;font-size:.65rem;z-index:2;}
+.pet-equip-btn{display:block;width:100%;margin-top:4px;padding:3px 0;border-radius:5px;
+  background:var(--accent);color:#fff;font-family:var(--font-d);font-size:.55rem;font-weight:700;
+  letter-spacing:.05em;border:none;cursor:pointer;transition:var(--t);}
+.pet-equip-btn:hover{background:#6ba3ff;}
+.pet-equip-btn.equipped{background:#22c55e;}
+.pet-equip-btn.equipped:hover{background:#16a34a;}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   .game-layout{grid-template-columns:72px 1fr}
@@ -817,13 +844,17 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
 
         <div class="settings-section">
-          <div class="settings-section-title">ℹ️ ACCOUNT</div>
+          <div class="settings-section-title">🐾 EQUIPPED PET</div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label">Username</div>
-              <div class="settings-row-desc" id="settings-username-display">—</div>
+              <div class="settings-row-label" id="equipped-pet-display">None equipped</div>
+              <div class="settings-row-desc" id="equipped-pet-desc">Find secret pets (1 in 1M) to equip here for perks!</div>
             </div>
           </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">ℹ️ ACCOUNT</div>
           <div class="settings-row">
             <div class="settings-row-info">
               <div class="settings-row-label">Lucky Wheel</div>
@@ -956,6 +987,8 @@ const RARITIES = {
   eternal:      {name:'Eternal',      color:'#22d3ee', glow:'#67e8f944', tier:17},
   genesis:      {name:'Genesis',      color:'#fbbf24', glow:'#fbbf2488', tier:18},
   infinite:     {name:'Infinite',     color:'#ffffff', glow:'#ffffff99', tier:19},
+  pet:          {name:'???',         color:'#ffffff', glow:'#ffffff88', tier:1000},
+};
 };
 
 const ITEMS = [
@@ -1012,8 +1045,32 @@ const ITEMS = [
   {id:'tr01',name:'TRANSCENDENT WILL',rarity:'transcendent',icon:'🌟',value:4400000,desc:'Beyond all comprehension.'},
   {id:'et01',name:'ETERNAL FLAME',    rarity:'eternal',  icon:'🔥', value:4600000,  desc:'Burns across eternity.'},
   {id:'ge01',name:'GENESIS',          rarity:'genesis',  icon:'🌅', value:5200000,  desc:'The beginning and the end.'},
-  {id:'in01',name:'∞ INFINITE',       rarity:'infinite', icon:'♾️', value:6000000,  desc:'True limitless power.'},
+    {id:'in01',name:'∞ INFINITE',       rarity:'infinite', icon:'♾️', value:6000000,  desc:'True limitless power.'},
 ];
+
+// ============================================================
+// CRATE-SPECIFIC SECRET PETS (3 unique per crate)
+// ============================================================
+const PETS_BY_CRATE = {
+  // Add one entry per crate ID. Example below — customize names/icons as you like
+  'basic': [
+    {id:'p_basic1', name:'Fortune Kitten', rarity:'pet', icon:'🐱', value:4500000, desc:'Basic crate companion.', perk:'luck',     perkName:'Luck Surge',    perkDesc:'+50% Luck Boost power'},
+    {id:'p_basic2', name:'Speedy Tortoise', rarity:'pet', icon:'🐢', value:4500000, desc:'Surprisingly quick.', perk:'speed',    perkName:'Quick Crack',   perkDesc:'50% faster opening animations'},
+    {id:'p_basic3', name:'Coin Pig', rarity:'pet', icon:'🐷', value:4500000, desc:'Loves discounts.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  // Duplicate and customize for other crates...
+  'rare': [
+    {id:'p_rare1', name:'Astral Owl', rarity:'pet', icon:'🦉', value:5000000, desc:'Mystic wisdom.', perk:'luck', perkName:'Luck Surge', perkDesc:'+50% Luck Boost power'},
+    {id:'p_rare2', name:'Lightning Fox', rarity:'pet', icon:'🦊', value:5000000, desc:'Blazing fast.', perk:'speed', perkName:'Quick Crack', perkDesc:'50% faster opening animations'},
+    {id:'p_rare3', name:'Treasure Dragon', rarity:'pet', icon:'🐉', value:5000000, desc:'Hoarder of deals.', perk:'discount', perkName:'Bulk Discount', perkDesc:'-15% crate prices'},
+  ],
+  // ... repeat for every crate ID in your CRATES array
+};
+
+// Helper to get pets for a crate
+function getPetsForCrate(crateId) {
+  return PETS_BY_CRATE[crateId] || PETS_BY_CRATE['basic']; // fallback
+}
 
 
 const CRATES = [
@@ -1140,7 +1197,9 @@ const ACHIEVEMENTS = [
   {id:'ultra_hunter',name:'Ultra Hunter', desc:'Pull an Ultra item',       icon:'💠', reward:15000},
 ];
 
-function getItem(id){return ITEMS.find(i=>i.id===id);}
+function getItem(id){
+  return ITEMS.find(i=>i.id===id) || Object.values(PETS_BY_CRATE).flat().find(p=>p.id===id);
+}
 function getRarity(k){return RARITIES[k]||RARITIES.common;}
 function fmtNum(n){
   if(n>=1e12)return(n/1e12).toFixed(1)+'T';
@@ -1159,6 +1218,60 @@ function rarityOdds(k,crateOdds){
   return'1 in '+Math.round(1/pct).toLocaleString();
 }
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+
+// ============================================================
+// PET HELPERS
+// ============================================================
+function getEquippedPet(){
+  if(!S.profile||!S.profile.equippedPetUid) return null;
+  const inv=S.inventory.find(i=>i.uniqueId===S.profile.equippedPetUid);
+  if(!inv) return null;
+  return getItem(inv.itemId);
+}
+
+function getCratePrice(crate){
+  if(!crate) return 0;
+  const pet=getEquippedPet();
+  if(pet&&pet.perk==='discount') return Math.max(1,Math.floor(crate.price*0.85));
+  return crate.price;
+}
+
+function getSpinDuration(){
+  const pet=getEquippedPet();
+  return (pet&&pet.perk==='speed')?2000:4000;
+}
+
+async function equipPet(uniqueId){
+  if(!S.user||!S.profile)return;
+  const inv=S.inventory.find(i=>i.uniqueId===uniqueId);
+  if(!inv)return;
+  const pet=getItem(inv.itemId);
+  if(!pet||pet.rarity!=='pet')return;
+  const newUid=S.profile.equippedPetUid===uniqueId?null:uniqueId;
+  S.profile.equippedPetUid=newUid;
+  try{ await db.collection('users').doc(S.user.uid).update({equippedPetUid:newUid}); }
+  catch(e){ toast('Error updating equipped pet','error'); return; }
+  toast(newUid?`${pet.icon} ${pet.name} equipped!`:'Pet unequipped.','success');
+  renderInventory();
+  updateEquippedPetDisplay();
+  if(S.currentCrate&&document.getElementById('page-opening').classList.contains('active')){
+    document.getElementById('open-price-display').textContent='Cost: 🪙 '+getCratePrice(S.currentCrate).toLocaleString();
+  }
+}
+
+function updateEquippedPetDisplay(){
+  const disp=document.getElementById('equipped-pet-display');
+  const desc=document.getElementById('equipped-pet-desc');
+  if(!disp||!desc)return;
+  const pet=getEquippedPet();
+  if(pet){
+    disp.innerHTML=`${pet.icon} <span class="rainbow-text">${pet.name}</span>`;
+    desc.textContent='Perk: '+pet.perkName+' — '+pet.perkDesc;
+  } else {
+    disp.textContent='None equipped';
+    desc.textContent='Find secret pets (1 in 1M) in any crate!';
+  }
+}
 
 // ============================================================
 // PROFANITY FILTER — Fixed version
@@ -1261,6 +1374,7 @@ function showPage(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
   if(id==='settings' && S.profile){
     document.getElementById('settings-username-display').textContent=S.profile.username;
+    updateEquippedPetDisplay();
   }
 }
 function toast(msg,type='',duration=3000){
@@ -1328,6 +1442,7 @@ document.getElementById('register-btn').addEventListener('click',async()=>{
       uid:cred.user.uid, username, usernameLower:username.toLowerCase(),
       coins:400, inventory:[], tradeHistory:[], cratesOpened:0,
       luckCoinsPerCrate:{}, totalValue:0, rarestItem:null, rarestTier:0, lastWheelSpin:0,
+      equippedPetUid:null,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     });
   }catch(e){ err.textContent=friendlyAuthError(e.code)||e.message; btn.disabled=false; btn.textContent='CREATE ACCOUNT'; }
@@ -1583,10 +1698,14 @@ function loadCratesPage(){
     c.className='crate-card';
     c.style.setProperty('--cc',crate.color==='#ffffff'?'#aaa':crate.color);
     c.style.setProperty('--cg',(crate.color==='#ffffff'?'#aaaaaa':crate.color)+'33');
+    const price=getCratePrice(crate);
+    const priceHTML = price!==crate.price
+      ? `<div class="crate-price"><span style="text-decoration:line-through;color:var(--text-3);font-size:.65rem;margin-right:4px">${crate.price.toLocaleString()}</span>🪙 ${price.toLocaleString()}</div>`
+      : `<div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
     c.innerHTML=`<span class="crate-emoji">${crate.icon}</span>
       <div class="crate-name">${crate.name}</div>
       <div class="crate-desc">${crate.desc}</div>
-      <div class="crate-price">🪙 ${crate.price.toLocaleString()}</div>`;
+      ${priceHTML}`;
     c.addEventListener('click',()=>{
       if(!S.profile){toast('Still loading your profile, please wait...');return;}
       openCratePage(crate);
@@ -1601,7 +1720,10 @@ function loadCratesPage(){
 function openCratePage(crate){
   S.currentCrate=crate;
   document.getElementById('opening-crate-name').textContent=crate.name.toUpperCase();
-  document.getElementById('open-price-display').textContent='Cost: 🪙 '+crate.price.toLocaleString();
+  const price=getCratePrice(crate);
+  document.getElementById('open-price-display').textContent = price!==crate.price
+    ? `Cost: 🪙 ${price.toLocaleString()} (was ${crate.price.toLocaleString()})`
+    : 'Cost: 🪙 '+crate.price.toLocaleString();
   document.getElementById('opening-coin-balance').textContent=fmtNum(S.profile.coins);
   document.getElementById('result-panel').classList.add('hidden');
   updateLuckBar(crate);
@@ -1650,6 +1772,24 @@ function buildCrateInfoPanel(crate){
       </div>`;
   });
 
+  // Add 3 rainbow secret pets for this crate
+  const cratePets = getPetsForCrate(crate.id);
+  let petItemsHTML = '';
+  let petOddsHTML = '';
+  cratePets.forEach(pet => {
+    petItemsHTML += `
+      <div class="crate-item-pill pet-rainbow" style="border-width:2px">
+        ${pet.icon} <span class="rainbow-text" style="font-family:var(--font-d);font-weight:700">???</span>
+      </div>`;
+    petOddsHTML += `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem">
+        <span class="rainbow-text" style="font-family:var(--font-d);font-weight:700;font-size:.65rem;letter-spacing:.05em">PET ???</span>
+        <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">1 in 1,000,000</span>
+      </div>`;
+  });
+
+  panel.innerHTML = `
+
   panel.innerHTML = `
     <div style="flex:1">
       <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">
@@ -1683,20 +1823,43 @@ function buildSpinTrack(crate,winningItem,landIdx){
 function rollItem(crateId){
   const crate=CRATES.find(c=>c.id===crateId);
   if(!crate)return null;
+
+  // Crate-specific secret pet roll (1 in 1,000,000 each)
+  const cratePets = getPetsForCrate(crateId);
+  for(const pet of cratePets){
+    if(Math.random() < 0.000001) return pet;
+  }
+
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
   let odds={...crate.odds};
+
   if(S.luckBoost&&!S.luckBoostUsed&&S.luckBoostCrate===crateId){
     const entries=Object.entries(odds);
     const tiers=entries.map(([r])=>getRarity(r).tier||0);
     const maxTier=Math.max(...tiers); const minTier=Math.min(...tiers);
     const mid=(maxTier+minTier)/2;
+    const equippedPet=getEquippedPet();
+    const luckPetMult=(equippedPet&&equippedPet.perk==='luck')?1.5:1;
     entries.forEach(([r])=>{
       const t=getRarity(r).tier||0;
-      if(S.luckBoost==='minor'){ odds[r]*=t<=mid?0.5:1.5; }
-      else { odds[r]*=t<=mid?0.1:4; }
+      if(S.luckBoost==='minor'){ odds[r]*=t<=mid?0.5:1.5*luckPetMult; }
+      else { odds[r]*=t<=mid?0.1:4*luckPetMult; }
     });
     S.luckBoost=null; S.luckBoostUsed=true;
   }
+
+  // normal roll logic...
+  let total = Object.values(odds).reduce((a,b)=>a+b,0);
+  let roll = Math.random()*total;
+  for(let [rar,chance] of Object.entries(odds)){
+    roll -= chance;
+    if(roll <= 0){
+      const candidates = pool.filter(i=>i.rarity===rar);
+      return candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
+    }
+  }
+  return pool[0];
+}
   const rarityEntries=Object.entries(odds);
   const total=rarityEntries.reduce((s,[,v])=>s+v,0);
   let rand=Math.random()*total;
@@ -1710,20 +1873,19 @@ function rollItem(crateId){
 document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const crate=S.currentCrate;
   if(!crate||!S.user||!S.profile)return;
-  if(S.profile.coins<crate.price){toast('Not enough coins! 🪙','error');return;}
+  const price=getCratePrice(crate);
+  if(S.profile.coins<price){toast('Not enough coins! 🪙','error');return;}
   const btn=document.getElementById('btn-open-crate');
   btn.disabled=true;
   document.getElementById('result-panel').classList.add('hidden');
   const item=rollItem(crate.id);
   if(!item){btn.disabled=false;return;}
-  S.profile.coins-=crate.price;
+  S.profile.coins-=price;
   updateCoinDisplay(S.profile.coins);
 
-  // Run animation or skip based on settings
   if(SETTINGS.spinAnim){
     await animateSpin(crate,item);
   } else {
-    // Instant: just show the winning item in the track center
     buildSpinTrack(crate,item,30);
   }
 
@@ -1731,29 +1893,38 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   S.inventory.push(invItem);
   S.profile.cratesOpened=(S.profile.cratesOpened||0)+1;
   if(!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate={};
-  S.profile.luckCoinsPerCrate[crate.id]=(S.profile.luckCoinsPerCrate[crate.id]||0)+crate.price;
+  S.profile.luckCoinsPerCrate[crate.id]=(S.profile.luckCoinsPerCrate[crate.id]||0)+price;
   checkLuckMilestone(crate);
   const r=getRarity(item.rarity);
   if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=item.id;S.profile.rarestTier=r.tier;}
   S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+
   try{
     await db.collection('users').doc(S.user.uid).update({
-      coins:firebase.firestore.FieldValue.increment(-crate.price),
+      coins:firebase.firestore.FieldValue.increment(-price),
       inventory:S.inventory,
       cratesOpened:S.profile.cratesOpened,
-      [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(crate.price),
+      [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(price),
       rarestItem:S.profile.rarestItem,
       rarestTier:S.profile.rarestTier,
       totalValue:S.profile.totalValue,
     });
   }catch(e){ toast('Save error: '+e.message,'error'); }
+
   showResult(item,r,invItem);
-  if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(item.rarity)){
+
+  if(item.rarity==='pet'){
+    if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(item),800);
+    const msg=`🌈 ${S.profile.username} found the SECRET PET ${item.icon} ${item.name}!!! 🌈`;
+    showGlobalBanner(msg);
+    try{
+      await rtdb.ref('chat').push({username:'🌈 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',isPull:true,ts:firebase.database.ServerValue.TIMESTAMP});
+    }catch(e){}
+  } else if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(item.rarity)){
     if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(item),800);
     const msg=`🌟 ${S.profile.username} just pulled ${item.icon} ${item.name}!`;
     showGlobalBanner(msg);
     try{
-      // isPull:true so per-pull muting works
       await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',isPull:true,ts:firebase.database.ServerValue.TIMESTAMP});
     }catch(e){}
   }
@@ -1769,25 +1940,31 @@ function animateSpin(crate,winningItem){
     const containerW=document.getElementById('spin-container').offsetWidth;
     const targetX=containerW/2-(landIdx*iW+iW/2);
     void track.offsetWidth;
-    track.style.transition='transform 4s cubic-bezier(0.08,0,0.06,1)';
+    const dur=getSpinDuration();
+    track.style.transition=`transform ${dur/1000}s cubic-bezier(0.08,0,0.06,1)`;
     track.style.transform=`translateX(${targetX}px)`;
     setTimeout(()=>{
       const landingEl=track.querySelectorAll('.spin-item')[landIdx];
       if(landingEl){
-        const r=getRarity(winningItem.rarity);
-        const col=r.color==='#ffffff'?'#e0e0ff':r.color;
-        landingEl.style.borderColor=col;
-        landingEl.style.boxShadow=`0 0 24px ${r.glow||col+'66'}`;
-        landingEl.style.background='var(--bg-hover)';
+        if(winningItem.rarity==='pet'){
+          landingEl.classList.add('pet-rainbow');
+          landingEl.style.background='var(--bg-hover)';
+        } else {
+          const r=getRarity(winningItem.rarity);
+          const col=r.color==='#ffffff'?'#e0e0ff':r.color;
+          landingEl.style.borderColor=col;
+          landingEl.style.boxShadow=`0 0 24px ${r.glow||col+'66'}`;
+          landingEl.style.background='var(--bg-hover)';
+        }
       }
       resolve();
-    },4100);
+    },dur+100);
   });
 }
 
 function showResult(item,r,invItem){
   S.lastOpenedInvItem=invItem;
-  if(S.autoSell){
+  if(S.autoSell && item.rarity!=='pet'){
     let shouldSell=false;
     if(S.autoSellMode==='rarity'){
       const itemTier=rarityTierOrder.indexOf(item.rarity);
@@ -1802,14 +1979,29 @@ function showResult(item,r,invItem){
       sellItems([invItem.uniqueId]); return;
     }
   }
-  const col=r.color==='#ffffff'?'#aaa':r.color;
+
   const panel=document.getElementById('result-panel');
+  const nameEl=document.getElementById('result-name');
+  const rarEl=document.getElementById('result-rarity');
+
+  if(item.rarity==='pet'){
+    panel.style.setProperty('--rc','#fff');
+    panel.style.setProperty('--rg','#ffffff88');
+    panel.className='result-panel pet-rainbow';
+    document.getElementById('result-icon').textContent=item.icon;
+    nameEl.textContent=item.name; nameEl.classList.add('rainbow-text');
+    rarEl.textContent='??? PET'; rarEl.classList.add('rainbow-text'); rarEl.style.borderColor='#fff';
+    document.getElementById('result-value').textContent='Perk: '+item.perkName+' — '+item.perkDesc;
+    panel.classList.remove('hidden');
+    return;
+  }
+
+  const col=r.color==='#ffffff'?'#aaa':r.color;
   panel.style.setProperty('--rc',col);
   panel.style.setProperty('--rg',r.glow||col+'44');
   panel.className='result-panel'+(item.rarity==='divine'?' rarity-divine':'');
   document.getElementById('result-icon').textContent=item.icon;
-  document.getElementById('result-name').textContent=item.name;
-  const rarEl=document.getElementById('result-rarity');
+  nameEl.textContent=item.name;
   rarEl.textContent=r.name.toUpperCase(); rarEl.style.color=col; rarEl.style.borderColor=col+'88';
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
   panel.classList.remove('hidden');
@@ -1886,20 +2078,40 @@ function renderInventory(){
 
 function makeItemCard(inv,container,selectable=false){
   const item=getItem(inv.itemId); if(!item)return null;
+  const isPet=item.rarity==='pet';
   const r=getRarity(item.rarity);
   const col=r.color==='#ffffff'?'#aaa':r.color;
   const card=document.createElement('div');
-  card.className='item-card'+(item.rarity==='divine'?' rarity-divine':'');
+  card.className='item-card'+(item.rarity==='divine'?' rarity-divine':'')+(isPet?' pet-rainbow':'');
   card.style.setProperty('--ic',col+'aa');
   card.style.setProperty('--ig',r.glow||'#9ca3af33');
   card.dataset.uid=inv.uniqueId;
   if(selectable&&S.selectedItems.has(inv.uniqueId)) card.classList.add('selected');
-  card.innerHTML=`<span class="item-icon">${item.icon}</span><div class="item-name">${item.name}</div><div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
+
+  const sourceCrate=CRATES.find(c=>c.id===inv.crateSource);
+  const sourceIconHTML=(isPet&&sourceCrate)?`<span class="pet-source-icon" title="Found in ${sourceCrate.name}">${sourceCrate.icon}</span>`:'';
+
+  const nameHTML=isPet?`<div class="item-name rainbow-text">${item.name}</div>`:`<div class="item-name">${item.name}</div>`;
+  const valueHTML=isPet?`<div class="item-value-small" style="color:var(--text-2)">${item.perkName}</div>`:`<div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
+
+  let equipHTML='';
+  if(isPet&&selectable){
+    const equipped=S.profile&&S.profile.equippedPetUid===inv.uniqueId;
+    equipHTML=`<button class="pet-equip-btn${equipped?' equipped':''}" type="button">${equipped?'★ EQUIPPED':'EQUIP'}</button>`;
+  }
+
+  card.innerHTML=`${sourceIconHTML}<span class="item-icon">${item.icon}</span>${nameHTML}${valueHTML}${equipHTML}`;
+
   if(selectable){
-    card.addEventListener('click',()=>{
+    card.addEventListener('click',(e)=>{
+      if(e.target.closest('.pet-equip-btn'))return;
       if(S.selectedItems.has(inv.uniqueId)){S.selectedItems.delete(inv.uniqueId);card.classList.remove('selected');}
       else{S.selectedItems.add(inv.uniqueId);card.classList.add('selected');}
     });
+  }
+  if(isPet&&selectable){
+    const eqBtn=card.querySelector('.pet-equip-btn');
+    if(eqBtn) eqBtn.addEventListener('click',e=>{ e.stopPropagation(); equipPet(inv.uniqueId); });
   }
   card.addEventListener('mouseenter',e=>showTip(e,item,r));
   card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
@@ -1918,9 +2130,17 @@ function showTip(e,item,r){
   document.getElementById('tt-icon').textContent=item.icon;
   document.getElementById('tt-name').textContent=item.name;
   const rarEl=document.getElementById('tt-rarity');
-  rarEl.textContent=r.name; rarEl.style.color=col;
-  document.getElementById('tt-desc').textContent=item.desc||'';
-  document.getElementById('tt-value').textContent='🪙 '+item.value.toLocaleString();
+  rarEl.removeAttribute('style');
+  if(item.rarity==='pet'){
+    rarEl.textContent='??? PET'; rarEl.className='tooltip-rarity rainbow-text';
+    document.getElementById('tt-desc').textContent=(item.desc||'')+' Perk: '+item.perkName+' — '+item.perkDesc;
+    document.getElementById('tt-value').textContent='🪙 '+item.value.toLocaleString()+' (sell value)';
+  } else {
+    rarEl.className='tooltip-rarity';
+    rarEl.textContent=r.name; rarEl.style.color=col;
+    document.getElementById('tt-desc').textContent=item.desc||'';
+    document.getElementById('tt-value').textContent='🪙 '+item.value.toLocaleString();
+  }
   tt.classList.remove('hidden');
   tt.style.left=Math.min(e.clientX+12,window.innerWidth-240)+'px';
   tt.style.top=Math.min(e.clientY+12,window.innerHeight-200)+'px';
@@ -1935,24 +2155,29 @@ document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
 
 async function sellItems(uniqueIds){
   let earned=0;
+  let unequipped=false;
   for(const uid of uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
     if(item) earned+=Math.floor(item.value*1);
+    if(S.profile.equippedPetUid===uid){ S.profile.equippedPetUid=null; unequipped=true; }
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
   S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
   try{
-    await db.collection('users').doc(S.user.uid).update({
+    const updateObj={
       coins:firebase.firestore.FieldValue.increment(earned),
       inventory:S.inventory,
       totalValue:S.profile.totalValue,
-    });
+    };
+    if(unequipped) updateObj.equippedPetUid=null;
+    await db.collection('users').doc(S.user.uid).update(updateObj);
   }catch(e){ toast('Save error','error'); return; }
   updateCoinDisplay(S.profile.coins);
   toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
+  if(unequipped) updateEquippedPetDisplay();
   if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
 
@@ -2225,13 +2450,15 @@ function renderTradeItems(containerId,items,isYours){
   }
   items.forEach(item=>{
     const r=getRarity(item.rarity);
+    const isPet=item.rarity==='pet';
     const col=r.color==='#ffffff'?'#aaa':r.color;
     const card=document.createElement('div');
-    card.className='item-card';
+    card.className='item-card'+(isPet?' pet-rainbow':'');
     card.style.width='80px';
     card.style.setProperty('--ic',col+'aa');
     card.style.setProperty('--ig',r.glow||'#9ca3af33');
-    card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
+    const nameHTML=isPet?`<div class="item-name rainbow-text">${item.name}</div>`:`<div class="item-name">${item.name}</div>`;
+    card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span>${nameHTML}`;
     if(isYours){card.title='Click to remove';card.addEventListener('click',()=>removeFromTrade(item.uniqueId));}
     card.addEventListener('mouseenter',e=>showTip(e,item,r));
     card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
@@ -2250,13 +2477,15 @@ function renderTradeInventoryMini(){
   items.forEach(inv=>{
     const item=getItem(inv.itemId); if(!item)return;
     const r=getRarity(item.rarity);
+    const isPet=item.rarity==='pet';
     const col=r.color==='#ffffff'?'#aaa':r.color;
     const card=document.createElement('div');
-    card.className='item-card'+(inTrade.has(inv.uniqueId)?' selected':'');
+    card.className='item-card'+(inTrade.has(inv.uniqueId)?' selected':'')+(isPet?' pet-rainbow':'');
     card.style.width='75px';
     card.style.setProperty('--ic',col+'aa');
     card.style.setProperty('--ig',r.glow||'#9ca3af33');
-    card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span><div class="item-name">${item.name}</div>`;
+    const nameHTML=isPet?`<div class="item-name rainbow-text">${item.name}</div>`:`<div class="item-name">${item.name}</div>`;
+    card.innerHTML=`<span class="item-icon" style="font-size:1.5rem">${item.icon}</span>${nameHTML}`;
     card.addEventListener('click',()=>inTrade.has(inv.uniqueId)?removeFromTrade(inv.uniqueId):addToTrade(inv));
     card.addEventListener('mouseenter',e=>showTip(e,item,r));
     card.addEventListener('mouseleave',()=>document.getElementById('item-tooltip').classList.add('hidden'));
@@ -2405,6 +2634,11 @@ async function executeTrade(){
       if(theirAgreedCoins>theirCoins) throw new Error("Partner doesn't have enough coins");
       myCoins=myCoins-myAgreedCoins+theirAgreedCoins;
       theirCoins=theirCoins-theirAgreedCoins+myAgreedCoins;
+            // Unequip pets that were traded away
+      let myEquippedPetUid = myData.equippedPetUid || null;
+      let theirEquippedPetUid = theirData.equippedPetUid || null;
+      if(myAgreedItems.some(ti=>ti.uniqueId===myEquippedPetUid)) myEquippedPetUid=null;
+      if(theirAgreedItems.some(ti=>ti.uniqueId===theirEquippedPetUid)) theirEquippedPetUid=null;
 
       const ts=new Date().toISOString(); const tradeId=genUID();
       const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
@@ -2417,8 +2651,8 @@ async function executeTrade(){
         itemsGiven:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         itemsReceived:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         coinsGiven:theirAgreedCoins,coinsReceived:myAgreedCoins,timestamp:ts};
-      tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
-      tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
+        tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,equippedPetUid:myEquippedPetUid,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
+        tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,equippedPetUid:theirEquippedPetUid,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
     });
 
     // ── FIX: Mark completed and DELETE room immediately to prevent re-trigger ──
