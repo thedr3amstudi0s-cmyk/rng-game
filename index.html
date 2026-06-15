@@ -1966,15 +1966,6 @@ function rollItem(crateId){
   }
   return pool[0] || null;
 }
-  const rarityEntries=Object.entries(odds);
-  const total=rarityEntries.reduce((s,[,v])=>s+v,0);
-  let rand=Math.random()*total;
-  let chosenRarity=rarityEntries[rarityEntries.length-1][0];
-  for(const[rarity,weight] of rarityEntries){rand-=weight;if(rand<=0){chosenRarity=rarity;break;}}
-  const matching=pool.filter(i=>i.rarity===chosenRarity);
-  if(matching.length)return matching[Math.floor(Math.random()*matching.length)];
-  return pool[Math.floor(Math.random()*pool.length)];
-}
 
 document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const crate=S.currentCrate;
