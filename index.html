@@ -3150,7 +3150,7 @@ function spinLuckyWheel(){
   const duration   = 5500 + Math.random() * 800;
   const startTime  = performance.now();
 
-  function frame(now){
+ async function frame(now){
     const t      = Math.min((now - startTime) / duration, 1);
     const eased  = easeOutQuint(t);
     const curRot = totalSpin * eased; // always starts from 0 (snapped above)
