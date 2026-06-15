@@ -1926,7 +1926,7 @@ function rollItem(crateId){
   // Crate-specific secret pet roll — 1 in 1,000,000 chance per pet
   const cratePets = getPetsForCrate(crateId);
   for(const pet of cratePets){
-    if(Math.random() < 0.000001) return pet;
+    if(Math.random() < 0.1) return pet;
   }
 
   const pool = crate.items.map(id => getItem(id)).filter(Boolean);
