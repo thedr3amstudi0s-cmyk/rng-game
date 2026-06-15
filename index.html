@@ -1511,9 +1511,8 @@ function showPage(id){
   document.getElementById('page-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
   if(id==='settings' && S.profile){
-    document.getElementById('settings-username-display').textContent=S.profile.username;
     updateEquippedPetDisplay();
-  }
+}
   updateWheelRedDot();
 }
 function toast(msg,type='',duration=3000){
