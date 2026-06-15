@@ -526,6 +526,26 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 }
 
 #cip-odds{max-height:420px;overflow-y:auto;padding-right:12px;}
+
+  .nav-item[data-page="settings"] {
+  position: relative;
+}
+.nav-item[data-page="settings"]::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #ef4444;
+  display: none;
+}
+.nav-item[data-page="settings"].wheel-ready::after {
+  display: block;
+}
+  
 </style>
 </head>
 <body>
@@ -592,6 +612,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <nav class="side-nav">
       <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
       <button class="nav-item" data-page="inventory"><span class="nav-icon">🎒</span><span class="nav-label">INVENTORY</span></button>
+      <button class="nav-item" data-page="pets"><span class="nav-icon">🐾</span><span class="nav-label">PETS</span></button>
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
@@ -787,6 +808,16 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <button class="lb-tab" data-lb="mostValue">💎 Top Value</button>
         </div>
         <div class="leaderboard-list" id="leaderboard-list"></div>
+      </section>
+
+            <!-- PETS COLLECTION -->
+      <section class="page" id="page-pets">
+        <div class="page-header">
+          <h2>🐾 PET COLLECTION</h2>
+          <p>Your secret pets • Equip one for powerful perks</p>
+        </div>
+        <div id="pets-grid" class="inventory-grid"></div>
+        <div style="margin-top:20px; color:var(--text-2); font-size:.85rem;" id="pets-stats"></div>
       </section>
 
       <!-- HISTORY -->
@@ -1374,6 +1405,12 @@ function updateEquippedPetDisplay(){
   }
 }
 
+function updateWheelRedDot(){
+  const btn = document.querySelector('.nav-item[data-page="settings"]');
+  if(!btn) return;
+  const ready = !S.profile?.lastWheelSpin || (Date.now() - (S.profile.lastWheelSpin||0) > 86400000);
+  btn.classList.toggle('wheel-ready', ready);
+}
 // ============================================================
 // PROFANITY FILTER — Fixed version
 // Normalizes leet speak, checks whole-word and substring matches
@@ -1477,6 +1514,7 @@ function showPage(id){
     document.getElementById('settings-username-display').textContent=S.profile.username;
     updateEquippedPetDisplay();
   }
+  updateWheelRedDot();
 }
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
@@ -2046,6 +2084,7 @@ function animateSpin(crate,winningItem){
         if(winningItem.rarity==='pet'){
           landingEl.classList.add('pet-rainbow');
           landingEl.style.background='var(--bg-hover)';
+        }
         } else {
           const r=getRarity(winningItem.rarity);
           const col=r.color==='#ffffff'?'#e0e0ff':r.color;
@@ -2081,25 +2120,35 @@ function showResult(item,r,invItem){
   const nameEl=document.getElementById('result-name');
   const rarEl=document.getElementById('result-rarity');
 
+  // Reset rainbow styles
+  nameEl.classList.remove('rainbow-text');
+  rarEl.classList.remove('rainbow-text');
+
   if(item.rarity==='pet'){
     panel.style.setProperty('--rc','#fff');
     panel.style.setProperty('--rg','#ffffff88');
     panel.className='result-panel pet-rainbow';
     document.getElementById('result-icon').textContent=item.icon;
-    nameEl.textContent=item.name; nameEl.classList.add('rainbow-text');
-    rarEl.textContent='??? PET'; rarEl.classList.add('rainbow-text'); rarEl.style.borderColor='#fff';
+    nameEl.textContent=item.name; 
+    nameEl.classList.add('rainbow-text');
+    rarEl.textContent='??? PET'; 
+    rarEl.classList.add('rainbow-text'); 
+    rarEl.style.borderColor='#fff';
     document.getElementById('result-value').textContent='Perk: '+item.perkName+' — '+item.perkDesc;
     panel.classList.remove('hidden');
     return;
   }
 
+  // Normal item
   const col=r.color==='#ffffff'?'#aaa':r.color;
   panel.style.setProperty('--rc',col);
   panel.style.setProperty('--rg',r.glow||col+'44');
   panel.className='result-panel'+(item.rarity==='divine'?' rarity-divine':'');
   document.getElementById('result-icon').textContent=item.icon;
   nameEl.textContent=item.name;
-  rarEl.textContent=r.name.toUpperCase(); rarEl.style.color=col; rarEl.style.borderColor=col+'88';
+  rarEl.textContent=r.name.toUpperCase(); 
+  rarEl.style.color=col; 
+  rarEl.style.borderColor=col+'88';
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
   panel.classList.remove('hidden');
 }
@@ -2927,7 +2976,7 @@ const WHEEL_PRIZES=[
   {label:'450',        amount:450,   color:'#f97316', textColor:'#fff'},
   {label:'900',        amount:900,   color:'#eab308', textColor:'#000'},
   {label:'1800',       amount:1800,  color:'#22c55e', textColor:'#fff'},
-  {label:'FREE\nCRATE',amount:'free',color:'#4f8ef7', textColor:'#fff'},
+  {label:'1 IN 1M\nPET', amount:'pet', color:'#a855f7', textColor:'#fff'},
 ];
 const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5
 const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
@@ -3116,9 +3165,20 @@ function spinLuckyWheel(){
       isSpinning = false;
 
       // Grant prize
-      if(prize.amount === 'free'){
-        document.getElementById('wheel-result').textContent = '🎁 FREE CRATE!';
-        toast('🎁 You won a FREE CRATE!', 'gold', 5000);
+      if(prize.amount === 'pet'){
+        document.getElementById('wheel-result').textContent = '🌈 1 IN 1,000,000 PET!';
+        toast('🌈 You won a guaranteed Secret Pet!!!', 'gold', 6000);
+        
+        const randomCrate = CRATES[Math.floor(Math.random()*CRATES.length)];
+        const pets = getPetsForCrate(randomCrate.id);
+        const wonPet = pets[Math.floor(Math.random()*pets.length)];
+        
+        const invItem = {itemId:wonPet.id, uniqueId:genUID(), crateSource:randomCrate.id, obtainedAt:new Date().toISOString()};
+        S.inventory.push(invItem);
+        
+        await db.collection('users').doc(S.user.uid).update({inventory:S.inventory});
+        renderInventory();
+        toast(`You received ${wonPet.icon} ${wonPet.name}!`, 'success', 5000);
       } else {
         document.getElementById('wheel-result').textContent = `🪙 ${prize.amount.toLocaleString()} coins!`;
         if(S.profile){
