@@ -810,14 +810,22 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="leaderboard-list" id="leaderboard-list"></div>
       </section>
 
-            <!-- PETS COLLECTION -->
+                  <!-- COLLECTION INDEX (was PETS) -->
       <section class="page" id="page-pets">
         <div class="page-header">
-          <h2>🐾 PET COLLECTION</h2>
-          <p>Your secret pets • Equip one for powerful perks</p>
+          <h2>📖 COLLECTION INDEX</h2>
+          <p>Every item &amp; pet in the game. Discover them all.</p>
         </div>
-        <div id="pets-grid" class="inventory-grid"></div>
-        <div style="margin-top:20px; color:var(--text-2); font-size:.85rem;" id="pets-stats"></div>
+        <div id="collection-stats" style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;"></div>
+        <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;" id="collection-tabs">
+          <button class="lb-tab active" data-ctab="all">All</button>
+          <button class="lb-tab" data-ctab="common">Common</button>
+          <button class="lb-tab" data-ctab="rare">Rare+</button>
+          <button class="lb-tab" data-ctab="epic">Epic+</button>
+          <button class="lb-tab" data-ctab="legendary">Legendary+</button>
+          <button class="lb-tab" data-ctab="pets">Pets</button>
+        </div>
+        <div id="collection-grid"></div>
       </section>
 
       <!-- HISTORY -->
@@ -1512,7 +1520,11 @@ function showPage(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
   if(id==='settings' && S.profile){
     updateEquippedPetDisplay();
-}
+  }
+  if(id==='inventory') renderInventory();
+  if(id==='pets') renderCollectionIndex();
+  if(id==='leaderboard') loadLeaderboard();
+  if(id==='history') renderTradeHistory();
   updateWheelRedDot();
 }
 function toast(msg,type='',duration=3000){
@@ -1671,6 +1683,105 @@ function updateCoinDisplay(coins){
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
 }
 
+function renderCollectionIndex() {
+  const owned = new Set(S.inventory.map(i => i.itemId));
+  // Also count pets ever seen (owned now OR previously sold — track via profile.seenItems)
+  const seen = new Set([...owned, ...(S.profile?.seenItems || [])]);
+
+  const activeTab = document.querySelector('[data-ctab].active')?.dataset.ctab || 'all';
+
+  const TIER_GROUPS = [
+    { label: 'Common & Uncommon', rarities: ['common','uncommon'] },
+    { label: 'Rare — Legendary',  rarities: ['rare','spectral','epic','runic','legendary','cursed'] },
+    { label: 'Mythic — Infinite', rarities: ['mythic','astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'] },
+    { label: 'Secret Pets',       rarities: ['pet'] },
+  ];
+
+  const TAB_FILTER = {
+    all:       () => true,
+    common:    i => ['common','uncommon'].includes(i.rarity),
+    rare:      i => getRarity(i.rarity).tier >= 3,
+    epic:      i => getRarity(i.rarity).tier >= 5,
+    legendary: i => getRarity(i.rarity).tier >= 7,
+    pets:      i => i.rarity === 'pet',
+  };
+
+  // All items + all pets flat list
+  const allPets = Object.values(PETS_BY_CRATE).flat();
+  const uniquePets = [...new Map(allPets.map(p => [p.id, p])).values()];
+  const allItems = [...ITEMS, ...uniquePets];
+
+  const filtered = allItems.filter(TAB_FILTER[activeTab] || (() => true));
+
+  // Stats
+  const totalItems = allItems.filter(i => i.rarity !== 'pet').length;
+  const totalPets  = uniquePets.length;
+  const ownedItems = allItems.filter(i => i.rarity !== 'pet' && seen.has(i.id)).length;
+  const ownedPets  = uniquePets.filter(p => seen.has(p.id)).length;
+  const pct = Math.round((ownedItems + ownedPets) / (totalItems + totalPets) * 100);
+
+  const statsEl = document.getElementById('collection-stats');
+  statsEl.innerHTML = `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;font-family:var(--font-d);font-size:.7rem;color:var(--text-2)">
+      <div style="font-size:1.1rem;font-weight:900;color:var(--text-1)">${ownedItems} / ${totalItems}</div>ITEMS FOUND
+    </div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;font-family:var(--font-d);font-size:.7rem;color:var(--text-2)">
+      <div style="font-size:1.1rem;font-weight:900;color:var(--text-1)">${ownedPets} / ${totalPets}</div>PETS FOUND
+    </div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;font-family:var(--font-d);font-size:.7rem;color:var(--text-2)">
+      <div style="font-size:1.1rem;font-weight:900;color:var(--accent)">${pct}%</div>COMPLETION
+    </div>`;
+
+  const grid = document.getElementById('collection-grid');
+  grid.innerHTML = '';
+
+  TIER_GROUPS.forEach(group => {
+    const groupItems = filtered.filter(i => group.rarities.includes(i.rarity));
+    if (!groupItems.length) return;
+
+    const label = document.createElement('div');
+    label.style.cssText = 'font-family:var(--font-d);font-size:.65rem;letter-spacing:.15em;color:var(--text-3);margin:20px 0 8px;text-transform:uppercase';
+    label.textContent = group.label;
+    grid.appendChild(label);
+
+    const row = document.createElement('div');
+    row.className = 'inventory-grid';
+    groupItems.forEach(item => {
+      const isSeen = seen.has(item.id);
+      const isPet  = item.rarity === 'pet';
+      const r = getRarity(item.rarity);
+      const col = r.color === '#ffffff' ? '#aaa' : r.color;
+
+      const card = document.createElement('div');
+      card.className = 'item-card' + (isPet ? ' pet-rainbow' : '') + (item.rarity === 'divine' ? ' rarity-divine' : '');
+      card.style.setProperty('--ic', isSeen ? col + 'aa' : 'var(--border)');
+      card.style.setProperty('--ig', isSeen ? (r.glow || '#9ca3af33') : 'transparent');
+      if (!isSeen) { card.style.opacity = '0.22'; card.style.filter = 'grayscale(1)'; }
+
+      const dot = isSeen ? `<div style="position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 4px #22c55e"></div>` : '';
+      const rarColor = isPet ? 'var(--accent)' : col;
+      const nameHtml = isPet && isSeen
+        ? `<div class="item-name rainbow-text">${item.name}</div>`
+        : `<div class="item-name">${item.name}</div>`;
+
+      card.innerHTML = `${dot}<span class="item-icon">${item.icon}</span>${nameHtml}
+        <div class="item-value-small" style="color:${rarColor}">${r.name}</div>`;
+
+      if (isSeen) {
+        card.addEventListener('mouseenter', e => showTip(e, item, r));
+        card.addEventListener('mouseleave', () => document.getElementById('item-tooltip').classList.add('hidden'));
+        card.addEventListener('mousemove', e => {
+          const tt = document.getElementById('item-tooltip');
+          tt.style.left = Math.min(e.clientX+12, window.innerWidth-240) + 'px';
+          tt.style.top  = Math.min(e.clientY+12, window.innerHeight-200) + 'px';
+        });
+      }
+      row.appendChild(card);
+    });
+    grid.appendChild(row);
+  });
+}
+  
 function getLuckThresholds(crate){ return {minor:crate.price*10,huge:crate.price*100}; }
 
 function checkLuckMilestone(crate){
@@ -2098,6 +2209,13 @@ function animateSpin(crate,winningItem){
 
 function showResult(item,r,invItem){
   S.lastOpenedInvItem=invItem;
+
+  if(!S.profile.seenItems) S.profile.seenItems=[];
+  if(!S.profile.seenItems.includes(item.id)){
+    S.profile.seenItems.push(item.id);
+    db.collection('users').doc(S.user.uid).update({seenItems:firebase.firestore.FieldValue.arrayUnion(item.id)});
+  }
+
   if(S.autoSell && item.rarity!=='pet'){
     let shouldSell=false;
     if(S.autoSellMode==='rarity'){
@@ -2118,7 +2236,6 @@ function showResult(item,r,invItem){
   const nameEl=document.getElementById('result-name');
   const rarEl=document.getElementById('result-rarity');
 
-  // Reset rainbow styles
   nameEl.classList.remove('rainbow-text');
   rarEl.classList.remove('rainbow-text');
 
@@ -2127,25 +2244,24 @@ function showResult(item,r,invItem){
     panel.style.setProperty('--rg','#ffffff88');
     panel.className='result-panel pet-rainbow';
     document.getElementById('result-icon').textContent=item.icon;
-    nameEl.textContent=item.name; 
+    nameEl.textContent=item.name;
     nameEl.classList.add('rainbow-text');
-    rarEl.textContent='??? PET'; 
-    rarEl.classList.add('rainbow-text'); 
+    rarEl.textContent='??? PET';
+    rarEl.classList.add('rainbow-text');
     rarEl.style.borderColor='#fff';
     document.getElementById('result-value').textContent='Perk: '+item.perkName+' — '+item.perkDesc;
     panel.classList.remove('hidden');
     return;
   }
 
-  // Normal item
   const col=r.color==='#ffffff'?'#aaa':r.color;
   panel.style.setProperty('--rc',col);
   panel.style.setProperty('--rg',r.glow||col+'44');
   panel.className='result-panel'+(item.rarity==='divine'?' rarity-divine':'');
   document.getElementById('result-icon').textContent=item.icon;
   nameEl.textContent=item.name;
-  rarEl.textContent=r.name.toUpperCase(); 
-  rarEl.style.color=col; 
+  rarEl.textContent=r.name.toUpperCase();
+  rarEl.style.color=col;
   rarEl.style.borderColor=col+'88';
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
   panel.classList.remove('hidden');
