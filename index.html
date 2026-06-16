@@ -612,7 +612,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <nav class="side-nav">
       <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
       <button class="nav-item" data-page="inventory"><span class="nav-icon">🎒</span><span class="nav-label">INVENTORY</span></button>
-      <button class="nav-item" data-page="pets"><span class="nav-icon">🐾</span><span class="nav-label">PETS</span></button>
+      <button class="nav-item" data-page="pets"><span class="nav-icon">🔓</span><span class="nav-label">INDEX</span></button>
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
@@ -1416,7 +1416,9 @@ function updateEquippedPetDisplay(){
 function updateWheelRedDot(){
   const btn = document.querySelector('.nav-item[data-page="settings"]');
   if(!btn) return;
-  const ready = !S.profile?.lastWheelSpin || (Date.now() - (S.profile.lastWheelSpin||0) > 86400000);
+  if(S.user && INFINITE_WHEEL_UIDS.has(S.user.uid)){ btn.classList.remove('wheel-ready'); return; }
+  const effective = Math.max(lastSpinTime, S.profile?.lastWheelSpin || 0);
+  const ready = effective === 0 || (Date.now() - effective > 86400000);
   btn.classList.toggle('wheel-ready', ready);
 }
 // ============================================================
