@@ -753,7 +753,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <div id="online-players-list" class="online-players-list"><div class="no-players">No other players online</div></div>
         </div>
         <div class="trade-room hidden" id="trade-room">
-          <div class="trade-warning-banner">⚠️ ANTI-SCAM PROTECTION ACTIVE — Read items carefully before accepting!</div>
+          <div class="trade-warning-banner">⚠️ ANTI-SCAM PROTECTION ACTIVE — Read items carefully before accepting! Bri gonna scam u careful.</div>
           <div class="trade-panels">
             <div class="trade-panel">
               <div class="trade-panel-header"><span>YOUR OFFER</span><span id="trade-you-name" class="trade-player-label">You</span></div>
@@ -2096,7 +2096,7 @@ function rollItem(crateId){
 
   const cratePets=getPetsForCrate(crateId);
   for(const pet of cratePets){
-    if(Math.random()<0.0001) return pet;
+    if(Math.random()<0.001) return pet;
   }
 
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
@@ -3206,7 +3206,7 @@ const POINTER_DEG = 270; // 12 o'clock in canvas coords
 const INFINITE_WHEEL_UIDS = new Set([
   'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
   'Qo058ATVgidpQPdRU7mliFtTZqh1',
-  'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2',  // new
+  'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2', 
 ]);
 
 // Internal state
