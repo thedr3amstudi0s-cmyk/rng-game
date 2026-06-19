@@ -1009,7 +1009,7 @@ const RARITIES = {
   common:       {name:'Common',       color:'#9ca3af', glow:'#9ca3af44', tier:1},
   uncommon:     {name:'Uncommon',     color:'#22c55e', glow:'#22c55e44', tier:2},
   rare:         {name:'Rare',         color:'#3b82f6', glow:'#3b82f644', tier:3},
-  spectral:     {name:'Spectral',     color:'#38bdf8', glow:'#38bdf844', tier:4},
+  spectral:     {name:'Spectral',     color:'#ceeaf3', glow:'#ceeaf344', tier:4},
   epic:         {name:'Epic',         color:'#a855f7', glow:'#a855f744', tier:5},
   runic:        {name:'Runic',        color:'#f97316', glow:'#f9731644', tier:6},
   legendary:    {name:'Legendary',    color:'#f59e0b', glow:'#f59e0b44', tier:7},
@@ -3459,13 +3459,10 @@ document.getElementById('spin-btn').addEventListener('click', spinLuckyWheel);
 // AFK PUZZLE SYSTEM
 // ============================================================
 const PUZZLES=[
-  {q:'What is 17 × 4?',a:'68'},{q:'What is 144 ÷ 12?',a:'12'},
-  {q:'What is 25 + 37?',a:'62'},{q:'What is 100 - 63?',a:'37'},
-  {q:'What is 8 × 9?',a:'72'},{q:'What is 256 ÷ 8?',a:'32'},
-  {q:'What is 13 × 7?',a:'91'},{q:'What is 200 - 84?',a:'116'},
-  {q:'What is 15 × 6?',a:'90'},{q:'What is 81 ÷ 9?',a:'9'},
   {q:'Type the word: VAULT',a:'VAULT'},{q:'Type the word: CRATE',a:'CRATE'},
   {q:'Type the word: UNLOCK',a:'UNLOCK'},{q:'Type the word: LEGENDARY',a:'LEGENDARY'},
+  {q:'Type the word: WAFFLE',a:'WAFFLE'},{q:'Type the word: SPIN',a:'SPIN'},
+  {q:'Type the word: ROLL',a:'ROLL'},{q:'Type the word: RARE',a:'RARE'},
   {q:'Type the word: FORTUNE',a:'FORTUNE'},{q:'How many sides does a hexagon have?',a:'6'},
   {q:'How many days in a week?',a:'7'},{q:'How many hours in a day?',a:'24'},
   {q:'How many months in a year?',a:'12'},{q:'What is 3 squared?',a:'9'},
@@ -3490,7 +3487,7 @@ function schedulePuzzle(){
 function showAfkPuzzle(){
   if(S.tradeRoomId){schedulePuzzle();return;}
   const puzzle=PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
-  let timeLeft=60;
+  let timeLeft=30;
   const overlay=document.createElement('div');
   overlay.id='afk-puzzle-overlay';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .4s ease;';
@@ -3524,7 +3521,7 @@ function showAfkPuzzle(){
   function checkAnswer(){
     const userAnswer=input.value.trim().toUpperCase();
     const correct=puzzle.a.toUpperCase();
-    if(userAnswer===correct){ clearInterval(_puzzleInterval); overlay.remove(); toast('✅ Puzzle solved! Stay frosty.','success',3000); schedulePuzzle(); }
+    if(userAnswer===correct){ clearInterval(_puzzleInterval); overlay.remove(); toast('✅ Puzzle solved! Roll Roll Roll.','success',3000); schedulePuzzle(); }
     else{ input.style.borderColor='#ef4444'; input.value=''; input.placeholder='Wrong! Try again...'; setTimeout(()=>{input.style.borderColor='var(--border)';input.placeholder='Your answer...';input.focus();},600); }
   }
   submitBtn.addEventListener('click',checkAnswer);
