@@ -903,6 +903,35 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
 
         <div class="settings-section">
+          <div class="settings-section-title">💎 VIP SHOP</div>
+          <div class="settings-row" style="flex-wrap:wrap;gap:10px">
+            <div class="settings-row-info" style="flex:1;min-width:240px">
+              <div class="settings-row-label">VIP Pack — 🐉 VIP Golden Drake + 10,000 Coins</div>
+              <div class="settings-row-desc">
+                $5.00 via Cash App. Click Buy, send payment to <strong id="shop-cashtag">$YourCashtag</strong>
+                with your order ID in the note, then submit your Cash App tag below so we can verify it.
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn-primary" id="shop-buy-btn" style="width:auto;padding:10px 20px;white-space:nowrap">BUY VIP PACK — $5</button>
+              </div>
+              <div id="shop-order-box" class="hidden" style="margin-top:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+                <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
+                <div id="shop-order-id" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
+                <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <input type="text" id="shop-cashtag-input" placeholder="$YourCashtag"
+                    style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);
+                    border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
+                  <button class="btn-primary" id="shop-submit-tag-btn" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
+                </div>
+                <div id="shop-order-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
+              </div>
+              <div id="shop-status-list" style="margin-top:14px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <div class="settings-section-title">🎟️ REDEEM CODE</div>
           <div class="settings-row" style="flex-wrap:wrap;gap:10px">
             <div class="settings-row-info" style="flex:1;min-width:200px">
@@ -918,6 +947,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               <div id="redeem-code-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
             </div>
           </div>
+        </div>
+
+        <div class="settings-section hidden" id="admin-orders-section">
+          <div class="settings-section-title">🛠️ ADMIN — PENDING ORDERS</div>
+          <div id="admin-orders-list" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
       </section>
 
@@ -1692,6 +1726,8 @@ function startAuthObserver(){
         listenToChat();
         listenToTradeRequests();
         setupTradeInviteListener();
+        listenToMyOrders();
+        listenToAdminOrders();
       }
       checkLuckMilestone(null);
       updateLuckBar(null);
@@ -3698,6 +3734,221 @@ async function generateVipCodes(amount, coinAmount){
   console.log(codes.join('\n'));
   return codes;
 }
+
+// ============================================================
+// CASH APP SHOP — manual-verification order system
+// ============================================================
+// Firestore structure:
+// orders/{orderId}: {
+//   uid, username, reward, status: 'pending'|'approved'|'rejected',
+//   cashtag, createdAt, approvedAt, code (set after approval)
+// }
+//
+// Flow:
+//  1. Player clicks Buy -> createOrder() writes a pending order tied to their uid
+//  2. Player sends Cash App payment manually, then submits their $cashtag -> submitCashTag()
+//  3. ADMIN ONLY (gated by UID, matching Firestore rules) reviews orders in Settings
+//     and clicks Approve -> approveOrder() generates a fresh one-time code via makeCode()
+//     and writes it to the order, then the player's pending-order listener picks it up.
+//
+// IMPORTANT: Firestore rules must restrict orders/{orderId} writes for status changes
+// to the admin UID only — see the rules block provided alongside this code.
+
+const ADMIN_UID = 'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2';
+const SHOP_CASHTAG = '$doctorwaffle500';
+
+const VIP_PRODUCT = {
+  id: 'vip_pack',
+  label: 'VIP Pack — 🐉 VIP Golden Drake + 10,000 Coins',
+  priceLabel: '$5.00',
+  reward: { type: 'bundle', petId: 'p_vip1', coins: 10000 },
+};
+
+function isAdminUser(){
+  return !!(S.user && S.user.uid === ADMIN_UID);
+}
+
+function genOrderId(){
+  return 'ORD-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+}
+
+let currentOrderId = null;
+let myOrdersListener = null;
+let adminOrdersListener = null;
+
+async function createOrder(){
+  if(!S.user || !S.profile){ toast('You must be logged in.', 'error'); return; }
+  const btn = document.getElementById('shop-buy-btn');
+  btn.disabled = true; btn.textContent = 'CREATING ORDER...';
+
+  const orderId = genOrderId();
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId,
+      uid: S.user.uid,
+      username: S.profile.username,
+      product: VIP_PRODUCT.id,
+      reward: VIP_PRODUCT.reward,
+      status: 'pending',
+      cashtag: '',
+      createdAt: new Date().toISOString(),
+    });
+    currentOrderId = orderId;
+    document.getElementById('shop-order-id').textContent = orderId;
+    document.getElementById('shop-order-box').classList.remove('hidden');
+    toast('Order created! Send payment, then submit your $cashtag.', 'success', 5000);
+  }catch(e){
+    toast('Could not create order: ' + e.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'BUY VIP PACK — ' + VIP_PRODUCT.priceLabel;
+}
+
+async function submitCashTag(){
+  if(!currentOrderId){ toast('No active order.', 'error'); return; }
+  const input = document.getElementById('shop-cashtag-input');
+  const msg = document.getElementById('shop-order-msg');
+  const cashtag = input.value.trim();
+
+  if(!cashtag){ msg.style.color = '#ef4444'; msg.textContent = 'Enter your $cashtag.'; return; }
+
+  const btn = document.getElementById('shop-submit-tag-btn');
+  btn.disabled = true; btn.textContent = 'SUBMITTING...';
+  try{
+    await db.collection('orders').doc(currentOrderId).update({
+      cashtag,
+      cashtagSubmittedAt: new Date().toISOString(),
+    });
+    msg.style.color = '#22c55e';
+    msg.textContent = '✅ Submitted! Waiting for approval — check back here or in your order list below.';
+    toast('Cash App tag submitted. Waiting for approval.', 'success', 4000);
+  }catch(e){
+    msg.style.color = '#ef4444';
+    msg.textContent = 'Error: ' + e.message;
+  }
+  btn.disabled = false; btn.textContent = 'SUBMIT';
+}
+
+// Renders the player's own order history/status under the shop box
+function renderMyOrders(orders){
+  const list = document.getElementById('shop-status-list');
+  if(!list) return;
+  if(!orders.length){ list.innerHTML = ''; return; }
+
+  const statusColor = { pending: 'var(--gold)', approved: '#22c55e', rejected: '#ef4444' };
+  const statusLabel = { pending: '⏳ Pending review', approved: '✅ Approved', rejected: '❌ Rejected' };
+
+  list.innerHTML = orders.map(o => `
+    <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <span style="font-family:var(--font-m);font-size:.8rem;color:var(--text-2)">${escHtml(o.orderId)}</span>
+        <span style="font-family:var(--font-d);font-size:.72rem;color:${statusColor[o.status]||'var(--text-2)'}">${statusLabel[o.status]||o.status}</span>
+      </div>
+      ${o.status === 'approved' && o.code ? `
+        <div style="margin-top:8px;font-family:var(--font-m);font-size:.85rem;color:var(--gold)">
+          Your code: <strong>${escHtml(o.code)}</strong> — paste it into Redeem Code below!
+        </div>` : ''}
+      ${o.status === 'rejected' ? `
+        <div style="margin-top:6px;font-size:.78rem;color:var(--text-3)">
+          Payment couldn't be verified. Contact the admin if you believe this is an error.
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function listenToMyOrders(){
+  if(!S.user) return;
+  if(myOrdersListener) myOrdersListener();
+  const unsub = db.collection('orders')
+    .where('uid', '==', S.user.uid)
+    .onSnapshot(snap=>{
+      const orders = snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+      renderMyOrders(orders);
+    }, err=>{ console.warn('Orders listener error:', err.message); });
+  myOrdersListener = unsub;
+}
+
+// ── ADMIN ONLY ──────────────────────────────────────────────
+async function approveOrder(orderId){
+  if(!isAdminUser()){ toast('Not authorized.', 'error'); return; }
+  try{
+    const orderRef = db.collection('orders').doc(orderId);
+    const orderSnap = await orderRef.get();
+    if(!orderSnap.exists){ toast('Order not found.', 'error'); return; }
+    const order = orderSnap.data();
+    if(order.status !== 'pending'){ toast('Order is not pending.', 'error'); return; }
+
+    // Generate a fresh one-time code carrying this order's reward
+    const code = await makeCode(order.reward);
+
+    await orderRef.update({
+      status: 'approved',
+      code,
+      approvedAt: new Date().toISOString(),
+      approvedBy: S.user.uid,
+    });
+    toast(`Order ${orderId} approved. Code: ${code}`, 'success', 6000);
+  }catch(e){
+    toast('Approve failed: ' + e.message, 'error');
+  }
+}
+
+async function rejectOrder(orderId){
+  if(!isAdminUser()){ toast('Not authorized.', 'error'); return; }
+  try{
+    await db.collection('orders').doc(orderId).update({
+      status: 'rejected',
+      rejectedAt: new Date().toISOString(),
+      rejectedBy: S.user.uid,
+    });
+    toast(`Order ${orderId} rejected.`, 'error');
+  }catch(e){
+    toast('Reject failed: ' + e.message, 'error');
+  }
+}
+
+function renderAdminOrders(orders){
+  const list = document.getElementById('admin-orders-list');
+  if(!list) return;
+  const pending = orders.filter(o=>o.status==='pending' && o.cashtag);
+  if(!pending.length){
+    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No pending orders awaiting review.</div>';
+    return;
+  }
+  list.innerHTML = pending.map(o=>`
+    <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <span style="font-family:var(--font-m);font-size:.85rem;color:var(--gold)">${escHtml(o.orderId)}</span>
+        <span style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2)">${escHtml(o.username)}</span>
+      </div>
+      <div style="font-size:.85rem;color:var(--text-2);margin-bottom:4px">Cash App tag: <strong style="color:var(--text-1)">${escHtml(o.cashtag)}</strong></div>
+      <div style="font-size:.78rem;color:var(--text-3);margin-bottom:10px">Product: ${escHtml(o.product||'')} · Submitted: ${o.cashtagSubmittedAt ? new Date(o.cashtagSubmittedAt).toLocaleString() : '—'}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" style="width:auto;padding:8px 16px" onclick="approveOrder('${o.orderId}')">✓ APPROVE</button>
+        <button class="btn-ghost" style="border-color:#ef4444;color:#ef4444" onclick="rejectOrder('${o.orderId}')">✗ REJECT</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function listenToAdminOrders(){
+  if(!isAdminUser()) return;
+  document.getElementById('admin-orders-section').classList.remove('hidden');
+  if(adminOrdersListener) adminOrdersListener();
+  const unsub = db.collection('orders')
+    .where('status', '==', 'pending')
+    .onSnapshot(snap=>{
+      const orders = snap.docs.map(d=>d.data());
+      renderAdminOrders(orders);
+    }, err=>{ console.warn('Admin orders listener error:', err.message); });
+  adminOrdersListener = unsub;
+}
+
+document.getElementById('shop-cashtag').textContent = SHOP_CASHTAG;
+document.getElementById('shop-buy-btn').addEventListener('click', createOrder);
+document.getElementById('shop-submit-tag-btn').addEventListener('click', submitCashTag);
+document.getElementById('shop-cashtag-input').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') submitCashTag();
+});
 
 // ============================================================
 // AFK PUZZLE SYSTEM
