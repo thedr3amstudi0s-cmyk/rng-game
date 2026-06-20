@@ -753,7 +753,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <div id="online-players-list" class="online-players-list"><div class="no-players">No other players online</div></div>
         </div>
         <div class="trade-room hidden" id="trade-room">
-          <div class="trade-warning-banner">⚠️ ANTI-SCAM PROTECTION ACTIVE — Read items carefully before accepting! Bri gonna scam u careful.</div>
+          <div class="trade-warning-banner">⚠️ ANTI-SCAM PROTECTION ACTIVE — Read items carefully before accepting!</div>
           <div class="trade-panels">
             <div class="trade-panel">
               <div class="trade-panel-header"><span>YOUR OFFER</span><span id="trade-you-name" class="trade-player-label">You</span></div>
@@ -901,6 +901,24 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <button class="btn-ghost" onclick="showLuckyWheel()" style="white-space:nowrap">🎰 OPEN WHEEL</button>
           </div>
         </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">🎟️ REDEEM CODE</div>
+          <div class="settings-row" style="flex-wrap:wrap;gap:10px">
+            <div class="settings-row-info" style="flex:1;min-width:200px">
+              <div class="settings-row-label">Have a code?</div>
+              <div class="settings-row-desc">Enter it below to claim your reward</div>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <input type="text" id="redeem-code-input" placeholder="CRATE-XXXXXX"
+                  style="flex:1;min-width:160px;background:var(--bg-dark);border:1px solid var(--border);
+                  border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);
+                  font-family:var(--font-m);letter-spacing:.05em;text-transform:uppercase;"/>
+                <button class="btn-primary" id="redeem-code-btn" style="width:auto;padding:10px 20px;white-space:nowrap">REDEEM</button>
+              </div>
+              <div id="redeem-code-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
+            </div>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -1009,7 +1027,7 @@ const RARITIES = {
   common:       {name:'Common',       color:'#9ca3af', glow:'#9ca3af44', tier:1},
   uncommon:     {name:'Uncommon',     color:'#22c55e', glow:'#22c55e44', tier:2},
   rare:         {name:'Rare',         color:'#3b82f6', glow:'#3b82f644', tier:3},
-  spectral:     {name:'Spectral',     color:'#ceeaf3', glow:'#ceeaf344', tier:4},
+  spectral:     {name:'Spectral',     color:'#38bdf8', glow:'#38bdf844', tier:4},
   epic:         {name:'Epic',         color:'#a855f7', glow:'#a855f744', tier:5},
   runic:        {name:'Runic',        color:'#f97316', glow:'#f9731644', tier:6},
   legendary:    {name:'Legendary',    color:'#f59e0b', glow:'#f59e0b44', tier:7},
@@ -1071,7 +1089,6 @@ const ITEMS = [
   {id:'m002',name:'Celestial Throne', rarity:'mythic',   icon:'🪑', value:180000,   desc:'Seat of the sky people.'},
 
   {id:'as01',name:'Astral Catalyst',  rarity:'astral',   icon:'🌠', value:400000,   desc:'Bends starlight.'},
-  {id:'as02',name:'Astral Moon',  rarity:'astral',   icon:'🌑', value:350000,   desc:'Just the moon with a fancy name.'},
 
   {id:'d001',name:'Reality Shatter',  rarity:'divine',   icon:'💠', value:900000,   desc:'Breaks the rules of existence.'},
 
@@ -1205,6 +1222,11 @@ const PETS_BY_CRATE = {
     {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 1'},
     {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Genesis Deal I', perkDesc:'-30% off all crate prices'},
   ],
+  // VIP-exclusive pet — purchase only, NEVER drops from any crate.
+  // Kept in its own bucket so it's excluded from getPetsForCrate() / crate odds entirely.
+  'vip': [
+    {id:'p_vip1', name:'VIP Golden Drake', rarity:'pet', icon:'🐉', value:120000000, desc:'A mark of true status. Bought, not found.', perk:'discount', perkName:'VIP Deal', perkDesc:'-35% off all crate prices'},
+  ],
 };
 
 // Helper to get pets for a crate
@@ -1247,7 +1269,7 @@ const CRATES = [
   {id:'crystal', name:'Crystal Crate', price:380, icon:'💎', color:'#7dd3fc',
     desc:'Gleaming with potential.',
     odds:{uncommon:0.45, rare:0.45, spectral:0.10},
-    items:['u006','r001','r002','r003','r004','sp01','sp02']},
+    items:['u005','r001','r002','r003','r004','sp01','sp02']},
 
   {id:'arcane', name:'Arcane Crate', price:950, icon:'🔮', color:'#a78bfa',
     desc:'Mana infused.',
@@ -1302,7 +1324,7 @@ const CRATES = [
   {id:'primordial', name:'Primordial Crate', price:1150000, icon:'🌋', color:'#10b981',
     desc:'Ancient beyond measure.',
     odds:{astral:0.45, divine:0.45, primordial:0.10},
-    items:['as01','as02','d001','pr01']},
+    items:['as01','d001','pr01']},
 
   {id:'ultra', name:'Ultra Crate', price:2350000, icon:'🌌', color:'#00ffff',
     desc:'Transcends limits.',
@@ -2097,7 +2119,7 @@ function rollItem(crateId){
 
   const cratePets=getPetsForCrate(crateId);
   for(const pet of cratePets){
-    if(Math.random()<0.001) return pet;
+    if(Math.random()<0.000001) return pet;
   }
 
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
@@ -3207,7 +3229,7 @@ const POINTER_DEG = 270; // 12 o'clock in canvas coords
 const INFINITE_WHEEL_UIDS = new Set([
   'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
   'Qo058ATVgidpQPdRU7mliFtTZqh1',
-  'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2', 
+  'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2',  // new
 ]);
 
 // Internal state
@@ -3457,13 +3479,237 @@ function closeLuckyWheel(){
 document.getElementById('spin-btn').addEventListener('click', spinLuckyWheel);
 
 // ============================================================
+// REDEEM CODES
+// ============================================================
+// Firestore structure:
+// codes/{CODE}: { used: false, reward: { type: 'coins', amount: 5000 } }
+//            or { used: false, reward: { type: 'item', itemId: 'l001' } }
+//            or { used: false, reward: { type: 'pet', crateId: 'dragon' } }   // random pet from that crate's pet pool
+//            or { used: false, reward: { type: 'pet', petId: 'p_dra1' } }    // specific pet
+// Once redeemed: used:true, usedBy:<uid>, usedByUsername:<name>, usedAt:<ISO>
+
+function normalizeCode(raw){
+  return String(raw||'').trim().toUpperCase();
+}
+
+async function redeemCode(){
+  const input = document.getElementById('redeem-code-input');
+  const btn   = document.getElementById('redeem-code-btn');
+  const msg   = document.getElementById('redeem-code-msg');
+  const code  = normalizeCode(input.value);
+
+  msg.style.color = 'var(--text-2)';
+  msg.textContent = '';
+
+  if(!S.user || !S.profile){ msg.style.color='#ef4444'; msg.textContent='You must be logged in.'; return; }
+  if(!code){ msg.style.color='#ef4444'; msg.textContent='Enter a code first.'; return; }
+
+  btn.disabled = true; btn.textContent = 'CHECKING...';
+
+  try{
+    const codeRef = db.collection('codes').doc(code);
+    const userRef = db.collection('users').doc(S.user.uid);
+
+    // Result of the transaction: what we need to do AFTER committing (toasts, UI refresh)
+    let rewardResult = null;
+
+    await db.runTransaction(async tx=>{
+      const [codeDoc, userDoc] = await Promise.all([tx.get(codeRef), tx.get(userRef)]);
+      if(!codeDoc.exists) throw new Error('INVALID');
+      const codeData = codeDoc.data();
+      if(codeData.used) throw new Error('USED');
+      if(!userDoc.exists) throw new Error('NO_USER');
+
+      const userData = userDoc.data();
+      const reward = codeData.reward || {};
+      let newCoins = userData.coins || 0;
+      let newInventory = [...(userData.inventory||[])];
+      let grantedLabel = '';
+
+      if(reward.type === 'coins'){
+        const amt = Math.max(0, Math.floor(reward.amount||0));
+        newCoins += amt;
+        grantedLabel = `🪙 ${amt.toLocaleString()} coins`;
+      } else if(reward.type === 'item'){
+        const item = getItem(reward.itemId);
+        if(!item) throw new Error('BAD_REWARD');
+        newInventory.push({itemId:item.id, uniqueId:genUID(), crateSource:'code', obtainedAt:new Date().toISOString()});
+        grantedLabel = `${item.icon} ${item.name}`;
+      } else if(reward.type === 'pet'){
+        let pet = null;
+        if(reward.petId){
+          pet = getItem(reward.petId);
+        } else if(reward.crateId){
+          const pets = getPetsForCrate(reward.crateId);
+          pet = pets[Math.floor(Math.random()*pets.length)];
+        }
+        if(!pet) throw new Error('BAD_REWARD');
+        newInventory.push({itemId:pet.id, uniqueId:genUID(), crateSource:reward.crateId||'code', obtainedAt:new Date().toISOString()});
+        grantedLabel = `${pet.icon} ${pet.name}`;
+      } else if(reward.type === 'bundle'){
+        // Bundle can include any combination of: coins, petId, itemIds[]
+        const labels = [];
+        if(reward.coins){
+          const amt = Math.max(0, Math.floor(reward.coins));
+          newCoins += amt;
+          labels.push(`🪙 ${amt.toLocaleString()} coins`);
+        }
+        if(reward.petId){
+          const pet = getItem(reward.petId);
+          if(!pet) throw new Error('BAD_REWARD');
+          newInventory.push({itemId:pet.id, uniqueId:genUID(), crateSource:'code', obtainedAt:new Date().toISOString()});
+          labels.push(`${pet.icon} ${pet.name}`);
+        }
+        if(Array.isArray(reward.itemIds)){
+          for(const iid of reward.itemIds){
+            const item = getItem(iid);
+            if(!item) throw new Error('BAD_REWARD');
+            newInventory.push({itemId:item.id, uniqueId:genUID(), crateSource:'code', obtainedAt:new Date().toISOString()});
+            labels.push(`${item.icon} ${item.name}`);
+          }
+        }
+        if(!labels.length) throw new Error('BAD_REWARD');
+        grantedLabel = labels.join(', ');
+      } else {
+        throw new Error('BAD_REWARD');
+      }
+
+      tx.update(userRef, {
+        coins: newCoins,
+        inventory: newInventory,
+      });
+      tx.update(codeRef, {
+        used: true,
+        usedBy: S.user.uid,
+        usedByUsername: S.profile.username,
+        usedAt: new Date().toISOString(),
+      });
+
+      rewardResult = { label: grantedLabel, newCoins, newInventory };
+    });
+
+    // Refresh local state after successful transaction
+    if(rewardResult){
+      S.profile.coins = rewardResult.newCoins;
+      S.inventory = rewardResult.newInventory;
+      updateCoinDisplay(S.profile.coins);
+      if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
+      msg.style.color = '#22c55e';
+      msg.textContent = `✅ Redeemed! You received ${rewardResult.label}`;
+      toast(`🎟️ Code redeemed: ${rewardResult.label}`, 'success', 5000);
+      input.value = '';
+    }
+  }catch(e){
+    const map = {
+      INVALID: 'Invalid code.',
+      USED: 'This code has already been used.',
+      NO_USER: 'Profile not found — try logging in again.',
+      BAD_REWARD: 'This code is misconfigured. Contact support.',
+    };
+    msg.style.color = '#ef4444';
+    msg.textContent = map[e.message] || ('Error: ' + e.message);
+  }
+
+  btn.disabled = false; btn.textContent = 'REDEEM';
+}
+
+document.getElementById('redeem-code-btn').addEventListener('click', redeemCode);
+document.getElementById('redeem-code-input').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') redeemCode();
+});
+document.getElementById('redeem-code-input').addEventListener('input', e=>{
+  e.target.value = e.target.value.toUpperCase();
+});
+
+// ============================================================
+// ADMIN: CODE GENERATOR (run from browser console while logged in)
+// ============================================================
+// Examples:
+//   generateCoinCodes(50, 5000)                 -> 50 codes worth 5,000 coins each
+//   generateItemCodes(10, 'l001')                -> 10 codes that grant item l001
+//   generatePetCodes(20, 'dragon')                -> 20 codes that grant a random Dragon Crate pet
+//   generatePetCodes(5, null, 'p_gen1')            -> 5 codes that grant the specific Genesis Phoenix pet
+//   makeCode({type:'coins', amount:1000})          -> 1 custom code, returns the code string
+
+function randomCodeString(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = 'CRATE-';
+  for(let i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+async function makeCode(reward){
+  const code = randomCodeString();
+  await db.collection('codes').doc(code).set({
+    used: false,
+    reward,
+    createdAt: new Date().toISOString(),
+  });
+  console.log('Created code:', code, reward);
+  return code;
+}
+
+async function generateCoinCodes(amount, coinValue){
+  const codes = [];
+  for(let i=0;i<amount;i++){
+    codes.push(await makeCode({type:'coins', amount:coinValue}));
+  }
+  console.log(`Generated ${amount} codes worth 🪙${coinValue} each:`);
+  console.log(codes.join('\n'));
+  return codes;
+}
+
+async function generateItemCodes(amount, itemId){
+  if(!getItem(itemId)){ console.error('Unknown itemId:', itemId); return; }
+  const codes = [];
+  for(let i=0;i<amount;i++){
+    codes.push(await makeCode({type:'item', itemId}));
+  }
+  console.log(`Generated ${amount} codes for item ${itemId}:`);
+  console.log(codes.join('\n'));
+  return codes;
+}
+
+async function generatePetCodes(amount, crateId, petId){
+  if(petId && !getItem(petId)){ console.error('Unknown petId:', petId); return; }
+  if(!petId && (!crateId || !PETS_BY_CRATE[crateId])){ console.error('Unknown crateId:', crateId); return; }
+  const codes = [];
+  for(let i=0;i<amount;i++){
+    codes.push(await makeCode(petId ? {type:'pet', petId} : {type:'pet', crateId}));
+  }
+  console.log(`Generated ${amount} pet codes (${petId||('random from '+crateId)}):`);
+  console.log(codes.join('\n'));
+  return codes;
+}
+
+// VIP pack — grants the VIP-exclusive pet plus a coin bonus, in one code.
+// Use this for the itch.io "VIP Pack" unlockable purchase.
+// Example: generateVipCodes(25, 10000)  -> 25 single-use VIP codes, each worth the VIP pet + 10,000 coins
+async function generateVipCodes(amount, coinAmount){
+  const codes = [];
+  for(let i=0;i<amount;i++){
+    codes.push(await makeCode({
+      type: 'bundle',
+      petId: 'p_vip1',
+      coins: coinAmount,
+    }));
+  }
+  console.log(`Generated ${amount} VIP codes (🐉 VIP Golden Drake + 🪙${coinAmount.toLocaleString()} coins each):`);
+  console.log(codes.join('\n'));
+  return codes;
+}
+
+// ============================================================
 // AFK PUZZLE SYSTEM
 // ============================================================
 const PUZZLES=[
+  {q:'What is 17 × 4?',a:'68'},{q:'What is 144 ÷ 12?',a:'12'},
+  {q:'What is 25 + 37?',a:'62'},{q:'What is 100 - 63?',a:'37'},
+  {q:'What is 8 × 9?',a:'72'},{q:'What is 256 ÷ 8?',a:'32'},
+  {q:'What is 13 × 7?',a:'91'},{q:'What is 200 - 84?',a:'116'},
+  {q:'What is 15 × 6?',a:'90'},{q:'What is 81 ÷ 9?',a:'9'},
   {q:'Type the word: VAULT',a:'VAULT'},{q:'Type the word: CRATE',a:'CRATE'},
   {q:'Type the word: UNLOCK',a:'UNLOCK'},{q:'Type the word: LEGENDARY',a:'LEGENDARY'},
-  {q:'Type the word: WAFFLE',a:'WAFFLE'},{q:'Type the word: SPIN',a:'SPIN'},
-  {q:'Type the word: ROLL',a:'ROLL'},{q:'Type the word: RARE',a:'RARE'},
   {q:'Type the word: FORTUNE',a:'FORTUNE'},{q:'How many sides does a hexagon have?',a:'6'},
   {q:'How many days in a week?',a:'7'},{q:'How many hours in a day?',a:'24'},
   {q:'How many months in a year?',a:'12'},{q:'What is 3 squared?',a:'9'},
@@ -3488,7 +3734,7 @@ function schedulePuzzle(){
 function showAfkPuzzle(){
   if(S.tradeRoomId){schedulePuzzle();return;}
   const puzzle=PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
-  let timeLeft=30;
+  let timeLeft=60;
   const overlay=document.createElement('div');
   overlay.id='afk-puzzle-overlay';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;animation:ultra-fade-in .4s ease;';
@@ -3522,7 +3768,7 @@ function showAfkPuzzle(){
   function checkAnswer(){
     const userAnswer=input.value.trim().toUpperCase();
     const correct=puzzle.a.toUpperCase();
-    if(userAnswer===correct){ clearInterval(_puzzleInterval); overlay.remove(); toast('✅ Puzzle solved! Roll Roll Roll.','success',3000); schedulePuzzle(); }
+    if(userAnswer===correct){ clearInterval(_puzzleInterval); overlay.remove(); toast('✅ Puzzle solved! Stay frosty.','success',3000); schedulePuzzle(); }
     else{ input.style.borderColor='#ef4444'; input.value=''; input.placeholder='Wrong! Try again...'; setTimeout(()=>{input.style.borderColor='var(--border)';input.placeholder='Your answer...';input.focus();},600); }
   }
   submitBtn.addEventListener('click',checkAnswer);
