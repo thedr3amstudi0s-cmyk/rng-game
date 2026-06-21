@@ -3896,12 +3896,20 @@ function renderMyOrders(orders){
 function listenToMyOrders(){
   if(!S.user) return;
   if(myOrdersListener) myOrdersListener();
+
   const unsub = db.collection('orders')
     .where('uid', '==', S.user.uid)
     .onSnapshot(snap=>{
       const orders = snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
       renderMyOrders(orders);
-    }, err=>{ console.warn('Orders listener error:', err.message); });
+    }, err=>{
+      // Silently ignore permission errors for non-admins
+      if(err.code === 'permission-denied') {
+        renderMyOrders([]); // show empty state
+      } else {
+        console.warn('Orders listener error:', err.message);
+      }
+    });
   myOrdersListener = unsub;
 }
 
@@ -3972,12 +3980,19 @@ function listenToAdminOrders(){
   if(!isAdminUser()) return;
   document.getElementById('admin-orders-section').classList.remove('hidden');
   if(adminOrdersListener) adminOrdersListener();
+
   const unsub = db.collection('orders')
     .where('status', '==', 'pending')
     .onSnapshot(snap=>{
       const orders = snap.docs.map(d=>d.data());
       renderAdminOrders(orders);
-    }, err=>{ console.warn('Admin orders listener error:', err.message); });
+    }, err=>{
+      if(err.code === 'permission-denied') {
+        console.warn('Admin orders access denied (expected for non-admins)');
+      } else {
+        console.warn('Admin orders listener error:', err.message);
+      }
+    });
   adminOrdersListener = unsub;
 }
 
