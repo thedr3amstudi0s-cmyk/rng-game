@@ -1259,18 +1259,7 @@ const PETS_BY_CRATE = {
   // VIP-exclusive pet — purchase only, NEVER drops from any crate.
   // Kept in its own bucket so it's excluded from getPetsForCrate() / crate odds entirely.
    'vip': [
-    {id:'p_vip1', 
-     name:'VIP Golden Drake', 
-     rarity:'pet', 
-     icon:'🐉', 
-     value:120000000, 
-     desc:'A mark of true status. Bought, not found.',
-     perk:'vip',
-     perkName:'VIP Golden Drake',
-     perkDesc:'2x Rolls • 2x Speed • +50% Luck • 35% off',
-     sellable: false,
-     vip: true
-    },
+    {id:'p_vip1', name:'VIP Golden Drake', rarity:'pet', icon:'🐉', value:0, desc:'A mark of true status. Bought, not found.', perk:'vip', perkName:'VIP Golden Drake', perkDesc:'2x Rolls • 2x Speed • +50% Luck • 35% off', sellable: false, vip: true},
   ],
 };
 
@@ -2237,10 +2226,15 @@ function rollItem(crateId){
   return pool[0] || null;
 }
 
-document.getElementById('btn-open-crate').addEventListener('click',async()=>{
-  const crate=S.currentCrate;
-  if(!crate||!S.user||!S.profile)return;
-  const price=getCratePrice(crate);
+document.getElementById('btn-open-crate').addEventListener('click', async () => {
+  const crate = S.currentCrate;
+  if (!crate || !S.user || !S.profile) return;
+
+  const price = getCratePrice(crate);
+  if (S.profile.coins < price) {
+    toast('Not enough coins! 🪙', 'error');
+    return;
+  }
 
   const isVip = hasVipPetEquipped();
   const pet = getEquippedPet();
@@ -2248,91 +2242,134 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   const doubleOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates');
   const openCount = isVip ? 2 : (quadOpen ? 4 : (doubleOpen ? 2 : 1));
 
-  if(S.profile.coins<price){toast('Not enough coins! 🪙','error');return;}
-  const btn=document.getElementById('btn-open-crate');
-  btn.disabled=true;
+  const btn = document.getElementById('btn-open-crate');
+  btn.disabled = true;
   document.getElementById('result-panel').classList.add('hidden');
 
-  const saveItems=[];
-  for(let x=0;x<openCount;x++){
-    const rolled=rollItem(crate.id);
-    if(rolled) saveItems.push(rolled);
+  const saveItems = [];
+  for (let x = 0; x < openCount; x++) {
+    const rolled = rollItem(crate.id);
+    if (rolled) saveItems.push(rolled);
   }
-  if(!saveItems.length){ btn.disabled=false; return; }
 
-  S.profile.coins-=price;
+  if (!saveItems.length) {
+    btn.disabled = false;
+    return;
+  }
+
+  // Deduct coins (only once)
+  S.profile.coins -= price;
   updateCoinDisplay(S.profile.coins);
 
-  if(SETTINGS.spinAnim){
+  // Animation
+  if (SETTINGS.spinAnim) {
     await animateSpin(crate, saveItems);
   } else {
-    for(let t=0;t<saveItems.length;t++){
-      buildSpinTrack(crate, saveItems[t], 30, 'spin-track-'+t);
-      const track=document.getElementById('spin-track-'+t);
-      if(track) track.style.display='flex';
+    for (let t = 0; t < saveItems.length; t++) {
+      buildSpinTrack(crate, saveItems[t], 30, 'spin-track-' + t);
+      const track = document.getElementById('spin-track-' + t);
+      if (track) track.style.display = 'flex';
     }
-    for(let t=saveItems.length;t<4;t++){
-      const track=document.getElementById('spin-track-'+t);
-      if(track) track.style.display='none';
+    for (let t = saveItems.length; t < 4; t++) {
+      const track = document.getElementById('spin-track-' + t);
+      if (track) track.style.display = 'none';
     }
   }
 
-  for(const it of saveItems){
-    const inv={itemId:it.id,uniqueId:genUID(),crateSource:crate.id,obtainedAt:new Date().toISOString()};
+  // Add all items to inventory
+  for (const it of saveItems) {
+    const inv = {
+      itemId: it.id,
+      uniqueId: genUID(),
+      crateSource: crate.id,
+      obtainedAt: new Date().toISOString()
+    };
     S.inventory.push(inv);
   }
 
-  S.profile.cratesOpened=(S.profile.cratesOpened||0)+openCount;
-  if(!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate={};
-  S.profile.luckCoinsPerCrate[crate.id]=(S.profile.luckCoinsPerCrate[crate.id]||0)+price;
+  // Update stats
+  S.profile.cratesOpened = (S.profile.cratesOpened || 0) + openCount;
+  if (!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate = {};
+  S.profile.luckCoinsPerCrate[crate.id] = (S.profile.luckCoinsPerCrate[crate.id] || 0) + price;
   checkLuckMilestone(crate);
 
-  for(const it of saveItems){
-    const r=getRarity(it.rarity);
-    if(r.tier>(S.profile.rarestTier||0)){S.profile.rarestItem=it.id;S.profile.rarestTier=r.tier;}
+  for (const it of saveItems) {
+    const r = getRarity(it.rarity);
+    if (r.tier > (S.profile.rarestTier || 0)) {
+      S.profile.rarestItem = it.id;
+      S.profile.rarestTier = r.tier;
+    }
   }
-  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  S.profile.totalValue = S.inventory.reduce((s, inv) => {
+    const it = getItem(inv.itemId);
+    return s + (it ? it.value : 0);
+  }, 0);
 
-  try{
+  // Save to Firestore
+  try {
     await db.collection('users').doc(S.user.uid).update({
-      coins:firebase.firestore.FieldValue.increment(-price),
-      inventory:S.inventory,
-      cratesOpened:S.profile.cratesOpened,
-      [`luckCoinsPerCrate.${crate.id}`]:firebase.firestore.FieldValue.increment(price),
-      rarestItem:S.profile.rarestItem,
-      rarestTier:S.profile.rarestTier,
-      totalValue:S.profile.totalValue,
+      coins: firebase.firestore.FieldValue.increment(-price),
+      inventory: S.inventory,
+      cratesOpened: S.profile.cratesOpened,
+      [`luckCoinsPerCrate.${crate.id}`]: firebase.firestore.FieldValue.increment(price),
+      rarestItem: S.profile.rarestItem,
+      rarestTier: S.profile.rarestTier,
+      totalValue: S.profile.totalValue,
     });
-  }catch(e){ toast('Save error: '+e.message,'error'); }
+  } catch (e) {
+    toast('Save error: ' + e.message, 'error');
+  }
 
-  const firstInv=S.inventory[S.inventory.length-saveItems.length];
+  // Show result (first item)
+  const firstInv = S.inventory[S.inventory.length - saveItems.length];
   showResult(saveItems[0], getRarity(saveItems[0].rarity), firstInv);
 
-  if(saveItems.length>1){
-    const bonusNames=saveItems.slice(1).map(i=>`${i.icon} ${i.name}`).join(', ');
-    if(isVip){
-      toast(`🐉 VIP GOLDEN DRAKE — DOUBLE REWARD! ${bonusNames}`, 'gold', 4500);
+  // VIP / Multi-crack toast
+  if (saveItems.length > 1) {
+    const bonusNames = saveItems.slice(1).map(i => `${i.icon} ${i.name}`).join(', ');
+    if (isVip) {
+      toast(`🐉 VIP GOLDEN DRAKE — DOUBLE REWARD! ${bonusNames}`, 'gold', 5000);
     } else {
-      toast(`🎁 ${quadOpen?'QUAD':'DOUBLE'} CRACK BONUS: ${bonusNames}!`,'gold',6000);
+      toast(`🎁 ${quadOpen ? 'QUAD' : 'DOUBLE'} CRACK BONUS: ${bonusNames}!`, 'gold', 6000);
     }
   }
 
-  for(const it of saveItems){
-    if(it.rarity==='pet'){
-      if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(it),800);
-      const msg=`🌈 ${S.profile.username} found the SECRET PET ${it.icon} ${it.name}!!! 🌈`;
+  // Ultra announcements
+  for (const it of saveItems) {
+    if (it.rarity === 'pet') {
+      if (SETTINGS.cutscene) setTimeout(() => showUltraOverlay(it), 800);
+      const msg = `🌈 ${S.profile.username} found the SECRET PET ${it.icon} ${it.name}!!! 🌈`;
       showGlobalBanner(msg);
-      try{ await rtdb.ref('chat').push({username:'🌈 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',isPull:true,ts:firebase.database.ServerValue.TIMESTAMP}); }catch(e){}
-    } else if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(it.rarity)){
-      if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(it),800);
-      const msg=`🌟 ${S.profile.username} just pulled ${it.icon} ${it.name}!`;
+      try {
+        await rtdb.ref('chat').push({
+          username: '🌈 GLOBAL',
+          text: msg,
+          isSystem: true,
+          cls: 'chat-msg-announce',
+          isPull: true,
+          ts: firebase.database.ServerValue.TIMESTAMP
+        });
+      } catch (e) {}
+    } else if (['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(it.rarity)) {
+      if (SETTINGS.cutscene) setTimeout(() => showUltraOverlay(it), 800);
+      const msg = `🌟 ${S.profile.username} just pulled ${it.icon} ${it.name}!`;
       showGlobalBanner(msg);
-      try{ await rtdb.ref('chat').push({username:'🌟 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',isPull:true,ts:firebase.database.ServerValue.TIMESTAMP}); }catch(e){}
+      try {
+        await rtdb.ref('chat').push({
+          username: '🌟 GLOBAL',
+          text: msg,
+          isSystem: true,
+          cls: 'chat-msg-announce',
+          isPull: true,
+          ts: firebase.database.ServerValue.TIMESTAMP
+        });
+      } catch (e) {}
     }
   }
-  btn.disabled=false;
+
+  btn.disabled = false;
 });
-
+  
 function animateSpin(crate, winningItems){
   return new Promise(resolve => {
     const dur = getSpinDuration();
