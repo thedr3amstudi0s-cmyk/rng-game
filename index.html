@@ -1139,11 +1139,9 @@ const ITEMS = [
 
   {id:'ur01',name:'UNIVERSE CORE',    rarity:'ultra',    icon:'🌌', value:4000000,  desc:'The heart of the universe.'},
   {id:'hy01',name:'HYPER BLADE',      rarity:'hyper',    icon:'⚔️', value:4200000,  desc:'Slays the unkillable.'},
-  {id:'co01',name:'COSMIC WILL',      rarity:'cosmic',   icon:'🌌', value:4300000,  desc:'The will of all reality.'},
-  {id:'tr01',name:'TRANSCENDENT WILL',rarity:'transcendent',icon:'🌟',value:4400000,desc:'Beyond all comprehension.'},
-  {id:'et01',name:'ETERNAL FLAME',    rarity:'eternal',  icon:'🔥', value:4600000,  desc:'Burns across eternity.'},
-  {id:'ge01',name:'GENESIS',          rarity:'genesis',  icon:'🌅', value:5200000,  desc:'The beginning and the end.'},
-    {id:'in01',name:'∞ INFINITE',       rarity:'infinite', icon:'♾️', value:6000000,  desc:'True limitless power.'},
+  {id:'co01',name:'COSMIC WILL',      rarity:'cosmic',   icon:'🌌', value:0,  desc:'The will of all reality.'},
+  {id:'tr01',name:'TRANSCENDENT WILL',rarity:'transcendent',icon:'🌟',value:5000000,desc:'Beyond all comprehension.'},
+    {id:'in01',name:'∞ INFINITE',       rarity:'infinite', icon:'♾️', value:9100000,  desc:'True limitless power.'},
 ];
 
 // ============================================================
@@ -1386,18 +1384,18 @@ const CRATES = [
 
   {id:'transcendent', name:'Transcendent Crate', price:4200000, icon:'🌟', color:'#c026d3',
     desc:'Beyond human measure.',
-    odds:{ultra:0.45, hyper:0.45, cosmic:0.10},
-    items:['ur01','hy01','co01']},
+    odds:{ultra:0.50, hyper:0.45, transcendent:0.5},
+    items:['ur01','hy01','tr01']},
 
   {id:'eternal', name:'Eternal Crate', price:4400000, icon:'♾️', color:'#22d3ee',
     desc:'Eternal riches await. 🎲 50/50: either bottom or top tier — no in-between.',
-    odds:{hyper:0.45, cosmic:0.45, transcendent:0.10},
-    items:['hy01','co01','tr01'], coinflip:true},
+    odds:{hyper:0.50, transcendent:0.50},
+    items:['hy01','tr01'], coinflip:true},
 
   {id:'genesis', name:'Genesis Crate', price:4550000, icon:'🌅', color:'#fbbf24',
-    desc:'The beginning and end. 🎲 50/50: either bottom or top tier — no in-between.',
-    odds:{cosmic:0.40, transcendent:0.35, eternal:0.20, genesis:0.04, infinite:0.01},
-    items:['co01','tr01','et01','ge01','in01'], coinflip:true},
+    desc:'The beginning and end. 🎲 Double or nothing: either bottom or top tier — no in-between.',
+    odds:{cosmic:0.50, infinite:50},
+    items:['co01', 'in01'], coinflip:true},
 ];
 
 const ACHIEVEMENTS = [
