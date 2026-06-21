@@ -1258,8 +1258,19 @@ const PETS_BY_CRATE = {
   ],
   // VIP-exclusive pet — purchase only, NEVER drops from any crate.
   // Kept in its own bucket so it's excluded from getPetsForCrate() / crate odds entirely.
-  'vip': [
-    {id:'p_vip1', name:'VIP Golden Drake', rarity:'pet', icon:'🐉', value:120000000, desc:'A mark of true status. Bought, not found.', perk:'discount', perkName:'VIP Deal', perkDesc:'-35% off all crate prices'},
+   'vip': [
+    {id:'p_vip1', 
+     name:'VIP Golden Drake', 
+     rarity:'pet', 
+     icon:'🐉', 
+     value:120000000, 
+     desc:'A mark of true status. Bought, not found.',
+     perk:'vip',
+     perkName:'VIP Golden Drake',
+     perkDesc:'2x Rolls • 2x Speed • +50% Luck • 35% off',
+     sellable: false,
+     vip: true
+    },
   ],
 };
 
@@ -1425,24 +1436,41 @@ function getEquippedPet(){
   return getItem(inv.itemId);
 }
 
+// ====================== VIP HELPERS ======================
+function hasVipPetEquipped() {
+  const pet = getEquippedPet();
+  return pet && pet.id === "p_vip1";
+}
+
 function getCratePrice(crate){
   if(!crate) return 0;
-  const pet=getEquippedPet();
-  if(pet&&pet.perk==='discount'){
-    const match=pet.perkDesc.match(/-(\d+)%/);
-    const pct=match?parseInt(match[1]):5;
-    return Math.max(1,Math.floor(crate.price*(1-pct/100)));
+  let price = crate.price;
+
+  if(hasVipPetEquipped()){
+    price = Math.floor(price * 0.65); // 35% off
+  } else {
+    const pet = getEquippedPet();
+    if(pet && pet.perk === 'discount'){
+      const match = pet.perkDesc.match(/-(\d+)%/);
+      const pct = match ? parseInt(match[1]) : 5;
+      price = Math.max(1, Math.floor(price * (1 - pct / 100)));
+    }
   }
-  return crate.price;
+  return Math.max(1, price);
 }
 
 function getSpinDuration(){
-  const pet=getEquippedPet();
-  if(!pet||pet.perk!=='speed') return 4000;
-  if(pet.perkDesc.includes('Instant')) return 0;
-  const match=pet.perkDesc.match(/(\d+)%\s+faster/);
-  const pct=match?parseInt(match[1]):20;
-  return Math.floor(4000*(1-pct/100));
+  if(hasVipPetEquipped()) return 2500; // 2.5s for VIP
+
+  const pet = getEquippedPet();
+  if(pet && pet.perk === 'speed'){
+    if(pet.perkDesc.includes('Instant')) return 0;
+    if(pet.perkDesc.includes('90%')) return 500;
+    const match=pet.perkDesc.match(/(\d+)%\s+faster/);
+    const pct=match?parseInt(match[1]):20;
+    return Math.floor(4000*(1-pct/100));
+  }
+  return 5000;
 }
 
 async function equipPet(uniqueId){
@@ -2161,46 +2189,52 @@ function rollItem(crateId){
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
   let odds={...crate.odds};
 
-  if(S.luckBoost&&!S.luckBoostUsed&&S.luckBoostCrate===crateId){
-    const entries=Object.entries(odds);
-    const tiers=entries.map(([r])=>getRarity(r).tier||0);
-    const maxTier=Math.max(...tiers);
-    const minTier=Math.min(...tiers);
-    const mid=(maxTier+minTier)/2;
+  // === LUCK BOOST (including VIP) ===
+  let luckMult = 1;
 
-    const equippedPet=getEquippedPet();
-    let luckMult=1;
-    if(equippedPet&&equippedPet.perk==='luck'){
-      if(equippedPet.perkDesc.includes('twice as powerful')){
-        luckMult=2;
+  const equippedPet = getEquippedPet();
+  if (equippedPet) {
+    if (equippedPet.id === "p_vip1") {
+      luckMult = 1.5; // +50% Luck for VIP
+    } else if (equippedPet.perk === 'luck') {
+      if (equippedPet.perkDesc.includes('twice as powerful')) {
+        luckMult = 2;
       } else {
-        const match=equippedPet.perkDesc.match(/\+(\d+)%\s+better/);
-        luckMult=match?1+(parseInt(match[1])/100):1;
+        const match = equippedPet.perkDesc.match(/\+(\d+)%\s+better/);
+        luckMult = match ? 1 + (parseInt(match[1]) / 100) : 1;
       }
     }
+  }
 
-    entries.forEach(([r])=>{
-      const t=getRarity(r).tier||0;
-      if(S.luckBoost==='minor'){
-        odds[r]*=t<=mid?0.5:1.5*luckMult;
+  if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate === crateId){
+    const entries = Object.entries(odds);
+    const tiers = entries.map(([r]) => getRarity(r).tier || 0);
+    const maxTier = Math.max(...tiers);
+    const minTier = Math.min(...tiers);
+    const mid = (maxTier + minTier) / 2;
+
+    entries.forEach(([r]) => {
+      const t = getRarity(r).tier || 0;
+      if (S.luckBoost === 'minor') {
+        odds[r] *= t <= mid ? 0.5 : 1.5 * luckMult;
       } else {
-        odds[r]*=t<=mid?0.1:4*luckMult;
+        odds[r] *= t <= mid ? 0.1 : 4 * luckMult;
       }
     });
-    S.luckBoost=null;
-    S.luckBoostUsed=true;
+    S.luckBoost = null;
+    S.luckBoostUsed = true;
   }
 
-  let total=Object.values(odds).reduce((a,b)=>a+b,0);
-  let roll=Math.random()*total;
+  let total = Object.values(odds).reduce((a,b)=>a+b,0);
+  let roll = Math.random() * total;
   for(let [rar,chance] of Object.entries(odds)){
-    roll-=chance;
-    if(roll<=0){
-      const candidates=pool.filter(i=>i.rarity===rar);
-      return candidates[Math.floor(Math.random()*candidates.length)]||pool[0];
+    roll -= chance;
+    if(roll <= 0){
+      const candidates = pool.filter(i => i.rarity === rar);
+      return candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
     }
   }
-  return pool[0]||null;
+  return pool[0] || null;
 }
 
 document.getElementById('btn-open-crate').addEventListener('click',async()=>{
@@ -2208,10 +2242,11 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
   if(!crate||!S.user||!S.profile)return;
   const price=getCratePrice(crate);
 
-  const pet=getEquippedPet();
-  const quadOpen=pet&&pet.perk==='speed'&&pet.perkDesc.includes('4 crates');
-  const doubleOpen=pet&&pet.perk==='speed'&&pet.perkDesc.includes('2 crates');
-  const openCount=quadOpen?4:doubleOpen?2:1;
+  const isVip = hasVipPetEquipped();
+  const pet = getEquippedPet();
+  const quadOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates');
+  const doubleOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates');
+  const openCount = isVip ? 2 : (quadOpen ? 4 : (doubleOpen ? 2 : 1));
 
   if(S.profile.coins<price){toast('Not enough coins! 🪙','error');return;}
   const btn=document.getElementById('btn-open-crate');
@@ -2275,13 +2310,10 @@ document.getElementById('btn-open-crate').addEventListener('click',async()=>{
 
   if(saveItems.length>1){
     const bonusNames=saveItems.slice(1).map(i=>`${i.icon} ${i.name}`).join(', ');
-    toast(`🎁 ${quadOpen?'QUAD':'DOUBLE'} CRACK BONUS: ${bonusNames}!`,'gold',6000);
-    if(!S.profile.seenItems) S.profile.seenItems=[];
-    for(const bonusItem of saveItems.slice(1)){
-      if(!S.profile.seenItems.includes(bonusItem.id)){
-        S.profile.seenItems.push(bonusItem.id);
-        db.collection('users').doc(S.user.uid).update({seenItems:firebase.firestore.FieldValue.arrayUnion(bonusItem.id)}).catch(()=>{});
-      }
+    if(isVip){
+      toast(`🐉 VIP GOLDEN DRAKE — DOUBLE REWARD! ${bonusNames}`, 'gold', 4500);
+    } else {
+      toast(`🎁 ${quadOpen?'QUAD':'DOUBLE'} CRACK BONUS: ${bonusNames}!`,'gold',6000);
     }
   }
 
@@ -2577,6 +2609,12 @@ async function sellItems(uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
     const item=getItem(S.inventory[idx].itemId);
+
+    // === VIP PROTECTION ===
+    if(item && item.sellable === false){
+      toast("This item cannot be sold!", "error");
+      continue;
+    }
     if(item) earned+=Math.floor(item.value*1);
     if(S.profile.equippedPetUid===uid){ S.profile.equippedPetUid=null; unequipped=true; }
     S.inventory.splice(idx,1);
