@@ -531,10 +531,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 
 #cip-odds{max-height:420px;overflow-y:auto;padding-right:12px;}
 
-  .nav-item[data-page="settings"] {
+  .nav-item[data-page="wheel"] {
   position: relative;
 }
-.nav-item[data-page="settings"]::after {
+.nav-item[data-page="wheel"]::after {
   content: '';
   position: absolute;
   top: 8px;
@@ -546,7 +546,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   box-shadow: 0 0 6px #ef4444;
   display: none;
 }
-.nav-item[data-page="settings"].wheel-ready::after {
+.nav-item[data-page="wheel"].wheel-ready::after {
   display: block;
 }
   
@@ -620,6 +620,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
+      <button class="nav-item" data-page="wheel"><span class="nav-icon">🎰</span><span class="nav-label">WHEEL</span></button>
       <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span class="nav-label">SETTINGS</span></button>
     </nav>
 
@@ -833,6 +834,27 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div class="history-list" id="history-list"></div>
       </section>
 
+      <!-- LUCKY WHEEL -->
+      <section class="page" id="page-wheel">
+        <div class="page-header"><h2>🎰 LUCKY WHEEL</h2><p>Free daily spin — real prizes, every time.</p></div>
+        <div style="max-width:420px;margin:0 auto;text-align:center">
+          <div id="cooldown-display" style="color:#f59e0b;font-weight:700;margin-bottom:16px;min-height:24px;font-size:1rem;font-family:var(--font-d);"></div>
+          <div style="position:relative;width:300px;height:300px;margin:0 auto 20px;">
+            <!-- Fixed pointer arrow -->
+            <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;
+                        border-left:14px solid transparent;border-right:14px solid transparent;
+                        border-top:28px solid #fff;z-index:20;
+                        filter:drop-shadow(0 3px 6px rgba(0,0,0,0.8));"></div>
+            <!-- Canvas wheel -->
+            <canvas id="wheel-canvas" width="300" height="300"
+                    style="border-radius:50%;display:block;box-shadow:0 0 40px rgba(245,158,11,0.5);"></canvas>
+          </div>
+          <p id="wheel-result" style="min-height:36px;font-size:1.2rem;font-weight:700;color:var(--gold);margin:10px 0;font-family:var(--font-d);letter-spacing:.05em;"></p>
+          <button id="spin-btn" class="btn-primary" style="width:100%;margin-bottom:10px;">SPIN WHEEL (FREE)</button>
+          <div id="wheel-odds-list" style="margin-top:20px;text-align:left;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px"></div>
+        </div>
+      </section>
+
       <!-- ACHIEVEMENTS -->
       <section class="page" id="page-achievements">
         <div class="page-header"><h2>ACHIEVEMENTS</h2><p>Play more. Unlock more.</p></div>
@@ -892,43 +914,52 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
 
         <div class="settings-section">
-          <div class="settings-section-title">ℹ️ ACCOUNT</div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label">Lucky Wheel</div>
-              <div class="settings-row-desc">Free daily coin reward</div>
-            </div>
-            <button class="btn-ghost" onclick="showLuckyWheel()" style="white-space:nowrap">🎰 OPEN WHEEL</button>
+          <div class="settings-section-title">💎 SHOP</div>
+          <div style="font-size:.8rem;color:var(--text-3);margin-bottom:12px">
+            Pay via Cash App to <strong id="shop-cashtag" style="color:var(--text-2)">$YourCashtag</strong>.
+            Click Buy on an item below, send payment with your order ID in the note, then submit your $cashtag so we can verify it.
           </div>
+          <div id="shop-products-list" style="display:flex;flex-direction:column;gap:12px"></div>
+          <div id="shop-order-box" class="hidden" style="margin-top:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
+            <div id="shop-order-id" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
+            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" id="shop-cashtag-input" placeholder="$YourCashtag"
+                style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);
+                border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
+              <button class="btn-primary" id="shop-submit-tag-btn" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
+            </div>
+            <div id="shop-order-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
+          </div>
+          <div id="shop-status-list" style="margin-top:14px"></div>
         </div>
 
-        <div class="settings-section">
-          <div class="settings-section-title">💎 VIP SHOP</div>
-          <div class="settings-row" style="flex-wrap:wrap;gap:10px">
-            <div class="settings-row-info" style="flex:1;min-width:240px">
-              <div class="settings-row-label">VIP Pack — 🐉 VIP Golden Drake + 10,000 Coins</div>
-              <div class="settings-row-desc">
-                $5.00 via Cash App. Click Buy, send payment to <strong id="shop-cashtag">$YourCashtag</strong>
-                with your order ID in the note, then submit your Cash App tag below so we can verify it.
-              </div>
-              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-                <button class="btn-primary" id="shop-buy-btn" style="width:auto;padding:10px 20px;white-space:nowrap">BUY VIP PACK — $5</button>
-              </div>
-              <div id="shop-order-box" class="hidden" style="margin-top:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-                <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
-                <div id="shop-order-id" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
-                <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <input type="text" id="shop-cashtag-input" placeholder="$YourCashtag"
-                    style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);
-                    border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
-                  <button class="btn-primary" id="shop-submit-tag-btn" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
-                </div>
-                <div id="shop-order-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
-              </div>
-              <div id="shop-status-list" style="margin-top:14px"></div>
+        <div class="settings-section hidden" id="admin-shop-manage-section">
+          <div class="settings-section-title">🛍️ ADMIN — MANAGE SHOP PRODUCTS</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" id="new-prod-label" placeholder="Product name (e.g. Coin Pack 5K)"
+                style="flex:2;min-width:180px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)"/>
+              <input type="text" id="new-prod-price-label" placeholder="$4.99"
+                style="flex:1;min-width:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
             </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <select id="new-prod-reward-type" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)">
+                <option value="coins">Coins only</option>
+                <option value="item">Specific item</option>
+                <option value="pet">Specific pet</option>
+                <option value="bundle">Bundle (coins + pet/item)</option>
+              </select>
+              <input type="number" id="new-prod-coins" placeholder="Coin amount" min="0"
+                style="width:130px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
+              <input type="text" id="new-prod-item-id" placeholder="Item/Pet ID (e.g. p_vip1)"
+                style="width:160px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
+            </div>
+            <button class="btn-primary" id="add-product-btn" style="width:auto;padding:10px 20px;align-self:flex-start">+ ADD PRODUCT</button>
+            <div id="add-product-msg" style="font-size:.8rem;min-height:18px"></div>
           </div>
+          <div id="admin-products-list" style="display:flex;flex-direction:column;gap:8px"></div>
         </div>
 
         <div class="settings-section">
@@ -965,28 +996,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <button id="chat-send">SEND</button>
       </div>
     </aside>
-  </div>
-</div>
-
-<!-- Lucky Wheel Modal -->
-<div id="lucky-wheel-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;">
-  <div style="background:var(--bg-card);padding:30px;border-radius:var(--rl);text-align:center;max-width:420px;width:90%;border:3px solid var(--gold);box-shadow:0 0 60px rgba(245,158,11,0.4);">
-    <h2 style="font-family:var(--font-d);color:var(--gold);margin-bottom:6px;letter-spacing:.1em;">🎰 LUCKY WHEEL</h2>
-    <p style="color:var(--text-2);font-size:.8rem;margin-bottom:16px;">Free daily spin — real prizes, every time.</p>
-    <div id="cooldown-display" style="color:#f59e0b;font-weight:700;margin-bottom:16px;min-height:24px;font-size:1rem;font-family:var(--font-d);"></div>
-    <div style="position:relative;width:300px;height:300px;margin:0 auto 20px;">
-      <!-- Fixed pointer arrow -->
-      <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;
-                  border-left:14px solid transparent;border-right:14px solid transparent;
-                  border-top:28px solid #fff;z-index:20;
-                  filter:drop-shadow(0 3px 6px rgba(0,0,0,0.8));"></div>
-      <!-- Canvas wheel -->
-      <canvas id="wheel-canvas" width="300" height="300"
-              style="border-radius:50%;display:block;box-shadow:0 0 40px rgba(245,158,11,0.5);"></canvas>
-    </div>
-    <p id="wheel-result" style="min-height:36px;font-size:1.2rem;font-weight:700;color:var(--gold);margin:10px 0;font-family:var(--font-d);letter-spacing:.05em;"></p>
-    <button id="spin-btn" class="btn-primary" style="width:100%;margin-bottom:10px;">SPIN WHEEL (FREE)</button>
-    <button class="btn-ghost" onclick="closeLuckyWheel()" style="width:100%;">CLOSE</button>
   </div>
 </div>
 
@@ -1261,6 +1270,11 @@ const PETS_BY_CRATE = {
    'vip': [
     {id:'p_vip1', name:'VIP Golden Drake', rarity:'pet', icon:'🐉', value:0, desc:'A mark of true status. Bought, not found.', perk:'vip', perkName:'VIP Golden Drake', perkDesc:'2x Rolls • 2x Speed • +50% Luck • 35% off', sellable: false, vip: true},
   ],
+  // Wheel-exclusive pet — only obtainable from the 1-in-1,000,000 Lucky Wheel segment.
+  // Never drops from any crate and is not part of any crate's pet pool.
+  'wheel': [
+    {id:'p_wheel1', name:'Fortune Coin Spirit', rarity:'pet', icon:'🪙', value:5000000, desc:'Born from a single impossible spin.', perk:'luck', perkName:'Wheel Fortune', perkDesc:'+60% better odds on next open after a luck boost'},
+  ],
 };
 
 // Helper to get pets for a crate
@@ -1376,14 +1390,14 @@ const CRATES = [
     items:['ur01','hy01','co01']},
 
   {id:'eternal', name:'Eternal Crate', price:4400000, icon:'♾️', color:'#22d3ee',
-    desc:'Eternal riches await.',
+    desc:'Eternal riches await. 🎲 50/50: either bottom or top tier — no in-between.',
     odds:{hyper:0.45, cosmic:0.45, transcendent:0.10},
-    items:['hy01','co01','tr01']},
+    items:['hy01','co01','tr01'], coinflip:true},
 
   {id:'genesis', name:'Genesis Crate', price:4550000, icon:'🌅', color:'#fbbf24',
-    desc:'The beginning and end.',
+    desc:'The beginning and end. 🎲 50/50: either bottom or top tier — no in-between.',
     odds:{cosmic:0.40, transcendent:0.35, eternal:0.20, genesis:0.04, infinite:0.01},
-    items:['co01','tr01','et01','ge01','in01']},
+    items:['co01','tr01','et01','ge01','in01'], coinflip:true},
 ];
 
 const ACHIEVEMENTS = [
@@ -1608,6 +1622,7 @@ function showPage(id){
   if(id==='pets') renderCollectionIndex();
   if(id==='leaderboard') loadLeaderboard();
   if(id==='history') renderTradeHistory();
+  if(id==='wheel') enterWheelPage(); else leaveWheelPage();
   updateWheelRedDot();
 }
 function toast(msg,type='',duration=3000){
@@ -1745,6 +1760,9 @@ function startAuthObserver(){
         setupTradeInviteListener();
         listenToMyOrders();
         listenToAdminOrders();
+        listenToShopProducts();
+        updateWheelRedDot();
+        setInterval(updateWheelRedDot, 30000); // keep the red dot live, not just on nav
       }
       checkLuckMilestone(null);
       updateLuckBar(null);
@@ -1768,19 +1786,65 @@ function updateCoinDisplay(coins){
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
 }
 
+// Section definitions used for both rendering dividers and awarding completion bonuses.
+// Rarity tiers (existing 3 groups) + one group per crate's 3 secret pets.
+function getRaritySections(){
+  return [
+    { id: 'sec_common',    label: 'Common & Uncommon', rarities: ['common','uncommon'], bonus: 500 },
+    { id: 'sec_rare',      label: 'Rare — Legendary',  rarities: ['rare','spectral','epic','runic','legendary','cursed'], bonus: 5000 },
+    { id: 'sec_mythic',    label: 'Mythic — Infinite', rarities: ['mythic','astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'], bonus: 50000 },
+  ];
+}
+function getPetSections(){
+  // One section per crate that actually has pets defined (skips the 'vip' bucket, which isn't a crate).
+  return CRATES
+    .filter(c => PETS_BY_CRATE[c.id] && PETS_BY_CRATE[c.id].length)
+    .map(c => ({ id: 'sec_pets_'+c.id, label: c.icon+' '+c.name+' Pets', crateId: c.id, pets: PETS_BY_CRATE[c.id], bonus: Math.max(1000, Math.floor(c.price * 5)) }));
+}
+
+async function claimSectionBonus(sectionId, bonusAmount, label){
+  if(!S.user || !S.profile) return;
+  const claimed = S.profile.claimedBonuses || [];
+  if(claimed.includes(sectionId)) return; // already claimed, nothing to do
+
+  S.profile.claimedBonuses = [...claimed, sectionId];
+  S.profile.coins = (S.profile.coins||0) + bonusAmount;
+  updateCoinDisplay(S.profile.coins);
+  toast(`🎉 Section complete: ${label}! +🪙 ${fmtNum(bonusAmount)} bonus`, 'gold', 6000);
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      claimedBonuses: firebase.firestore.FieldValue.arrayUnion(sectionId),
+      coins: firebase.firestore.FieldValue.increment(bonusAmount),
+    });
+  }catch(e){ console.warn('Bonus save failed:', e.message); }
+}
+
+function renderSectionDivider(grid, label, sectionDone, bonusAmount){
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 8px;flex-wrap:wrap';
+  const labelEl = document.createElement('div');
+  labelEl.style.cssText = 'font-family:var(--font-d);font-size:.65rem;letter-spacing:.15em;color:var(--text-3);text-transform:uppercase';
+  labelEl.textContent = label;
+  wrap.appendChild(labelEl);
+  if(sectionDone){
+    const badge = document.createElement('div');
+    badge.style.cssText = 'font-family:var(--font-d);font-size:.62rem;letter-spacing:.08em;color:#22c55e;border:1px solid #22c55e66;border-radius:20px;padding:3px 10px;background:#22c55e11';
+    badge.textContent = `✓ COMPLETE (+🪙 ${fmtNum(bonusAmount)} claimed)`;
+    wrap.appendChild(badge);
+  }
+  grid.appendChild(wrap);
+}
+
 function renderCollectionIndex() {
   const owned = new Set(S.inventory.map(i => i.itemId));
   // Also count pets ever seen (owned now OR previously sold — track via profile.seenItems)
   const seen = new Set([...owned, ...(S.profile?.seenItems || [])]);
+  const claimed = new Set(S.profile?.claimedBonuses || []);
 
   const activeTab = document.querySelector('[data-ctab].active')?.dataset.ctab || 'all';
 
-  const TIER_GROUPS = [
-    { label: 'Common & Uncommon', rarities: ['common','uncommon'] },
-    { label: 'Rare — Legendary',  rarities: ['rare','spectral','epic','runic','legendary','cursed'] },
-    { label: 'Mythic — Infinite', rarities: ['mythic','astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'] },
-    { label: 'Secret Pets',       rarities: ['pet'] },
-  ];
+  const RARITY_SECTIONS = getRaritySections();
+  const PET_SECTIONS = getPetSections();
 
   const TAB_FILTER = {
     all:       () => true,
@@ -1820,15 +1884,7 @@ function renderCollectionIndex() {
   const grid = document.getElementById('collection-grid');
   grid.innerHTML = '';
 
-  TIER_GROUPS.forEach(group => {
-    const groupItems = filtered.filter(i => group.rarities.includes(i.rarity));
-    if (!groupItems.length) return;
-
-    const label = document.createElement('div');
-    label.style.cssText = 'font-family:var(--font-d);font-size:.65rem;letter-spacing:.15em;color:var(--text-3);margin:20px 0 8px;text-transform:uppercase';
-    label.textContent = group.label;
-    grid.appendChild(label);
-
+  function renderItemRow(groupItems){
     const row = document.createElement('div');
     row.className = 'inventory-grid';
     groupItems.forEach(item => {
@@ -1864,7 +1920,43 @@ function renderCollectionIndex() {
       row.appendChild(card);
     });
     grid.appendChild(row);
+  }
+
+  // Rarity-tier sections (skip the pet bucket here — handled separately below with per-crate dividers)
+  RARITY_SECTIONS.forEach(section => {
+    const groupItems = filtered.filter(i => section.rarities.includes(i.rarity));
+    if (!groupItems.length) return;
+
+    const sectionComplete = section.rarities.every(rar =>
+      allItems.filter(i => i.rarity === rar).every(i => seen.has(i.id))
+    );
+    const alreadyClaimed = claimed.has(section.id);
+
+    renderSectionDivider(grid, section.label, alreadyClaimed, section.bonus);
+    renderItemRow(groupItems);
+
+    if(sectionComplete && !alreadyClaimed){
+      claimSectionBonus(section.id, section.bonus, section.label);
+    }
   });
+
+  // Secret Pets — one divider per crate, only shown if the active tab includes pets
+  if(activeTab === 'all' || activeTab === 'pets'){
+    PET_SECTIONS.forEach(section => {
+      const groupItems = section.pets;
+      if(!groupItems.length) return;
+
+      const sectionComplete = groupItems.every(p => seen.has(p.id));
+      const alreadyClaimed = claimed.has(section.id);
+
+      renderSectionDivider(grid, section.label, alreadyClaimed, section.bonus);
+      renderItemRow(groupItems);
+
+      if(sectionComplete && !alreadyClaimed){
+        claimSectionBonus(section.id, section.bonus, section.label);
+      }
+    });
+  }
 }
   
 function getLuckThresholds(crate){ return {minor:crate.price*10,huge:crate.price*100}; }
@@ -2160,6 +2252,7 @@ function buildSpinTrack(crate, winningItem, landIdx, trackId){
 }
 
 function getActiveTrackCount(){
+  if(hasVipPetEquipped()) return 2;
   const pet = getEquippedPet();
   if(pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates')) return 4;
   if(pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates')) return 2;
@@ -2177,6 +2270,20 @@ function rollItem(crateId){
 
   const pool=crate.items.map(id=>getItem(id)).filter(Boolean);
   let odds={...crate.odds};
+
+  // === COINFLIP CRATES (Eternal, Genesis) ===
+  // Same rarities as always available in this crate, but the roll is polarized:
+  // 50% chance you're restricted to the single lowest-tier rarity in this crate's odds,
+  // 50% chance you're restricted to the single highest-tier rarity. No middle-ground outcome.
+  if(crate.coinflip){
+    const rarityEntries = Object.keys(odds).map(r => ({ rar: r, tier: getRarity(r).tier || 0 }));
+    rarityEntries.sort((a,b) => a.tier - b.tier);
+    const chosen = Math.random() < 0.5
+      ? rarityEntries[0].rar                      // "lose" — bottom tier of this crate's pool
+      : rarityEntries[rarityEntries.length-1].rar; // "win"  — top tier of this crate's pool
+    const candidates = pool.filter(i => i.rarity === chosen);
+    return candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
+  }
 
   // === LUCK BOOST (including VIP) ===
   let luckMult = 1;
@@ -3318,14 +3425,26 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 // baseline snap before each spin.
 // ============================================================
 const WHEEL_PRIZES=[
-  {label:'200',        amount:200,   color:'#ef4444', textColor:'#fff'},
-  {label:'450',        amount:450,   color:'#f97316', textColor:'#fff'},
-  {label:'900',        amount:900,   color:'#eab308', textColor:'#000'},
-  {label:'1800',       amount:1800,  color:'#22c55e', textColor:'#fff'},
-  {label:'1 IN 1M\nPET', amount:'pet', color:'#a855f7', textColor:'#fff'},
+  {label:'200',        amount:200,   color:'#ef4444', textColor:'#fff', weight:42},
+  {label:'450',        amount:450,   color:'#f97316', textColor:'#fff', weight:28},
+  {label:'900',        amount:900,   color:'#eab308', textColor:'#000', weight:18},
+  {label:'1800',       amount:1800,  color:'#22c55e', textColor:'#fff', weight:11},
+  {label:'1 IN 1M\nPET', amount:'pet', color:'#a855f7', textColor:'#fff', weight:1},
 ];
-const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5
+const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5 — still 5 equal-size visual segments
 const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
+const WHEEL_TOTAL_WEIGHT = WHEEL_PRIZES.reduce((s,p)=>s+p.weight, 0);
+
+// Picks a prize index using weighted random selection (segments stay equal-size visually,
+// but landing on the rare ones happens far less often than 1-in-5).
+function pickWeightedPrizeIndex(){
+  let roll = Math.random() * WHEEL_TOTAL_WEIGHT;
+  for(let i=0;i<WHEEL_PRIZES.length;i++){
+    roll -= WHEEL_PRIZES[i].weight;
+    if(roll <= 0) return i;
+  }
+  return WHEEL_PRIZES.length - 1;
+}
 
 // The pointer sits at 12 o'clock = 270° in canvas angle space (0° = 3 o'clock).
 // Segment i occupies [i*72 , (i+1)*72) degrees of wheel-local rotation.
@@ -3473,7 +3592,7 @@ function spinLuckyWheel(){
   btn.textContent = 'Spinning...';
 
   // 1. Choose prize
-  const prizeIndex = Math.floor(Math.random() * WHEEL_SEG_COUNT);
+  const prizeIndex = pickWeightedPrizeIndex();
   const prize      = WHEEL_PRIZES[prizeIndex];
 
   // 2. SNAP wheel to 0° baseline so math is always exact
@@ -3513,15 +3632,13 @@ function spinLuckyWheel(){
       // Grant prize
       if(prize.amount === 'pet'){
         document.getElementById('wheel-result').textContent = '🌈 1 IN 1,000,000 PET!';
-        toast('🌈 You won a guaranteed Secret Pet!!!', 'gold', 6000);
-        
-        const randomCrate = CRATES[Math.floor(Math.random()*CRATES.length)];
-        const pets = getPetsForCrate(randomCrate.id);
-        const wonPet = pets[Math.floor(Math.random()*pets.length)];
-        
-        const invItem = {itemId:wonPet.id, uniqueId:genUID(), crateSource:randomCrate.id, obtainedAt:new Date().toISOString()};
+        toast('🌈 You won the exclusive Wheel pet!!!', 'gold', 6000);
+
+        const wonPet = PETS_BY_CRATE['wheel'][0];
+
+        const invItem = {itemId:wonPet.id, uniqueId:genUID(), crateSource:'wheel', obtainedAt:new Date().toISOString()};
         S.inventory.push(invItem);
-        
+
         await db.collection('users').doc(S.user.uid).update({inventory:S.inventory});
         renderInventory();
         toast(`You received ${wonPet.icon} ${wonPet.name}!`, 'success', 5000);
@@ -3572,18 +3689,31 @@ function updateCooldownDisplay(){
   }
 }
 
-// ── Open / close ──────────────────────────────────────────────
-function showLuckyWheel(){
-  if(isSpinning) return;
-  document.getElementById('lucky-wheel-modal').classList.remove('hidden');
-  if(S.profile?.lastWheelSpin) lastSpinTime = S.profile.lastWheelSpin;
-  updateCooldownDisplay();
-  drawWheel(wheelRotation);
-  startIdleRotation();
+// ── Page enter/leave (was: modal open/close) ───────────────────
+function renderWheelOdds(){
+  const el = document.getElementById('wheel-odds-list');
+  if(!el) return;
+  const rows = WHEEL_PRIZES.map(p=>{
+    const pct = (p.weight / WHEEL_TOTAL_WEIGHT) * 100;
+    const oddsText = pct >= 1 ? pct.toFixed(1)+'%' : '1 in '+Math.round(WHEEL_TOTAL_WEIGHT/p.weight).toLocaleString();
+    const label = p.amount === 'pet' ? '🪙 Fortune Coin Spirit (pet)' : `🪙 ${p.amount.toLocaleString()} coins`;
+    return `<div style="display:flex;justify-content:space-between;font-size:.8rem;padding:4px 0;color:var(--text-2)">
+      <span>${label}</span><span style="font-family:var(--font-m);color:${p.color}">${oddsText}</span>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:8px">ODDS</div>${rows}`;
 }
 
-function closeLuckyWheel(){
-  document.getElementById('lucky-wheel-modal').classList.add('hidden');
+function enterWheelPage(){
+  if(S.profile?.lastWheelSpin) lastSpinTime = S.profile.lastWheelSpin;
+  updateCooldownDisplay();
+  renderWheelOdds();
+  drawWheel(wheelRotation);
+  if(!isSpinning) startIdleRotation();
+  updateWheelRedDot();
+}
+
+function leaveWheelPage(){
   stopIdleRotation();
 }
 
@@ -3832,12 +3962,16 @@ async function generateVipCodes(amount, coinAmount){
 const ADMIN_UID = 'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2';
 const SHOP_CASHTAG = '$doctorwaffle500';
 
-const VIP_PRODUCT = {
-  id: 'vip_pack',
-  label: 'VIP Pack — 🐉 VIP Golden Drake + 10,000 Coins',
-  priceLabel: '$5.00',
-  reward: { type: 'bundle', petId: 'p_vip1', coins: 10000 },
-};
+// Fallback product shown if Firestore has no products yet (first run before admin adds any).
+const DEFAULT_PRODUCTS = [
+  {
+    id: 'vip_pack',
+    label: 'VIP Pack — 🐉 VIP Golden Drake + 10,000 Coins',
+    priceLabel: '$5.00',
+    reward: { type: 'bundle', petId: 'p_vip1', coins: 10000 },
+    active: true,
+  },
+];
 
 function isAdminUser(){
   return !!(S.user && S.user.uid === ADMIN_UID);
@@ -3848,13 +3982,52 @@ function genOrderId(){
 }
 
 let currentOrderId = null;
+let currentProductId = null;
 let myOrdersListener = null;
 let adminOrdersListener = null;
+let shopProductsListener = null;
+let shopProductsCache = [];
 
-async function createOrder(){
+// ── Player-facing product list ─────────────────────────────────
+function renderShopProducts(products){
+  const list = document.getElementById('shop-products-list');
+  if(!list) return;
+  const active = products.filter(p => p.active !== false);
+  if(!active.length){
+    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No products available right now.</div>';
+    return;
+  }
+  list.innerHTML = active.map(p => `
+    <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">${escHtml(p.label)}</div>
+        <div style="font-family:var(--font-m);font-size:.8rem;color:var(--gold);margin-top:2px">${escHtml(p.priceLabel)}</div>
+      </div>
+      <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap" onclick="createOrder('${p.id}')">BUY</button>
+    </div>
+  `).join('');
+}
+
+function listenToShopProducts(){
+  if(shopProductsListener) shopProductsListener();
+  const unsub = db.collection('shopProducts')
+    .onSnapshot(snap=>{
+      shopProductsCache = snap.docs.map(d=>d.data());
+      if(!shopProductsCache.length) shopProductsCache = DEFAULT_PRODUCTS;
+      renderShopProducts(shopProductsCache);
+      if(isAdminUser()) renderAdminProducts(shopProductsCache);
+    }, err=>{
+      console.warn('Shop products listener error:', err.message);
+      shopProductsCache = DEFAULT_PRODUCTS;
+      renderShopProducts(shopProductsCache);
+    });
+  shopProductsListener = unsub;
+}
+
+async function createOrder(productId){
   if(!S.user || !S.profile){ toast('You must be logged in.', 'error'); return; }
-  const btn = document.getElementById('shop-buy-btn');
-  btn.disabled = true; btn.textContent = 'CREATING ORDER...';
+  const product = shopProductsCache.find(p => p.id === productId);
+  if(!product){ toast('Product not found.', 'error'); return; }
 
   const orderId = genOrderId();
   try{
@@ -3862,20 +4035,21 @@ async function createOrder(){
       orderId,
       uid: S.user.uid,
       username: S.profile.username,
-      product: VIP_PRODUCT.id,
-      reward: VIP_PRODUCT.reward,
+      product: product.id,
+      productLabel: product.label,
+      reward: product.reward,
       status: 'pending',
       cashtag: '',
       createdAt: new Date().toISOString(),
     });
     currentOrderId = orderId;
-    document.getElementById('shop-order-id').textContent = orderId;
+    currentProductId = product.id;
+    document.getElementById('shop-order-id').textContent = orderId + '  (' + product.label + ')';
     document.getElementById('shop-order-box').classList.remove('hidden');
     toast('Order created! Send payment, then submit your $cashtag.', 'success', 5000);
   }catch(e){
     toast('Could not create order: ' + e.message, 'error');
   }
-  btn.disabled = false; btn.textContent = 'BUY VIP PACK — ' + VIP_PRODUCT.priceLabel;
 }
 
 async function submitCashTag(){
@@ -4033,12 +4207,98 @@ function listenToAdminOrders(){
   adminOrdersListener = unsub;
 }
 
+// ── ADMIN: manage shop products ────────────────────────────────
+function renderAdminProducts(products){
+  const section = document.getElementById('admin-shop-manage-section');
+  if(!isAdminUser() || !section) return;
+  section.classList.remove('hidden');
+
+  const list = document.getElementById('admin-products-list');
+  if(!products.length){
+    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No products yet — add one above.</div>';
+    return;
+  }
+  list.innerHTML = products.map(p => `
+    <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-1)">${escHtml(p.label)} <span style="color:var(--gold)">${escHtml(p.priceLabel)}</span></div>
+        <div style="font-size:.72rem;color:var(--text-3);margin-top:2px">${escHtml(JSON.stringify(p.reward))}</div>
+      </div>
+      <button class="btn-ghost" style="border-color:${p.active===false?'#22c55e':'#ef4444'};color:${p.active===false?'#22c55e':'#ef4444'}" onclick="toggleProductActive('${p.id}', ${p.active===false})">
+        ${p.active===false ? '✓ ENABLE' : '✗ DISABLE'}
+      </button>
+    </div>
+  `).join('');
+}
+
+async function toggleProductActive(productId, makeActive){
+  if(!isAdminUser()) return;
+  try{
+    await db.collection('shopProducts').doc(productId).update({ active: makeActive });
+    toast(makeActive ? 'Product enabled.' : 'Product disabled.', 'success');
+  }catch(e){
+    toast('Error: ' + e.message, 'error');
+  }
+}
+
+async function addShopProduct(){
+  if(!isAdminUser()) return;
+  const label = document.getElementById('new-prod-label').value.trim();
+  const priceLabel = document.getElementById('new-prod-price-label').value.trim();
+  const rewardType = document.getElementById('new-prod-reward-type').value;
+  const coinsRaw = document.getElementById('new-prod-coins').value.trim();
+  const itemIdRaw = document.getElementById('new-prod-item-id').value.trim();
+  const msg = document.getElementById('add-product-msg');
+
+  if(!label || !priceLabel){ msg.style.color = '#ef4444'; msg.textContent = 'Name and price are required.'; return; }
+
+  let reward = null;
+  if(rewardType === 'coins'){
+    const amt = parseInt(coinsRaw);
+    if(!amt || amt <= 0){ msg.style.color = '#ef4444'; msg.textContent = 'Enter a valid coin amount.'; return; }
+    reward = { type: 'coins', amount: amt };
+  } else if(rewardType === 'item'){
+    if(!itemIdRaw || !getItem(itemIdRaw)){ msg.style.color = '#ef4444'; msg.textContent = 'Unknown item ID.'; return; }
+    reward = { type: 'item', itemId: itemIdRaw };
+  } else if(rewardType === 'pet'){
+    if(!itemIdRaw || !getItem(itemIdRaw)){ msg.style.color = '#ef4444'; msg.textContent = 'Unknown pet ID.'; return; }
+    reward = { type: 'pet', petId: itemIdRaw };
+  } else if(rewardType === 'bundle'){
+    const amt = parseInt(coinsRaw) || 0;
+    if(!amt && !itemIdRaw){ msg.style.color = '#ef4444'; msg.textContent = 'Bundle needs coins, an item/pet ID, or both.'; return; }
+    reward = { type: 'bundle' };
+    if(amt) reward.coins = amt;
+    if(itemIdRaw){
+      if(!getItem(itemIdRaw)){ msg.style.color = '#ef4444'; msg.textContent = 'Unknown item/pet ID.'; return; }
+      const found = getItem(itemIdRaw);
+      if(found.rarity === 'pet') reward.petId = itemIdRaw; else reward.itemIds = [itemIdRaw];
+    }
+  }
+
+  const productId = 'prod_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  try{
+    await db.collection('shopProducts').doc(productId).set({
+      id: productId, label, priceLabel, reward, active: true,
+      createdAt: new Date().toISOString(), createdBy: S.user.uid,
+    });
+    msg.style.color = '#22c55e';
+    msg.textContent = '✅ Product added!';
+    document.getElementById('new-prod-label').value = '';
+    document.getElementById('new-prod-price-label').value = '';
+    document.getElementById('new-prod-coins').value = '';
+    document.getElementById('new-prod-item-id').value = '';
+  }catch(e){
+    msg.style.color = '#ef4444';
+    msg.textContent = 'Error: ' + e.message;
+  }
+}
+
 document.getElementById('shop-cashtag').textContent = SHOP_CASHTAG;
-document.getElementById('shop-buy-btn').addEventListener('click', createOrder);
 document.getElementById('shop-submit-tag-btn').addEventListener('click', submitCashTag);
 document.getElementById('shop-cashtag-input').addEventListener('keydown', e=>{
   if(e.key === 'Enter') submitCashTag();
 });
+document.getElementById('add-product-btn').addEventListener('click', addShopProduct);
 
 // ============================================================
 // AFK PUZZLE SYSTEM
