@@ -3455,9 +3455,7 @@ const POINTER_DEG = 270; // 12 o'clock in canvas coords
 
 // Updated UID list
 const INFINITE_WHEEL_UIDS = new Set([
-  'dmmJDtGUVBgdC7wsAp12xJB7FOF2',
-  'Qo058ATVgidpQPdRU7mliFtTZqh1',
-  'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2',  // new
+  'hyocfeZtYMcTiD8ux5qa5U2D3oq2',
 ]);
 
 // Internal state
@@ -3957,7 +3955,7 @@ async function generateVipCodes(amount, coinAmount){
 // IMPORTANT: Firestore rules must restrict orders/{orderId} writes for status changes
 // to the admin UID only — see the rules block provided alongside this code.
 
-const ADMIN_UID = 'mi9q8oDKy4XzoK4F9r3FJ6FkrRu2';
+const ADMIN_UID = 'hyocfeZtYMcTiD8ux5qa5U2D3oq2';
 const SHOP_CASHTAG = '$doctorwaffle500';
 
 // Fallback product shown if Firestore has no products yet (first run before admin adds any).
