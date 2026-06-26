@@ -4302,11 +4302,6 @@ document.getElementById('add-product-btn').addEventListener('click', addShopProd
 // AFK PUZZLE SYSTEM
 // ============================================================
 const PUZZLES=[
-  {q:'What is 17 × 4?',a:'68'},{q:'What is 144 ÷ 12?',a:'12'},
-  {q:'What is 25 + 37?',a:'62'},{q:'What is 100 - 63?',a:'37'},
-  {q:'What is 8 × 9?',a:'72'},{q:'What is 256 ÷ 8?',a:'32'},
-  {q:'What is 13 × 7?',a:'91'},{q:'What is 200 - 84?',a:'116'},
-  {q:'What is 15 × 6?',a:'90'},{q:'What is 81 ÷ 9?',a:'9'},
   {q:'Type the word: VAULT',a:'VAULT'},{q:'Type the word: CRATE',a:'CRATE'},
   {q:'Type the word: UNLOCK',a:'UNLOCK'},{q:'Type the word: LEGENDARY',a:'LEGENDARY'},
   {q:'Type the word: FORTUNE',a:'FORTUNE'},{q:'How many sides does a hexagon have?',a:'6'},
@@ -4403,15 +4398,14 @@ async function handleAfkFail(){
 // ============================================================
 (function boot(){
   const cfg={
-    apiKey:'AIzaSyAJnboCJ0RwHjik8X7M-ESavSlV-cZYaeM',
-    authDomain:'rng-game-13854.firebaseapp.com',
-    projectId:'rng-game-13854',
-    storageBucket:'rng-game-13854.firebasestorage.app',
-    messagingSenderId:'60292248542',
-    appId:'1:60292248542:web:2942a3a407dab5d51a234f',
-    measurementId:'G-PH8Q3YGWZ3',
-    databaseURL:'https://rng-game-13854-default-rtdb.firebaseio.com',
-  };
+  apiKey: "AIzaSyBMEAAGp1BbsbTIktDVIY1aQ39c5l6kXXQ",
+  authDomain: "dr3amstudi0s.firebaseapp.com",
+  databaseURL: "https://dr3amstudi0s-default-rtdb.firebaseio.com",
+  projectId: "dr3amstudi0s",
+  storageBucket: "dr3amstudi0s.firebasestorage.app",
+  messagingSenderId: "453880003509",
+  appId: "1:453880003509:web:5e01c05056bee24941b7fc"
+};
   try{
     initFirebase(cfg);
     startAuthObserver();
