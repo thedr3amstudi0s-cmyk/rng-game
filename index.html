@@ -2489,7 +2489,6 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   const doubleOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates');
   const openCount = isVip ? 2 : (quadOpen ? 4 : (doubleOpen ? 2 : 1));
 
-  const btn = document.getElementById('btn-open-crate');
   document.getElementById('result-panel').classList.add('hidden');
 
   const saveItems = [];
