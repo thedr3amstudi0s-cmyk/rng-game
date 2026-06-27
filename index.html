@@ -1667,7 +1667,7 @@ document.getElementById('login-btn').addEventListener('click',async()=>{
 });
 
 // ============================================================
-// REGISTER (Updated - More Robust)
+// REGISTER (Simplified for Rules Compatibility)
 // ============================================================
 document.getElementById('register-btn').addEventListener('click', async () => {
   const username = document.getElementById('reg-username').value.trim();
@@ -1691,50 +1691,37 @@ document.getElementById('register-btn').addEventListener('click', async () => {
   }
 
   btn.disabled = true;
-  btn.textContent = 'CREATING ACCOUNT...';
+  btn.textContent = 'CREATING...';
 
   try {
-    // Check username availability
+    // Check username
     const snap = await db.collection('users')
       .where('usernameLower', '==', username.toLowerCase())
       .limit(1)
       .get();
+    if (!snap.empty) throw new Error('Username already taken.');
 
-    if (!snap.empty) {
-      throw new Error('Username already taken.');
-    }
-
-    // Create Auth user
+    // Create user
     const cred = await auth.createUserWithEmailAndPassword(email, pass);
 
-    // Create minimal user document (rule-friendly)
+    // Minimal document - most rule-friendly
     await db.collection('users').doc(cred.user.uid).set({
       uid: cred.user.uid,
       username: username,
       usernameLower: username.toLowerCase(),
       coins: 400,
-      inventory: [],
-      tradeHistory: [],
-      cratesOpened: 0,
-      totalValue: 0,
-      rarestTier: 0,
-      lastWheelSpin: 0,
-      equippedPetUid: null,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     err.style.color = '#22c55e';
-    err.textContent = 'Account created successfully! Logging in...';
-
-    // Auto login after creation
-    setTimeout(() => {
-      showScreen('game-screen');
-    }, 800);
+    err.textContent = 'Success! Welcome to CrateVault!';
+    
+    setTimeout(() => location.reload(), 1200); // refresh to load profile
 
   } catch (e) {
-    console.error(e);
+    console.error("Register error:", e);
     err.style.color = '#ef4444';
-    err.textContent = e.message || 'Registration failed. Try again.';
+    err.textContent = e.message || 'Failed to create account. Try again.';
   } finally {
     btn.disabled = false;
     btn.textContent = 'CREATE ACCOUNT';
