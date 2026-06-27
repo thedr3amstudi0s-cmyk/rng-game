@@ -2463,17 +2463,77 @@ function rollItem(crateId){
   
 // ── Anti-autoclicker ──────────────────────────────────────────
 let _openTimestamps = [];
+let _acStrikeCount = 0;
+let _acBanned = false;
+
 async function checkAutoClicker() {
-  const now = Date.now();
-  _openTimestamps = _openTimestamps.filter(t => now - t < 10000);
-  _openTimestamps.push(now);
-  if (_openTimestamps.length > 15) {
-    toast('⚠️ Slow down! Possible autoclicker detected.', 'error', 5000);
-    await leavePresence();
+  if (_acBanned) {
+    toast('⛔ You have been flagged for using an autoclicker.', 'error', 8000);
     return true;
   }
+
+  const now = Date.now();
+
+  // Keep only the last 20 timestamps
+  _openTimestamps.push(now);
+  if (_openTimestamps.length > 20) _openTimestamps.shift();
+
+  // Need at least 3 clicks to start measuring
+  if (_openTimestamps.length < 3) return false;
+
+  // Calculate gaps between consecutive clicks
+  const gaps = [];
+  for (let i = 1; i < _openTimestamps.length; i++) {
+    gaps.push(_openTimestamps[i] - _openTimestamps[i - 1]);
+  }
+
+  const minGap = Math.min(...gaps);
+  const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
+
+  // Humans physically cannot click faster than ~120ms reliably
+  // Autoclickers are typically set to 50-100ms intervals
+  const tooFast = minGap < 120;
+
+  // Suspicious: average gap under 200ms with very low variance (robotic rhythm)
+  const variance = gaps.reduce((a, b) => a + Math.pow(b - avgGap, 2), 0) / gaps.length;
+  const stdDev = Math.sqrt(variance);
+  const roboticRhythm = avgGap < 250 && stdDev < 40 && gaps.length >= 5;
+
+  // 5+ clicks in under 800ms total window
+  const recentClicks = _openTimestamps.filter(t => now - t < 800).length;
+  const burstClick = recentClicks >= 5;
+
+  if (tooFast || roboticRhythm || burstClick) {
+    _acStrikeCount++;
+
+    if (_acStrikeCount >= 2) {
+      // Two strikes = flag and block
+      _acBanned = true;
+      _openTimestamps = [];
+      await leavePresence();
+      // Log to Firebase for review
+      try {
+        if (S.user) {
+          db.collection('users').doc(S.user.uid).update({
+            acFlagged: true,
+            acFlaggedAt: new Date().toISOString(),
+            acReason: `minGap:${minGap}ms avg:${Math.round(avgGap)}ms stdDev:${Math.round(stdDev)} burst:${recentClicks}`,
+          }).catch(() => {});
+        }
+      } catch(e) {}
+      toast('⛔ Autoclicker detected. You have been flagged.', 'error', 10000);
+      return true;
+    } else {
+      // First strike — warn
+      toast(`⚠️ Clicking too fast! Slow down or you will be flagged. (${_acStrikeCount}/2)`, 'error', 5000);
+      _openTimestamps = []; // reset timing after warning
+      return true; // block this click
+    }
+  }
+
   return false;
 }
+
 
 let crateCooldown = false;
 document.getElementById('btn-open-crate').addEventListener('click', async () => {
