@@ -671,6 +671,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   <header class="top-nav">
     <div class="nav-logo">⚡ CRATEVAULT</div>
     <div class="coin-display"><span>🪙</span><span id="coin-balance">0</span></div>
+    <div class="coin-display" style="border-color:#a855f7;color:#a855f7"><span>💎</span><span id="gem-balance">0</span></div>
     <div class="nav-right">
       <span class="player-name" id="nav-username">—</span>
       <button class="btn-ghost hidden" id="admin-refresh-btn" style="border-color:#ef4444;color:#ef4444" title="Force refresh all clients">⚡ REFRESH ALL</button>
@@ -689,6 +690,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">RANKS</span></button>
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
       <button class="nav-item" data-page="wheel"><span class="nav-icon">🎰</span><span class="nav-label">WHEEL</span></button>
+      <button class="nav-item" data-page="shop"><span class="nav-icon">🛒</span><span class="nav-label">SHOP</span></button>
       <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span class="nav-label">SETTINGS</span></button>
     </nav>
 
@@ -735,7 +737,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <div class="luck-bar-status" id="luck-bar-status"></div>
           </div>
           <div class="open-price-display" id="open-price-display"></div>
-          <button class="btn-open" id="btn-open-crate">OPEN CRATE</button>
+          <div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap">
+            <button class="btn-open" id="btn-open-crate">OPEN CRATE</button>
+            <button id="btn-autoroll-toggle" class="hidden" style="padding:10px 18px;border-radius:var(--r);font-family:var(--font-d);font-size:.72rem;font-weight:700;letter-spacing:.08em;border:2px solid #22c55e;color:#22c55e;background:transparent;cursor:pointer;transition:.2s">⚡ AUTO</button>
+          </div>
           <div class="open-coins-info">Balance: <span id="opening-coin-balance">0</span> 🪙</div>
         </div>
         <div class="result-panel hidden" id="result-panel">
@@ -921,6 +926,113 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <p id="wheel-result" style="min-height:36px;font-size:1.2rem;font-weight:700;color:var(--gold);margin:10px 0;font-family:var(--font-d);letter-spacing:.05em;"></p>
           <button id="spin-btn" class="btn-primary" style="width:100%;margin-bottom:10px;">SPIN WHEEL (FREE)</button>
           <div id="wheel-odds-list" style="margin-top:20px;text-align:left;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px"></div>
+        </div>
+      </section>
+
+      <!-- SHOP -->
+      <section class="page" id="page-shop">
+        <div class="page-header"><h2>🛒 SHOP</h2></div>
+        <!-- Tab bar -->
+        <div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap">
+          <button class="lb-tab active" data-shop-tab="real">💳 Real Money</button>
+          <button class="lb-tab" data-shop-tab="gems">💎 Gem Shop</button>
+          <button class="lb-tab" data-shop-tab="gemcrates">📦 Gem Crates</button>
+        </div>
+
+        <!-- REAL MONEY TAB -->
+        <div id="shop-tab-real">
+          <div style="font-size:.82rem;color:var(--text-3);margin-bottom:16px">
+            Pay via Cash App to <strong id="shop-cashtag2" style="color:var(--text-2)">$doctorwaffle500</strong>.
+            Click Buy, send payment with your order ID in the note, then submit your $cashtag.
+          </div>
+          <div id="shop-real-products" style="display:flex;flex-direction:column;gap:12px"></div>
+          <div id="shop-order-box2" class="hidden" style="margin-top:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
+            <div id="shop-order-id2" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
+            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" id="shop-cashtag-input2" placeholder="$YourCashtag"
+                style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
+              <button class="btn-primary" id="shop-submit-tag-btn2" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
+            </div>
+            <div id="shop-order-msg2" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
+          </div>
+          <div id="shop-status-list2" style="margin-top:14px"></div>
+          <div class="hidden" id="admin-shop-manage-section2" style="margin-top:20px">
+            <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">🛍️ ADMIN — MANAGE PRODUCTS</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <input type="text" id="new-prod-label2" placeholder="Product name" style="flex:2;min-width:180px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)"/>
+                <input type="text" id="new-prod-price-label2" placeholder="$4.99" style="flex:1;min-width:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <select id="new-prod-reward-type2" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)">
+                  <option value="coins">Coins</option>
+                  <option value="gems">Gems</option>
+                  <option value="item">Specific item</option>
+                  <option value="pet">Specific pet</option>
+                  <option value="bundle">Bundle</option>
+                  <option value="autoroll">Auto-Roll</option>
+                </select>
+                <input type="number" id="new-prod-amount2" placeholder="Amount" min="0" style="width:130px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
+                <input type="text" id="new-prod-item-id2" placeholder="Item/Pet ID" style="width:160px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
+              </div>
+              <button class="btn-primary" id="add-product-btn2" style="width:auto;padding:10px 20px;align-self:flex-start">+ ADD PRODUCT</button>
+              <div id="add-product-msg2" style="font-size:.8rem;min-height:18px"></div>
+            </div>
+            <div id="admin-products-list2" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+        </div>
+
+        <!-- GEM SHOP TAB -->
+        <div id="shop-tab-gems" class="hidden">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:14px 18px">
+            <span style="font-size:2rem">💎</span>
+            <div>
+              <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-2)">YOUR GEM BALANCE</div>
+              <div style="font-family:var(--font-d);font-size:1.5rem;font-weight:900;color:#a855f7" id="gem-balance-shop">0</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px" id="gem-shop-items">
+            <!-- Extra Wheel Spin -->
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+              <div>
+                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🎰 Extra Wheel Spin</div>
+                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Spin the lucky wheel again — no cooldown needed</div>
+              </div>
+              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('wheel_spin',50)">💎 50 Gems</button>
+            </div>
+            <!-- Luck Boost -->
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+              <div>
+                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">✨ Minor Luck Boost</div>
+                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Instantly trigger a luck boost on your current crate</div>
+              </div>
+              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_minor',30)">💎 30 Gems</button>
+            </div>
+            <!-- Huge Luck Boost -->
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+              <div>
+                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🌟 Huge Luck Boost</div>
+                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Trigger a HUGE luck boost on your current crate</div>
+              </div>
+              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_huge',100)">💎 100 Gems</button>
+            </div>
+            <!-- Coin Pack -->
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+              <div>
+                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🪙 50,000 Coins</div>
+                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Instant coin deposit to your balance</div>
+              </div>
+              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('coins_50k',75)">💎 75 Gems</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GEM CRATES TAB -->
+        <div id="shop-tab-gemcrates" class="hidden">
+          <div style="color:var(--text-2);font-size:.85rem;margin-bottom:16px">These crates can only be purchased with 💎 Gems.</div>
+          <div class="crates-grid" id="gem-crates-grid"></div>
         </div>
       </section>
 
@@ -1527,6 +1639,27 @@ const CRATES = [
     items:['co01', 'in01'], coinflip:true},
 ];
 
+
+// ── Gem-only crates ───────────────────────────────────────────
+const GEM_CRATES = [
+  {id:'gem_shadow', name:'Shadow Gem Crate', gemPrice:25, icon:'🌑', color:'#6366f1',
+    desc:'Exclusive gem crate. Epic+ only drops.',
+    odds:{epic:0.60, runic:0.30, legendary:0.10},
+    items:['e001','e002','e003','ru01','ru02','l001']},
+  {id:'gem_aurora', name:'Aurora Gem Crate', gemPrice:60, icon:'🌌', color:'#06b6d4',
+    desc:'Rare gem crate with mythic potential.',
+    odds:{legendary:0.50, cursed:0.35, mythic:0.15},
+    items:['l001','l002','cu01','m001','m002']},
+  {id:'gem_prism', name:'Prism Gem Crate', gemPrice:150, icon:'🔮', color:'#ec4899',
+    desc:'Legendary gem crate. Astral-tier possible.',
+    odds:{mythic:0.50, astral:0.40, divine:0.10},
+    items:['m001','m002','as01','d001']},
+  {id:'gem_void', name:'Void Gem Crate', gemPrice:400, icon:'🕳️', color:'#9333ea',
+    desc:'The ultimate gem crate. Ultra+ inside.',
+    odds:{divine:0.45, primordial:0.40, ultra:0.15},
+    items:['d001','pr01','ur01','hy01']},
+];
+
 const ACHIEVEMENTS = [
   {id:'first_open', name:'First Steps',    desc:'Open your first crate',   icon:'📦', reward:250},
   {id:'lucky_10',   name:'Lucky 10',       desc:'Open 10 crates',          icon:'🍀', reward:1000},
@@ -1594,11 +1727,14 @@ function getSpinDuration(){
 
   const pet = getEquippedPet();
   if(pet && pet.perk === 'speed'){
-    if(pet.perkDesc.includes('Instant')) return 0;
-    if(pet.perkDesc.includes('90%')) return 500;
+    // NERFED: Instant pets now take 800ms minimum
+    if(pet.perkDesc.includes('Instant')) return 800;
+    // NERFED: 90% pets now take 1200ms
+    if(pet.perkDesc.includes('90%')) return 1200;
+    // NERFED: percentage pets have their bonus halved
     const match=pet.perkDesc.match(/(\d+)%\s+faster/);
-    const pct=match?parseInt(match[1]):20;
-    return Math.floor(4000*(1-pct/100));
+    const pct=match?Math.floor(parseInt(match[1])/2):10;
+    return Math.floor(5000*(1-pct/100));
   }
   return 5000;
 }
@@ -1722,6 +1858,7 @@ const S = {
   luckBoost: null, luckBoostUsed: false,
   autoSell: false, autoSellMode: 'rarity', autoSellRarity: 'common', autoSellPrice: 0,
   hasAutoRoll: false, autoRollActive: false, autoRollIntervalId: null,
+  gems: 0,
   lastOpenedInvItem: null,
   listenersInitialized: false,
   // FIX: track per-session which trade rooms we've already executed, prevents double execution on refresh
@@ -1747,6 +1884,7 @@ function showPage(id){
     updateEquippedPetDisplay();
     updateAutoRollUI();
   }
+  if(id==='shop'){ renderShopProducts2(); updateGemDisplay(); }
   if(id==='inventory') renderInventory();
   if(id==='pets') renderCollectionIndex();
   if(id==='leaderboard') loadLeaderboard();
@@ -1916,7 +2054,10 @@ function startAuthObserver(){
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
       S.hasAutoRoll = S.profile.hasAutoRoll === true;
+      S.gems = S.profile.gems || 0;
       updateAutoRollUI();
+      updateGemDisplay();
+      setTimeout(updateAutoRollInlineBtn, 100);
       document.getElementById('nav-username').textContent=S.profile.username;
       if(S.profile.username==='Dreamcrusher'){
         document.getElementById('admin-refresh-btn').classList.remove('hidden');
@@ -1955,6 +2096,40 @@ function updateCoinDisplay(coins){
   S.profile.coins=coins;
   document.getElementById('coin-balance').textContent=fmtNum(coins);
   document.getElementById('opening-coin-balance').textContent=fmtNum(coins);
+}
+function updateGemDisplay(){
+  const gems = S.profile?.gems || 0;
+  S.gems = gems;
+  const el1 = document.getElementById('gem-balance');
+  const el2 = document.getElementById('gem-balance-shop');
+  if(el1) el1.textContent = fmtNum(gems);
+  if(el2) el2.textContent = fmtNum(gems);
+}
+async function spendGems(amount, reason){
+  const current = S.profile?.gems || 0;
+  if(current < amount){ toast('Not enough gems! 💎', 'error'); return false; }
+  S.profile.gems = current - amount;
+  updateGemDisplay();
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      gems: firebase.firestore.FieldValue.increment(-amount)
+    });
+    return true;
+  }catch(e){
+    S.profile.gems = current; // rollback
+    updateGemDisplay();
+    toast('Error spending gems: ' + e.message, 'error');
+    return false;
+  }
+}
+async function grantGems(amount){
+  S.profile.gems = (S.profile.gems || 0) + amount;
+  updateGemDisplay();
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      gems: firebase.firestore.FieldValue.increment(amount)
+    });
+  }catch(e){ console.warn('Gem grant failed:', e.message); }
 }
 
 // Section definitions used for both rendering dividers and awarding completion bonuses.
@@ -4305,6 +4480,11 @@ async function redeemCode(){
         }
         if(!labels.length) throw new Error('BAD_REWARD');
         grantedLabel = labels.join(', ');
+      } else if(reward.type === 'gems'){
+        const amt = Math.max(0, Math.floor(reward.amount||0));
+        const curGems = userData.gems || 0;
+        userUpdate.gems = curGems + amt;
+        grantedLabel = `💎 ${amt.toLocaleString()} gems`;
       } else if(reward.type === 'autoroll'){
         // Grant permanent autoroll to this user
         grantedLabel = '⚡ Auto-Roll (permanent)';
@@ -4835,6 +5015,7 @@ function startAutoRoll() {
   const delay   = speedEl ? parseInt(speedEl.value) : 1500;
 
   toast('⚡ Auto-Roll started!', 'success', 2000);
+  updateAutoRollInlineBtn();
 
   // Trigger immediately then on interval
   triggerAutoRoll();
@@ -4851,6 +5032,7 @@ function stopAutoRoll() {
   const toggle = document.getElementById('autoroll-toggle');
   if (toggle) toggle.checked = false;
   updateAutoRollStatusDesc();
+  updateAutoRollInlineBtn();
 }
 
 function triggerAutoRoll() {
@@ -4919,6 +5101,224 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Stop auto-roll if player navigates away from opening page
+
+// ============================================================
+// SHOP PAGE
+// ============================================================
+let shopTab = 'real';
+let currentOrderId2 = null;
+
+document.querySelectorAll('[data-shop-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-shop-tab]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    shopTab = btn.dataset.shopTab;
+    document.getElementById('shop-tab-real').classList.toggle('hidden', shopTab !== 'real');
+    document.getElementById('shop-tab-gems').classList.toggle('hidden', shopTab !== 'gems');
+    document.getElementById('shop-tab-gemcrates').classList.toggle('hidden', shopTab !== 'gemcrates');
+    if(shopTab === 'gems') updateGemDisplay();
+    if(shopTab === 'gemcrates') renderGemCratesGrid();
+    if(shopTab === 'real') renderShopProducts2();
+  });
+});
+
+function renderShopProducts2(){
+  const list = document.getElementById('shop-real-products');
+  if(!list) return;
+  const products = shopProductsCache.length ? shopProductsCache : DEFAULT_PRODUCTS;
+  const active = products.filter(p => p.active !== false);
+  if(!active.length){
+    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No products right now.</div>';
+    return;
+  }
+  list.innerHTML = active.map(p => `
+    <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">${escHtml(p.label)}</div>
+        <div style="font-family:var(--font-m);font-size:.8rem;color:var(--gold);margin-top:2px">${escHtml(p.priceLabel)}</div>
+      </div>
+      <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap" onclick="createOrder2('${p.id}')">BUY</button>
+    </div>
+  `).join('');
+  if(isAdminUser()){
+    const admin = document.getElementById('admin-shop-manage-section2');
+    if(admin) admin.classList.remove('hidden');
+    const adminList = document.getElementById('admin-products-list2');
+    if(adminList) adminList.innerHTML = active.map(p => `
+      <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-1)">${escHtml(p.label)} <span style="color:var(--gold)">${escHtml(p.priceLabel)}</span></div>
+        </div>
+        <button class="btn-ghost" style="border-color:#ef4444;color:#ef4444" onclick="toggleProductActive('${p.id}',false)">✗ DISABLE</button>
+      </div>
+    `).join('');
+  }
+}
+
+async function createOrder2(productId){
+  if(!S.user || !S.profile){ toast('You must be logged in.', 'error'); return; }
+  const products = shopProductsCache.length ? shopProductsCache : DEFAULT_PRODUCTS;
+  const product = products.find(p => p.id === productId);
+  if(!product){ toast('Product not found.', 'error'); return; }
+  const orderId = genOrderId();
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId, uid: S.user.uid, username: S.profile.username,
+      product: product.id, productLabel: product.label,
+      reward: product.reward, status: 'pending', cashtag: '',
+      createdAt: new Date().toISOString(),
+    });
+    currentOrderId2 = orderId;
+    document.getElementById('shop-order-id2').textContent = orderId + '  (' + product.label + ')';
+    document.getElementById('shop-order-box2').classList.remove('hidden');
+    toast('Order created! Send payment then submit your $cashtag.', 'success', 5000);
+  }catch(e){ toast('Could not create order: ' + e.message, 'error'); }
+}
+
+async function submitCashTag2(){
+  if(!currentOrderId2){ toast('No active order.', 'error'); return; }
+  const input = document.getElementById('shop-cashtag-input2');
+  const msg   = document.getElementById('shop-order-msg2');
+  const cashtag = input.value.trim();
+  if(!cashtag){ msg.style.color='#ef4444'; msg.textContent='Enter your $cashtag.'; return; }
+  const btn = document.getElementById('shop-submit-tag-btn2');
+  btn.disabled = true; btn.textContent = 'SUBMITTING...';
+  try{
+    await db.collection('orders').doc(currentOrderId2).update({
+      cashtag, cashtagSubmittedAt: new Date().toISOString(),
+    });
+    msg.style.color='#22c55e';
+    msg.textContent='✅ Submitted! Waiting for approval.';
+    toast('Cash App tag submitted!', 'success', 4000);
+  }catch(e){ msg.style.color='#ef4444'; msg.textContent='Error: '+e.message; }
+  btn.disabled=false; btn.textContent='SUBMIT';
+}
+
+document.getElementById('shop-submit-tag-btn2')?.addEventListener('click', submitCashTag2);
+document.getElementById('shop-cashtag2')?.textContent && (document.getElementById('shop-cashtag2').textContent = '$doctorwaffle500');
+
+// ── Gem shop purchases ────────────────────────────────────────
+async function buyGemItem(itemId, cost){
+  if(!S.user || !S.profile){ toast('Must be logged in.', 'error'); return; }
+  const ok = await spendGems(cost, itemId);
+  if(!ok) return;
+
+  if(itemId === 'wheel_spin'){
+    // Grant an extra wheel spin (bypass cooldown once)
+    S.profile.lastWheelSpin = 0;
+    lastSpinTime = 0;
+    await db.collection('users').doc(S.user.uid).update({lastWheelSpin: 0});
+    toast('🎰 Extra wheel spin unlocked! Head to the Wheel tab.', 'gold', 4000);
+    updateGemDisplay();
+  } else if(itemId === 'luck_boost_minor'){
+    if(!S.currentCrate){ toast('Open a crate page first!', 'error'); await grantGems(cost); return; }
+    S.luckBoost = 'minor'; S.luckBoostCrate = S.currentCrate.id; S.luckBoostUsed = false;
+    toast('✨ Minor Luck Boost activated!', 'gold', 4000);
+    updateLuckBar(S.currentCrate);
+    updateGemDisplay();
+  } else if(itemId === 'luck_boost_huge'){
+    if(!S.currentCrate){ toast('Open a crate page first!', 'error'); await grantGems(cost); return; }
+    S.luckBoost = 'huge'; S.luckBoostCrate = S.currentCrate.id; S.luckBoostUsed = false;
+    toast('🌟 HUGE Luck Boost activated!', 'gold', 5000);
+    updateLuckBar(S.currentCrate);
+    updateGemDisplay();
+  } else if(itemId === 'coins_50k'){
+    S.profile.coins += 50000;
+    updateCoinDisplay(S.profile.coins);
+    await db.collection('users').doc(S.user.uid).update({ coins: firebase.firestore.FieldValue.increment(50000) });
+    toast('🪙 50,000 coins added!', 'gold', 4000);
+    updateGemDisplay();
+  }
+}
+
+// ── Gem crates grid ───────────────────────────────────────────
+function renderGemCratesGrid(){
+  const grid = document.getElementById('gem-crates-grid');
+  if(!grid) return;
+  grid.innerHTML = GEM_CRATES.map(crate => `
+    <div class="crate-card" style="--cc:${crate.color};--cg:${crate.color}33" onclick="openGemCrate('${crate.id}')">
+      <span class="crate-emoji">${crate.icon}</span>
+      <div class="crate-name">${crate.name}</div>
+      <div class="crate-desc">${crate.desc}</div>
+      <div class="crate-price" style="border-color:#a855f766;color:#a855f7">💎 ${crate.gemPrice}</div>
+    </div>
+  `).join('');
+}
+
+async function openGemCrate(crateId){
+  const crate = GEM_CRATES.find(c => c.id === crateId);
+  if(!crate || !S.user || !S.profile){ return; }
+  const ok = await spendGems(crate.gemPrice, 'gem_crate');
+  if(!ok) return;
+
+  // Roll the item
+  const pool = crate.items.map(id => getItem(id)).filter(Boolean);
+  let odds = {...crate.odds};
+  let total = Object.values(odds).reduce((a,b)=>a+b,0);
+  let roll = Math.random() * total;
+  let result = pool[0];
+  for(let [rar, chance] of Object.entries(odds)){
+    roll -= chance;
+    if(roll <= 0){
+      const candidates = pool.filter(i => i.rarity === rar);
+      result = candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
+      break;
+    }
+  }
+
+  // Add to inventory
+  const inv = { itemId: result.id, uniqueId: genUID(), crateSource: crate.id, obtainedAt: new Date().toISOString() };
+  S.inventory.push(inv);
+  S.profile.totalValue = S.inventory.reduce((s,i)=>{ const it=getItem(i.itemId); return s+(it?it.value:0);},0);
+
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      inventory: S.inventory,
+      totalValue: S.profile.totalValue,
+    });
+  }catch(e){ toast('Save error: '+e.message,'error'); }
+
+  const r = getRarity(result.rarity);
+  const col = r.color==='#ffffff'?'#aaa':r.color;
+  toast(`${crate.icon} ${crate.name}: You got ${result.icon} ${result.name}!`, 'gold', 5000);
+  updateGemDisplay();
+
+  // Ultra announcement
+  if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(result.rarity)){
+    if(SETTINGS.cutscene) showUltraOverlay(result);
+    showGlobalBanner(`🌟 ${S.profile.username} pulled ${result.icon} ${result.name} from a Gem Crate!`);
+  }
+}
+
+
+// ── Auto-roll inline button ───────────────────────────────────
+function updateAutoRollInlineBtn(){
+  const btn = document.getElementById('btn-autoroll-toggle');
+  if(!btn) return;
+  const has = S.hasAutoRoll || (S.profile && S.profile.hasAutoRoll);
+  if(!has){ btn.classList.add('hidden'); return; }
+  btn.classList.remove('hidden');
+  if(S.autoRollIntervalId){
+    btn.textContent = '⏹ STOP';
+    btn.style.borderColor = '#ef4444';
+    btn.style.color = '#ef4444';
+  } else {
+    btn.textContent = '⚡ AUTO';
+    btn.style.borderColor = '#22c55e';
+    btn.style.color = '#22c55e';
+  }
+}
+
+document.getElementById('btn-autoroll-toggle')?.addEventListener('click', () => {
+  if(S.autoRollIntervalId){
+    stopAutoRoll();
+  } else {
+    S.autoRollActive = true;
+    startAutoRoll();
+  }
+  updateAutoRollInlineBtn();
+});
+
 // ============================================================
 // AFK PUZZLE SYSTEM
 // ============================================================
