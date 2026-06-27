@@ -549,16 +549,14 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .nav-item[data-page="wheel"].wheel-ready::after {
   display: block;
 }
-  /* RULES MODAL */
 .rules-modal {
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 16, 0.97);
+  background: rgba(5, 8, 16, 0.98);
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.4s ease;
 }
 
 .rules-modal-inner {
@@ -566,63 +564,46 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border: 2px solid var(--accent);
   border-radius: var(--rl);
   width: 100%;
-  max-width: 620px;
-  max-height: 85vh;
+  max-width: 640px;
+  max-height: 88vh;
   overflow: hidden;
-  box-shadow: 0 0 60px rgba(79, 142, 247, 0.4);
+  box-shadow: 0 0 70px rgba(79, 142, 247, 0.5);
+  display: flex;
+  flex-direction: column;
 }
 
 .rules-header {
   text-align: center;
-  padding: 24px 20px 16px;
+  padding: 20px 24px 16px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
-.rules-header .logo-icon {
-  font-size: 2.8rem;
-  margin-bottom: 8px;
-}
-
-.rules-header h2 {
-  font-family: var(--font-d);
-  font-size: 1.5rem;
-  letter-spacing: .1em;
-  margin-bottom: 6px;
-}
+.rules-header .logo-icon { font-size: 2.6rem; margin-bottom: 8px; }
 
 .rules-content {
-  padding: 20px 24px;
+  padding: 20px 28px;
   overflow-y: auto;
-  max-height: 55vh;
-  line-height: 1.5;
-  font-size: 0.9rem;
+  flex: 1;
+  line-height: 1.55;
+  font-size: 0.92rem;
   color: var(--text-2);
 }
 
-.rules-content h3 {
-  color: var(--accent);
-  margin: 18px 0 8px;
-  font-family: var(--font-d);
-}
-
 .rules-footer {
-  padding: 20px 24px;
+  padding: 20px 28px;
   border-top: 1px solid var(--border);
   background: var(--bg-dark);
+  flex-shrink: 0;
 }
 
 .rules-checkbox {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-  font-size: 0.9rem;
   margin-bottom: 16px;
   cursor: pointer;
-}
-
-.rules-checkbox input {
-  margin-top: 4px;
-  accent-color: var(--accent);
+  font-size: 0.95rem;
 }
 
 .rules-buttons {
@@ -1116,20 +1097,22 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <div class="rules-header">
       <div class="logo-icon">⚡</div>
       <h2>CRATEVAULT RULES</h2>
-      <p>You must accept the rules to continue</p>
+      <p>You must accept to continue playing</p>
     </div>
     
-    <div class="rules-content" id="rules-content"></div>
+    <div class="rules-content" id="rules-content">
+      <!-- Filled by JS -->
+    </div>
 
     <div class="rules-footer">
       <label class="rules-checkbox">
         <input type="checkbox" id="accept-checkbox">
-        <span>I have read and agree to the <strong>Rules & Terms</strong></span>
+        <span>I have read and agree to the Rules & Terms</span>
       </label>
       
       <div class="rules-buttons">
         <button id="decline-rules" class="btn-ghost">Decline & Exit</button>
-        <button id="accept-rules" class="btn-primary" disabled>ACCEPT & ENTER VAULT</button>
+        <button id="accept-rules" class="btn-primary" disabled>ACCEPT & ENTER THE VAULT</button>
       </div>
     </div>
   </div>
@@ -4720,7 +4703,7 @@ async function handleAfkFail(){
   }
 })();
   
-// ====================== RULES MODAL (Fixed) ======================
+// ====================== RULES MODAL ======================
 const RULES_TEXT = `
 <h3>1. General Conduct</h3>
 <p>• Be respectful. No toxicity, harassment, or spam.<br>
@@ -4743,8 +4726,8 @@ const RULES_TEXT = `
 <h3>5. Consequences</h3>
 <p>Violations may lead to warnings, temporary bans, permanent bans, or inventory/coin wipes.</p>
 
-<p style="margin-top:16px; font-size:0.85rem; color:var(--text-3)">
-By accepting, you agree to our full <strong>Terms of Service</strong> and understand that this game contains gambling-like mechanics. Play responsibly.
+<p style="margin-top:20px; font-size:0.88rem; color:var(--text-3)">
+By accepting, you agree to our full Terms of Service and understand that this game contains gambling-like mechanics. Play responsibly.
 </p>
 `;
 
@@ -4758,40 +4741,33 @@ function showRulesModal() {
   const acceptBtn = document.getElementById('accept-rules');
   const declineBtn = document.getElementById('decline-rules');
 
-  // Reset
   checkbox.checked = false;
   acceptBtn.disabled = true;
-  acceptBtn.style.opacity = "0.5";
 
-  // Checkbox enables Accept button
-  checkbox.onchange = function() {
-    acceptBtn.disabled = !this.checked;
-    acceptBtn.style.opacity = this.checked ? "1" : "0.5";
+  checkbox.onchange = () => {
+    acceptBtn.disabled = !checkbox.checked;
   };
 
-  // Accept button
-  acceptBtn.onclick = function() {
+  acceptBtn.onclick = () => {
     localStorage.setItem('cv_rules_accepted', 'true');
     modal.classList.add('hidden');
     toast('✅ Welcome to CrateVault!', 'success');
   };
 
-  // Decline button
-  declineBtn.onclick = function() {
+  declineBtn.onclick = () => {
     window.location.href = "https://google.com";
   };
 
   modal.classList.remove('hidden');
 }
 
-// Check on game load
 function checkRulesAcceptance() {
   if (localStorage.getItem('cv_rules_accepted') !== 'true') {
     setTimeout(() => {
       if (document.getElementById('game-screen').classList.contains('active')) {
         showRulesModal();
       }
-    }, 800);
+    }, 600);
   }
 }
 </script>
