@@ -1745,6 +1745,7 @@ function showPage(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
   if(id==='settings' && S.profile){
     updateEquippedPetDisplay();
+    updateAutoRollUI();
   }
   if(id==='inventory') renderInventory();
   if(id==='pets') renderCollectionIndex();
@@ -1752,6 +1753,11 @@ function showPage(id){
   if(id==='history') renderTradeHistory();
   if(id==='wheel') enterWheelPage(); else leaveWheelPage();
   updateWheelRedDot();
+  // Stop auto-roll if leaving the crate opening page
+  if(id !== 'opening' && S.autoRollIntervalId){
+    stopAutoRoll();
+    toast('⚡ Auto-Roll stopped — left crate page.', '', 2500);
+  }
 }
 function toast(msg,type='',duration=3000){
   const el=document.createElement('div');
@@ -4913,17 +4919,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Stop auto-roll if player navigates away from opening page
-const _origShowPage = showPage;
-function showPage(id) {
-  _origShowPage(id);
-  if (id !== 'opening' && S.autoRollIntervalId) {
-    stopAutoRoll();
-    toast('⚡ Auto-Roll stopped — left crate page.', '', 2500);
-  }
-  // Refresh autoroll UI when settings page opens
-  if (id === 'settings') updateAutoRollUI();
-}
-
 // ============================================================
 // AFK PUZZLE SYSTEM
 // ============================================================
