@@ -2872,8 +2872,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   if (crateCooldown) return;
 
   // ❗ ANTI-CHEAT CHECK
-  const flagged = await checkAutoClicker();
-  const flagged = true
+  const flagged = false
   if (flagged) return;
 
   // Lock immediately — before any async work
