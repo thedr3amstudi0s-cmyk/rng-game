@@ -2461,6 +2461,86 @@ function rollItem(crateId){
   return pool[0] || null;
 }
   
+// ── Mouse movement tracker ────────────────────────────────────
+const _mouseHistory = [];   // {x, y, t}
+let _mouseStrikeCount = 0;
+
+document.addEventListener('mousemove', e => {
+  const now = Date.now();
+  _mouseHistory.push({ x: e.clientX, y: e.clientY, t: now });
+  // Keep only last 60 points (~last 3–5 seconds of movement)
+  if (_mouseHistory.length > 60) _mouseHistory.shift();
+});
+
+function analyzeMouseMovement() {
+  // Need enough data
+  if (_mouseHistory.length < 10) return { suspicious: false, reason: '' };
+
+  const recent = _mouseHistory.slice(-30);
+
+  // ── 1. Zero movement — no mouse moved at all recently ────────
+  const xs = recent.map(p => p.x);
+  const ys = recent.map(p => p.y);
+  const xRange = Math.max(...xs) - Math.min(...xs);
+  const yRange = Math.max(...ys) - Math.min(...ys);
+  if (xRange < 2 && yRange < 2) {
+    return { suspicious: true, reason: 'no_movement' };
+  }
+
+  // ── 2. Perfectly straight line (macro teleporting to button) ─
+  // Calculate how well the points fit a straight line via linear regression
+  const n = recent.length;
+  const sumX = xs.reduce((a, b) => a + b, 0);
+  const sumY = ys.reduce((a, b) => a + b, 0);
+  const sumXY = recent.reduce((a, p) => a + p.x * p.y, 0);
+  const sumXX = xs.reduce((a, x) => a + x * x, 0);
+  const meanX = sumX / n;
+  const meanY = sumY / n;
+  const slope = (sumXY - n * meanX * meanY) / (sumXX - n * meanX * meanX);
+  const intercept = meanY - slope * meanX;
+  // Average deviation from the fitted line
+  const residuals = recent.map(p => Math.abs(p.y - (slope * p.x + intercept)));
+  const avgResidual = residuals.reduce((a, b) => a + b, 0) / n;
+  if (avgResidual < 1.5 && xRange > 20) {
+    return { suspicious: true, reason: 'perfect_line' };
+  }
+
+  // ── 3. Perfectly repeating loop (same path repeated) ─────────
+  // Compare first half vs second half of recent points
+  const half = Math.floor(recent.length / 2);
+  const first = recent.slice(0, half);
+  const second = recent.slice(half);
+  let loopScore = 0;
+  for (let i = 0; i < half; i++) {
+    const dx = Math.abs(first[i].x - second[i].x);
+    const dy = Math.abs(first[i].y - second[i].y);
+    if (dx < 4 && dy < 4) loopScore++;
+  }
+  if (loopScore / half > 0.85) {
+    return { suspicious: true, reason: 'loop_pattern' };
+  }
+
+  // ── 4. Perfectly uniform speed (robotic movement) ────────────
+  const speeds = [];
+  for (let i = 1; i < recent.length; i++) {
+    const dt = recent[i].t - recent[i - 1].t;
+    if (dt === 0) continue;
+    const dist = Math.hypot(recent[i].x - recent[i - 1].x, recent[i].y - recent[i - 1].y);
+    speeds.push(dist / dt);
+  }
+  if (speeds.length >= 5) {
+    const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+    const speedVariance = speeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / speeds.length;
+    const speedStdDev = Math.sqrt(speedVariance);
+    // Human mouse movement has a lot of speed variance; robots don't
+    if (avgSpeed > 0.5 && speedStdDev / avgSpeed < 0.08) {
+      return { suspicious: true, reason: 'uniform_speed' };
+    }
+  }
+
+  return { suspicious: false, reason: '' };
+}
+
 // ── Anti-autoclicker ──────────────────────────────────────────
 let _openTimestamps = [];
 let _acStrikeCount = 0;
@@ -2468,7 +2548,7 @@ let _acBanned = false;
 
 async function checkAutoClicker() {
   if (_acBanned) {
-    toast('⛔ You have been flagged for using an autoclicker.', 'error', 8000);
+    toast('⛔ You have been flagged for suspicious activity.', 'error', 8000);
     return true;
   }
 
@@ -2490,44 +2570,59 @@ async function checkAutoClicker() {
   const minGap = Math.min(...gaps);
   const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
 
-  // Humans physically cannot click faster than ~120ms reliably
-  // Autoclickers are typically set to 50-100ms intervals
   const tooFast = minGap < 120;
 
-  // Suspicious: average gap under 200ms with very low variance (robotic rhythm)
   const variance = gaps.reduce((a, b) => a + Math.pow(b - avgGap, 2), 0) / gaps.length;
   const stdDev = Math.sqrt(variance);
   const roboticRhythm = avgGap < 250 && stdDev < 40 && gaps.length >= 5;
 
-  // 5+ clicks in under 800ms total window
   const recentClicks = _openTimestamps.filter(t => now - t < 800).length;
   const burstClick = recentClicks >= 5;
 
-  if (tooFast || roboticRhythm || burstClick) {
+  // ── Mouse movement analysis ───────────────────────────────────
+  const mouseResult = analyzeMouseMovement();
+  const suspiciousMouse = mouseResult.suspicious;
+
+  // Combine signals — clicking fast + weird mouse = very suspicious
+  const clickSuspicious = tooFast || roboticRhythm || burstClick;
+  const flagged = clickSuspicious || (suspiciousMouse && _openTimestamps.length >= 5);
+
+  if (flagged) {
     _acStrikeCount++;
 
+    const reason = [
+      tooFast ? `minGap:${minGap}ms` : '',
+      roboticRhythm ? `roboticRhythm avg:${Math.round(avgGap)}ms stdDev:${Math.round(stdDev)}` : '',
+      burstClick ? `burst:${recentClicks}` : '',
+      suspiciousMouse ? `mouse:${mouseResult.reason}` : '',
+    ].filter(Boolean).join(' | ');
+
     if (_acStrikeCount >= 2) {
-      // Two strikes = flag and block
       _acBanned = true;
       _openTimestamps = [];
       await leavePresence();
-      // Log to Firebase for review
       try {
         if (S.user) {
           db.collection('users').doc(S.user.uid).update({
             acFlagged: true,
             acFlaggedAt: new Date().toISOString(),
-            acReason: `minGap:${minGap}ms avg:${Math.round(avgGap)}ms stdDev:${Math.round(stdDev)} burst:${recentClicks}`,
+            acReason: reason,
           }).catch(() => {});
         }
       } catch(e) {}
-      toast('⛔ Autoclicker detected. You have been flagged.', 'error', 10000);
+      toast('⛔ Suspicious activity detected. You have been flagged.', 'error', 10000);
       return true;
     } else {
-      // First strike — warn
-      toast(`⚠️ Clicking too fast! Slow down or you will be flagged. (${_acStrikeCount}/2)`, 'error', 5000);
-      _openTimestamps = []; // reset timing after warning
-      return true; // block this click
+      const mouseMsg = suspiciousMouse ? {
+        no_movement: 'No mouse movement detected.',
+        perfect_line: 'Robotic mouse path detected.',
+        loop_pattern: 'Repeating movement loop detected.',
+        uniform_speed: 'Unnaturally uniform mouse speed detected.',
+      }[mouseResult.reason] || '' : '';
+
+      toast(`⚠️ Suspicious activity detected. ${mouseMsg} Strike ${_acStrikeCount}/2.`, 'error', 6000);
+      _openTimestamps = [];
+      return true;
     }
   }
 
