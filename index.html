@@ -982,6 +982,40 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
 
+        <div class="settings-section" id="autoroll-settings-section">
+          <div class="settings-section-title">⚡ AUTO-ROLL</div>
+          <div id="autoroll-locked" style="color:var(--text-3);font-size:.85rem;font-style:italic">
+            Purchase Auto-Roll from the shop below for $1.00 to unlock this feature.
+          </div>
+          <div id="autoroll-unlocked" class="hidden">
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-label">Auto-Roll</div>
+                <div class="settings-row-desc" id="autoroll-status-desc">Automatically opens crates at a set speed.</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="autoroll-toggle"/>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div id="autoroll-config" style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span style="font-size:.82rem;color:var(--text-2)">Speed:</span>
+                <select id="autoroll-speed" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;font-size:.82rem;color:var(--text-1)">
+                  <option value="6500">Slow (after animation)</option>
+                  <option value="3000">Normal</option>
+                  <option value="1500" selected>Fast</option>
+                  <option value="600">Very Fast</option>
+                </select>
+                <span style="font-size:.75rem;color:var(--text-3)" id="autoroll-speed-note">Opens every ~1.5s</span>
+              </div>
+              <div style="font-size:.75rem;color:var(--text-3)">
+                ⚠️ Auto-sell must be ON for items to be sold automatically during auto-roll.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="settings-section">
           <div class="settings-section-title">💎 SHOP</div>
           <div style="font-size:.8rem;color:var(--text-3);margin-bottom:12px">
@@ -1687,6 +1721,7 @@ const S = {
   tradeMyCoins: 0, tradeTheirCoins: 0, tradeSortBy: 'rarity',
   luckBoost: null, luckBoostUsed: false,
   autoSell: false, autoSellMode: 'rarity', autoSellRarity: 'common', autoSellPrice: 0,
+  hasAutoRoll: false, autoRollActive: false, autoRollIntervalId: null,
   lastOpenedInvItem: null,
   listenersInitialized: false,
   // FIX: track per-session which trade rooms we've already executed, prevents double execution on refresh
@@ -1874,6 +1909,8 @@ function startAuthObserver(){
       if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
       S.profile=doc.data();
       S.inventory=[...S.profile.inventory||[]];
+      S.hasAutoRoll = S.profile.hasAutoRoll === true;
+      updateAutoRollUI();
       document.getElementById('nav-username').textContent=S.profile.username;
       if(S.profile.username==='Dreamcrusher'){
         document.getElementById('admin-refresh-btn').classList.remove('hidden');
@@ -2756,17 +2793,43 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
     toast('Save error: ' + e.message, 'error');
   }
 
-  // Show result (first item)
+  // Show result for first item
   const firstInv = S.inventory[S.inventory.length - saveItems.length];
   showResult(saveItems[0], getRarity(saveItems[0].rarity), firstInv);
 
-  // VIP / Multi-crack toast
+  // Auto-sell + toast for bonus items (multi-roll)
   if (saveItems.length > 1) {
-    const bonusNames = saveItems.slice(1).map(i => `${i.icon} ${i.name}`).join(', ');
-    if (isVip) {
-      toast(`🐉 VIP GOLDEN DRAKE — DOUBLE REWARD! ${bonusNames}`, 'gold', 5000);
-    } else {
-      toast(`🎁 ${quadOpen ? 'QUAD' : 'DOUBLE'} CRACK BONUS: ${bonusNames}!`, 'gold', 6000);
+    const bonusInvItems = S.inventory.slice(S.inventory.length - saveItems.length + 1);
+    const keptNames = [];
+    for (let bi = 0; bi < saveItems.length - 1; bi++) {
+      const bonusItem = saveItems[bi + 1];
+      const bonusInv  = bonusInvItems[bi];
+      if (!bonusItem || !bonusInv) continue;
+      let autoSold = false;
+      if (S.autoSell && bonusItem.rarity !== 'pet') {
+        let shouldSell = false;
+        if (S.autoSellMode === 'rarity') {
+          const itemTier   = rarityTierOrder.indexOf(bonusItem.rarity);
+          const threshTier = rarityTierOrder.indexOf(S.autoSellRarity);
+          shouldSell = itemTier !== -1 && threshTier !== -1 && itemTier <= threshTier;
+        } else if (S.autoSellMode === 'price') {
+          shouldSell = bonusItem.value < S.autoSellPrice;
+        }
+        if (shouldSell) {
+          toast(`⚡ Auto-sold bonus ${bonusItem.icon} ${bonusItem.name} for 🪙 ${fmtNum(Math.floor(bonusItem.value))}`, 'gold', 2500);
+          sellItems([bonusInv.uniqueId]);
+          autoSold = true;
+        }
+      }
+      if (!autoSold) keptNames.push(`${bonusItem.icon} ${bonusItem.name}`);
+    }
+    if (keptNames.length) {
+      const label = keptNames.join(', ');
+      if (isVip) {
+        toast(`🐉 VIP GOLDEN DRAKE — DOUBLE REWARD! ${label}`, 'gold', 5000);
+      } else {
+        toast(`🎁 ${quadOpen ? 'QUAD' : 'DOUBLE'} CRACK BONUS: ${label}!`, 'gold', 6000);
+      }
     }
   }
 
@@ -4236,14 +4299,17 @@ async function redeemCode(){
         }
         if(!labels.length) throw new Error('BAD_REWARD');
         grantedLabel = labels.join(', ');
+      } else if(reward.type === 'autoroll'){
+        // Grant permanent autoroll to this user
+        grantedLabel = '⚡ Auto-Roll (permanent)';
+        // Flag is saved via the tx.update below
       } else {
         throw new Error('BAD_REWARD');
       }
 
-      tx.update(userRef, {
-        coins: newCoins,
-        inventory: newInventory,
-      });
+      const userUpdate = { coins: newCoins, inventory: newInventory };
+      if(reward.type === 'autoroll') userUpdate.hasAutoRoll = true;
+      tx.update(userRef, userUpdate);
       tx.update(codeRef, {
         used: true,
         usedBy: S.user.uid,
@@ -4251,7 +4317,7 @@ async function redeemCode(){
         usedAt: new Date().toISOString(),
       });
 
-      rewardResult = { label: grantedLabel, newCoins, newInventory };
+      rewardResult = { label: grantedLabel, newCoins, newInventory, hasAutoRoll: reward.type === 'autoroll' };
     });
 
     // Refresh local state after successful transaction
@@ -4259,6 +4325,11 @@ async function redeemCode(){
       S.profile.coins = rewardResult.newCoins;
       S.inventory = rewardResult.newInventory;
       updateCoinDisplay(S.profile.coins);
+      if(rewardResult.hasAutoRoll){
+        S.hasAutoRoll = true;
+        S.profile.hasAutoRoll = true;
+        updateAutoRollUI();
+      }
       if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
       msg.style.color = '#22c55e';
       msg.textContent = `✅ Redeemed! You received ${rewardResult.label}`;
@@ -4394,6 +4465,13 @@ const DEFAULT_PRODUCTS = [
     label: 'VIP Pack — 🐉 VIP Golden Drake + 75,000 Coins',
     priceLabel: '$10.00',
     reward: { type: 'bundle', petId: 'p_vip1', coins: 75000 },
+    active: true,
+  },
+  {
+    id: 'autoroll_pack',
+    label: '⚡ Auto-Roll — Automatically open crates without clicking!',
+    priceLabel: '$1.00',
+    reward: { type: 'autoroll' },
     active: true,
   },
 ];
@@ -4724,6 +4802,127 @@ document.getElementById('shop-cashtag-input').addEventListener('keydown', e=>{
   if(e.key === 'Enter') submitCashTag();
 });
 document.getElementById('add-product-btn').addEventListener('click', addShopProduct);
+
+
+// ============================================================
+// AUTO-ROLL ENGINE
+// ============================================================
+function updateAutoRollUI() {
+  const locked   = document.getElementById('autoroll-locked');
+  const unlocked = document.getElementById('autoroll-unlocked');
+  if (!locked || !unlocked) return;
+
+  const has = S.hasAutoRoll || (S.profile && S.profile.hasAutoRoll === true);
+  if (has) {
+    locked.classList.add('hidden');
+    unlocked.classList.remove('hidden');
+  } else {
+    locked.classList.remove('hidden');
+    unlocked.classList.add('hidden');
+    stopAutoRoll();
+  }
+}
+
+function startAutoRoll() {
+  if (S.autoRollIntervalId) return; // already running
+  const speedEl = document.getElementById('autoroll-speed');
+  const delay   = speedEl ? parseInt(speedEl.value) : 1500;
+
+  toast('⚡ Auto-Roll started!', 'success', 2000);
+
+  // Trigger immediately then on interval
+  triggerAutoRoll();
+  S.autoRollIntervalId = setInterval(triggerAutoRoll, delay);
+  updateAutoRollStatusDesc();
+}
+
+function stopAutoRoll() {
+  if (S.autoRollIntervalId) {
+    clearInterval(S.autoRollIntervalId);
+    S.autoRollIntervalId = null;
+  }
+  S.autoRollActive = false;
+  const toggle = document.getElementById('autoroll-toggle');
+  if (toggle) toggle.checked = false;
+  updateAutoRollStatusDesc();
+}
+
+function triggerAutoRoll() {
+  // Must be on crate opening page with a crate selected
+  if (!document.getElementById('page-opening').classList.contains('active')) {
+    stopAutoRoll();
+    toast('⚡ Auto-Roll stopped — not on a crate page.', '', 2500);
+    return;
+  }
+  if (!S.currentCrate || !S.user || !S.profile) return;
+  // Don't fire if already rolling
+  if (crateCooldown) return;
+  // Check coins
+  const price = getCratePrice(S.currentCrate);
+  if (S.profile.coins < price) {
+    stopAutoRoll();
+    toast('⚡ Auto-Roll stopped — not enough coins!', 'error', 3000);
+    return;
+  }
+  document.getElementById('btn-open-crate').click();
+}
+
+function updateAutoRollStatusDesc() {
+  const desc = document.getElementById('autoroll-status-desc');
+  if (!desc) return;
+  if (S.autoRollIntervalId) {
+    const speedEl = document.getElementById('autoroll-speed');
+    const delay   = speedEl ? parseInt(speedEl.value) : 1500;
+    desc.textContent = `⚡ RUNNING — opening every ~${(delay/1000).toFixed(1)}s`;
+    desc.style.color  = '#22c55e';
+  } else {
+    desc.textContent  = 'Automatically opens crates at a set speed.';
+    desc.style.color  = '';
+  }
+}
+
+// Wire up toggle and speed selector once DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle  = document.getElementById('autoroll-toggle');
+  const speedEl = document.getElementById('autoroll-speed');
+  const speedNote = document.getElementById('autoroll-speed-note');
+
+  if (toggle) {
+    toggle.addEventListener('change', () => {
+      if (toggle.checked) {
+        S.autoRollActive = true;
+        startAutoRoll();
+      } else {
+        stopAutoRoll();
+      }
+    });
+  }
+
+  if (speedEl && speedNote) {
+    speedEl.addEventListener('change', () => {
+      const delay = parseInt(speedEl.value);
+      speedNote.textContent = `Opens every ~${(delay/1000).toFixed(1)}s`;
+      // Restart with new speed if currently running
+      if (S.autoRollIntervalId) {
+        clearInterval(S.autoRollIntervalId);
+        S.autoRollIntervalId = setInterval(triggerAutoRoll, delay);
+        updateAutoRollStatusDesc();
+      }
+    });
+  }
+});
+
+// Stop auto-roll if player navigates away from opening page
+const _origShowPage = showPage;
+function showPage(id) {
+  _origShowPage(id);
+  if (id !== 'opening' && S.autoRollIntervalId) {
+    stopAutoRoll();
+    toast('⚡ Auto-Roll stopped — left crate page.', '', 2500);
+  }
+  // Refresh autoroll UI when settings page opens
+  if (id === 'settings') updateAutoRollUI();
+}
 
 // ============================================================
 // AFK PUZZLE SYSTEM
