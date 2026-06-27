@@ -4720,7 +4720,7 @@ async function handleAfkFail(){
   }
 })();
   
-// ====================== RULES MODAL ======================
+// ====================== RULES MODAL (Fixed) ======================
 const RULES_TEXT = `
 <h3>1. General Conduct</h3>
 <p>• Be respectful. No toxicity, harassment, or spam.<br>
@@ -4758,47 +4758,42 @@ function showRulesModal() {
   const acceptBtn = document.getElementById('accept-rules');
   const declineBtn = document.getElementById('decline-rules');
 
-  // Reset state
+  // Reset
   checkbox.checked = false;
   acceptBtn.disabled = true;
+  acceptBtn.style.opacity = "0.5";
 
-  // Remove old listeners to prevent duplicates
-  acceptBtn.replaceWith(acceptBtn.cloneNode(true));
-  declineBtn.replaceWith(declineBtn.cloneNode(true));
-
-  const newAcceptBtn = document.getElementById('accept-rules');
-  const newDeclineBtn = document.getElementById('decline-rules');
-
-  checkbox.onchange = () => {
-    newAcceptBtn.disabled = !checkbox.checked;
+  // Checkbox enables Accept button
+  checkbox.onchange = function() {
+    acceptBtn.disabled = !this.checked;
+    acceptBtn.style.opacity = this.checked ? "1" : "0.5";
   };
 
-  newAcceptBtn.onclick = () => {
+  // Accept button
+  acceptBtn.onclick = function() {
     localStorage.setItem('cv_rules_accepted', 'true');
     modal.classList.add('hidden');
     toast('✅ Welcome to CrateVault!', 'success');
   };
 
-  newDeclineBtn.onclick = () => {
+  // Decline button
+  declineBtn.onclick = function() {
     window.location.href = "https://google.com";
   };
 
   modal.classList.remove('hidden');
 }
 
+// Check on game load
 function checkRulesAcceptance() {
   if (localStorage.getItem('cv_rules_accepted') !== 'true') {
     setTimeout(() => {
       if (document.getElementById('game-screen').classList.contains('active')) {
         showRulesModal();
       }
-    }, 1000);
+    }, 800);
   }
 }
-
-// Call this after login success
-// Add this in your login/register success code:
-checkRulesAcceptance();
 </script>
 </body>
 </html>
