@@ -549,7 +549,94 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 .nav-item[data-page="wheel"].wheel-ready::after {
   display: block;
 }
-  
+  /* RULES MODAL */
+.rules-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 16, 0.97);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.rules-modal-inner {
+  background: var(--bg-card);
+  border: 2px solid var(--accent);
+  border-radius: var(--rl);
+  width: 100%;
+  max-width: 620px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(79, 142, 247, 0.4);
+}
+
+.rules-header {
+  text-align: center;
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rules-header .logo-icon {
+  font-size: 2.8rem;
+  margin-bottom: 8px;
+}
+
+.rules-header h2 {
+  font-family: var(--font-d);
+  font-size: 1.5rem;
+  letter-spacing: .1em;
+  margin-bottom: 6px;
+}
+
+.rules-content {
+  padding: 20px 24px;
+  overflow-y: auto;
+  max-height: 55vh;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.rules-content h3 {
+  color: var(--accent);
+  margin: 18px 0 8px;
+  font-family: var(--font-d);
+}
+
+.rules-footer {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-dark);
+}
+
+.rules-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.rules-checkbox input {
+  margin-top: 4px;
+  accent-color: var(--accent);
+}
+
+.rules-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.rules-modal.hidden { display: none; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -1021,7 +1108,31 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <button class="btn-ultra-close" id="btn-ultra-close">INCREDIBLE!</button>
   </div>
 </div>
+  
+<!-- RULES ACCEPTANCE MODAL -->
+<div id="rules-modal" class="rules-modal hidden">
+  <div class="rules-modal-inner">
+    <div class="rules-header">
+      <div class="logo-icon">⚡</div>
+      <h2>CRATEVAULT RULES</h2>
+      <p>You must accept the rules to continue</p>
+    </div>
+    
+    <div class="rules-content" id="rules-content"></div>
 
+    <div class="rules-footer">
+      <label class="rules-checkbox">
+        <input type="checkbox" id="accept-checkbox">
+        <span>I have read and agree to the <strong>Rules & Terms</strong></span>
+      </label>
+      
+      <div class="rules-buttons">
+        <button id="decline-rules" class="btn-ghost">Decline & Exit</button>
+        <button id="accept-rules" class="btn-primary" disabled>ACCEPT & ENTER VAULT</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 // ============================================================
 // SETTINGS — persisted to localStorage
@@ -4460,6 +4571,76 @@ async function handleAfkFail(){
     spawnParticles();
   }
 })();
+  
+const RULES_TEXT = `
+<h3>1. General Conduct</h3>
+<p>• Be respectful. No toxicity, harassment, or spam.<br>
+• English preferred in global chat.</p>
+
+<h3>2. Fair Play</h3>
+<p>• No bots, macros, scripts, or exploits.<br>
+• No multi-accounting for unfair advantage.<br>
+• No bug abuse — report bugs instead.</p>
+• No hacking</p>
+• No manipulating the server</p>
+
+<h3>3. Trading</h3>
+<p>• Double-check all offers before accepting.<br>
+• Scamming will result in a ban.</p>
+
+<h3>4. Shop & Payments</h3>
+<p>• All purchases via official Cash App.<br>
+• Payments are final. No refunds after delivery.<br>
+• Chargebacks = permanent ban.</p>
+
+<h3>5. Consequences</h3>
+<p>Violations may lead to warnings, temporary bans, permanent bans, or inventory/coin wipes.</p>
+
+<p style="margin-top:16px; font-size:0.85rem; color:var(--text-3)">
+By accepting, you agree to our full <strong>Terms of Service</strong> and understand that this game contains gambling-like mechanics. Play responsibly.
+</p>
+`;
+
+function showRulesModal() {
+  const modal = document.getElementById('rules-modal');
+  const content = document.getElementById('rules-content');
+  content.innerHTML = RULES_TEXT;
+  
+  const checkbox = document.getElementById('accept-checkbox');
+  const acceptBtn = document.getElementById('accept-rules');
+  const declineBtn = document.getElementById('decline-rules');
+
+  checkbox.checked = false;
+  acceptBtn.disabled = true;
+
+  checkbox.onchange = () => acceptBtn.disabled = !checkbox.checked;
+
+  acceptBtn.onclick = () => {
+    localStorage.setItem('cv_rules_accepted', 'true');
+    modal.classList.add('hidden');
+    toast('✅ Welcome to CrateVault!', 'success');
+  };
+
+  declineBtn.onclick = () => {
+    window.location.href = "https://google.com";
+  };
+
+  modal.classList.remove('hidden');
+}
+
+function checkRulesAcceptance() {
+  if (localStorage.getItem('cv_rules_accepted') !== 'true') {
+    setTimeout(() => {
+      if (document.getElementById('game-screen').classList.contains('active')) {
+        showRulesModal();
+      }
+    }, 1200);
+  }
+}
+
+// Call this after successful login
+// Add this line in your login/register success handler:
+checkRulesAcceptance();
 </script>
 </body>
 </html>
