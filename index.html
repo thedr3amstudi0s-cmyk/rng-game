@@ -2536,30 +2536,46 @@ async function checkAutoClicker() {
 
 
 let crateCooldown = false;
+
+function lockOpenBtn() {
+  const btn = document.getElementById('btn-open-crate');
+  btn.disabled = true;
+  btn.textContent = '🎲 ROLLING...';
+  btn.style.opacity = '0.6';
+  btn.style.cursor = 'not-allowed';
+}
+
+function unlockOpenBtn() {
+  const btn = document.getElementById('btn-open-crate');
+  btn.disabled = false;
+  btn.textContent = 'OPEN CRATE';
+  btn.style.opacity = '1';
+  btn.style.cursor = '';
+  crateCooldown = false;
+}
+
 document.getElementById('btn-open-crate').addEventListener('click', async () => {
-  // ❗ ANTI-CHEAT CHECK FIRST (must be first line)
+  // Hard guard — disabled attribute blocks this but just in case
+  if (crateCooldown) return;
+
+  // ❗ ANTI-CHEAT CHECK
   const flagged = await checkAutoClicker();
   if (flagged) return;
 
-  // ❗ COOLDOWN BLOCK
-  if (crateCooldown) return;
+  // Lock immediately — before any async work
   crateCooldown = true;
-
-  const btn = document.getElementById('btn-open-crate');
-  btn.style.opacity = 0.5;
-  btn.style.pointerEvents = "none";
+  lockOpenBtn();
 
   const crate = S.currentCrate;
   if (!crate || !S.user || !S.profile) {
-    btn.style.opacity = 1;
-    btn.style.pointerEvents = "auto";
-    crateCooldown = false;
+    unlockOpenBtn();
     return;
   }
 
   const price = getCratePrice(crate);
   if (S.profile.coins < price) {
     toast('Not enough coins! 🪙', 'error');
+    unlockOpenBtn();
     return;
   }
 
@@ -2578,7 +2594,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   }
 
   if (!saveItems.length) {
-    btn.disabled = false;
+    unlockOpenBtn();
     return;
   }
 
@@ -2692,9 +2708,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
     }
   }
 
-  btn.style.opacity = 1;
-  btn.style.pointerEvents = "auto";
-  crateCooldown = false;
+  unlockOpenBtn();
 });
   
 function animateSpin(crate, winningItems){
