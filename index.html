@@ -2663,9 +2663,11 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
     toast('Save error: ' + e.message, 'error');
   }
 
-  // Show result (first item)
-  const firstInv = S.inventory[S.inventory.length - saveItems.length];
-  showResult(saveItems[0], getRarity(saveItems[0].rarity), firstInv);
+  // Auto-sell check every rolled item
+for (let i = 0; i < saveItems.length; i++) {
+  const invItem = S.inventory[S.inventory.length - saveItems.length + i];
+  showResult(saveItems[i], getRarity(saveItems[i].rarity), invItem);
+}
 
   // VIP / Multi-crack toast
   if (saveItems.length > 1) {
@@ -2776,7 +2778,7 @@ function animateSpin(crate, winningItems){
   });
 }
 
-function showResult(item,r,invItem){
+function showResult(item,r,invItem,showPanel=true){
   S.lastOpenedInvItem=invItem;
 
   if(!S.profile.seenItems) S.profile.seenItems=[];
@@ -2819,7 +2821,9 @@ function showResult(item,r,invItem){
     rarEl.classList.add('rainbow-text');
     rarEl.style.borderColor='#fff';
     document.getElementById('result-value').textContent='Perk: '+item.perkName+' — '+item.perkDesc;
-    panel.classList.remove('hidden');
+    if(showPanel){
+      panel.classList.remove('hidden');
+  }
     return;
   }
 
@@ -3963,7 +3967,7 @@ function spinLuckyWheel(){
 
       // Grant prize
       if(prize.amount === 'pet'){
-        document.getElementById('wheel-result').textContent = '🌈 1 IN 1,000,000 PET!';
+        document.getElementById('wheel-result').textContent = '🌈 1 IN 100,000 PET!';
         toast('🌈 You won the exclusive Wheel pet!!!', 'gold', 6000);
 
         const wonPet = PETS_BY_CRATE['wheel'][0];
