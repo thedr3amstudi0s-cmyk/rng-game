@@ -2541,95 +2541,6 @@ function analyzeMouseMovement() {
   return { suspicious: false, reason: '' };
 }
 
-// ── Anti-autoclicker ──────────────────────────────────────────
-let _openTimestamps = [];
-let _acStrikeCount = 0;
-let _acBanned = false;
-
-async function checkAutoClicker() {
-  if (_acBanned) {
-    toast('⛔ You have been flagged for suspicious activity.', 'error', 8000);
-    return true;
-  }
-
-  const now = Date.now();
-
-  // Keep only the last 20 timestamps
-  _openTimestamps.push(now);
-  if (_openTimestamps.length > 20) _openTimestamps.shift();
-
-  // Need at least 3 clicks to start measuring
-  if (_openTimestamps.length < 3) return false;
-
-  // Calculate gaps between consecutive clicks
-  const gaps = [];
-  for (let i = 1; i < _openTimestamps.length; i++) {
-    gaps.push(_openTimestamps[i] - _openTimestamps[i - 1]);
-  }
-
-  const minGap = Math.min(...gaps);
-  const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
-
-  const tooFast = minGap < 120;
-
-  const variance = gaps.reduce((a, b) => a + Math.pow(b - avgGap, 2), 0) / gaps.length;
-  const stdDev = Math.sqrt(variance);
-  const roboticRhythm = avgGap < 250 && stdDev < 40 && gaps.length >= 5;
-
-  const recentClicks = _openTimestamps.filter(t => now - t < 800).length;
-  const burstClick = recentClicks >= 5;
-
-  // ── Mouse movement analysis ───────────────────────────────────
-  const mouseResult = analyzeMouseMovement();
-  const suspiciousMouse = mouseResult.suspicious;
-
-  // Combine signals — clicking fast + weird mouse = very suspicious
-  const clickSuspicious = tooFast || roboticRhythm || burstClick;
-  const flagged = clickSuspicious || (suspiciousMouse && _openTimestamps.length >= 5);
-
-  if (flagged) {
-    _acStrikeCount++;
-
-    const reason = [
-      tooFast ? `minGap:${minGap}ms` : '',
-      roboticRhythm ? `roboticRhythm avg:${Math.round(avgGap)}ms stdDev:${Math.round(stdDev)}` : '',
-      burstClick ? `burst:${recentClicks}` : '',
-      suspiciousMouse ? `mouse:${mouseResult.reason}` : '',
-    ].filter(Boolean).join(' | ');
-
-    if (_acStrikeCount >= 2) {
-      _acBanned = true;
-      _openTimestamps = [];
-      await leavePresence();
-      try {
-        if (S.user) {
-          db.collection('users').doc(S.user.uid).update({
-            acFlagged: true,
-            acFlaggedAt: new Date().toISOString(),
-            acReason: reason,
-          }).catch(() => {});
-        }
-      } catch(e) {}
-      toast('⛔ Suspicious activity detected. You have been flagged.', 'error', 10000);
-      return true;
-    } else {
-      const mouseMsg = suspiciousMouse ? {
-        no_movement: 'No mouse movement detected.',
-        perfect_line: 'Robotic mouse path detected.',
-        loop_pattern: 'Repeating movement loop detected.',
-        uniform_speed: 'Unnaturally uniform mouse speed detected.',
-      }[mouseResult.reason] || '' : '';
-
-      toast(`⚠️ Suspicious activity detected. ${mouseMsg} Strike ${_acStrikeCount}/2.`, 'error', 6000);
-      _openTimestamps = [];
-      return true;
-    }
-  }
-
-  return false;
-}
-
-
 let crateCooldown = false;
 
 function lockOpenBtn() {
@@ -2652,10 +2563,6 @@ function unlockOpenBtn() {
 document.getElementById('btn-open-crate').addEventListener('click', async () => {
   // Hard guard — disabled attribute blocks this but just in case
   if (crateCooldown) return;
-
-  // ❗ ANTI-CHEAT CHECK
-  const flagged = await checkAutoClicker();
-  if (flagged) return;
 
   // Lock immediately — before any async work
   crateCooldown = true;
