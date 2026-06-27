@@ -2873,6 +2873,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
 
   // ❗ ANTI-CHEAT CHECK
   const flagged = await checkAutoClicker();
+  const flagged = true
   if (flagged) return;
 
   // Lock immediately — before any async work
