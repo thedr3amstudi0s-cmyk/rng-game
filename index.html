@@ -1693,6 +1693,132 @@ const S = {
   executedTradeIds: new Set(),
 };
 
+
+  // ============================================================
+// PROGRESSIVE ANTI-AUTOCLICKER + TEMP BAN SYSTEM
+// ============================================================
+const ANTI_CLICK = {
+  lastClickTime: 0,
+  clickHistory: [],
+  warningCount: 0,
+  banStart: null,
+  banDuration: 0
+};
+
+function getBanLevel(banCount) {
+  return Math.pow(2, Math.max(0, banCount - 1)) * 5 * 60 * 1000; // 5,10,20,40,... minutes
+}
+
+async function checkAutoClicker() {
+  if (isCurrentlyBanned()) return true;
+
+  const now = Date.now();
+  ANTI_CLICK.clickHistory.push(now);
+  if (ANTI_CLICK.clickHistory.length > 25) ANTI_CLICK.clickHistory.shift();
+
+  const timeSinceLast = now - ANTI_CLICK.lastClickTime;
+  if (timeSinceLast < 160) ANTI_CLICK.warningCount++;
+
+  // Check clicks per second in recent window
+  if (ANTI_CLICK.clickHistory.length >= 10) {
+    const span = now - ANTI_CLICK.clickHistory[ANTI_CLICK.clickHistory.length - 10];
+    const cps = 10 / (span / 1000);
+    if (cps > 4) ANTI_CLICK.warningCount += 2;
+  }
+
+  ANTI_CLICK.lastClickTime = now;
+
+  if (ANTI_CLICK.warningCount >= 6) {
+    await applyTempBan();
+    return true;
+  }
+
+  if (ANTI_CLICK.warningCount >= 3) {
+    toast('⚠️ Slow down! You are clicking too fast.', 'error', 3500);
+  }
+  return false;
+}
+
+async function applyTempBan() {
+  if (!S.user) return;
+
+  const banCount = (S.profile.banCount || 0) + 1;
+  const durationMs = getBanLevel(banCount);
+
+  const banData = {
+    banStart: firebase.firestore.FieldValue.serverTimestamp(),
+    banDuration: durationMs,
+    banCount: banCount,
+    banReason: 'Autoclicker / Macro'
+  };
+
+  try {
+    await db.collection('users').doc(S.user.uid).update(banData);
+    S.profile.banStart = new Date();
+    S.profile.banDuration = durationMs;
+    S.profile.banCount = banCount;
+
+    showBanOverlay(durationMs);
+    toast(`🚫 Temp Ban Applied (${Math.floor(durationMs/60000)} minutes)`, 'error', 8000);
+  } catch(e) {}
+}
+
+function isCurrentlyBanned() {
+  if (!S.profile?.banStart || !S.profile?.banDuration) return false;
+
+  const start = S.profile.banStart?.toDate ? S.profile.banStart.toDate() : new Date(S.profile.banStart);
+  const elapsed = Date.now() - start.getTime();
+  return elapsed < S.profile.banDuration;
+}
+
+function showBanOverlay(durationMs) {
+  let overlay = document.getElementById('ban-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'ban-overlay';
+    overlay.style.cssText = `
+      position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:99999;
+      display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-d);
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  const endTime = Date.now() + durationMs;
+
+  function updateTimer() {
+    const remaining = Math.max(0, endTime - Date.now());
+    const minutes = Math.floor(remaining / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    overlay.innerHTML = `
+      <div style="background:#ef4444; border:3px solid #fff; border-radius:16px; padding:40px 60px; text-align:center; max-width:420px;">
+        <div style="font-size:3rem; margin-bottom:16px;">🚫</div>
+        <div style="font-size:1.4rem; font-weight:900; letter-spacing:2px;">ACCOUNT TEMPORARILY BANNED</div>
+        <div style="margin:20px 0; font-size:2.2rem; font-weight:900; color:#fff;" id="ban-timer">
+          ${minutes}:${seconds.toString().padStart(2,'0')}
+        </div>
+        <div style="color:#fdd;">Reason: Autoclicker / Macro</div>
+        <div style="margin-top:24px; font-size:0.95rem; opacity:0.85;">
+          Next ban will be longer.
+        </div>
+      </div>
+    `;
+    if (remaining <= 0) {
+      overlay.remove();
+      return;
+    }
+    setTimeout(updateTimer, 1000);
+  }
+
+  updateTimer();
+}
+
+// Load ban status on profile load
+function checkBanStatusOnLoad() {
+  if (isCurrentlyBanned()) {
+    const remaining = (S.profile.banStart.toDate ? S.profile.banStart.toDate() : new Date(S.profile.banStart)).getTime() + S.profile.banDuration - Date.now();
+    if (remaining > 0) showBanOverlay(remaining);
+  }
+}
 // ============================================================
 // UTILITY
 // ============================================================
@@ -1857,6 +1983,7 @@ function startAuthObserver(){
       S.user=user;
       showScreen('game-screen');
       checkRulesAcceptance();
+      checkBanStatusOnLoad();
       hideLoadingOverlay();
       loadSettings();
       loadCratesPage();
@@ -2504,6 +2631,13 @@ function rollItem(crateId){
 }
 
 document.getElementById('btn-open-crate').addEventListener('click', async () => {
+  if (isCurrentlyBanned()) {
+    toast('You are currently banned from opening crates.', 'error');
+    return;
+  }
+
+  if (await checkAutoClicker()) return;
+  
   const crate = S.currentCrate;
   if (!crate || !S.user || !S.profile) return;
 
