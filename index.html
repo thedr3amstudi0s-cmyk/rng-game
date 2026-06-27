@@ -784,6 +784,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               <option value="name">Sort: Name</option>
             </select>
             <button class="btn-sell-selected" id="btn-sell-selected">SELL SELECTED</button>
+            <button class="btn-sell-selected" id="btn-sell-all" style="background:#ef4444;color:#fff;">SELL ALL</button>
           </div>
         </div>
         <div class="auto-sell-panel" id="auto-sell-panel">
@@ -2790,27 +2791,173 @@ document.querySelectorAll('.rarity-chip').forEach(chip=>{
 
 document.getElementById('auto-sell-price-input').addEventListener('input',e=>{ S.autoSellPrice=parseInt(e.target.value)||0; });
 
+// Add locked property support
 function renderInventory(){
-  const grid=document.getElementById('inventory-grid');
-  const search=document.getElementById('inv-search').value.toLowerCase();
-  const sort=document.getElementById('inv-sort').value;
-  let items=[...S.inventory];
-  if(search) items=items.filter(inv=>{const it=getItem(inv.itemId);return it&&it.name.toLowerCase().includes(search);});
-  items.sort((a,b)=>{
-    const ia=getItem(a.itemId),ib=getItem(b.itemId); if(!ia||!ib)return 0;
-    if(sort==='rarity') return (getRarity(ib.rarity).tier||0)-(getRarity(ia.rarity).tier||0);
-    if(sort==='value')  return ib.value-ia.value;
-    if(sort==='name')   return ia.name.localeCompare(ib.name);
+  const grid = document.getElementById('inventory-grid');
+  const search = document.getElementById('inv-search').value.toLowerCase();
+  const sort = document.getElementById('inv-sort').value;
+  
+  let items = [...S.inventory];
+  
+  if(search) {
+    items = items.filter(inv => {
+      const it = getItem(inv.itemId);
+      return it && it.name.toLowerCase().includes(search);
+    });
+  }
+
+  // Sort
+  items.sort((a,b) => {
+    const ia = getItem(a.itemId), ib = getItem(b.itemId);
+    if(!ia || !ib) return 0;
+    if(sort === 'rarity') return (getRarity(ib.rarity).tier||0) - (getRarity(ia.rarity).tier||0);
+    if(sort === 'value')  return (ib.value||0) - (ia.value||0);
+    if(sort === 'name')   return ia.name.localeCompare(ib.name);
     return 0;
   });
-  grid.innerHTML='';
+
+  grid.innerHTML = '';
   if(!items.length){
-    grid.innerHTML='<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">Your inventory is empty. Open some crates!</div>';
-  } else { items.forEach(inv=>makeItemCard(inv,grid,true)); }
-  const total=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-  document.getElementById('inv-count').textContent=S.inventory.length+' items';
-  document.getElementById('inv-total-value').textContent='Total: '+fmtNum(total)+' 🪙';
+    grid.innerHTML = '<div style="color:var(--text-3);font-style:italic;grid-column:1/-1">Your inventory is empty.</div>';
+  } else {
+    items.forEach(inv => makeItemCard(inv, grid, true));
+  }
+
+  const total = S.inventory.reduce((s, inv) => {
+    const it = getItem(inv.itemId);
+    return s + (it ? it.value : 0);
+  }, 0);
+  
+  document.getElementById('inv-count').textContent = S.inventory.length + ' items';
+  document.getElementById('inv-total-value').textContent = 'Total: ' + fmtNum(total) + ' 🪙';
 }
+
+// Enhanced makeItemCard with right-click lock
+function makeItemCard(inv, container, selectable = false){
+  const item = getItem(inv.itemId);
+  if(!item) return null;
+
+  const isPet = item.rarity === 'pet';
+  const r = getRarity(item.rarity);
+  const col = r.color === '#ffffff' ? '#aaa' : r.color;
+
+  const card = document.createElement('div');
+  card.className = `item-card${item.rarity==='divine' ? ' rarity-divine' : ''}${isPet ? ' pet-rainbow' : ''}`;
+  card.style.setProperty('--ic', col + 'aa');
+  card.style.setProperty('--ig', r.glow || '#9ca3af33');
+  card.dataset.uid = inv.uniqueId;
+
+  if(selectable && S.selectedItems.has(inv.uniqueId)) card.classList.add('selected');
+
+  // Lock indicator
+  const locked = inv.locked === true;
+  const lockHTML = locked ? `<span style="position:absolute;top:4px;right:4px;font-size:1.1rem;filter:drop-shadow(0 0 4px #f59e0b);">🔒</span>` : '';
+
+  const sourceCrate = CRATES.find(c => c.id === inv.crateSource);
+  const sourceIconHTML = (isPet && sourceCrate) ? `<span class="pet-source-icon" title="Found in ${sourceCrate.name}">${sourceCrate.icon}</span>` : '';
+
+  const nameHTML = isPet ? `<div class="item-name rainbow-text">${item.name}</div>` : `<div class="item-name">${item.name}</div>`;
+  const valueHTML = isPet ? `<div class="item-value-small" style="color:var(--text-2)">${item.perkName}</div>` : `<div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
+
+  let equipHTML = '';
+  if(isPet && selectable){
+    const equipped = S.profile?.equippedPetUid === inv.uniqueId;
+    equipHTML = `<button class="pet-equip-btn${equipped?' equipped':''}" type="button">${equipped?'★ EQUIPPED':'EQUIP'}</button>`;
+  }
+
+  card.innerHTML = `${lockHTML}${sourceIconHTML}<span class="item-icon">${item.icon}</span>${nameHTML}${valueHTML}${equipHTML}`;
+
+  // Right click to lock/unlock
+  card.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    toggleLock(inv.uniqueId);
+  });
+
+  // Rest of your existing click handlers...
+  if(selectable){
+    card.addEventListener('click', e => {
+      if(e.target.closest('.pet-equip-btn')) return;
+      if(S.selectedItems.has(inv.uniqueId)){
+        S.selectedItems.delete(inv.uniqueId);
+        card.classList.remove('selected');
+      } else {
+        S.selectedItems.add(inv.uniqueId);
+        card.classList.add('selected');
+      }
+    });
+  }
+
+  if(isPet && selectable){
+    const eqBtn = card.querySelector('.pet-equip-btn');
+    if(eqBtn) eqBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      equipPet(inv.uniqueId);
+    });
+  }
+
+  card.addEventListener('mouseenter', e => showTip(e, item, r));
+  card.addEventListener('mouseleave', () => document.getElementById('item-tooltip').classList.add('hidden'));
+
+  container.appendChild(card);
+  return card;
+}
+
+// Toggle lock
+function toggleLock(uniqueId){
+  const item = S.inventory.find(i => i.uniqueId === uniqueId);
+  if(!item) return;
+
+  item.locked = !item.locked;
+
+  // Save to Firestore
+  db.collection('users').doc(S.user.uid).update({
+    inventory: S.inventory
+  }).catch(() => {});
+
+  toast(item.locked ? '🔒 Item Locked' : '🔓 Item Unlocked', 'gold');
+  renderInventory();
+}
+
+// SELL ALL FUNCTION
+document.getElementById('btn-sell-all').addEventListener('click', async () => {
+  if(!S.inventory.length){
+    toast('No items to sell!', 'error');
+    return;
+  }
+
+  let toSell = S.inventory.filter(inv => {
+    const item = getItem(inv.itemId);
+    if(!item || inv.locked === true) return false; // Skip locked items
+    if(item.sellable === false) return false; // VIP protection
+
+    // Respect auto-sell settings if enabled
+    if(S.autoSell){
+      if(S.autoSellMode === 'rarity'){
+        const tier = rarityTierOrder.indexOf(item.rarity);
+        const thresh = rarityTierOrder.indexOf(S.autoSellRarity);
+        return tier !== -1 && thresh !== -1 && tier <= thresh;
+      } else if(S.autoSellMode === 'price'){
+        return item.value < (S.autoSellPrice || 0);
+      }
+    }
+    return true; // Sell all if auto-sell is off
+  });
+
+  if(!toSell.length){
+    toast('No items match your sell criteria (or all are locked)', 'error');
+    return;
+  }
+
+  const confirmMsg = `Sell ${toSell.length} items for ~${fmtNum(toSell.reduce((sum, inv) => {
+    const it = getItem(inv.itemId);
+    return sum + (it ? it.value : 0);
+  }, 0) * 0.9)} coins?`;
+
+  if(!confirm(confirmMsg)) return;
+
+  const ids = toSell.map(i => i.uniqueId);
+  await sellItems(ids);
+});
 
 function makeItemCard(inv,container,selectable=false){
   const item=getItem(inv.itemId); if(!item)return null;
@@ -4572,6 +4719,7 @@ async function handleAfkFail(){
   }
 })();
   
+// ====================== RULES MODAL ======================
 const RULES_TEXT = `
 <h3>1. General Conduct</h3>
 <p>• Be respectful. No toxicity, harassment, or spam.<br>
@@ -4581,8 +4729,6 @@ const RULES_TEXT = `
 <p>• No bots, macros, scripts, or exploits.<br>
 • No multi-accounting for unfair advantage.<br>
 • No bug abuse — report bugs instead.</p>
-• No hacking</p>
-• No manipulating the server</p>
 
 <h3>3. Trading</h3>
 <p>• Double-check all offers before accepting.<br>
@@ -4603,25 +4749,36 @@ By accepting, you agree to our full <strong>Terms of Service</strong> and unders
 
 function showRulesModal() {
   const modal = document.getElementById('rules-modal');
-  const content = document.getElementById('rules-content');
-  content.innerHTML = RULES_TEXT;
-  
+  if (!modal) return;
+
+  document.getElementById('rules-content').innerHTML = RULES_TEXT;
+
   const checkbox = document.getElementById('accept-checkbox');
   const acceptBtn = document.getElementById('accept-rules');
   const declineBtn = document.getElementById('decline-rules');
 
+  // Reset state
   checkbox.checked = false;
   acceptBtn.disabled = true;
 
-  checkbox.onchange = () => acceptBtn.disabled = !checkbox.checked;
+  // Remove old listeners to prevent duplicates
+  acceptBtn.replaceWith(acceptBtn.cloneNode(true));
+  declineBtn.replaceWith(declineBtn.cloneNode(true));
 
-  acceptBtn.onclick = () => {
+  const newAcceptBtn = document.getElementById('accept-rules');
+  const newDeclineBtn = document.getElementById('decline-rules');
+
+  checkbox.onchange = () => {
+    newAcceptBtn.disabled = !checkbox.checked;
+  };
+
+  newAcceptBtn.onclick = () => {
     localStorage.setItem('cv_rules_accepted', 'true');
     modal.classList.add('hidden');
     toast('✅ Welcome to CrateVault!', 'success');
   };
 
-  declineBtn.onclick = () => {
+  newDeclineBtn.onclick = () => {
     window.location.href = "https://google.com";
   };
 
@@ -4634,12 +4791,12 @@ function checkRulesAcceptance() {
       if (document.getElementById('game-screen').classList.contains('active')) {
         showRulesModal();
       }
-    }, 1200);
+    }, 1000);
   }
 }
 
-// Call this after successful login
-// Add this line in your login/register success handler:
+// Call this after login success
+// Add this in your login/register success code:
 checkRulesAcceptance();
 </script>
 </body>
