@@ -1873,6 +1873,7 @@ function startAuthObserver(){
     if(user){
       S.user=user;
       showScreen('game-screen');
+      checkRulesAcceptance();
       hideLoadingOverlay();
       loadSettings();
       loadCratesPage();
