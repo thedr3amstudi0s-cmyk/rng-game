@@ -2460,10 +2460,9 @@ function rollItem(crateId){
   }
   return pool[0] || null;
 }
-
-document.getElementById('btn-open-crate').addEventListener('click', async () => {
-  let crateCooldown = false;
   
+let crateCooldown = false;
+document.getElementById('btn-open-crate').addEventListener('click', async () => {
   // ❗ ANTI-CHEAT CHECK FIRST (must be first line)
   const flagged = await checkAutoClicker();
   if (flagged) return;
