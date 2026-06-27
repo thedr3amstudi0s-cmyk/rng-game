@@ -1502,7 +1502,7 @@ function updateEquippedPetDisplay(){
     desc.textContent='Perk: '+pet.perkName+' — '+pet.perkDesc;
   } else {
     disp.textContent='None equipped';
-    desc.textContent='Find secret pets (1 in 1M) in any crate!';
+    desc.textContent='Find secret pets (1 in 100k) in any crate!';
   }
 }
 
@@ -2246,7 +2246,7 @@ function buildCrateInfoPanel(crate){
     petOddsHTML += `
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem">
         <span class="rainbow-text" style="font-family:var(--font-d);font-weight:700;font-size:.65rem;letter-spacing:.05em">PET ???</span>
-        <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">1 in 1,000,000</span>
+        <span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">1 in 100,000</span>
       </div>`;
   });
 
@@ -3459,9 +3459,9 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 const WHEEL_PRIZES=[
   {label:'200',        amount:200,   color:'#ef4444', textColor:'#fff', weight:42},
   {label:'450',        amount:450,   color:'#f97316', textColor:'#fff', weight:28},
-  {label:'900',        amount:900,   color:'#eab308', textColor:'#000', weight:18},
-  {label:'1800',       amount:1800,  color:'#22c55e', textColor:'#fff', weight:11},
-  {label:'1 IN 1M\nPET', amount:'pet', color:'#a855f7', textColor:'#fff', weight:1},
+  {label:'900',        amount:900,   color:'#eab308', textColor:'#fff', weight:18},
+  {label:'1800',       amount:1800,  color:'#22c55e', textColor:'#fff', weight:11.09},
+  {label:'1 IN 100,000k\nPET', amount:'pet', color:'#a855f7', textColor:'#fff', weight:0.01},
 ];
 const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5 — still 5 equal-size visual segments
 const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
