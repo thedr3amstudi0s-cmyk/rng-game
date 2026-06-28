@@ -2838,7 +2838,7 @@ let _acBanned = false;
 
 async function checkAutoClicker() {
   if (_acBanned) {
-    toast('⛔ You have been flagged for suspicious activity.', 'error', 8000);
+    _acBanned = false;
     return true;
   }
 
@@ -2879,7 +2879,7 @@ async function checkAutoClicker() {
 
   if (flagged) {
     _acStrikeCount++;
-
+    flagged = false;
     const reason = [
       tooFast ? `minGap:${minGap}ms` : '',
       roboticRhythm ? `roboticRhythm avg:${Math.round(avgGap)}ms stdDev:${Math.round(stdDev)}` : '',
@@ -2888,7 +2888,7 @@ async function checkAutoClicker() {
     ].filter(Boolean).join(' | ');
 
     if (_acStrikeCount >= 2) {
-      _acBanned = true;
+      _acBanned = false;
       _openTimestamps = [];
       await leavePresence();
       try {
@@ -2900,7 +2900,6 @@ async function checkAutoClicker() {
           }).catch(() => {});
         }
       } catch(e) {}
-      toast('⛔ Suspicious activity detected. You have been flagged.', 'error', 10000);
       return true;
     } else {
       const mouseMsg = suspiciousMouse ? {
