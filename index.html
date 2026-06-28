@@ -756,6 +756,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             </div>
           </div>
         </div>
+
+        <!-- GEM CRATES -->
+        <div style="margin-top:32px">
+          <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.2em;color:#a855f7;margin-bottom:6px">💎 GEM-ONLY CRATES</div>
+          <div style="font-size:.78rem;color:var(--text-3);margin-bottom:14px">These special crates require 💎 Gems. Earn gems from the Shop tab.</div>
+          <div class="crates-grid" id="gem-crates-grid"></div>
+        </div>
       </section>
 
       <!-- INVENTORY -->
@@ -936,7 +943,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         <div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap">
           <button class="lb-tab active" data-shop-tab="real">💳 Real Money</button>
           <button class="lb-tab" data-shop-tab="gems">💎 Gem Shop</button>
-          <button class="lb-tab" data-shop-tab="gemcrates">📦 Gem Crates</button>
+
         </div>
 
         <!-- REAL MONEY TAB -->
@@ -984,25 +991,66 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
 
-        <!-- GEM SHOP TAB -->
+        <!-- GEM SHOP TAB — Buy Gems with real money, then spend on items -->
         <div id="shop-tab-gems" class="hidden">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:14px 18px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:14px 18px">
             <span style="font-size:2rem">💎</span>
             <div>
               <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-2)">YOUR GEM BALANCE</div>
               <div style="font-family:var(--font-d);font-size:1.5rem;font-weight:900;color:#a855f7" id="gem-balance-shop">0</div>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:12px" id="gem-shop-items">
-            <!-- Extra Wheel Spin -->
+
+          <!-- Buy Gems section -->
+          <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">💎 BUY GEMS</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+            <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
+              <div style="font-size:1.8rem;margin-bottom:6px">💎</div>
+              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">50 Gems</div>
+              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Starter pack</div>
+              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(50,1)">$1.00</button>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
+              <div style="font-size:1.8rem;margin-bottom:6px">💎💎</div>
+              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">100 Gems</div>
+              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Basic pack</div>
+              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(100,2)">$2.00</button>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
+              <div style="font-size:1.8rem;margin-bottom:6px">💎💎💎</div>
+              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">500 Gems</div>
+              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Value pack</div>
+              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(500,10)">$10.00</button>
+            </div>
+            <div style="background:var(--bg-card);border:2px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center;position:relative">
+              <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;font-family:var(--font-d);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.1em">BEST VALUE</div>
+              <div style="font-size:1.8rem;margin-bottom:6px">🌟</div>
+              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">1,000 Gems</div>
+              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Big pack</div>
+              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(1000,20)">$20.00</button>
+            </div>
+            <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);padding:16px;text-align:center;position:relative">
+              <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-family:var(--font-d);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.1em">🔥 MEGA DEAL</div>
+              <div style="font-size:1.8rem;margin-bottom:6px">👑</div>
+              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:var(--gold)">10,000 Gems</div>
+              <div style="margin:4px 0 12px">
+                <span style="font-size:.75rem;color:var(--text-3);text-decoration:line-through">Was $200</span>
+                <span style="font-size:.85rem;color:#22c55e;font-weight:700;margin-left:6px">Now $175!</span>
+              </div>
+              <button class="btn-primary" style="background:linear-gradient(135deg,var(--gold),#ef4444)" onclick="buyGemsReal(10000,175)">$175.00</button>
+            </div>
+          </div>
+
+          <!-- Spend Gems section -->
+          <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">⚡ SPEND GEMS</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
             <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
               <div>
                 <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🎰 Extra Wheel Spin</div>
-                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Spin the lucky wheel again — no cooldown needed</div>
+                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Bypass the 24h cooldown and spin again</div>
               </div>
               <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('wheel_spin',50)">💎 50 Gems</button>
             </div>
-            <!-- Luck Boost -->
             <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
               <div>
                 <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">✨ Minor Luck Boost</div>
@@ -1010,7 +1058,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               </div>
               <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_minor',30)">💎 30 Gems</button>
             </div>
-            <!-- Huge Luck Boost -->
             <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
               <div>
                 <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🌟 Huge Luck Boost</div>
@@ -1018,22 +1065,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               </div>
               <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_huge',100)">💎 100 Gems</button>
             </div>
-            <!-- Coin Pack -->
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-              <div>
-                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🪙 50,000 Coins</div>
-                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Instant coin deposit to your balance</div>
-              </div>
-              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('coins_50k',75)">💎 75 Gems</button>
-            </div>
           </div>
         </div>
 
-        <!-- GEM CRATES TAB -->
-        <div id="shop-tab-gemcrates" class="hidden">
-          <div style="color:var(--text-2);font-size:.85rem;margin-bottom:16px">These crates can only be purchased with 💎 Gems.</div>
-          <div class="crates-grid" id="gem-crates-grid"></div>
-        </div>
+
       </section>
 
       <!-- ACHIEVEMENTS -->
@@ -1390,119 +1425,119 @@ const ITEMS = [
 // ============================================================
 const PETS_BY_CRATE = {
   'tin': [
-    {id:'p_tin1', name:'Scrap Kitten', rarity:'pet', icon:'🐱', value:2000000, desc:'Born in the junkyard.', perk:'luck', perkName:'Luck Surge I', perkDesc:'+10% better odds on next open after a luck boost', sellable: false},
-    {id:'p_tin2', name:'Rusty Snail', rarity:'pet', icon:'🐌', value:2000000, desc:'Slow but determined.', perk:'speed', perkName:'Quick Crack I', perkDesc:'Spin animation is 20% faster', sellable: false},
-    {id:'p_tin3', name:'Penny Pig', rarity:'pet', icon:'🐷', value:2000000, desc:'Collects every last coin.', perk:'discount', perkName:'Bulk Discount I', perkDesc:'-5% off all crate prices', sellable: false},
+    {id:'p_tin1', name:'Scrap Kitten', rarity:'pet', icon:'🐱', value:2000000, desc:'Born in the junkyard.', perk:'luck', perkName:'Luck Surge I', perkDesc:'+10% better odds on next open after a luck boost'},
+    {id:'p_tin2', name:'Rusty Snail', rarity:'pet', icon:'🐌', value:2000000, desc:'Slow but determined.', perk:'speed', perkName:'Quick Crack I', perkDesc:'Spin animation is 20% faster'},
+    {id:'p_tin3', name:'Penny Pig', rarity:'pet', icon:'🐷', value:2000000, desc:'Collects every last coin.', perk:'discount', perkName:'Bulk Discount I', perkDesc:'-5% off all crate prices'},
   ],
   'copper': [
-    {id:'p_cop1', name:'Copper Cat', rarity:'pet', icon:'🐱', value:2500000, desc:'Shiny and curious.', perk:'luck', perkName:'Luck Surge II', perkDesc:'+15% better odds on next open after a luck boost', sellable: false},
-    {id:'p_cop2', name:'Bolt Tortoise', rarity:'pet', icon:'🐢', value:2500000, desc:'Mechanically enhanced.', perk:'speed', perkName:'Quick Crack II', perkDesc:'Spin animation is 30% faster', sellable: false},
-    {id:'p_cop3', name:'Copper Pig', rarity:'pet', icon:'🐷', value:2500000, desc:'Hoarder of shiny metals.', perk:'discount', perkName:'Bulk Discount II', perkDesc:'-6% off all crate prices', sellable: false},
+    {id:'p_cop1', name:'Copper Cat', rarity:'pet', icon:'🐱', value:2500000, desc:'Shiny and curious.', perk:'luck', perkName:'Luck Surge II', perkDesc:'+15% better odds on next open after a luck boost'},
+    {id:'p_cop2', name:'Bolt Tortoise', rarity:'pet', icon:'🐢', value:2500000, desc:'Mechanically enhanced.', perk:'speed', perkName:'Quick Crack II', perkDesc:'Spin animation is 30% faster'},
+    {id:'p_cop3', name:'Copper Pig', rarity:'pet', icon:'🐷', value:2500000, desc:'Hoarder of shiny metals.', perk:'discount', perkName:'Bulk Discount II', perkDesc:'-6% off all crate prices'},
   ],
   'bronze': [
-    {id:'p_bro1', name:'Bronze Lion', rarity:'pet', icon:'🦁', value:2800000, desc:'Small but proud.', perk:'luck', perkName:'Luck Surge III', perkDesc:'+20% better odds on next open after a luck boost', sellable: false},
-    {id:'p_bro2', name:'Bronze Hare', rarity:'pet', icon:'🐇', value:2800000, desc:'Surprisingly zippy.', perk:'speed', perkName:'Quick Crack III', perkDesc:'Spin animation is 40% faster', sellable: false},
-    {id:'p_bro3', name:'Treasure Boar', rarity:'pet', icon:'🐗', value:2800000, desc:'Smells opportunity.', perk:'discount', perkName:'Bulk Discount III', perkDesc:'-7% off all crate prices', sellable: false},
+    {id:'p_bro1', name:'Bronze Lion', rarity:'pet', icon:'🦁', value:2800000, desc:'Small but proud.', perk:'luck', perkName:'Luck Surge III', perkDesc:'+20% better odds on next open after a luck boost'},
+    {id:'p_bro2', name:'Bronze Hare', rarity:'pet', icon:'🐇', value:2800000, desc:'Surprisingly zippy.', perk:'speed', perkName:'Quick Crack III', perkDesc:'Spin animation is 40% faster'},
+    {id:'p_bro3', name:'Treasure Boar', rarity:'pet', icon:'🐗', value:2800000, desc:'Smells opportunity.', perk:'discount', perkName:'Bulk Discount III', perkDesc:'-7% off all crate prices'},
   ],
   'iron': [
-    {id:'p_iron1', name:'Iron Wolf', rarity:'pet', icon:'🐺', value:3200000, desc:'Fierce protector.', perk:'luck', perkName:'Luck Surge IV', perkDesc:'+25% better odds on next open after a luck boost', sellable: false},
-    {id:'p_iron2', name:'Forge Snail', rarity:'pet', icon:'🐌', value:3200000, desc:'Heated for speed.', perk:'speed', perkName:'Quick Crack IV', perkDesc:'Spin animation is 50% faster', sellable: false},
-    {id:'p_iron3', name:'Iron Piglet', rarity:'pet', icon:'🐷', value:3200000, desc:'Built like a tank.', perk:'discount', perkName:'Bulk Discount IV', perkDesc:'-8% off all crate prices', sellable: false},
+    {id:'p_iron1', name:'Iron Wolf', rarity:'pet', icon:'🐺', value:3200000, desc:'Fierce protector.', perk:'luck', perkName:'Luck Surge IV', perkDesc:'+25% better odds on next open after a luck boost'},
+    {id:'p_iron2', name:'Forge Snail', rarity:'pet', icon:'🐌', value:3200000, desc:'Heated for speed.', perk:'speed', perkName:'Quick Crack IV', perkDesc:'Spin animation is 50% faster'},
+    {id:'p_iron3', name:'Iron Piglet', rarity:'pet', icon:'🐷', value:3200000, desc:'Built like a tank.', perk:'discount', perkName:'Bulk Discount IV', perkDesc:'-8% off all crate prices'},
   ],
   'steel': [
-    {id:'p_steel1', name:'Steel Falcon', rarity:'pet', icon:'🦅', value:3800000, desc:'Keen-eyed hunter.', perk:'luck', perkName:'Luck Surge V', perkDesc:'+30% better odds on next open after a luck boost', sellable: false},
-    {id:'p_steel2', name:'Blade Rabbit', rarity:'pet', icon:'🐇', value:3800000, desc:'Lightning reflexes.', perk:'speed', perkName:'Quick Crack V', perkDesc:'Spin animation is 60% faster', sellable: false},
-    {id:'p_steel3', name:'Coin Serpent', rarity:'pet', icon:'🐍', value:3800000, desc:'Loves shiny discounts.', perk:'discount', perkName:'Bulk Discount V', perkDesc:'-9% off all crate prices', sellable: false},
+    {id:'p_steel1', name:'Steel Falcon', rarity:'pet', icon:'🦅', value:3800000, desc:'Keen-eyed hunter.', perk:'luck', perkName:'Luck Surge V', perkDesc:'+30% better odds on next open after a luck boost'},
+    {id:'p_steel2', name:'Blade Rabbit', rarity:'pet', icon:'🐇', value:3800000, desc:'Lightning reflexes.', perk:'speed', perkName:'Quick Crack V', perkDesc:'Spin animation is 60% faster'},
+    {id:'p_steel3', name:'Coin Serpent', rarity:'pet', icon:'🐍', value:3800000, desc:'Loves shiny discounts.', perk:'discount', perkName:'Bulk Discount V', perkDesc:'-9% off all crate prices'},
   ],
   'silver': [
-    {id:'p_silver1', name:'Moon Cat', rarity:'pet', icon:'🐱', value:4500000, desc:'Lunar fortune bringer.', perk:'luck', perkName:'Lunar Luck I', perkDesc:'+35% better odds on next open after a luck boost', sellable: false},
-    {id:'p_silver2', name:'Silver Fox', rarity:'pet', icon:'🦊', value:4500000, desc:'Cunning and quick.', perk:'speed', perkName:'Silver Rush I', perkDesc:'Spin animation is 65% faster', sellable: false},
-    {id:'p_silver3', name:'Silver Dragon', rarity:'pet', icon:'🐉', value:4500000, desc:'Hoarder of wealth.', perk:'discount', perkName:'Silver Deal I', perkDesc:'-10% off all crate prices', sellable: false},
+    {id:'p_silver1', name:'Moon Cat', rarity:'pet', icon:'🐱', value:4500000, desc:'Lunar fortune bringer.', perk:'luck', perkName:'Lunar Luck I', perkDesc:'+35% better odds on next open after a luck boost'},
+    {id:'p_silver2', name:'Silver Fox', rarity:'pet', icon:'🦊', value:4500000, desc:'Cunning and quick.', perk:'speed', perkName:'Silver Rush I', perkDesc:'Spin animation is 65% faster'},
+    {id:'p_silver3', name:'Silver Dragon', rarity:'pet', icon:'🐉', value:4500000, desc:'Hoarder of wealth.', perk:'discount', perkName:'Silver Deal I', perkDesc:'-10% off all crate prices'},
   ],
   'crystal': [
-    {id:'p_crystal1', name:'Crystal Owl', rarity:'pet', icon:'🦉', value:5200000, desc:'Sees hidden luck.', perk:'luck', perkName:'Crystal Sight I', perkDesc:'+40% better odds on next open after a luck boost', sellable: false},
-    {id:'p_crystal2', name:'Prism Hare', rarity:'pet', icon:'🐇', value:5200000, desc:'Refracts time.', perk:'speed', perkName:'Prism Dash I', perkDesc:'Spin animation is 70% faster', sellable: false},
-    {id:'p_crystal3', name:'Gem Pig', rarity:'pet', icon:'🐷', value:5200000, desc:'Attracts riches.', perk:'discount', perkName:'Gem Deal I', perkDesc:'-11% off all crate prices', sellable: false},
+    {id:'p_crystal1', name:'Crystal Owl', rarity:'pet', icon:'🦉', value:5200000, desc:'Sees hidden luck.', perk:'luck', perkName:'Crystal Sight I', perkDesc:'+40% better odds on next open after a luck boost'},
+    {id:'p_crystal2', name:'Prism Hare', rarity:'pet', icon:'🐇', value:5200000, desc:'Refracts time.', perk:'speed', perkName:'Prism Dash I', perkDesc:'Spin animation is 70% faster'},
+    {id:'p_crystal3', name:'Gem Pig', rarity:'pet', icon:'🐷', value:5200000, desc:'Attracts riches.', perk:'discount', perkName:'Gem Deal I', perkDesc:'-11% off all crate prices'},
   ],
   'arcane': [
-    {id:'p_arc1', name:'Arcane Raven', rarity:'pet', icon:'🐦‍⬛', value:6500000, desc:'Whispers of fortune.', perk:'luck', perkName:'Arcane Fortune I', perkDesc:'+45% better odds on next open after a luck boost', sellable: false},
-    {id:'p_arc2', name:'Mana Cheetah', rarity:'pet', icon:'🐆', value:6500000, desc:'Blurs through time.', perk:'speed', perkName:'Mana Rush I', perkDesc:'Spin animation is 75% faster', sellable: false},
-    {id:'p_arc3', name:'Spellbound Pig', rarity:'pet', icon:'🐷', value:6500000, desc:'Magical merchant.', perk:'discount', perkName:'Arcane Deal I', perkDesc:'-12% off all crate prices', sellable: false},
+    {id:'p_arc1', name:'Arcane Raven', rarity:'pet', icon:'🐦‍⬛', value:6500000, desc:'Whispers of fortune.', perk:'luck', perkName:'Arcane Fortune I', perkDesc:'+45% better odds on next open after a luck boost'},
+    {id:'p_arc2', name:'Mana Cheetah', rarity:'pet', icon:'🐆', value:6500000, desc:'Blurs through time.', perk:'speed', perkName:'Mana Rush I', perkDesc:'Spin animation is 75% faster'},
+    {id:'p_arc3', name:'Spellbound Pig', rarity:'pet', icon:'🐷', value:6500000, desc:'Magical merchant.', perk:'discount', perkName:'Arcane Deal I', perkDesc:'-12% off all crate prices'},
   ],
   'runic': [
-    {id:'p_run1', name:'Rune Wolf', rarity:'pet', icon:'🐺', value:7800000, desc:'Ancient luck runes.', perk:'luck', perkName:'Runic Fortune I', perkDesc:'+50% better odds on next open after a luck boost', sellable: false},
-    {id:'p_run2', name:'Rune Fox', rarity:'pet', icon:'🦊', value:7800000, desc:'Swift rune magic.', perk:'speed', perkName:'Runic Dash I', perkDesc:'Spin animation is 80% faster', sellable: false},
-    {id:'p_run3', name:'Rune Boar', rarity:'pet', icon:'🐗', value:7800000, desc:'Hoarder of ancient gold.', perk:'discount', perkName:'Runic Deal I', perkDesc:'-13% off all crate prices', sellable: false},
+    {id:'p_run1', name:'Rune Wolf', rarity:'pet', icon:'🐺', value:7800000, desc:'Ancient luck runes.', perk:'luck', perkName:'Runic Fortune I', perkDesc:'+50% better odds on next open after a luck boost'},
+    {id:'p_run2', name:'Rune Fox', rarity:'pet', icon:'🦊', value:7800000, desc:'Swift rune magic.', perk:'speed', perkName:'Runic Dash I', perkDesc:'Spin animation is 80% faster'},
+    {id:'p_run3', name:'Rune Boar', rarity:'pet', icon:'🐗', value:7800000, desc:'Hoarder of ancient gold.', perk:'discount', perkName:'Runic Deal I', perkDesc:'-13% off all crate prices'},
   ],
   'infernal': [
-    {id:'p_inf1', name:'Hellcat', rarity:'pet', icon:'🐱‍👤', value:9200000, desc:'Bringer of infernal luck.', perk:'luck', perkName:'Hellfire Luck I', perkDesc:'+55% better odds on next open after a luck boost', sellable: false},
-    {id:'p_inf2', name:'Flame Snail', rarity:'pet', icon:'🐌', value:9200000, desc:'Burns through time.', perk:'speed', perkName:'Infernal Rush I', perkDesc:'Spin animation is 85% faster', sellable: false},
-    {id:'p_inf3', name:'Inferno Pig', rarity:'pet', icon:'🐷', value:9200000, desc:'Devours prices.', perk:'discount', perkName:'Infernal Deal I', perkDesc:'-14% off all crate prices', sellable: false},
+    {id:'p_inf1', name:'Hellcat', rarity:'pet', icon:'🐱‍👤', value:9200000, desc:'Bringer of infernal luck.', perk:'luck', perkName:'Hellfire Luck I', perkDesc:'+55% better odds on next open after a luck boost'},
+    {id:'p_inf2', name:'Flame Snail', rarity:'pet', icon:'🐌', value:9200000, desc:'Burns through time.', perk:'speed', perkName:'Infernal Rush I', perkDesc:'Spin animation is 85% faster'},
+    {id:'p_inf3', name:'Inferno Pig', rarity:'pet', icon:'🐷', value:9200000, desc:'Devours prices.', perk:'discount', perkName:'Infernal Deal I', perkDesc:'-14% off all crate prices'},
   ],
   'storm': [
-    {id:'p_storm1', name:'Thunder Owl', rarity:'pet', icon:'🦉', value:12500000, desc:'Storm of fortune.', perk:'luck', perkName:'Storm Luck I', perkDesc:'+60% better odds on next open after a luck boost', sellable: false},
-    {id:'p_storm2', name:'Lightning Fox', rarity:'pet', icon:'🦊', value:12500000, desc:'Faster than lightning.', perk:'speed', perkName:'Storm Dash I', perkDesc:'Spin animation is 90% faster (near instant)', sellable: false},
-    {id:'p_storm3', name:'Storm Boar', rarity:'pet', icon:'🐗', value:12500000, desc:'Brings rain of coins.', perk:'discount', perkName:'Storm Deal I', perkDesc:'-15% off all crate prices', sellable: false},
+    {id:'p_storm1', name:'Thunder Owl', rarity:'pet', icon:'🦉', value:12500000, desc:'Storm of fortune.', perk:'luck', perkName:'Storm Luck I', perkDesc:'+60% better odds on next open after a luck boost'},
+    {id:'p_storm2', name:'Lightning Fox', rarity:'pet', icon:'🦊', value:12500000, desc:'Faster than lightning.', perk:'speed', perkName:'Storm Dash I', perkDesc:'Spin animation is 90% faster (near instant)'},
+    {id:'p_storm3', name:'Storm Boar', rarity:'pet', icon:'🐗', value:12500000, desc:'Brings rain of coins.', perk:'discount', perkName:'Storm Deal I', perkDesc:'-15% off all crate prices'},
   ],
   'royal': [
-    {id:'p_roy1', name:'Royal Griffin', rarity:'pet', icon:'🦅', value:14800000, desc:'Noble luck.', perk:'luck', perkName:'Royal Fortune I', perkDesc:'+65% better odds on next open after a luck boost', sellable: false},
-    {id:'p_roy2', name:'Royal Hare', rarity:'pet', icon:'🐇', value:14800000, desc:'Swift as royalty.', perk:'speed', perkName:'Royal Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_roy3', name:'Golden Pig', rarity:'pet', icon:'🐷', value:14800000, desc:'Royal treasurer.', perk:'discount', perkName:'Royal Deal I', perkDesc:'-16% off all crate prices', sellable: false},
+    {id:'p_roy1', name:'Royal Griffin', rarity:'pet', icon:'🦅', value:14800000, desc:'Noble luck.', perk:'luck', perkName:'Royal Fortune I', perkDesc:'+65% better odds on next open after a luck boost'},
+    {id:'p_roy2', name:'Royal Hare', rarity:'pet', icon:'🐇', value:14800000, desc:'Swift as royalty.', perk:'speed', perkName:'Royal Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_roy3', name:'Golden Pig', rarity:'pet', icon:'🐷', value:14800000, desc:'Royal treasurer.', perk:'discount', perkName:'Royal Deal I', perkDesc:'-16% off all crate prices'},
   ],
   'void': [
-    {id:'p_void1', name:'Void Cat', rarity:'pet', icon:'🐱', value:18500000, desc:'Luck from the abyss.', perk:'luck', perkName:'Void Luck I', perkDesc:'+70% better odds on next open after a luck boost', sellable: false},
-    {id:'p_void2', name:'Shadow Snail', rarity:'pet', icon:'🐌', value:18500000, desc:'Slips through time.', perk:'speed', perkName:'Void Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_void3', name:'Abyssal Pig', rarity:'pet', icon:'🐷', value:18500000, desc:'Consumes costs.', perk:'discount', perkName:'Void Deal I', perkDesc:'-17% off all crate prices', sellable: false},
+    {id:'p_void1', name:'Void Cat', rarity:'pet', icon:'🐱', value:18500000, desc:'Luck from the abyss.', perk:'luck', perkName:'Void Luck I', perkDesc:'+70% better odds on next open after a luck boost'},
+    {id:'p_void2', name:'Shadow Snail', rarity:'pet', icon:'🐌', value:18500000, desc:'Slips through time.', perk:'speed', perkName:'Void Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_void3', name:'Abyssal Pig', rarity:'pet', icon:'🐷', value:18500000, desc:'Consumes costs.', perk:'discount', perkName:'Void Deal I', perkDesc:'-17% off all crate prices'},
   ],
   'abyssal': [
-    {id:'p_abys1', name:'Deep Leviathan Cub', rarity:'pet', icon:'🐋', value:22000000, desc:'Ancient deep luck.', perk:'luck', perkName:'Abyssal Luck I', perkDesc:'+75% better odds on next open after a luck boost', sellable: false},
-    {id:'p_abys2', name:'Abyssal Eel', rarity:'pet', icon:'🐍', value:22000000, desc:'Lightning fast.', perk:'speed', perkName:'Abyssal Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_abys3', name:'Treasure Kraken', rarity:'pet', icon:'🐙', value:22000000, desc:'Guards vast wealth.', perk:'discount', perkName:'Abyssal Deal I', perkDesc:'-18% off all crate prices', sellable: false},
+    {id:'p_abys1', name:'Deep Leviathan Cub', rarity:'pet', icon:'🐋', value:22000000, desc:'Ancient deep luck.', perk:'luck', perkName:'Abyssal Luck I', perkDesc:'+75% better odds on next open after a luck boost'},
+    {id:'p_abys2', name:'Abyssal Eel', rarity:'pet', icon:'🐍', value:22000000, desc:'Lightning fast.', perk:'speed', perkName:'Abyssal Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_abys3', name:'Treasure Kraken', rarity:'pet', icon:'🐙', value:22000000, desc:'Guards vast wealth.', perk:'discount', perkName:'Abyssal Deal I', perkDesc:'-18% off all crate prices'},
   ],
   'dragon': [
-    {id:'p_dra1', name:'Baby Dragon', rarity:'pet', icon:'🐉', value:26000000, desc:'Bringer of draconic luck.', perk:'luck', perkName:'Dragon Luck I', perkDesc:'+80% better odds on next open after a luck boost', sellable: false},
-    {id:'p_dra2', name:'Wyvern Swift', rarity:'pet', icon:'🐲', value:26000000, desc:'Wings of speed.', perk:'speed', perkName:'Wyvern Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_dra3', name:'Hoarder Drake', rarity:'pet', icon:'🐉', value:26000000, desc:'Master of deals.', perk:'discount', perkName:'Dragon Deal I', perkDesc:'-19% off all crate prices', sellable: false},
+    {id:'p_dra1', name:'Baby Dragon', rarity:'pet', icon:'🐉', value:26000000, desc:'Bringer of draconic luck.', perk:'luck', perkName:'Dragon Luck I', perkDesc:'+80% better odds on next open after a luck boost'},
+    {id:'p_dra2', name:'Wyvern Swift', rarity:'pet', icon:'🐲', value:26000000, desc:'Wings of speed.', perk:'speed', perkName:'Wyvern Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_dra3', name:'Hoarder Drake', rarity:'pet', icon:'🐉', value:26000000, desc:'Master of deals.', perk:'discount', perkName:'Dragon Deal I', perkDesc:'-19% off all crate prices'},
   ],
   'celestial': [
-    {id:'p_cel1', name:'Star Owl', rarity:'pet', icon:'🦉', value:32000000, desc:'Celestial fortune.', perk:'luck', perkName:'Celestial Luck I', perkDesc:'+85% better odds on next open after a luck boost', sellable: false},
-    {id:'p_cel2', name:'Comet Fox', rarity:'pet', icon:'🦊', value:32000000, desc:'Blazing speed.', perk:'speed', perkName:'Comet Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_cel3', name:'Cosmic Pig', rarity:'pet', icon:'🐷', value:32000000, desc:'Star-born merchant.', perk:'discount', perkName:'Celestial Deal I', perkDesc:'-20% off all crate prices', sellable: false},
+    {id:'p_cel1', name:'Star Owl', rarity:'pet', icon:'🦉', value:32000000, desc:'Celestial fortune.', perk:'luck', perkName:'Celestial Luck I', perkDesc:'+85% better odds on next open after a luck boost'},
+    {id:'p_cel2', name:'Comet Fox', rarity:'pet', icon:'🦊', value:32000000, desc:'Blazing speed.', perk:'speed', perkName:'Comet Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_cel3', name:'Cosmic Pig', rarity:'pet', icon:'🐷', value:32000000, desc:'Star-born merchant.', perk:'discount', perkName:'Celestial Deal I', perkDesc:'-20% off all crate prices'},
   ],
   'divine': [
-    {id:'p_div1', name:'Holy Seraphim Cub', rarity:'pet', icon:'👼', value:45000000, desc:'Divine blessing.', perk:'luck', perkName:'Divine Luck I', perkDesc:'+90% better odds on next open after a luck boost', sellable: false},
-    {id:'p_div2', name:'Angel Swift', rarity:'pet', icon:'😇', value:45000000, desc:'Wings of light.', perk:'speed', perkName:'Angel Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_div3', name:'Divine Lamb', rarity:'pet', icon:'🐑', value:45000000, desc:'Bringer of grace discounts.', perk:'discount', perkName:'Divine Deal I', perkDesc:'-21% off all crate prices', sellable: false},
+    {id:'p_div1', name:'Holy Seraphim Cub', rarity:'pet', icon:'👼', value:45000000, desc:'Divine blessing.', perk:'luck', perkName:'Divine Luck I', perkDesc:'+90% better odds on next open after a luck boost'},
+    {id:'p_div2', name:'Angel Swift', rarity:'pet', icon:'😇', value:45000000, desc:'Wings of light.', perk:'speed', perkName:'Angel Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_div3', name:'Divine Lamb', rarity:'pet', icon:'🐑', value:45000000, desc:'Bringer of grace discounts.', perk:'discount', perkName:'Divine Deal I', perkDesc:'-21% off all crate prices'},
   ],
   'primordial': [
-    {id:'p_pri1', name:'Ancient Spirit Cat', rarity:'pet', icon:'🐱', value:52000000, desc:'Primordial luck.', perk:'luck', perkName:'Primordial Luck I', perkDesc:'+95% better odds on next open after a luck boost', sellable: false},
-    {id:'p_pri2', name:'Time Weaver', rarity:'pet', icon:'🕰️', value:52000000, desc:'Manipulates time.', perk:'speed', perkName:'Time Skip I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_pri3', name:'Origin Boar', rarity:'pet', icon:'🐗', value:52000000, desc:'Source of all wealth.', perk:'discount', perkName:'Primordial Deal I', perkDesc:'-22% off all crate prices', sellable: false},
+    {id:'p_pri1', name:'Ancient Spirit Cat', rarity:'pet', icon:'🐱', value:52000000, desc:'Primordial luck.', perk:'luck', perkName:'Primordial Luck I', perkDesc:'+95% better odds on next open after a luck boost'},
+    {id:'p_pri2', name:'Time Weaver', rarity:'pet', icon:'🕰️', value:52000000, desc:'Manipulates time.', perk:'speed', perkName:'Time Skip I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_pri3', name:'Origin Boar', rarity:'pet', icon:'🐗', value:52000000, desc:'Source of all wealth.', perk:'discount', perkName:'Primordial Deal I', perkDesc:'-22% off all crate prices'},
   ],
   'ultra': [
-    {id:'p_ult1', name:'Ultra Phoenix', rarity:'pet', icon:'🐦‍🔥', value:68000000, desc:'Reborn luck.', perk:'luck', perkName:'Ultra Luck I', perkDesc:'Luck boosts are twice as powerful', sellable: false},
-    {id:'p_ult2', name:'Hyper Cheetah', rarity:'pet', icon:'🐆', value:68000000, desc:'Beyond speed.', perk:'speed', perkName:'Hyper Dash I', perkDesc:'Instant spin — no animation delay', sellable: false},
-    {id:'p_ult3', name:'Cosmic Hoarder', rarity:'pet', icon:'🐷', value:68000000, desc:'Ultimate deal maker.', perk:'discount', perkName:'Ultra Deal I', perkDesc:'-23% off all crate prices', sellable: false},
+    {id:'p_ult1', name:'Ultra Phoenix', rarity:'pet', icon:'🐦‍🔥', value:68000000, desc:'Reborn luck.', perk:'luck', perkName:'Ultra Luck I', perkDesc:'Luck boosts are twice as powerful'},
+    {id:'p_ult2', name:'Hyper Cheetah', rarity:'pet', icon:'🐆', value:68000000, desc:'Beyond speed.', perk:'speed', perkName:'Hyper Dash I', perkDesc:'Instant spin — no animation delay'},
+    {id:'p_ult3', name:'Cosmic Hoarder', rarity:'pet', icon:'🐷', value:68000000, desc:'Ultimate deal maker.', perk:'discount', perkName:'Ultra Deal I', perkDesc:'-23% off all crate prices'},
   ],
   'cosmic': [
-    {id:'p_cos1', name:'Nebula Cat', rarity:'pet', icon:'🐱', value:75000000, desc:'Star dust fortune.', perk:'luck', perkName:'Cosmic Luck I', perkDesc:'Luck boosts are twice as powerful + fill 20% faster', sellable: false},
-    {id:'p_cos2', name:'Comet Runner', rarity:'pet', icon:'☄️', value:75000000, desc:'Faster than light.', perk:'speed', perkName:'Double Crack', perkDesc:'Open 2 crates at once for the price of 1', sellable: false},
-    {id:'p_cos3', name:'Galaxy Pig', rarity:'pet', icon:'🐷', value:75000000, desc:'Collects entire galaxies.', perk:'discount', perkName:'Cosmic Deal I', perkDesc:'-24% off all crate prices', sellable: false},
+    {id:'p_cos1', name:'Nebula Cat', rarity:'pet', icon:'🐱', value:75000000, desc:'Star dust fortune.', perk:'luck', perkName:'Cosmic Luck I', perkDesc:'Luck boosts are twice as powerful + fill 20% faster'},
+    {id:'p_cos2', name:'Comet Runner', rarity:'pet', icon:'☄️', value:75000000, desc:'Faster than light.', perk:'speed', perkName:'Double Crack', perkDesc:'Open 2 crates at once for the price of 1'},
+    {id:'p_cos3', name:'Galaxy Pig', rarity:'pet', icon:'🐷', value:75000000, desc:'Collects entire galaxies.', perk:'discount', perkName:'Cosmic Deal I', perkDesc:'-24% off all crate prices'},
   ],
   'transcendent': [
-    {id:'p_tra1', name:'Eternal Guardian', rarity:'pet', icon:'🛡️', value:82000000, desc:'Beyond mortal luck.', perk:'luck', perkName:'Transcendent Luck I', perkDesc:'Luck boosts are twice as powerful + fill 30% faster', sellable: false},
-    {id:'p_tra2', name:'Void Dasher', rarity:'pet', icon:'⚡', value:82000000, desc:'Transcends time.', perk:'speed', perkName:'Double Crack', perkDesc:'Open 2 crates at once for the price of 1', sellable: false},
-    {id:'p_tra3', name:'Infinite Hoarder', rarity:'pet', icon:'🐷', value:82000000, desc:'Masters all economies.', perk:'discount', perkName:'Transcendent Deal I', perkDesc:'-25% off all crate prices', sellable: false},
+    {id:'p_tra1', name:'Eternal Guardian', rarity:'pet', icon:'🛡️', value:82000000, desc:'Beyond mortal luck.', perk:'luck', perkName:'Transcendent Luck I', perkDesc:'Luck boosts are twice as powerful + fill 30% faster'},
+    {id:'p_tra2', name:'Void Dasher', rarity:'pet', icon:'⚡', value:82000000, desc:'Transcends time.', perk:'speed', perkName:'Double Crack', perkDesc:'Open 2 crates at once for the price of 1'},
+    {id:'p_tra3', name:'Infinite Hoarder', rarity:'pet', icon:'🐷', value:82000000, desc:'Masters all economies.', perk:'discount', perkName:'Transcendent Deal I', perkDesc:'-25% off all crate prices'},
   ],
   'eternal': [
-    {id:'p_ete1', name:'Timeless Sphinx', rarity:'pet', icon:'🦁', value:88000000, desc:'Eternal wisdom.', perk:'luck', perkName:'Eternal Luck I', perkDesc:'Luck boosts are twice as powerful + fill 40% faster', sellable: false},
-    {id:'p_ete2', name:'Eternal Wind', rarity:'pet', icon:'🌬️', value:88000000, desc:'Never stops moving.', perk:'speed', perkName:'Double Crack', perkDesc:'Open 2 crates at once for the price of 1', sellable: false},
-    {id:'p_ete3', name:'Eternal Coin Dragon', rarity:'pet', icon:'🐉', value:88000000, desc:'Endless riches.', perk:'discount', perkName:'Eternal Deal I', perkDesc:'-27% off all crate prices', sellable: false},
+    {id:'p_ete1', name:'Timeless Sphinx', rarity:'pet', icon:'🦁', value:88000000, desc:'Eternal wisdom.', perk:'luck', perkName:'Eternal Luck I', perkDesc:'Luck boosts are twice as powerful + fill 40% faster'},
+    {id:'p_ete2', name:'Eternal Wind', rarity:'pet', icon:'🌬️', value:88000000, desc:'Never stops moving.', perk:'speed', perkName:'Double Crack', perkDesc:'Open 2 crates at once for the price of 1'},
+    {id:'p_ete3', name:'Eternal Coin Dragon', rarity:'pet', icon:'🐉', value:88000000, desc:'Endless riches.', perk:'discount', perkName:'Eternal Deal I', perkDesc:'-27% off all crate prices'},
   ],
   'genesis': [
-    {id:'p_gen1', name:'Genesis Phoenix', rarity:'pet', icon:'🐦‍🔥', value:95000000, desc:'Birth of fortune.', perk:'luck', perkName:'Genesis Luck I', perkDesc:'Luck boosts are twice as powerful + fill 50% faster', sellable: false},
-    {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 1', sellable: false},
-    {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Genesis Deal I', perkDesc:'-30% off all crate prices', sellable: false},
+    {id:'p_gen1', name:'Genesis Phoenix', rarity:'pet', icon:'🐦‍🔥', value:95000000, desc:'Birth of fortune.', perk:'luck', perkName:'Genesis Luck I', perkDesc:'Luck boosts are twice as powerful + fill 50% faster'},
+    {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 1'},
+    {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Genesis Deal I', perkDesc:'-30% off all crate prices'},
   ],
   // VIP-exclusive pet — purchase only, NEVER drops from any crate.
   // Kept in its own bucket so it's excluded from getPetsForCrate() / crate odds entirely.
@@ -1512,8 +1547,32 @@ const PETS_BY_CRATE = {
   // Wheel-exclusive pet — only obtainable from the 1-in-1,000,000 Lucky Wheel segment.
   // Never drops from any crate and is not part of any crate's pet pool.
   'wheel': [
-    {id:'p_wheel1', name:'Fortune Coin Spirit', rarity:'pet', icon:'🪙', value:5000000, desc:'Born from a single impossible spin.', perk:'luck', perkName:'Wheel Fortune', perkDesc:'+60% better odds on next open after a luck boost' , sellable: false},
-    {id:'p_wheel2', name:'Waffle', rarity:'pet', icon:'🧇', value:5000000, desc:'Just a waffle', perk:'luck', perkName:'Wheel Fortune', perkDesc:'+60% better odds on next open after a luck boost' , sellable: false},
+    {id:'p_wheel1', name:'Fortune Coin Spirit', rarity:'pet', icon:'🪙', value:5000000, desc:'Born from a single impossible spin.', perk:'luck', perkName:'Wheel Fortune', perkDesc:'+60% better odds on next open after a luck boost'},
+  ],
+  // Gem crate exclusive pets (1 in 10,000)
+  'gem_shadow': [
+    {id:'p_gem_s1', name:'Shadow Wisp', rarity:'pet', icon:'👻', value:8000000, desc:'Born from the dark gem energy.', perk:'luck', perkName:'Shadow Luck', perkDesc:'+35% better odds on next open after a luck boost'},
+    {id:'p_gem_s2', name:'Void Sprite', rarity:'pet', icon:'🌑', value:8000000, desc:'A tiny piece of the void.', perk:'speed', perkName:'Shadow Dash', perkDesc:'Spin animation is 25% faster'},
+    {id:'p_gem_s3', name:'Gem Piglet', rarity:'pet', icon:'🐷', value:8000000, desc:'Rolls in gems.', perk:'discount', perkName:'Shadow Deal', perkDesc:'-8% off all crate prices'},
+  ],
+  'gem_aurora': [
+    {id:'p_gem_a1', name:'Aurora Fox', rarity:'pet', icon:'🦊', value:15000000, desc:'Painted by the northern lights.', perk:'luck', perkName:'Aurora Luck', perkDesc:'+45% better odds on next open after a luck boost'},
+    {id:'p_gem_a2', name:'Prism Hound', rarity:'pet', icon:'🐶', value:15000000, desc:'Reflects all light.', perk:'speed', perkName:'Aurora Dash', perkDesc:'Spin animation is 35% faster'},
+    {id:'p_gem_a3', name:'Aurora Boar', rarity:'pet', icon:'🐗', value:15000000, desc:'Charges for deals.', perk:'discount', perkName:'Aurora Deal', perkDesc:'-11% off all crate prices'},
+  ],
+  'gem_prism': [
+    {id:'p_gem_p1', name:'Prism Dragon', rarity:'pet', icon:'🐲', value:30000000, desc:'Splits light into fortune.', perk:'luck', perkName:'Prism Luck', perkDesc:'+55% better odds on next open after a luck boost'},
+    {id:'p_gem_p2', name:'Crystal Lynx', rarity:'pet', icon:'🐈', value:30000000, desc:'Cuts through time.', perk:'speed', perkName:'Prism Dash', perkDesc:'Spin animation is 45% faster'},
+    {id:'p_gem_p3', name:'Prism Piggy', rarity:'pet', icon:'🐷', value:30000000, desc:'Multiplies your wealth.', perk:'discount', perkName:'Prism Deal', perkDesc:'-14% off all crate prices'},
+  ],
+  'gem_void': [
+    {id:'p_gem_v1', name:'Void Serpent', rarity:'pet', icon:'🐍', value:55000000, desc:'Coils around your luck.', perk:'luck', perkName:'Void Luck', perkDesc:'+70% better odds on next open after a luck boost'},
+    {id:'p_gem_v2', name:'Abyss Panther', rarity:'pet', icon:'🐈', value:55000000, desc:'Hunts through darkness.', perk:'speed', perkName:'Void Dash', perkDesc:'Spin animation is 55% faster'},
+    {id:'p_gem_v3', name:'Void Hog', rarity:'pet', icon:'🐖', value:55000000, desc:'Devours all cost.', perk:'discount', perkName:'Void Deal', perkDesc:'-18% off all crate prices'},
+  ],
+  // Gem pet egg crate exclusive pet
+  'gem_egg': [
+    {id:'p_gem_egg1', name:'Celestial Drake', rarity:'pet', icon:'🐉', value:0, desc:'Hatched from a sacred gem egg. Rarer than the VIP Drake.', perk:'vip', perkName:'Celestial Drake', perkDesc:'2x Rolls • 1.5x Speed • +60% Luck • 38% off', sellable: false, gemExclusive: true},
   ],
 };
 
@@ -1643,22 +1702,26 @@ const CRATES = [
 
 // ── Gem-only crates ───────────────────────────────────────────
 const GEM_CRATES = [
-  {id:'gem_shadow', name:'Shadow Gem Crate', gemPrice:25, icon:'🌑', color:'#6366f1',
-    desc:'Exclusive gem crate. Epic+ only drops.',
+  {id:'gem_shadow', name:'Shadow Gem Crate', gemPrice:100, icon:'🌑', color:'#6366f1',
+    desc:'Exclusive gem crate. Epic+ only drops. 1 in 10,000 pet chance!',
     odds:{epic:0.60, runic:0.30, legendary:0.10},
     items:['e001','e002','e003','ru01','ru02','l001']},
-  {id:'gem_aurora', name:'Aurora Gem Crate', gemPrice:60, icon:'🌌', color:'#06b6d4',
-    desc:'Rare gem crate with mythic potential.',
+  {id:'gem_aurora', name:'Aurora Gem Crate', gemPrice:250, icon:'🌌', color:'#06b6d4',
+    desc:'Rare gem crate with mythic potential. 1 in 10,000 pet chance!',
     odds:{legendary:0.50, cursed:0.35, mythic:0.15},
     items:['l001','l002','cu01','m001','m002']},
-  {id:'gem_prism', name:'Prism Gem Crate', gemPrice:150, icon:'🔮', color:'#ec4899',
-    desc:'Legendary gem crate. Astral-tier possible.',
+  {id:'gem_prism', name:'Prism Gem Crate', gemPrice:600, icon:'🔮', color:'#ec4899',
+    desc:'Legendary gem crate. Astral-tier possible. 1 in 10,000 pet chance!',
     odds:{mythic:0.50, astral:0.40, divine:0.10},
     items:['m001','m002','as01','d001']},
-  {id:'gem_void', name:'Void Gem Crate', gemPrice:400, icon:'🕳️', color:'#9333ea',
-    desc:'The ultimate gem crate. Ultra+ inside.',
+  {id:'gem_void', name:'Void Gem Crate', gemPrice:1500, icon:'🕳️', color:'#9333ea',
+    desc:'The ultimate gem crate. Ultra+ inside. 1 in 10,000 pet chance!',
     odds:{divine:0.45, primordial:0.40, ultra:0.15},
     items:['d001','pr01','ur01','hy01']},
+  {id:'gem_egg', name:'Celestial Egg', gemPrice:5000, icon:'GEM_EGG_SVG', color:'#f59e0b',
+    desc:'🪩 The rarest gem crate. Contains the exclusive Celestial Drake pet at 1 in 10,000!',
+    odds:{divine:0.40, primordial:0.35, ultra:0.20, hyper:0.05},
+    items:['d001','pr01','ur01','hy01','tr01'], gemEgg:true},
 ];
 
 const ACHIEVEMENTS = [
@@ -1859,7 +1922,7 @@ const S = {
   luckBoost: null, luckBoostUsed: false,
   autoSell: false, autoSellMode: 'rarity', autoSellRarity: 'common', autoSellPrice: 0,
   hasAutoRoll: false, autoRollActive: false, autoRollIntervalId: null,
-  gems: 0,
+  gems: 0, currentGemCrate: null,
   lastOpenedInvItem: null,
   listenersInitialized: false,
   // FIX: track per-session which trade rooms we've already executed, prevents double execution on refresh
@@ -2485,6 +2548,8 @@ function loadCratesPage(){
     });
     grid.appendChild(c);
   });
+  // Render gem crates in their section
+  renderGemCratesGrid();
 }
 
 // ============================================================
@@ -2509,7 +2574,13 @@ function openCratePage(crate){
   showPage('opening');
 }
 
-document.getElementById('back-from-opening').addEventListener('click',()=>showPage('crates'));
+document.getElementById('back-from-opening').addEventListener('click',()=>{
+  S.currentGemCrate = null;
+  // Restore coin balance display
+  const coinInfo = document.getElementById('opening-coin-balance');
+  if(coinInfo) coinInfo.parentElement.style.display = '';
+  showPage('crates');
+});
 
 function buildCrateInfoPanel(crate){
   const panel = document.getElementById('crate-info-panel');
@@ -2873,13 +2944,22 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   if (crateCooldown) return;
 
   // ❗ ANTI-CHEAT CHECK
-  const flagged = false
+  const flagged = await checkAutoClicker();
   if (flagged) return;
 
   // Lock immediately — before any async work
   crateCooldown = true;
   lockOpenBtn();
 
+  // Handle gem crate opens differently
+  if(S.currentGemCrate && !S.currentCrate){
+    unlockOpenBtn();
+    // Restore coin balance display
+    document.getElementById('opening-coin-balance').parentElement.style.display = '';
+    await openGemCrate(S.currentGemCrate.id);
+    S.currentGemCrate = null;
+    return;
+  }
   const crate = S.currentCrate;
   if (!crate || !S.user || !S.profile) {
     unlockOpenBtn();
@@ -4465,6 +4545,11 @@ async function redeemCode(){
           newCoins += amt;
           labels.push(`🪙 ${amt.toLocaleString()} coins`);
         }
+        if(reward.gems){
+          const amt = Math.max(0, Math.floor(reward.gems));
+          userUpdate.gems = (userData.gems||0) + amt;
+          labels.push(`💎 ${amt.toLocaleString()} gems`);
+        }
         if(reward.petId){
           const pet = getItem(reward.petId);
           if(!pet) throw new Error('BAD_REWARD');
@@ -4649,9 +4734,9 @@ const SHOP_CASHTAG = '$doctorwaffle500';
 const DEFAULT_PRODUCTS = [
   {
     id: 'vip_pack',
-    label: 'VIP Pack — 🐉 VIP Golden Drake + 75,000 Coins',
+    label: 'VIP Pack — 🐉 VIP Golden Drake + 500 Gems',
     priceLabel: '$10.00',
-    reward: { type: 'bundle', petId: 'p_vip1', coins: 75000 },
+    reward: { type: 'bundle', petId: 'p_vip1', gems: 500 },
     active: true,
   },
   {
@@ -5116,9 +5201,7 @@ document.querySelectorAll('[data-shop-tab]').forEach(btn => {
     shopTab = btn.dataset.shopTab;
     document.getElementById('shop-tab-real').classList.toggle('hidden', shopTab !== 'real');
     document.getElementById('shop-tab-gems').classList.toggle('hidden', shopTab !== 'gems');
-    document.getElementById('shop-tab-gemcrates').classList.toggle('hidden', shopTab !== 'gemcrates');
     if(shopTab === 'gems') updateGemDisplay();
-    if(shopTab === 'gemcrates') renderGemCratesGrid();
     if(shopTab === 'real') renderShopProducts2();
   });
 });
@@ -5199,6 +5282,27 @@ document.getElementById('shop-submit-tag-btn2')?.addEventListener('click', submi
 document.getElementById('shop-cashtag2')?.textContent && (document.getElementById('shop-cashtag2').textContent = '$doctorwaffle500');
 
 // ── Gem shop purchases ────────────────────────────────────────
+async function buyGemsReal(gems, dollars){
+  if(!S.user || !S.profile){ toast('Must be logged in.', 'error'); return; }
+  const orderId = genOrderId();
+  const label = `💎 ${gems.toLocaleString()} Gems`;
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId, uid: S.user.uid, username: S.profile.username,
+      product: `gems_${gems}`, productLabel: label,
+      reward: { type: 'gems', amount: gems },
+      status: 'pending', cashtag: '',
+      createdAt: new Date().toISOString(),
+    });
+    currentOrderId2 = orderId;
+    document.getElementById('shop-order-id2').textContent = orderId + '  (' + label + ')';
+    document.getElementById('shop-order-box2').classList.remove('hidden');
+    toast(`Order created for ${label}! Send $${dollars} via Cash App then submit your $cashtag.`, 'success', 6000);
+    // Switch to real money tab to show order box
+    document.querySelector('[data-shop-tab="real"]')?.click();
+  }catch(e){ toast('Could not create order: '+e.message,'error'); }
+}
+
 async function buyGemItem(itemId, cost){
   if(!S.user || !S.profile){ toast('Must be logged in.', 'error'); return; }
   const ok = await spendGems(cost, itemId);
@@ -5233,17 +5337,158 @@ async function buyGemItem(itemId, cost){
 }
 
 // ── Gem crates grid ───────────────────────────────────────────
+function gemEggSVG(){
+  return `<svg viewBox="0 0 80 90" width="52" height="58" style="display:block;margin:0 auto 8px">
+    <defs>
+      <radialGradient id="egg-grad" cx="40%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#ffe066"/>
+        <stop offset="40%" stop-color="#f59e0b"/>
+        <stop offset="100%" stop-color="#b45309"/>
+      </radialGradient>
+      <radialGradient id="egg-shine" cx="30%" cy="25%" r="40%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <!-- Egg body -->
+    <ellipse cx="40" cy="52" rx="32" ry="38" fill="url(#egg-grad)"/>
+    <!-- Shine -->
+    <ellipse cx="40" cy="52" rx="32" ry="38" fill="url(#egg-shine)"/>
+    <!-- Crack lines (Roblox-style) -->
+    <polyline points="28,30 33,38 26,44 32,50" fill="none" stroke="#fff" stroke-width="2.2" stroke-opacity="0.7" stroke-linecap="round"/>
+    <polyline points="48,26 52,35 46,41" fill="none" stroke="#fff" stroke-width="1.8" stroke-opacity="0.5" stroke-linecap="round"/>
+    <!-- Gem sparkles -->
+    <circle cx="55" cy="35" r="3" fill="#a855f7" opacity="0.8"/>
+    <circle cx="22" cy="55" r="2.5" fill="#06b6d4" opacity="0.7"/>
+    <circle cx="58" cy="62" r="2" fill="#f59e0b" opacity="0.9"/>
+    <!-- Star top -->
+    <text x="40" y="22" text-anchor="middle" font-size="14" fill="#fff" opacity="0.9">✦</text>
+  </svg>`;
+}
+
 function renderGemCratesGrid(){
   const grid = document.getElementById('gem-crates-grid');
   if(!grid) return;
-  grid.innerHTML = GEM_CRATES.map(crate => `
-    <div class="crate-card" style="--cc:${crate.color};--cg:${crate.color}33" onclick="openGemCrate('${crate.id}')">
-      <span class="crate-emoji">${crate.icon}</span>
+  grid.innerHTML = GEM_CRATES.map(crate => {
+    const iconHTML = crate.gemEgg
+      ? gemEggSVG()
+      : `<span class="crate-emoji">${crate.icon}</span>`;
+    const borderStyle = crate.gemEgg ? 'border-color:var(--gold);animation:rainbow-border 2s linear infinite' : '';
+    return `<div class="crate-card" style="--cc:${crate.color};--cg:${crate.color}33;${borderStyle}" onclick="openGemCratePage('${crate.id}')">
+      ${iconHTML}
       <div class="crate-name">${crate.name}</div>
-      <div class="crate-desc">${crate.desc}</div>
-      <div class="crate-price" style="border-color:#a855f766;color:#a855f7">💎 ${crate.gemPrice}</div>
-    </div>
-  `).join('');
+      <div class="crate-desc" style="font-size:.68rem">${crate.desc}</div>
+      <div class="crate-price" style="border-color:#a855f766;color:#a855f7">\U0001f48e ${crate.gemPrice.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// Open gem crate via the normal crate opening UI
+function openGemCratePage(crateId){
+  const crate = GEM_CRATES.find(c => c.id === crateId);
+  if(!crate) return;
+  if(!S.profile){ toast('Still loading...'); return; }
+  // Store as current gem crate
+  S.currentGemCrate = crate;
+  S.currentCrate = null; // clear normal crate
+  // Use the standard opening page but adapt it
+  document.getElementById('opening-crate-name').textContent = crate.name.toUpperCase();
+  document.getElementById('open-price-display').innerHTML = `Cost: 💎 <span style="color:#a855f7;font-weight:900">${crate.gemPrice.toLocaleString()} Gems</span> &nbsp;(Balance: 💎 <span id="gem-price-balance">${fmtNum(S.profile.gems||0)}</span>)`;
+  document.getElementById('opening-coin-balance').parentElement.style.display = 'none';
+  document.getElementById('result-panel').classList.add('hidden');
+  updateLuckBar(null);
+  buildGemCrateInfoPanel(crate);
+  // Build a spin track from gem crate items
+  const fakeCrate = {...crate, price: crate.gemPrice, id: crate.id};
+  buildSpinTrack(fakeCrate, null, 999, 'spin-track-0');
+  for(let t=1;t<4;t++){const tr=document.getElementById('spin-track-'+t);if(tr)tr.style.display='none';}
+  showPage('opening');
+}
+
+function buildGemCrateInfoPanel(crate){
+  const panel = document.getElementById('crate-info-panel');
+  const pool = crate.items.map(id => getItem(id)).filter(Boolean);
+  const grouped = {};
+  pool.forEach(item => {
+    if(!grouped[item.rarity]) grouped[item.rarity] = [];
+    grouped[item.rarity].push(item);
+  });
+  const order = ['ultra','hyper','divine','primordial','mythic','legendary','cursed','runic','epic','spectral','rare','uncommon','common'];
+  let itemsHTML = '';
+  order.forEach(rar => {
+    if(!grouped[rar]) return;
+    const r = getRarity(rar); const col = r.color==='#ffffff'?'#e0e0ff':r.color;
+    grouped[rar].forEach(item => {
+      itemsHTML += `<div class="crate-item-pill" style="border-color:${col}66;color:${col}">${item.icon} <span style="color:var(--text-2)">${item.name}</span></div>`;
+    });
+  });
+  let oddsHTML = '';
+  order.filter(r => crate.odds[r] != null).forEach(rar => {
+    const r = getRarity(rar); const col = r.color==='#ffffff'?'#e0e0ff':r.color;
+    oddsHTML += `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem"><span style="color:${col};font-family:var(--font-d);font-size:.65rem">${r.name}</span><span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar,crate.odds)}</span></div>`;
+  });
+  // Pet odds
+  const pets = PETS_BY_CRATE[crate.id] || [];
+  let petHTML = '';
+  pets.forEach(pet => {
+    petHTML += `<div class="crate-item-pill pet-rainbow" style="border-width:2px">${pet.icon} <span class="rainbow-text" style="font-family:var(--font-d);font-weight:700">??? PET</span></div>`;
+  });
+  let petOddsHTML = pets.length ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem"><span class="rainbow-text" style="font-family:var(--font-d);font-weight:700;font-size:.65rem">PET ???</span><span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">1 in 10,000</span></div>` : '';
+  panel.innerHTML = `<div style="flex:1"><div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div><div class="crate-info-items">${itemsHTML}${petHTML}</div></div><div style="min-width:160px"><div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">DROP RATES</div><div style="display:flex;flex-direction:column;gap:4px">${oddsHTML}${petOddsHTML}</div></div>`;
+}
+
+// Open gem crate via the normal crate opening UI
+function openGemCratePage(crateId){
+  const crate = GEM_CRATES.find(c => c.id === crateId);
+  if(!crate) return;
+  if(!S.profile){ toast('Still loading...'); return; }
+  // Store as current gem crate
+  S.currentGemCrate = crate;
+  S.currentCrate = null; // clear normal crate
+  // Use the standard opening page but adapt it
+  document.getElementById('opening-crate-name').textContent = crate.name.toUpperCase();
+  document.getElementById('open-price-display').innerHTML = `Cost: 💎 <span style="color:#a855f7;font-weight:900">${crate.gemPrice.toLocaleString()} Gems</span> &nbsp;(Balance: 💎 <span id="gem-price-balance">${fmtNum(S.profile.gems||0)}</span>)`;
+  document.getElementById('opening-coin-balance').parentElement.style.display = 'none';
+  document.getElementById('result-panel').classList.add('hidden');
+  updateLuckBar(null);
+  buildGemCrateInfoPanel(crate);
+  // Build a spin track from gem crate items
+  const fakeCrate = {...crate, price: crate.gemPrice, id: crate.id};
+  buildSpinTrack(fakeCrate, null, 999, 'spin-track-0');
+  for(let t=1;t<4;t++){const tr=document.getElementById('spin-track-'+t);if(tr)tr.style.display='none';}
+  showPage('opening');
+}
+
+function buildGemCrateInfoPanel(crate){
+  const panel = document.getElementById('crate-info-panel');
+  const pool = crate.items.map(id => getItem(id)).filter(Boolean);
+  const grouped = {};
+  pool.forEach(item => {
+    if(!grouped[item.rarity]) grouped[item.rarity] = [];
+    grouped[item.rarity].push(item);
+  });
+  const order = ['ultra','hyper','divine','primordial','mythic','legendary','cursed','runic','epic','spectral','rare','uncommon','common'];
+  let itemsHTML = '';
+  order.forEach(rar => {
+    if(!grouped[rar]) return;
+    const r = getRarity(rar); const col = r.color==='#ffffff'?'#e0e0ff':r.color;
+    grouped[rar].forEach(item => {
+      itemsHTML += `<div class="crate-item-pill" style="border-color:${col}66;color:${col}">${item.icon} <span style="color:var(--text-2)">${item.name}</span></div>`;
+    });
+  });
+  let oddsHTML = '';
+  order.filter(r => crate.odds[r] != null).forEach(rar => {
+    const r = getRarity(rar); const col = r.color==='#ffffff'?'#e0e0ff':r.color;
+    oddsHTML += `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem"><span style="color:${col};font-family:var(--font-d);font-size:.65rem">${r.name}</span><span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">${rarityOdds(rar,crate.odds)}</span></div>`;
+  });
+  // Pet odds
+  const pets = PETS_BY_CRATE[crate.id] || [];
+  let petHTML = '';
+  pets.forEach(pet => {
+    petHTML += `<div class="crate-item-pill pet-rainbow" style="border-width:2px">${pet.icon} <span class="rainbow-text" style="font-family:var(--font-d);font-weight:700">??? PET</span></div>`;
+  });
+  let petOddsHTML = pets.length ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem"><span class="rainbow-text" style="font-family:var(--font-d);font-weight:700;font-size:.65rem">PET ???</span><span style="color:var(--text-3);font-family:var(--font-m);font-size:.65rem">1 in 10,000</span></div>` : '';
+  panel.innerHTML = `<div style="flex:1"><div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">POSSIBLE DROPS</div><div class="crate-info-items">${itemsHTML}${petHTML}</div></div><div style="min-width:160px"><div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2);margin-bottom:10px">DROP RATES</div><div style="display:flex;flex-direction:column;gap:4px">${oddsHTML}${petOddsHTML}</div></div>`;
 }
 
 async function openGemCrate(crateId){
@@ -5252,26 +5497,42 @@ async function openGemCrate(crateId){
   const ok = await spendGems(crate.gemPrice, 'gem_crate');
   if(!ok) return;
 
-  // Roll the item
-  const pool = crate.items.map(id => getItem(id)).filter(Boolean);
-  let odds = {...crate.odds};
-  let total = Object.values(odds).reduce((a,b)=>a+b,0);
-  let roll = Math.random() * total;
-  let result = pool[0];
-  for(let [rar, chance] of Object.entries(odds)){
-    roll -= chance;
-    if(roll <= 0){
-      const candidates = pool.filter(i => i.rarity === rar);
-      result = candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
-      break;
+  // Pet check first (1 in 10,000)
+  const pets = PETS_BY_CRATE[crate.id] || [];
+  let result = null;
+  for(const pet of pets){
+    if(Math.random() < 0.0001){ result = pet; break; }
+  }
+
+  if(!result){
+    // Roll normal item
+    const pool = crate.items.map(id => getItem(id)).filter(Boolean);
+    let odds = {...crate.odds};
+    let total = Object.values(odds).reduce((a,b)=>a+b,0);
+    let roll = Math.random() * total;
+    result = pool[0];
+    for(let [rar, chance] of Object.entries(odds)){
+      roll -= chance;
+      if(roll <= 0){
+        const candidates = pool.filter(i => i.rarity === rar);
+        result = candidates[Math.floor(Math.random()*candidates.length)] || pool[0];
+        break;
+      }
     }
   }
 
   // Add to inventory
   const inv = { itemId: result.id, uniqueId: genUID(), crateSource: crate.id, obtainedAt: new Date().toISOString() };
   S.inventory.push(inv);
-  S.profile.totalValue = S.inventory.reduce((s,i)=>{ const it=getItem(i.itemId); return s+(it?it.value:0);},0);
 
+  // Track seen items
+  if(!S.profile.seenItems) S.profile.seenItems = [];
+  if(!S.profile.seenItems.includes(result.id)){
+    S.profile.seenItems.push(result.id);
+    db.collection('users').doc(S.user.uid).update({seenItems: firebase.firestore.FieldValue.arrayUnion(result.id)});
+  }
+
+  S.profile.totalValue = S.inventory.reduce((s,i)=>{ const it=getItem(i.itemId); return s+(it?it.value:0);},0);
   try{
     await db.collection('users').doc(S.user.uid).update({
       inventory: S.inventory,
@@ -5280,17 +5541,19 @@ async function openGemCrate(crateId){
   }catch(e){ toast('Save error: '+e.message,'error'); }
 
   const r = getRarity(result.rarity);
-  const col = r.color==='#ffffff'?'#aaa':r.color;
-  toast(`${crate.icon} ${crate.name}: You got ${result.icon} ${result.name}!`, 'gold', 5000);
+  showResult(result, r, inv);
   updateGemDisplay();
 
-  // Ultra announcement
-  if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(result.rarity)){
-    if(SETTINGS.cutscene) showUltraOverlay(result);
+  if(result.rarity === 'pet'){
+    if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(result),800);
+    const msg = `🌈 ${S.profile.username} hatched ${result.icon} ${result.name} from a Gem Egg!!! 🌈`;
+    showGlobalBanner(msg);
+    try{ await rtdb.ref('chat').push({username:'🌈 GLOBAL',text:msg,isSystem:true,cls:'chat-msg-announce',isPull:true,ts:firebase.database.ServerValue.TIMESTAMP}); }catch(e){}
+  } else if(['astral','divine','primordial','ultra','hyper','cosmic','transcendent','eternal','genesis','infinite'].includes(result.rarity)){
+    if(SETTINGS.cutscene) setTimeout(()=>showUltraOverlay(result),800);
     showGlobalBanner(`🌟 ${S.profile.username} pulled ${result.icon} ${result.name} from a Gem Crate!`);
   }
 }
-
 
 // ── Auto-roll inline button ───────────────────────────────────
 function updateAutoRollInlineBtn(){
