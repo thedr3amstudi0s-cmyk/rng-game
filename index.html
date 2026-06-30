@@ -720,6 +720,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
     <div class="coin-display" style="border-color:#a855f7;color:#a855f7"><span>💎</span><span id="gem-balance">0</span></div>
     <div class="nav-right">
       <span class="player-name" id="nav-username">—</span>
+      <button class="btn-ghost hidden" id="admin-refresh-btn" style="border-color:#ef4444;color:#ef4444" title="Force refresh all clients">⚡ REFRESH ALL</button>
       <button class="btn-ghost" id="logout-btn">EXIT</button>
     </div>
   </header>
@@ -4647,6 +4648,20 @@ function spawnParticles(){
     c.appendChild(p);
   }
 }
+
+// ============================================================
+// ADMIN
+// ============================================================
+document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('admin-refresh-btn');
+  btn.disabled=true; btn.textContent='Refreshing...';
+  try{
+    await rtdb.ref('admin/forceRefresh').set({ts:firebase.database.ServerValue.TIMESTAMP,by:S.profile?.username||'admin'});
+    toast('Force refresh sent!','success');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+  setTimeout(()=>{btn.disabled=false;btn.textContent='⚡ REFRESH ALL';},2000);
+});
+
 // ============================================================
 // LUCKY WHEEL
 // ============================================================
