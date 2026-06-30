@@ -2622,7 +2622,7 @@ const REBIRTH_COINS_PER_GEM = 1000000; // coins above threshold needed per +1 ge
 const REBIRTH_STARTING_COINS = 400;    // coins after rebirthing
 
 function getRebirthGemsFor(coins){
-  if(coins < REBIRTH_THRESHOLD) return 0;
+  if(coins < REBIRTH_THRESHOLD) return 1;
   return Math.floor((coins - REBIRTH_THRESHOLD) / REBIRTH_COINS_PER_GEM);
 }
 
