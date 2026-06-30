@@ -173,6 +173,52 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   border:1px solid var(--border);border-radius:20px;padding:4px 12px;
   font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--gold);}
 
+/* PET SHOP — wooden shelf */
+.pet-shop-header{margin-bottom:16px;}
+.pet-shop-title{font-family:var(--font-d);font-size:.85rem;font-weight:900;letter-spacing:.15em;color:#deb887;margin-bottom:6px;text-shadow:0 0 12px rgba(222,184,135,.3);}
+.pet-shop-desc{font-size:.78rem;color:var(--text-2);margin-bottom:8px;max-width:640px;line-height:1.4;}
+.pet-shop-timer{display:inline-block;font-family:var(--font-d);font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#f59e0b;background:var(--bg-card);border:1px solid #f59e0b55;border-radius:20px;padding:5px 14px;}
+.pet-shelf-wrap{
+  background:
+    repeating-linear-gradient(180deg, rgba(0,0,0,.08) 0px, rgba(0,0,0,.08) 2px, transparent 2px, transparent 4px),
+    linear-gradient(180deg, #6b4226, #5a3620 55%, #4a2c17);
+  border:5px solid #3e2415;
+  border-radius:14px;
+  padding:22px 18px 14px;
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.5), inset 0 -30px 50px -20px rgba(0,0,0,.6), 0 14px 34px rgba(0,0,0,.5);
+  position:relative;
+}
+.pet-shelf-wrap::before{
+  content:'';position:absolute;inset:0;border-radius:10px;pointer-events:none;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 26px);
+}
+.shelf-row{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:14px;
+  padding:6px 4px 26px;margin-bottom:14px;position:relative;
+}
+.shelf-row::after{
+  content:'';position:absolute;left:-6px;right:-6px;bottom:6px;height:14px;
+  background:linear-gradient(180deg,#7a4d2c,#3e2415);
+  border-radius:3px;
+  box-shadow:0 8px 14px -4px rgba(0,0,0,.65), inset 0 2px 2px rgba(255,255,255,.08);
+}
+.shelf-row:last-child{margin-bottom:0;}
+.shelf-row:last-child::after{display:none;}
+.shelf-pet-card{
+  background:linear-gradient(160deg,var(--bg-card2),var(--bg-card));
+  border:2px solid var(--pc,#8b5e34);
+  border-radius:10px;padding:12px 6px 9px;text-align:center;cursor:pointer;
+  transition:var(--t);position:relative;z-index:1;
+  box-shadow:0 8px 16px rgba(0,0,0,.5);
+}
+.shelf-pet-card:hover{transform:translateY(-5px);box-shadow:0 16px 26px rgba(0,0,0,.6),0 0 20px var(--pg,transparent);}
+.shelf-pet-icon{font-size:2rem;display:block;margin-bottom:5px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));}
+.shelf-pet-name{font-family:var(--font-d);font-size:.6rem;font-weight:700;letter-spacing:.03em;margin-bottom:3px;line-height:1.25;min-height:2.1em;}
+.shelf-pet-tier{font-size:.56rem;font-family:var(--font-d);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase;}
+.shelf-pet-price{display:inline-flex;align-items:center;gap:3px;background:var(--bg-dark);border:1px solid var(--border);border-radius:14px;padding:3px 8px;font-family:var(--font-d);font-size:.62rem;font-weight:700;color:#a855f7;}
+@media(max-width:900px){.shelf-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.shelf-row{grid-template-columns:repeat(2,1fr);gap:8px;} .pet-shelf-wrap{padding:14px 10px 8px;}}
+
 /* CRATE OPENING */
 .crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
 .crate-open-header h2{font-family:var(--font-d);font-size:1.3rem;font-weight:900;letter-spacing:.15em;}
@@ -757,11 +803,18 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
 
-        <!-- GEM CRATES -->
+        <!-- PET SHOP -->
         <div style="margin-top:32px">
-          <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.2em;color:#a855f7;margin-bottom:6px">💎 GEM-ONLY CRATES</div>
-          <div style="font-size:.78rem;color:var(--text-3);margin-bottom:14px">These special crates require 💎 Gems. Earn gems from the Shop tab.</div>
-          <div class="crates-grid" id="gem-crates-grid"></div>
+          <div class="pet-shop-header">
+            <div class="pet-shop-title">🐾 PET SHOP</div>
+            <div class="pet-shop-desc">18 pets on the shelf right now. The shop restocks itself every 30 minutes — everyone sees the same lineup. Buy with 💎 Gems.</div>
+            <div class="pet-shop-timer" id="pet-shop-timer">🔄 Next restock in --:--</div>
+          </div>
+          <div class="pet-shelf-wrap" id="pet-shelf-wrap">
+            <div class="shelf-row" id="shelf-row-0"></div>
+            <div class="shelf-row" id="shelf-row-1"></div>
+            <div class="shelf-row" id="shelf-row-2"></div>
+          </div>
         </div>
       </section>
 
@@ -1581,6 +1634,362 @@ function getPetsForCrate(crateId) {
   return PETS_BY_CRATE[crateId] || PETS_BY_CRATE['basic']; // fallback
 }
 
+const SHOP_PETS = [
+  {id:'sp_budding_001',name:'Tiny Fang',icon:'🐱',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:20,value:150,desc:'A budding-tier shop pet.',perk:'luck',perkValue:2,perkName:'Lucky Charm',perkDesc:'+2% better odds on next open after a luck boost'},
+  {id:'sp_budding_002',name:'Brave Spark',icon:'🐶',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:21,value:154,desc:'A budding-tier shop pet.',perk:'speed',perkValue:2,perkName:'Quick Paws',perkDesc:'Spin animation is 2% faster'},
+  {id:'sp_budding_003',name:'Swift Glimmer',icon:'🐭',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:21,value:158,desc:'A budding-tier shop pet.',perk:'discount',perkValue:2,perkName:'Bargain Hunter',perkDesc:'-2% off all crate prices'},
+  {id:'sp_budding_004',name:'Clever Pebble',icon:'🐹',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:22,value:163,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:2,perkName:'Golden Touch',perkDesc:'+2% coins when selling items'},
+  {id:'sp_budding_005',name:'Gentle Dew',icon:'🐰',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:23,value:167,desc:'A budding-tier shop pet.',perk:'pity',perkValue:2,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 2% fewer coins'},
+  {id:'sp_budding_006',name:'Fierce Brook',icon:'🦊',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:23,value:171,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:2,perkName:'Gem Sniffer',perkDesc:'2% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_007',name:'Mystic Berry',icon:'🐻',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:24,value:175,desc:'A budding-tier shop pet.',perk:'luck',perkValue:2,perkName:'Lucky Charm',perkDesc:'+2% better odds on next open after a luck boost'},
+  {id:'sp_budding_008',name:'Shiny Tail',icon:'🐼',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:25,value:180,desc:'A budding-tier shop pet.',perk:'speed',perkValue:2,perkName:'Quick Paws',perkDesc:'Spin animation is 2% faster'},
+  {id:'sp_budding_009',name:'Lucky Horn',icon:'🐨',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:25,value:184,desc:'A budding-tier shop pet.',perk:'discount',perkValue:2,perkName:'Bargain Hunter',perkDesc:'-2% off all crate prices'},
+  {id:'sp_budding_010',name:'Wild Shade',icon:'🐯',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:26,value:188,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:2,perkName:'Golden Touch',perkDesc:'+2% coins when selling items'},
+  {id:'sp_budding_011',name:'Noble Burrow',icon:'🦁',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:27,value:192,desc:'A budding-tier shop pet.',perk:'pity',perkValue:3,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 3% fewer coins'},
+  {id:'sp_budding_012',name:'Curious Moss',icon:'🐮',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:27,value:197,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:3,perkName:'Gem Sniffer',perkDesc:'3% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_013',name:'Sneaky Hollow',icon:'🐷',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:28,value:201,desc:'A budding-tier shop pet.',perk:'luck',perkValue:3,perkName:'Lucky Charm',perkDesc:'+3% better odds on next open after a luck boost'},
+  {id:'sp_budding_014',name:'Bold Acorn',icon:'🐸',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:29,value:205,desc:'A budding-tier shop pet.',perk:'speed',perkValue:3,perkName:'Quick Paws',perkDesc:'Spin animation is 3% faster'},
+  {id:'sp_budding_015',name:'Calm Paws',icon:'🐵',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:29,value:209,desc:'A budding-tier shop pet.',perk:'discount',perkValue:3,perkName:'Bargain Hunter',perkDesc:'-3% off all crate prices'},
+  {id:'sp_budding_016',name:'Eager Hoof',icon:'🐔',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:30,value:214,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:3,perkName:'Golden Touch',perkDesc:'+3% coins when selling items'},
+  {id:'sp_budding_017',name:'Frosty Leaf',icon:'🐧',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:31,value:218,desc:'A budding-tier shop pet.',perk:'pity',perkValue:3,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 3% fewer coins'},
+  {id:'sp_budding_018',name:'Sunny Talon',icon:'🐦',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:32,value:222,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:3,perkName:'Gem Sniffer',perkDesc:'3% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_019',name:'Shadow Bramble',icon:'🐤',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:32,value:226,desc:'A budding-tier shop pet.',perk:'luck',perkValue:3,perkName:'Lucky Charm',perkDesc:'+3% better odds on next open after a luck boost'},
+  {id:'sp_budding_020',name:'Glowing Cinder',icon:'🦆',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:33,value:231,desc:'A budding-tier shop pet.',perk:'speed',perkValue:3,perkName:'Quick Paws',perkDesc:'Spin animation is 3% faster'},
+  {id:'sp_budding_021',name:'Spry Twig',icon:'🦉',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:34,value:235,desc:'A budding-tier shop pet.',perk:'discount',perkValue:3,perkName:'Bargain Hunter',perkDesc:'-3% off all crate prices'},
+  {id:'sp_budding_022',name:'Plucky Whiskers',icon:'🦇',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:34,value:239,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:3,perkName:'Golden Touch',perkDesc:'+3% coins when selling items'},
+  {id:'sp_budding_023',name:'Drowsy Fin',icon:'🐺',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:35,value:243,desc:'A budding-tier shop pet.',perk:'pity',perkValue:3,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 3% fewer coins'},
+  {id:'sp_budding_024',name:'Zesty Stone',icon:'🐗',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:36,value:247,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:3,perkName:'Gem Sniffer',perkDesc:'3% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_025',name:'Stormy Scale',icon:'🐴',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:36,value:252,desc:'A budding-tier shop pet.',perk:'luck',perkValue:3,perkName:'Lucky Charm',perkDesc:'+3% better odds on next open after a luck boost'},
+  {id:'sp_budding_026',name:'Quiet Thorn',icon:'🦄',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:37,value:256,desc:'A budding-tier shop pet.',perk:'speed',perkValue:3,perkName:'Quick Paws',perkDesc:'Spin animation is 3% faster'},
+  {id:'sp_budding_027',name:'Daring Bolt',icon:'🐝',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:38,value:260,desc:'A budding-tier shop pet.',perk:'discount',perkValue:3,perkName:'Bargain Hunter',perkDesc:'-3% off all crate prices'},
+  {id:'sp_budding_028',name:'Witty Pebbles',icon:'🦋',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:38,value:264,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:3,perkName:'Golden Touch',perkDesc:'+3% coins when selling items'},
+  {id:'sp_budding_029',name:'Humble Comet',icon:'🐌',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:39,value:269,desc:'A budding-tier shop pet.',perk:'pity',perkValue:3,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 3% fewer coins'},
+  {id:'sp_budding_030',name:'Radiant Wing',icon:'🐞',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:40,value:273,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:3,perkName:'Gem Sniffer',perkDesc:'3% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_031',name:'Feral Breeze',icon:'🐢',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:40,value:277,desc:'A budding-tier shop pet.',perk:'luck',perkValue:4,perkName:'Lucky Charm',perkDesc:'+4% better odds on next open after a luck boost'},
+  {id:'sp_budding_032',name:'Jolly Mane',icon:'🐍',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:41,value:281,desc:'A budding-tier shop pet.',perk:'speed',perkValue:4,perkName:'Quick Paws',perkDesc:'Spin animation is 4% faster'},
+  {id:'sp_budding_033',name:'Stoic Wisp',icon:'🦎',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:42,value:286,desc:'A budding-tier shop pet.',perk:'discount',perkValue:4,perkName:'Bargain Hunter',perkDesc:'-4% off all crate prices'},
+  {id:'sp_budding_034',name:'Nimble Pip',icon:'🦖',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:42,value:290,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:4,perkName:'Golden Touch',perkDesc:'+4% coins when selling items'},
+  {id:'sp_budding_035',name:'Rusty Crumb',icon:'🦕',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:43,value:294,desc:'A budding-tier shop pet.',perk:'pity',perkValue:4,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 4% fewer coins'},
+  {id:'sp_budding_036',name:'Velvet Storm',icon:'🐙',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:44,value:298,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:4,perkName:'Gem Sniffer',perkDesc:'4% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_037',name:'Crimson Snout',icon:'🦑',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:44,value:303,desc:'A budding-tier shop pet.',perk:'luck',perkValue:4,perkName:'Lucky Charm',perkDesc:'+4% better odds on next open after a luck boost'},
+  {id:'sp_budding_038',name:'Azure Frost',icon:'🐡',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:45,value:307,desc:'A budding-tier shop pet.',perk:'speed',perkValue:4,perkName:'Quick Paws',perkDesc:'Spin animation is 4% faster'},
+  {id:'sp_budding_039',name:'Golden Drift',icon:'🐠',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:46,value:311,desc:'A budding-tier shop pet.',perk:'discount',perkValue:4,perkName:'Bargain Hunter',perkDesc:'-4% off all crate prices'},
+  {id:'sp_budding_040',name:'Silver Flicker',icon:'🐟',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:46,value:315,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:4,perkName:'Golden Touch',perkDesc:'+4% coins when selling items'},
+  {id:'sp_budding_041',name:'Tiny Sprout',icon:'🐬',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:47,value:319,desc:'A budding-tier shop pet.',perk:'pity',perkValue:4,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 4% fewer coins'},
+  {id:'sp_budding_042',name:'Brave Nugget',icon:'🐳',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:48,value:324,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:4,perkName:'Gem Sniffer',perkDesc:'4% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_043',name:'Swift Petal',icon:'🐋',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:48,value:328,desc:'A budding-tier shop pet.',perk:'luck',perkValue:4,perkName:'Lucky Charm',perkDesc:'+4% better odds on next open after a luck boost'},
+  {id:'sp_budding_044',name:'Clever Claw',icon:'🦈',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:49,value:332,desc:'A budding-tier shop pet.',perk:'speed',perkValue:4,perkName:'Quick Paws',perkDesc:'Spin animation is 4% faster'},
+  {id:'sp_budding_045',name:'Gentle Ember',icon:'🐊',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:50,value:336,desc:'A budding-tier shop pet.',perk:'discount',perkValue:4,perkName:'Bargain Hunter',perkDesc:'-4% off all crate prices'},
+  {id:'sp_budding_046',name:'Fierce Echo',icon:'🐅',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:51,value:341,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:4,perkName:'Golden Touch',perkDesc:'+4% coins when selling items'},
+  {id:'sp_budding_047',name:'Mystic Ripple',icon:'🦓',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:51,value:345,desc:'A budding-tier shop pet.',perk:'pity',perkValue:4,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 4% fewer coins'},
+  {id:'sp_budding_048',name:'Shiny Glow',icon:'🦍',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:52,value:349,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:4,perkName:'Gem Sniffer',perkDesc:'4% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_049',name:'Lucky Fern',icon:'🐘',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:53,value:353,desc:'A budding-tier shop pet.',perk:'luck',perkValue:4,perkName:'Lucky Charm',perkDesc:'+4% better odds on next open after a luck boost'},
+  {id:'sp_budding_050',name:'Wild Clover',icon:'🦛',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:53,value:358,desc:'A budding-tier shop pet.',perk:'speed',perkValue:4,perkName:'Quick Paws',perkDesc:'Spin animation is 4% faster'},
+  {id:'sp_budding_051',name:'Noble Fang',icon:'🦏',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:54,value:362,desc:'A budding-tier shop pet.',perk:'discount',perkValue:5,perkName:'Bargain Hunter',perkDesc:'-5% off all crate prices'},
+  {id:'sp_budding_052',name:'Curious Spark',icon:'🐪',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:55,value:366,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:5,perkName:'Golden Touch',perkDesc:'+5% coins when selling items'},
+  {id:'sp_budding_053',name:'Sneaky Glimmer',icon:'🐫',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:55,value:370,desc:'A budding-tier shop pet.',perk:'pity',perkValue:5,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 5% fewer coins'},
+  {id:'sp_budding_054',name:'Bold Pebble',icon:'🦒',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:56,value:375,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:5,perkName:'Gem Sniffer',perkDesc:'5% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_budding_055',name:'Calm Dew',icon:'🦘',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:57,value:379,desc:'A budding-tier shop pet.',perk:'luck',perkValue:5,perkName:'Lucky Charm',perkDesc:'+5% better odds on next open after a luck boost'},
+  {id:'sp_budding_056',name:'Eager Brook',icon:'🐃',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:57,value:383,desc:'A budding-tier shop pet.',perk:'speed',perkValue:5,perkName:'Quick Paws',perkDesc:'Spin animation is 5% faster'},
+  {id:'sp_budding_057',name:'Frosty Berry',icon:'🐂',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:58,value:387,desc:'A budding-tier shop pet.',perk:'discount',perkValue:5,perkName:'Bargain Hunter',perkDesc:'-5% off all crate prices'},
+  {id:'sp_budding_058',name:'Sunny Tail',icon:'🐄',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:59,value:392,desc:'A budding-tier shop pet.',perk:'sellboost',perkValue:5,perkName:'Golden Touch',perkDesc:'+5% coins when selling items'},
+  {id:'sp_budding_059',name:'Shadow Horn',icon:'🐎',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:59,value:396,desc:'A budding-tier shop pet.',perk:'pity',perkValue:5,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 5% fewer coins'},
+  {id:'sp_budding_060',name:'Glowing Shade',icon:'🐖',rarity:'pet',tier:'budding',tierName:'Budding',tierColor:'#9ca3af',price:60,value:400,desc:'A budding-tier shop pet.',perk:'gemfind',perkValue:5,perkName:'Gem Sniffer',perkDesc:'5% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_001',name:'Spry Burrow',icon:'🐏',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:70,value:500,desc:'A spry-tier shop pet.',perk:'luck',perkValue:5,perkName:'Lucky Charm',perkDesc:'+5% better odds on next open after a luck boost'},
+  {id:'sp_spry_002',name:'Plucky Moss',icon:'🐑',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:72,value:514,desc:'A spry-tier shop pet.',perk:'speed',perkValue:5,perkName:'Quick Paws',perkDesc:'Spin animation is 5% faster'},
+  {id:'sp_spry_003',name:'Drowsy Hollow',icon:'🦙',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:73,value:529,desc:'A spry-tier shop pet.',perk:'discount',perkValue:5,perkName:'Bargain Hunter',perkDesc:'-5% off all crate prices'},
+  {id:'sp_spry_004',name:'Zesty Acorn',icon:'🐐',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:75,value:543,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:5,perkName:'Golden Touch',perkDesc:'+5% coins when selling items'},
+  {id:'sp_spry_005',name:'Stormy Paws',icon:'🦌',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:77,value:557,desc:'A spry-tier shop pet.',perk:'pity',perkValue:5,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 5% fewer coins'},
+  {id:'sp_spry_006',name:'Quiet Hoof',icon:'🐕',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:78,value:571,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:5,perkName:'Gem Sniffer',perkDesc:'5% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_007',name:'Daring Leaf',icon:'🐩',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:80,value:586,desc:'A spry-tier shop pet.',perk:'luck',perkValue:5,perkName:'Lucky Charm',perkDesc:'+5% better odds on next open after a luck boost'},
+  {id:'sp_spry_008',name:'Witty Talon',icon:'🐈',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:81,value:600,desc:'A spry-tier shop pet.',perk:'speed',perkValue:6,perkName:'Quick Paws',perkDesc:'Spin animation is 6% faster'},
+  {id:'sp_spry_009',name:'Humble Bramble',icon:'🐓',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:83,value:614,desc:'A spry-tier shop pet.',perk:'discount',perkValue:6,perkName:'Bargain Hunter',perkDesc:'-6% off all crate prices'},
+  {id:'sp_spry_010',name:'Radiant Cinder',icon:'🦃',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:85,value:629,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:6,perkName:'Golden Touch',perkDesc:'+6% coins when selling items'},
+  {id:'sp_spry_011',name:'Feral Twig',icon:'🦚',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:86,value:643,desc:'A spry-tier shop pet.',perk:'pity',perkValue:6,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 6% fewer coins'},
+  {id:'sp_spry_012',name:'Jolly Whiskers',icon:'🦜',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:88,value:657,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:6,perkName:'Gem Sniffer',perkDesc:'6% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_013',name:'Stoic Fin',icon:'🦢',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:90,value:671,desc:'A spry-tier shop pet.',perk:'luck',perkValue:6,perkName:'Lucky Charm',perkDesc:'+6% better odds on next open after a luck boost'},
+  {id:'sp_spry_014',name:'Nimble Stone',icon:'🦩',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:91,value:686,desc:'A spry-tier shop pet.',perk:'speed',perkValue:6,perkName:'Quick Paws',perkDesc:'Spin animation is 6% faster'},
+  {id:'sp_spry_015',name:'Rusty Scale',icon:'🐇',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:93,value:700,desc:'A spry-tier shop pet.',perk:'discount',perkValue:6,perkName:'Bargain Hunter',perkDesc:'-6% off all crate prices'},
+  {id:'sp_spry_016',name:'Velvet Thorn',icon:'🦝',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:94,value:714,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:6,perkName:'Golden Touch',perkDesc:'+6% coins when selling items'},
+  {id:'sp_spry_017',name:'Crimson Bolt',icon:'🦨',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:96,value:729,desc:'A spry-tier shop pet.',perk:'pity',perkValue:6,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 6% fewer coins'},
+  {id:'sp_spry_018',name:'Azure Pebbles',icon:'🦡',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:98,value:743,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:6,perkName:'Gem Sniffer',perkDesc:'6% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_019',name:'Golden Comet',icon:'🦦',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:99,value:757,desc:'A spry-tier shop pet.',perk:'luck',perkValue:6,perkName:'Lucky Charm',perkDesc:'+6% better odds on next open after a luck boost'},
+  {id:'sp_spry_020',name:'Silver Wing',icon:'🦥',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:101,value:771,desc:'A spry-tier shop pet.',perk:'speed',perkValue:7,perkName:'Quick Paws',perkDesc:'Spin animation is 7% faster'},
+  {id:'sp_spry_021',name:'Tiny Breeze',icon:'🐁',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:103,value:786,desc:'A spry-tier shop pet.',perk:'discount',perkValue:7,perkName:'Bargain Hunter',perkDesc:'-7% off all crate prices'},
+  {id:'sp_spry_022',name:'Brave Mane',icon:'🐀',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:104,value:800,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:7,perkName:'Golden Touch',perkDesc:'+7% coins when selling items'},
+  {id:'sp_spry_023',name:'Swift Wisp',icon:'🐿',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:106,value:814,desc:'A spry-tier shop pet.',perk:'pity',perkValue:7,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 7% fewer coins'},
+  {id:'sp_spry_024',name:'Clever Pip',icon:'🦔',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:108,value:829,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:7,perkName:'Gem Sniffer',perkDesc:'7% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_025',name:'Gentle Crumb',icon:'🐉',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:109,value:843,desc:'A spry-tier shop pet.',perk:'luck',perkValue:7,perkName:'Lucky Charm',perkDesc:'+7% better odds on next open after a luck boost'},
+  {id:'sp_spry_026',name:'Fierce Storm',icon:'🐲',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:111,value:857,desc:'A spry-tier shop pet.',perk:'speed',perkValue:7,perkName:'Quick Paws',perkDesc:'Spin animation is 7% faster'},
+  {id:'sp_spry_027',name:'Mystic Snout',icon:'🦅',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:112,value:871,desc:'A spry-tier shop pet.',perk:'discount',perkValue:7,perkName:'Bargain Hunter',perkDesc:'-7% off all crate prices'},
+  {id:'sp_spry_028',name:'Shiny Frost',icon:'🦂',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:114,value:886,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:7,perkName:'Golden Touch',perkDesc:'+7% coins when selling items'},
+  {id:'sp_spry_029',name:'Lucky Drift',icon:'🦗',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:116,value:900,desc:'A spry-tier shop pet.',perk:'pity',perkValue:7,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 7% fewer coins'},
+  {id:'sp_spry_030',name:'Wild Flicker',icon:'🐚',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:117,value:914,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:7,perkName:'Gem Sniffer',perkDesc:'7% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_031',name:'Noble Sprout',icon:'🐱',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:119,value:929,desc:'A spry-tier shop pet.',perk:'luck',perkValue:7,perkName:'Lucky Charm',perkDesc:'+7% better odds on next open after a luck boost'},
+  {id:'sp_spry_032',name:'Curious Nugget',icon:'🐶',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:121,value:943,desc:'A spry-tier shop pet.',perk:'speed',perkValue:8,perkName:'Quick Paws',perkDesc:'Spin animation is 8% faster'},
+  {id:'sp_spry_033',name:'Sneaky Petal',icon:'🐭',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:122,value:957,desc:'A spry-tier shop pet.',perk:'discount',perkValue:8,perkName:'Bargain Hunter',perkDesc:'-8% off all crate prices'},
+  {id:'sp_spry_034',name:'Bold Claw',icon:'🐹',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:124,value:971,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:8,perkName:'Golden Touch',perkDesc:'+8% coins when selling items'},
+  {id:'sp_spry_035',name:'Calm Ember',icon:'🐰',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:126,value:986,desc:'A spry-tier shop pet.',perk:'pity',perkValue:8,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 8% fewer coins'},
+  {id:'sp_spry_036',name:'Eager Echo',icon:'🦊',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:127,value:1000,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:8,perkName:'Gem Sniffer',perkDesc:'8% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_037',name:'Frosty Ripple',icon:'🐻',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:129,value:1014,desc:'A spry-tier shop pet.',perk:'luck',perkValue:8,perkName:'Lucky Charm',perkDesc:'+8% better odds on next open after a luck boost'},
+  {id:'sp_spry_038',name:'Sunny Glow',icon:'🐼',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:130,value:1029,desc:'A spry-tier shop pet.',perk:'speed',perkValue:8,perkName:'Quick Paws',perkDesc:'Spin animation is 8% faster'},
+  {id:'sp_spry_039',name:'Shadow Fern',icon:'🐨',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:132,value:1043,desc:'A spry-tier shop pet.',perk:'discount',perkValue:8,perkName:'Bargain Hunter',perkDesc:'-8% off all crate prices'},
+  {id:'sp_spry_040',name:'Glowing Clover',icon:'🐯',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:134,value:1057,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:8,perkName:'Golden Touch',perkDesc:'+8% coins when selling items'},
+  {id:'sp_spry_041',name:'Spry Fang',icon:'🦁',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:135,value:1071,desc:'A spry-tier shop pet.',perk:'pity',perkValue:8,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 8% fewer coins'},
+  {id:'sp_spry_042',name:'Plucky Spark',icon:'🐮',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:137,value:1086,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:8,perkName:'Gem Sniffer',perkDesc:'8% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_043',name:'Drowsy Glimmer',icon:'🐷',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:139,value:1100,desc:'A spry-tier shop pet.',perk:'luck',perkValue:8,perkName:'Lucky Charm',perkDesc:'+8% better odds on next open after a luck boost'},
+  {id:'sp_spry_044',name:'Zesty Pebble',icon:'🐸',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:140,value:1114,desc:'A spry-tier shop pet.',perk:'speed',perkValue:9,perkName:'Quick Paws',perkDesc:'Spin animation is 9% faster'},
+  {id:'sp_spry_045',name:'Stormy Dew',icon:'🐵',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:142,value:1129,desc:'A spry-tier shop pet.',perk:'discount',perkValue:9,perkName:'Bargain Hunter',perkDesc:'-9% off all crate prices'},
+  {id:'sp_spry_046',name:'Quiet Brook',icon:'🐔',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:143,value:1143,desc:'A spry-tier shop pet.',perk:'sellboost',perkValue:9,perkName:'Golden Touch',perkDesc:'+9% coins when selling items'},
+  {id:'sp_spry_047',name:'Daring Berry',icon:'🐧',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:145,value:1157,desc:'A spry-tier shop pet.',perk:'pity',perkValue:9,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 9% fewer coins'},
+  {id:'sp_spry_048',name:'Witty Tail',icon:'🐦',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:147,value:1171,desc:'A spry-tier shop pet.',perk:'gemfind',perkValue:9,perkName:'Gem Sniffer',perkDesc:'9% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_spry_049',name:'Humble Horn',icon:'🐤',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:148,value:1186,desc:'A spry-tier shop pet.',perk:'luck',perkValue:9,perkName:'Lucky Charm',perkDesc:'+9% better odds on next open after a luck boost'},
+  {id:'sp_spry_050',name:'Radiant Shade',icon:'🦆',rarity:'pet',tier:'spry',tierName:'Spry',tierColor:'#22c55e',price:150,value:1200,desc:'A spry-tier shop pet.',perk:'speed',perkValue:9,perkName:'Quick Paws',perkDesc:'Spin animation is 9% faster'},
+  {id:'sp_keen_001',name:'Feral Burrow',icon:'🦉',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:160,value:1500,desc:'A keen-tier shop pet.',perk:'discount',perkValue:9,perkName:'Bargain Hunter',perkDesc:'-9% off all crate prices'},
+  {id:'sp_keen_002',name:'Jolly Moss',icon:'🦇',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:164,value:1551,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:9,perkName:'Golden Touch',perkDesc:'+9% coins when selling items'},
+  {id:'sp_keen_003',name:'Stoic Hollow',icon:'🐺',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:168,value:1603,desc:'A keen-tier shop pet.',perk:'pity',perkValue:9,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 9% fewer coins'},
+  {id:'sp_keen_004',name:'Nimble Acorn',icon:'🐗',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:172,value:1654,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:9,perkName:'Gem Sniffer',perkDesc:'9% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_keen_005',name:'Rusty Paws',icon:'🐴',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:176,value:1705,desc:'A keen-tier shop pet.',perk:'luck',perkValue:10,perkName:'Lucky Charm',perkDesc:'+10% better odds on next open after a luck boost'},
+  {id:'sp_keen_006',name:'Velvet Hoof',icon:'🦄',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:181,value:1756,desc:'A keen-tier shop pet.',perk:'speed',perkValue:10,perkName:'Quick Paws',perkDesc:'Spin animation is 10% faster'},
+  {id:'sp_keen_007',name:'Crimson Leaf',icon:'🐝',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:185,value:1808,desc:'A keen-tier shop pet.',perk:'discount',perkValue:10,perkName:'Bargain Hunter',perkDesc:'-10% off all crate prices'},
+  {id:'sp_keen_008',name:'Azure Talon',icon:'🦋',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:189,value:1859,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:10,perkName:'Golden Touch',perkDesc:'+10% coins when selling items'},
+  {id:'sp_keen_009',name:'Golden Bramble',icon:'🐌',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:193,value:1910,desc:'A keen-tier shop pet.',perk:'pity',perkValue:10,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 10% fewer coins'},
+  {id:'sp_keen_010',name:'Silver Cinder',icon:'🐞',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:197,value:1962,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:10,perkName:'Gem Sniffer',perkDesc:'10% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_keen_011',name:'Tiny Twig',icon:'🐢',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:201,value:2013,desc:'A keen-tier shop pet.',perk:'luck',perkValue:10,perkName:'Lucky Charm',perkDesc:'+10% better odds on next open after a luck boost'},
+  {id:'sp_keen_012',name:'Brave Whiskers',icon:'🐍',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:205,value:2064,desc:'A keen-tier shop pet.',perk:'speed',perkValue:10,perkName:'Quick Paws',perkDesc:'Spin animation is 10% faster'},
+  {id:'sp_keen_013',name:'Swift Fin',icon:'🦎',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:209,value:2115,desc:'A keen-tier shop pet.',perk:'discount',perkValue:11,perkName:'Bargain Hunter',perkDesc:'-11% off all crate prices'},
+  {id:'sp_keen_014',name:'Clever Stone',icon:'🦖',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:213,value:2167,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:11,perkName:'Golden Touch',perkDesc:'+11% coins when selling items'},
+  {id:'sp_keen_015',name:'Gentle Scale',icon:'🦕',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:217,value:2218,desc:'A keen-tier shop pet.',perk:'pity',perkValue:11,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 11% fewer coins'},
+  {id:'sp_keen_016',name:'Fierce Thorn',icon:'🐙',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:222,value:2269,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:11,perkName:'Gem Sniffer',perkDesc:'11% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_keen_017',name:'Mystic Bolt',icon:'🦑',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:226,value:2321,desc:'A keen-tier shop pet.',perk:'luck',perkValue:11,perkName:'Lucky Charm',perkDesc:'+11% better odds on next open after a luck boost'},
+  {id:'sp_keen_018',name:'Shiny Pebbles',icon:'🐡',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:230,value:2372,desc:'A keen-tier shop pet.',perk:'speed',perkValue:11,perkName:'Quick Paws',perkDesc:'Spin animation is 11% faster'},
+  {id:'sp_keen_019',name:'Lucky Comet',icon:'🐠',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:234,value:2423,desc:'A keen-tier shop pet.',perk:'discount',perkValue:11,perkName:'Bargain Hunter',perkDesc:'-11% off all crate prices'},
+  {id:'sp_keen_020',name:'Wild Wing',icon:'🐟',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:238,value:2474,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:11,perkName:'Golden Touch',perkDesc:'+11% coins when selling items'},
+  {id:'sp_keen_021',name:'Noble Breeze',icon:'🐬',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:242,value:2526,desc:'A keen-tier shop pet.',perk:'pity',perkValue:12,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 12% fewer coins'},
+  {id:'sp_keen_022',name:'Curious Mane',icon:'🐳',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:246,value:2577,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:12,perkName:'Gem Sniffer',perkDesc:'12% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_keen_023',name:'Sneaky Wisp',icon:'🐋',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:250,value:2628,desc:'A keen-tier shop pet.',perk:'luck',perkValue:12,perkName:'Lucky Charm',perkDesc:'+12% better odds on next open after a luck boost'},
+  {id:'sp_keen_024',name:'Bold Pip',icon:'🦈',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:254,value:2679,desc:'A keen-tier shop pet.',perk:'speed',perkValue:12,perkName:'Quick Paws',perkDesc:'Spin animation is 12% faster'},
+  {id:'sp_keen_025',name:'Calm Crumb',icon:'🐊',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:258,value:2731,desc:'A keen-tier shop pet.',perk:'discount',perkValue:12,perkName:'Bargain Hunter',perkDesc:'-12% off all crate prices'},
+  {id:'sp_keen_026',name:'Eager Storm',icon:'🐅',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:263,value:2782,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:12,perkName:'Golden Touch',perkDesc:'+12% coins when selling items'},
+  {id:'sp_keen_027',name:'Frosty Snout',icon:'🦓',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:267,value:2833,desc:'A keen-tier shop pet.',perk:'pity',perkValue:12,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 12% fewer coins'},
+  {id:'sp_keen_028',name:'Sunny Frost',icon:'🦍',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:271,value:2885,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:12,perkName:'Gem Sniffer',perkDesc:'12% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_keen_029',name:'Shadow Drift',icon:'🐘',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:275,value:2936,desc:'A keen-tier shop pet.',perk:'luck',perkValue:13,perkName:'Lucky Charm',perkDesc:'+13% better odds on next open after a luck boost'},
+  {id:'sp_keen_030',name:'Glowing Flicker',icon:'🦛',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:279,value:2987,desc:'A keen-tier shop pet.',perk:'speed',perkValue:13,perkName:'Quick Paws',perkDesc:'Spin animation is 13% faster'},
+  {id:'sp_keen_031',name:'Spry Sprout',icon:'🦏',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:283,value:3038,desc:'A keen-tier shop pet.',perk:'discount',perkValue:13,perkName:'Bargain Hunter',perkDesc:'-13% off all crate prices'},
+  {id:'sp_keen_032',name:'Plucky Nugget',icon:'🐪',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:287,value:3090,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:13,perkName:'Golden Touch',perkDesc:'+13% coins when selling items'},
+  {id:'sp_keen_033',name:'Drowsy Petal',icon:'🐫',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:291,value:3141,desc:'A keen-tier shop pet.',perk:'pity',perkValue:13,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 13% fewer coins'},
+  {id:'sp_keen_034',name:'Zesty Claw',icon:'🦒',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:295,value:3192,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:13,perkName:'Gem Sniffer',perkDesc:'13% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_keen_035',name:'Stormy Ember',icon:'🦘',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:299,value:3244,desc:'A keen-tier shop pet.',perk:'luck',perkValue:13,perkName:'Lucky Charm',perkDesc:'+13% better odds on next open after a luck boost'},
+  {id:'sp_keen_036',name:'Quiet Echo',icon:'🐃',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:304,value:3295,desc:'A keen-tier shop pet.',perk:'speed',perkValue:13,perkName:'Quick Paws',perkDesc:'Spin animation is 13% faster'},
+  {id:'sp_keen_037',name:'Daring Ripple',icon:'🐂',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:308,value:3346,desc:'A keen-tier shop pet.',perk:'discount',perkValue:14,perkName:'Bargain Hunter',perkDesc:'-14% off all crate prices'},
+  {id:'sp_keen_038',name:'Witty Glow',icon:'🐄',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:312,value:3397,desc:'A keen-tier shop pet.',perk:'sellboost',perkValue:14,perkName:'Golden Touch',perkDesc:'+14% coins when selling items'},
+  {id:'sp_keen_039',name:'Humble Fern',icon:'🐎',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:316,value:3449,desc:'A keen-tier shop pet.',perk:'pity',perkValue:14,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 14% fewer coins'},
+  {id:'sp_keen_040',name:'Radiant Clover',icon:'🐖',rarity:'pet',tier:'keen',tierName:'Keen',tierColor:'#3b82f6',price:320,value:3500,desc:'A keen-tier shop pet.',perk:'gemfind',perkValue:14,perkName:'Gem Sniffer',perkDesc:'14% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_fierce_001',name:'Feral Fang',icon:'🐏',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:350,value:4000,desc:'A fierce-tier shop pet.',perk:'luck',perkValue:14,perkName:'Lucky Charm',perkDesc:'+14% better odds on next open after a luck boost'},
+  {id:'sp_fierce_002',name:'Jolly Spark',icon:'🐑',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:360,value:4172,desc:'A fierce-tier shop pet.',perk:'speed',perkValue:14,perkName:'Quick Paws',perkDesc:'Spin animation is 14% faster'},
+  {id:'sp_fierce_003',name:'Stoic Glimmer',icon:'🦙',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:371,value:4345,desc:'A fierce-tier shop pet.',perk:'discount',perkValue:14,perkName:'Bargain Hunter',perkDesc:'-14% off all crate prices'},
+  {id:'sp_fierce_004',name:'Nimble Pebble',icon:'🐐',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:381,value:4517,desc:'A fierce-tier shop pet.',perk:'sellboost',perkValue:15,perkName:'Golden Touch',perkDesc:'+15% coins when selling items'},
+  {id:'sp_fierce_005',name:'Rusty Dew',icon:'🦌',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:391,value:4690,desc:'A fierce-tier shop pet.',perk:'pity',perkValue:15,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 15% fewer coins'},
+  {id:'sp_fierce_006',name:'Velvet Brook',icon:'🐕',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:402,value:4862,desc:'A fierce-tier shop pet.',perk:'gemfind',perkValue:15,perkName:'Gem Sniffer',perkDesc:'15% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_fierce_007',name:'Crimson Berry',icon:'🐩',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:412,value:5034,desc:'A fierce-tier shop pet.',perk:'luck',perkValue:15,perkName:'Lucky Charm',perkDesc:'+15% better odds on next open after a luck boost'},
+  {id:'sp_fierce_008',name:'Azure Tail',icon:'🐈',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:422,value:5207,desc:'A fierce-tier shop pet.',perk:'speed',perkValue:15,perkName:'Quick Paws',perkDesc:'Spin animation is 15% faster'},
+  {id:'sp_fierce_009',name:'Golden Horn',icon:'🐓',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:433,value:5379,desc:'A fierce-tier shop pet.',perk:'discount',perkValue:16,perkName:'Bargain Hunter',perkDesc:'-16% off all crate prices'},
+  {id:'sp_fierce_010',name:'Silver Shade',icon:'🦃',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:443,value:5552,desc:'A fierce-tier shop pet.',perk:'sellboost',perkValue:16,perkName:'Golden Touch',perkDesc:'+16% coins when selling items'},
+  {id:'sp_fierce_011',name:'Tiny Burrow',icon:'🦚',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:453,value:5724,desc:'A fierce-tier shop pet.',perk:'pity',perkValue:16,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 16% fewer coins'},
+  {id:'sp_fierce_012',name:'Brave Moss',icon:'🦜',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:464,value:5897,desc:'A fierce-tier shop pet.',perk:'gemfind',perkValue:16,perkName:'Gem Sniffer',perkDesc:'16% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_fierce_013',name:'Swift Hollow',icon:'🦢',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:474,value:6069,desc:'A fierce-tier shop pet.',perk:'luck',perkValue:16,perkName:'Lucky Charm',perkDesc:'+16% better odds on next open after a luck boost'},
+  {id:'sp_fierce_014',name:'Clever Acorn',icon:'🦩',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:484,value:6241,desc:'A fierce-tier shop pet.',perk:'speed',perkValue:17,perkName:'Quick Paws',perkDesc:'Spin animation is 17% faster'},
+  {id:'sp_fierce_015',name:'Gentle Paws',icon:'🐇',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:495,value:6414,desc:'A fierce-tier shop pet.',perk:'discount',perkValue:17,perkName:'Bargain Hunter',perkDesc:'-17% off all crate prices'},
+  {id:'sp_fierce_016',name:'Fierce Hoof',icon:'🦝',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:505,value:6586,desc:'A fierce-tier shop pet.',perk:'sellboost',perkValue:17,perkName:'Golden Touch',perkDesc:'+17% coins when selling items'},
+  {id:'sp_fierce_017',name:'Mystic Leaf',icon:'🦨',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:516,value:6759,desc:'A fierce-tier shop pet.',perk:'pity',perkValue:17,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 17% fewer coins'},
+  {id:'sp_fierce_018',name:'Shiny Talon',icon:'🦡',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:526,value:6931,desc:'A fierce-tier shop pet.',perk:'gemfind',perkValue:18,perkName:'Gem Sniffer',perkDesc:'18% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_fierce_019',name:'Lucky Bramble',icon:'🦦',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:536,value:7103,desc:'A fierce-tier shop pet.',perk:'luck',perkValue:18,perkName:'Lucky Charm',perkDesc:'+18% better odds on next open after a luck boost'},
+  {id:'sp_fierce_020',name:'Wild Cinder',icon:'🦥',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:547,value:7276,desc:'A fierce-tier shop pet.',perk:'speed',perkValue:18,perkName:'Quick Paws',perkDesc:'Spin animation is 18% faster'},
+  {id:'sp_fierce_021',name:'Noble Twig',icon:'🐁',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:557,value:7448,desc:'A fierce-tier shop pet.',perk:'discount',perkValue:18,perkName:'Bargain Hunter',perkDesc:'-18% off all crate prices'},
+  {id:'sp_fierce_022',name:'Curious Whiskers',icon:'🐀',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:567,value:7621,desc:'A fierce-tier shop pet.',perk:'sellboost',perkValue:18,perkName:'Golden Touch',perkDesc:'+18% coins when selling items'},
+  {id:'sp_fierce_023',name:'Sneaky Fin',icon:'🐿',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:578,value:7793,desc:'A fierce-tier shop pet.',perk:'pity',perkValue:19,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 19% fewer coins'},
+  {id:'sp_fierce_024',name:'Bold Stone',icon:'🦔',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:588,value:7966,desc:'A fierce-tier shop pet.',perk:'gemfind',perkValue:19,perkName:'Gem Sniffer',perkDesc:'19% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_fierce_025',name:'Calm Scale',icon:'🐉',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:598,value:8138,desc:'A fierce-tier shop pet.',perk:'luck',perkValue:19,perkName:'Lucky Charm',perkDesc:'+19% better odds on next open after a luck boost'},
+  {id:'sp_fierce_026',name:'Eager Thorn',icon:'🐲',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:609,value:8310,desc:'A fierce-tier shop pet.',perk:'speed',perkValue:19,perkName:'Quick Paws',perkDesc:'Spin animation is 19% faster'},
+  {id:'sp_fierce_027',name:'Frosty Bolt',icon:'🦅',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:619,value:8483,desc:'A fierce-tier shop pet.',perk:'discount',perkValue:19,perkName:'Bargain Hunter',perkDesc:'-19% off all crate prices'},
+  {id:'sp_fierce_028',name:'Sunny Pebbles',icon:'🦂',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:629,value:8655,desc:'A fierce-tier shop pet.',perk:'sellboost',perkValue:20,perkName:'Golden Touch',perkDesc:'+20% coins when selling items'},
+  {id:'sp_fierce_029',name:'Shadow Comet',icon:'🦗',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:640,value:8828,desc:'A fierce-tier shop pet.',perk:'pity',perkValue:20,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 20% fewer coins'},
+  {id:'sp_fierce_030',name:'Glowing Wing',icon:'🐚',rarity:'pet',tier:'fierce',tierName:'Fierce',tierColor:'#a855f7',price:650,value:9000,desc:'A fierce-tier shop pet.',perk:'gemfind',perkValue:20,perkName:'Gem Sniffer',perkDesc:'20% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_mighty_001',name:'Spry Breeze',icon:'🐱',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:700,value:10000,desc:'A mighty-tier shop pet.',perk:'luck',perkValue:20,perkName:'Lucky Charm',perkDesc:'+20% better odds on next open after a luck boost'},
+  {id:'sp_mighty_002',name:'Plucky Mane',icon:'🐶',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:750,value:11071,desc:'A mighty-tier shop pet.',perk:'speed',perkValue:21,perkName:'Quick Paws',perkDesc:'Spin animation is 21% faster'},
+  {id:'sp_mighty_003',name:'Drowsy Wisp',icon:'🐭',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:800,value:12143,desc:'A mighty-tier shop pet.',perk:'discount',perkValue:21,perkName:'Bargain Hunter',perkDesc:'-21% off all crate prices'},
+  {id:'sp_mighty_004',name:'Zesty Pip',icon:'🐹',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:850,value:13214,desc:'A mighty-tier shop pet.',perk:'sellboost',perkValue:22,perkName:'Golden Touch',perkDesc:'+22% coins when selling items'},
+  {id:'sp_mighty_005',name:'Stormy Crumb',icon:'🐰',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:900,value:14286,desc:'A mighty-tier shop pet.',perk:'pity',perkValue:23,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 23% fewer coins'},
+  {id:'sp_mighty_006',name:'Quiet Storm',icon:'🦊',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:950,value:15357,desc:'A mighty-tier shop pet.',perk:'gemfind',perkValue:24,perkName:'Gem Sniffer',perkDesc:'24% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_mighty_007',name:'Daring Snout',icon:'🐻',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1000,value:16429,desc:'A mighty-tier shop pet.',perk:'luck',perkValue:24,perkName:'Lucky Charm',perkDesc:'+24% better odds on next open after a luck boost'},
+  {id:'sp_mighty_008',name:'Witty Frost',icon:'🐼',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1050,value:17500,desc:'A mighty-tier shop pet.',perk:'speed',perkValue:25,perkName:'Quick Paws',perkDesc:'Spin animation is 25% faster'},
+  {id:'sp_mighty_009',name:'Humble Drift',icon:'🐨',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1100,value:18571,desc:'A mighty-tier shop pet.',perk:'discount',perkValue:26,perkName:'Bargain Hunter',perkDesc:'-26% off all crate prices'},
+  {id:'sp_mighty_010',name:'Radiant Flicker',icon:'🐯',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1150,value:19643,desc:'A mighty-tier shop pet.',perk:'sellboost',perkValue:26,perkName:'Golden Touch',perkDesc:'+26% coins when selling items'},
+  {id:'sp_mighty_011',name:'Feral Sprout',icon:'🦁',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1200,value:20714,desc:'A mighty-tier shop pet.',perk:'pity',perkValue:27,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 27% fewer coins'},
+  {id:'sp_mighty_012',name:'Jolly Nugget',icon:'🐮',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1250,value:21786,desc:'A mighty-tier shop pet.',perk:'gemfind',perkValue:28,perkName:'Gem Sniffer',perkDesc:'28% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_mighty_013',name:'Stoic Petal',icon:'🐷',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1300,value:22857,desc:'A mighty-tier shop pet.',perk:'luck',perkValue:29,perkName:'Lucky Charm',perkDesc:'+29% better odds on next open after a luck boost'},
+  {id:'sp_mighty_014',name:'Nimble Claw',icon:'🐸',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1350,value:23929,desc:'A mighty-tier shop pet.',perk:'speed',perkValue:29,perkName:'Quick Paws',perkDesc:'Spin animation is 29% faster'},
+  {id:'sp_mighty_015',name:'Rusty Ember',icon:'🐵',rarity:'pet',tier:'mighty',tierName:'Mighty',tierColor:'#f59e0b',price:1400,value:25000,desc:'A mighty-tier shop pet.',perk:'discount',perkValue:30,perkName:'Bargain Hunter',perkDesc:'-30% off all crate prices'},
+  {id:'sp_mythical_001',name:'Velvet Echo',icon:'🐔',rarity:'pet',tier:'mythical',tierName:'Mythical',tierColor:'#ef4444',price:1600,value:30000,desc:'A mythical-tier shop pet.',perk:'sellboost',perkValue:30,perkName:'Golden Touch',perkDesc:'+30% coins when selling items'},
+  {id:'sp_mythical_002',name:'Crimson Ripple',icon:'🐧',rarity:'pet',tier:'mythical',tierName:'Mythical',tierColor:'#ef4444',price:1950,value:42500,desc:'A mythical-tier shop pet.',perk:'pity',perkValue:34,perkName:'Patient Soul',perkDesc:'Luck boost milestones need 34% fewer coins'},
+  {id:'sp_mythical_003',name:'Azure Glow',icon:'🐦',rarity:'pet',tier:'mythical',tierName:'Mythical',tierColor:'#ef4444',price:2300,value:55000,desc:'A mythical-tier shop pet.',perk:'gemfind',perkValue:38,perkName:'Gem Sniffer',perkDesc:'38% chance to find bonus 💎 gems when opening a crate'},
+  {id:'sp_mythical_004',name:'Golden Fern',icon:'🐤',rarity:'pet',tier:'mythical',tierName:'Mythical',tierColor:'#ef4444',price:2650,value:67500,desc:'A mythical-tier shop pet.',perk:'luck',perkValue:41,perkName:'Lucky Charm',perkDesc:'+41% better odds on next open after a luck boost'},
+  {id:'sp_mythical_005',name:'Silver Clover',icon:'🦆',rarity:'pet',tier:'mythical',tierName:'Mythical',tierColor:'#ef4444',price:3000,value:80000,desc:'A mythical-tier shop pet.',perk:'speed',perkValue:45,perkName:'Quick Paws',perkDesc:'Spin animation is 45% faster'},
+];
+// ============================================================
+// PET SHOP — rotating shelf of 18 pets, restocks every 30 min
+// ============================================================
+const SHOP_ROTATION_MS = 30 * 60 * 1000;
+const SHOP_ROW_SIZE = 6;
+const SHOP_ROWS = 3;
+
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function getShopEpoch(){
+  return Math.floor(Date.now() / SHOP_ROTATION_MS);
+}
+
+function getShopMsRemaining(){
+  const epoch = getShopEpoch();
+  const nextAt = (epoch + 1) * SHOP_ROTATION_MS;
+  return Math.max(0, nextAt - Date.now());
+}
+
+let _cachedShopEpoch = null;
+let _cachedShopPicks = null;
+function getRotatedShopPets(){
+  const epoch = getShopEpoch();
+  if(_cachedShopEpoch === epoch && _cachedShopPicks) return _cachedShopPicks;
+  const rng = mulberry32((epoch * 2654435761) >>> 0);
+  const pool = [...SHOP_PETS];
+  for(let i = pool.length - 1; i > 0; i--){
+    const j = Math.floor(rng() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const picked = pool.slice(0, SHOP_ROW_SIZE * SHOP_ROWS);
+  picked.sort((a,b) => (a.price||0) - (b.price||0));
+  _cachedShopEpoch = epoch;
+  _cachedShopPicks = picked;
+  return picked;
+}
+
+// ── Shop perk helpers (numeric, separate from legacy regex-based crate-pet perks) ──
+function getShopPerkValue(perkKey){
+  const pet = getEquippedPet();
+  if(!pet || pet.perk !== perkKey || pet.perkValue == null) return 0;
+  return pet.perkValue;
+}
+
+function getSellBonusMultiplier(){
+  const v = getShopPerkValue('sellboost');
+  return v ? 1 + (v / 100) : 1;
+}
+
+function getPityReduction(){
+  const v = getShopPerkValue('pity');
+  return v ? (v / 100) : 0;
+}
+
+// Called after a successful crate roll — chance to find bonus gems
+async function maybeGrantGemFind(){
+  const v = getShopPerkValue('gemfind');
+  if(!v) return;
+  if(Math.random() * 100 < v){
+    const bonus = 5 + Math.floor(Math.random() * 15);
+    await grantGems(bonus);
+    toast(`✨ Your pet sniffed out 💎 ${bonus} bonus gems!`, 'gold', 3000);
+  }
+}
+
+function renderPetShop(){
+  const rows = [document.getElementById('shelf-row-0'), document.getElementById('shelf-row-1'), document.getElementById('shelf-row-2')];
+  if(!rows[0]) return;
+  const pets = getRotatedShopPets();
+  rows.forEach(r => { if(r) r.innerHTML = ''; });
+
+  pets.forEach((pet, idx) => {
+    const rowIdx = Math.floor(idx / SHOP_ROW_SIZE);
+    const row = rows[rowIdx];
+    if(!row) return;
+    const col = pet.tierColor || '#a855f7';
+    const card = document.createElement('div');
+    card.className = 'shelf-pet-card';
+    card.style.setProperty('--pc', col + '99');
+    card.style.setProperty('--pg', col + '55');
+    const canAfford = (S.profile?.gems || 0) >= pet.price;
+    card.innerHTML = `
+      <span class="shelf-pet-icon">${pet.icon}</span>
+      <div class="shelf-pet-name">${pet.name}</div>
+      <div class="shelf-pet-tier" style="color:${col}">${pet.tierName}</div>
+      <div class="shelf-pet-perk" style="font-size:.6rem;color:var(--text-3);min-height:2em;margin-bottom:6px">${pet.perkName}</div>
+      <div class="shelf-pet-price" style="${canAfford?'':'opacity:.55'}">💎 ${pet.price.toLocaleString()}</div>
+    `;
+    card.addEventListener('click', () => buyShopPet(pet.id));
+    card.addEventListener('mouseenter', e => showTip(e, pet, getRarity('pet')));
+    card.addEventListener('mouseleave', () => document.getElementById('item-tooltip').classList.add('hidden'));
+    row.appendChild(card);
+  });
+
+  updateShopTimerDisplay();
+}
+
+let _shopTimerInterval = null;
+function updateShopTimerDisplay(){
+  const el = document.getElementById('pet-shop-timer');
+  if(!el) return;
+  const ms = getShopMsRemaining();
+  const m = Math.floor(ms / 60000);
+  const s = Math.floor((ms % 60000) / 1000);
+  el.textContent = `🔄 Next restock in ${m}:${s.toString().padStart(2,'0')}`;
+  if(ms < 1000 && document.getElementById('page-opening')?.classList.contains('active')){
+    setTimeout(() => renderPetShop(), 1200);
+  }
+}
+function startShopTimer(){
+  if(_shopTimerInterval) return;
+  _shopTimerInterval = setInterval(() => {
+    if(document.getElementById('page-opening')?.classList.contains('active')) updateShopTimerDisplay();
+  }, 1000);
+}
+
+async function buyShopPet(petId){
+  if(!S.user || !S.profile){ toast('Still loading your profile...'); return; }
+  const currentPicks = getRotatedShopPets();
+  const pet = currentPicks.find(p => p.id === petId);
+  if(!pet){ toast('That pet has left the shelf — shop just restocked!', 'error'); renderPetShop(); return; }
+  const ok = await spendGems(pet.price, 'shop_pet');
+  if(!ok) return;
+
+  const inv = { itemId: pet.id, uniqueId: genUID(), crateSource: 'shop', obtainedAt: new Date().toISOString() };
+  S.inventory.push(inv);
+
+  if(!S.profile.seenItems) S.profile.seenItems = [];
+  if(!S.profile.seenItems.includes(pet.id)){
+    S.profile.seenItems.push(pet.id);
+    db.collection('users').doc(S.user.uid).update({ seenItems: firebase.firestore.FieldValue.arrayUnion(pet.id) }).catch(()=>{});
+  }
+
+  S.profile.totalValue = S.inventory.reduce((s,i) => { const it = getItem(i.itemId); return s + (it ? it.value : 0); }, 0);
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      inventory: S.inventory,
+      totalValue: S.profile.totalValue,
+    });
+  }catch(e){ toast('Save error: ' + e.message, 'error'); }
+
+  toast(`${pet.icon} ${pet.name} added to your inventory!`, 'success', 3000);
+  renderPetShop();
+  if(document.getElementById('page-inventory')?.classList.contains('active')) renderInventory();
+}
+
 
 const CRATES = [
   {id:'tin', name:'Tin Crate', price:35, icon:'🔩', color:'#6b7280',
@@ -1732,7 +2141,7 @@ const ACHIEVEMENTS = [
 ];
 
 function getItem(id){
-  return ITEMS.find(i=>i.id===id) || Object.values(PETS_BY_CRATE).flat().find(p=>p.id===id);
+  return ITEMS.find(i=>i.id===id) || Object.values(PETS_BY_CRATE).flat().find(p=>p.id===id) || SHOP_PETS.find(p=>p.id===id);
 }
 function getRarity(k){return RARITIES[k]||RARITIES.common;}
 function fmtNum(n){
@@ -2369,7 +2778,11 @@ function renderCollectionIndex() {
   }
 }
   
-function getLuckThresholds(crate){ return {minor:crate.price*10,huge:crate.price*100}; }
+function getLuckThresholds(crate){
+  const reduction=getPityReduction();
+  const mult=1-Math.min(0.9,reduction);
+  return {minor:Math.max(1,Math.floor(crate.price*10*mult)),huge:Math.max(1,Math.floor(crate.price*100*mult))};
+}
 
 function checkLuckMilestone(crate){
   if(!S.profile||!crate) return;
@@ -2548,8 +2961,9 @@ function loadCratesPage(){
     });
     grid.appendChild(c);
   });
-  // Render gem crates in their section
-  renderGemCratesGrid();
+  // Render the rotating pet shop
+  renderPetShop();
+  startShopTimer();
 }
 
 // ============================================================
@@ -2571,6 +2985,7 @@ function openCratePage(crate){
     const track = document.getElementById('spin-track-' + t);
     if(track) track.style.display = 'none';
   }
+  renderPetShop();
   showPage('opening');
 }
 
@@ -3026,6 +3441,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   if (!S.profile.luckCoinsPerCrate) S.profile.luckCoinsPerCrate = {};
   S.profile.luckCoinsPerCrate[crate.id] = (S.profile.luckCoinsPerCrate[crate.id] || 0) + price;
   checkLuckMilestone(crate);
+  maybeGrantGemFind();
 
   for (const it of saveItems) {
     const r = getRarity(it.rarity);
@@ -3500,6 +3916,7 @@ document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
 async function sellItems(uniqueIds){
   let earned=0;
   let unequipped=false;
+  const sellMult=getSellBonusMultiplier();
   for(const uid of uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
@@ -3510,7 +3927,7 @@ async function sellItems(uniqueIds){
       toast("This item cannot be sold!", "error");
       continue;
     }
-    if(item) earned+=Math.floor(item.value*1);
+    if(item) earned+=Math.floor(item.value*sellMult);
     if(S.profile.equippedPetUid===uid){ S.profile.equippedPetUid=null; unequipped=true; }
     S.inventory.splice(idx,1);
   }
