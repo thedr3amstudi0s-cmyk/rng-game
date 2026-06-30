@@ -2623,7 +2623,7 @@ const REBIRTH_STARTING_COINS = 400;    // coins after rebirthing
 
 function getRebirthGemsFor(coins){
   if(coins < REBIRTH_THRESHOLD) return 1;
-  return Math.floor((coins - REBIRTH_THRESHOLD) / REBIRTH_COINS_PER_GEM);
+  return Math.floor(((coins + 1000000) - REBIRTH_THRESHOLD) / REBIRTH_COINS_PER_GEM);
 }
 
 function renderRebirthPanel(){
