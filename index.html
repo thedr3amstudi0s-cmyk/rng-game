@@ -4647,20 +4647,6 @@ function spawnParticles(){
     c.appendChild(p);
   }
 }
-
-// ============================================================
-// ADMIN
-// ============================================================
-document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
-  const btn=document.getElementById('admin-refresh-btn');
-  btn.disabled=true; btn.textContent='Refreshing...';
-  try{
-    await rtdb.ref('admin/forceRefresh').set({ts:firebase.database.ServerValue.TIMESTAMP,by:S.profile?.username||'admin'});
-    toast('Force refresh sent!','success');
-  }catch(e){ toast('Error: '+e.message,'error'); }
-  setTimeout(()=>{btn.disabled=false;btn.textContent='⚡ REFRESH ALL';},2000);
-});
-
 // ============================================================
 // LUCKY WHEEL
 // ============================================================
