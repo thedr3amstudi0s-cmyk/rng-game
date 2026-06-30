@@ -737,6 +737,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="history"><span class="nav-icon">📋</span><span class="nav-label">HISTORY</span></button>
       <button class="nav-item" data-page="wheel"><span class="nav-icon">🎰</span><span class="nav-label">WHEEL</span></button>
       <button class="nav-item" data-page="shop"><span class="nav-icon">🛒</span><span class="nav-label">SHOP</span></button>
+      <button class="nav-item" data-page="gems"><span class="nav-icon">💎</span><span class="nav-label">GEMS</span></button>
       <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span class="nav-label">SETTINGS</span></button>
     </nav>
 
@@ -992,14 +993,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <!-- SHOP -->
       <section class="page" id="page-shop">
         <div class="page-header"><h2>🛒 SHOP</h2></div>
-        <!-- Tab bar -->
-        <div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap">
-          <button class="lb-tab active" data-shop-tab="real">💳 Real Money</button>
-          <button class="lb-tab" data-shop-tab="gems">💎 Gem Shop</button>
 
-        </div>
-
-        <!-- REAL MONEY TAB -->
         <div id="shop-tab-real">
           <div style="font-size:.82rem;color:var(--text-3);margin-bottom:16px">
             Pay via Cash App to <strong id="shop-cashtag2" style="color:var(--text-2)">$doctorwaffle500</strong>.
@@ -1043,85 +1037,98 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <div id="admin-products-list2" style="display:flex;flex-direction:column;gap:8px"></div>
           </div>
         </div>
+      </section>
 
-        <!-- GEM SHOP TAB — Buy Gems with real money, then spend on items -->
-        <div id="shop-tab-gems" class="hidden">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:14px 18px">
-            <span style="font-size:2rem">💎</span>
-            <div>
-              <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-2)">YOUR GEM BALANCE</div>
-              <div style="font-family:var(--font-d);font-size:1.5rem;font-weight:900;color:#a855f7" id="gem-balance-shop">0</div>
-            </div>
-          </div>
+      <!-- GEMS (own page: rebirth + buy/spend gems) -->
+      <section class="page" id="page-gems">
+        <div class="page-header"><h2>💎 GEMS</h2><p>Rebirth for gems, buy gems, and spend them.</p></div>
 
-          <!-- Buy Gems section -->
-          <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">💎 BUY GEMS</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px">
-            <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
-              <div style="font-size:1.8rem;margin-bottom:6px">💎</div>
-              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">50 Gems</div>
-              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Starter pack</div>
-              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(50,1)">$1.00</button>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
-              <div style="font-size:1.8rem;margin-bottom:6px">💎💎</div>
-              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">100 Gems</div>
-              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Basic pack</div>
-              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(100,2)">$2.00</button>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
-              <div style="font-size:1.8rem;margin-bottom:6px">💎💎💎</div>
-              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">500 Gems</div>
-              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Value pack</div>
-              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(500,10)">$10.00</button>
-            </div>
-            <div style="background:var(--bg-card);border:2px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center;position:relative">
-              <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;font-family:var(--font-d);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.1em">BEST VALUE</div>
-              <div style="font-size:1.8rem;margin-bottom:6px">🌟</div>
-              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">1,000 Gems</div>
-              <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Big pack</div>
-              <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(1000,20)">$20.00</button>
-            </div>
-            <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);padding:16px;text-align:center;position:relative">
-              <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-family:var(--font-d);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.1em">🔥 MEGA DEAL</div>
-              <div style="font-size:1.8rem;margin-bottom:6px">👑</div>
-              <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:var(--gold)">10,000 Gems</div>
-              <div style="margin:4px 0 12px">
-                <span style="font-size:.75rem;color:var(--text-3);text-decoration:line-through">Was $200</span>
-                <span style="font-size:.85rem;color:#22c55e;font-weight:700;margin-left:6px">Now $175!</span>
-              </div>
-              <button class="btn-primary" style="background:linear-gradient(135deg,var(--gold),#ef4444)" onclick="buyGemsReal(10000,175)">$175.00</button>
-            </div>
-          </div>
-
-          <!-- Spend Gems section -->
-          <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">⚡ SPEND GEMS</div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-              <div>
-                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🎰 Extra Wheel Spin</div>
-                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Bypass the 24h cooldown and spin again</div>
-              </div>
-              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('wheel_spin',50)">💎 50 Gems</button>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-              <div>
-                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">✨ Minor Luck Boost</div>
-                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Instantly trigger a luck boost on your current crate</div>
-              </div>
-              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_minor',30)">💎 30 Gems</button>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-              <div>
-                <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🌟 Huge Luck Boost</div>
-                <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Trigger a HUGE luck boost on your current crate</div>
-              </div>
-              <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_huge',100)">💎 100 Gems</button>
-            </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:14px 18px">
+          <span style="font-size:2rem">💎</span>
+          <div>
+            <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-2)">YOUR GEM BALANCE</div>
+            <div style="font-family:var(--font-d);font-size:1.5rem;font-weight:900;color:#a855f7" id="gem-balance-shop">0</div>
           </div>
         </div>
 
+        <!-- REBIRTH -->
+        <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">🔁 REBIRTH</div>
+        <div id="rebirth-panel" style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);padding:18px 20px;margin-bottom:28px;box-shadow:0 0 24px rgba(245,158,11,.15)">
+          <div style="font-size:.85rem;color:var(--text-2);margin-bottom:12px;line-height:1.5">
+            Once you've stacked up at least <strong style="color:var(--gold)">🪙 5,000,000 coins</strong>, you can rebirth.
+            Your coins reset back to the start, but you keep everything else — and for every <strong style="color:var(--gold)">1,000,000 coins</strong> you had
+            <em>above</em> the 5M threshold, you earn <strong style="color:#a855f7">+1 💎 gem</strong>.
+          </div>
+          <div id="rebirth-stats" style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;font-family:var(--font-d);font-size:.78rem;color:var(--text-2)"></div>
+          <button class="btn-primary" id="btn-rebirth" style="width:auto;padding:12px 28px;background:linear-gradient(135deg,var(--gold),#a855f7)">🔁 REBIRTH NOW</button>
+          <span id="rebirth-count-label" style="margin-left:14px;font-size:.78rem;color:var(--text-3);font-family:var(--font-d)"></span>
+        </div>
 
+        <!-- Buy Gems section -->
+        <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">💎 BUY GEMS</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+          <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">💎</div>
+            <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">50 Gems</div>
+            <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Starter pack</div>
+            <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(50,1)">$1.00</button>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">💎💎</div>
+            <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">100 Gems</div>
+            <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Basic pack</div>
+            <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(100,2)">$2.00</button>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">💎💎💎</div>
+            <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">500 Gems</div>
+            <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Value pack</div>
+            <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(500,10)">$10.00</button>
+          </div>
+          <div style="background:var(--bg-card);border:2px solid #a855f7;border-radius:var(--rl);padding:16px;text-align:center;position:relative">
+            <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;font-family:var(--font-d);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.1em">BEST VALUE</div>
+            <div style="font-size:1.8rem;margin-bottom:6px">🌟</div>
+            <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:#a855f7">1,000 Gems</div>
+            <div style="font-size:.78rem;color:var(--text-3);margin:4px 0 12px">Big pack</div>
+            <button class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemsReal(1000,20)">$20.00</button>
+          </div>
+          <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--rl);padding:16px;text-align:center;position:relative">
+            <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-family:var(--font-d);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.1em">🔥 MEGA DEAL</div>
+            <div style="font-size:1.8rem;margin-bottom:6px">👑</div>
+            <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;color:var(--gold)">10,000 Gems</div>
+            <div style="margin:4px 0 12px">
+              <span style="font-size:.75rem;color:var(--text-3);text-decoration:line-through">Was $200</span>
+              <span style="font-size:.85rem;color:#22c55e;font-weight:700;margin-left:6px">Now $175!</span>
+            </div>
+            <button class="btn-primary" style="background:linear-gradient(135deg,var(--gold),#ef4444)" onclick="buyGemsReal(10000,175)">$175.00</button>
+          </div>
+        </div>
+
+        <!-- Spend Gems section -->
+        <div style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px">⚡ SPEND GEMS</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🎰 Extra Wheel Spin</div>
+              <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Bypass the 24h cooldown and spin again</div>
+            </div>
+            <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('wheel_spin',50)">💎 50 Gems</button>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">✨ Minor Luck Boost</div>
+              <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Instantly trigger a luck boost on your current crate</div>
+            </div>
+            <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_minor',30)">💎 30 Gems</button>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🌟 Huge Luck Boost</div>
+              <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Trigger a HUGE luck boost on your current crate</div>
+            </div>
+            <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_huge',100)">💎 100 Gems</button>
+          </div>
+        </div>
       </section>
 
       <!-- ACHIEVEMENTS -->
@@ -1133,6 +1140,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <!-- SETTINGS -->
       <section class="page" id="page-settings">
         <div class="page-header"><h2>SETTINGS</h2><p>Customize your CrateVault experience.</p></div>
+
 
         <div class="settings-section">
           <div class="settings-section-title">🎬 VISUAL EFFECTS</div>
@@ -2357,7 +2365,8 @@ function showPage(id){
     updateEquippedPetDisplay();
     updateAutoRollUI();
   }
-  if(id==='shop'){ renderShopProducts2(); updateGemDisplay(); }
+  if(id==='shop'){ renderShopProducts2(); }
+  if(id==='gems'){ updateGemDisplay(); renderRebirthPanel(); }
   if(id==='inventory') renderInventory();
   if(id==='pets') renderCollectionIndex();
   if(id==='leaderboard') loadLeaderboard();
@@ -2604,6 +2613,74 @@ async function grantGems(amount){
     });
   }catch(e){ console.warn('Gem grant failed:', e.message); }
 }
+
+// ============================================================
+// REBIRTH — reset coins back to the start in exchange for gems
+// ============================================================
+const REBIRTH_THRESHOLD = 5000000;     // minimum coins required to rebirth
+const REBIRTH_COINS_PER_GEM = 1000000; // coins above threshold needed per +1 gem
+const REBIRTH_STARTING_COINS = 400;    // coins after rebirthing
+
+function getRebirthGemsFor(coins){
+  if(coins < REBIRTH_THRESHOLD) return 0;
+  return Math.floor((coins - REBIRTH_THRESHOLD) / REBIRTH_COINS_PER_GEM);
+}
+
+function renderRebirthPanel(){
+  const statsEl = document.getElementById('rebirth-stats');
+  const btn = document.getElementById('btn-rebirth');
+  const countLabel = document.getElementById('rebirth-count-label');
+  if(!statsEl || !btn || !S.profile) return;
+
+  const coins = S.profile.coins || 0;
+  const gemsIfNow = getRebirthGemsFor(coins);
+  const eligible = coins >= REBIRTH_THRESHOLD;
+  const rebirths = S.profile.rebirths || 0;
+
+  statsEl.innerHTML = `
+    <div>🪙 Current coins: <strong style="color:var(--text-1)">${fmtNum(coins)}</strong></div>
+    <div>🎯 Threshold: <strong style="color:var(--text-1)">${fmtNum(REBIRTH_THRESHOLD)}</strong></div>
+    <div>💎 Gems if you rebirth now: <strong style="color:#a855f7">+${gemsIfNow}</strong></div>
+  `;
+
+  btn.disabled = !eligible;
+  btn.style.opacity = eligible ? '1' : '.5';
+  btn.style.cursor = eligible ? 'pointer' : 'not-allowed';
+  btn.textContent = eligible ? `🔁 REBIRTH NOW (+💎 ${gemsIfNow})` : `🔁 NEED ${fmtNum(REBIRTH_THRESHOLD - coins)} MORE COINS`;
+  countLabel.textContent = rebirths > 0 ? `You've rebirthed ${rebirths} time${rebirths===1?'':'s'}.` : '';
+}
+
+async function doRebirth(){
+  if(!S.user || !S.profile) return;
+  const coins = S.profile.coins || 0;
+  if(coins < REBIRTH_THRESHOLD){ toast(`You need at least 🪙 ${fmtNum(REBIRTH_THRESHOLD)} coins to rebirth.`, 'error'); return; }
+  const gemsEarned = getRebirthGemsFor(coins);
+  const ok = confirm(`Rebirth now?\n\nYou'll lose your 🪙 ${fmtNum(coins)} coins (reset to ${REBIRTH_STARTING_COINS}) and gain +💎 ${gemsEarned} gems.\n\nThis cannot be undone.`);
+  if(!ok) return;
+
+  const btn = document.getElementById('btn-rebirth');
+  if(btn){ btn.disabled = true; btn.textContent = 'REBIRTHING...'; }
+
+  S.profile.coins = REBIRTH_STARTING_COINS;
+  S.profile.gems = (S.profile.gems || 0) + gemsEarned;
+  S.profile.rebirths = (S.profile.rebirths || 0) + 1;
+  updateCoinDisplay(S.profile.coins);
+  updateGemDisplay();
+
+  try{
+    await db.collection('users').doc(S.user.uid).update({
+      coins: REBIRTH_STARTING_COINS,
+      gems: firebase.firestore.FieldValue.increment(gemsEarned),
+      rebirths: firebase.firestore.FieldValue.increment(1),
+    });
+    toast(`🔁 Rebirth complete! +💎 ${gemsEarned} gems. Coins reset to ${REBIRTH_STARTING_COINS}.`, 'gold', 6000);
+  }catch(e){
+    toast('Rebirth save error: ' + e.message, 'error');
+  }
+  renderRebirthPanel();
+}
+
+document.getElementById('btn-rebirth')?.addEventListener('click', doRebirth);
 
 // Section definitions used for both rendering dividers and awarding completion bonuses.
 // Rarity tiers (existing 3 groups) + one group per crate's 3 secret pets.
@@ -5607,20 +5684,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 // SHOP PAGE
 // ============================================================
-let shopTab = 'real';
 let currentOrderId2 = null;
-
-document.querySelectorAll('[data-shop-tab]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-shop-tab]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    shopTab = btn.dataset.shopTab;
-    document.getElementById('shop-tab-real').classList.toggle('hidden', shopTab !== 'real');
-    document.getElementById('shop-tab-gems').classList.toggle('hidden', shopTab !== 'gems');
-    if(shopTab === 'gems') updateGemDisplay();
-    if(shopTab === 'real') renderShopProducts2();
-  });
-});
 
 function renderShopProducts2(){
   const list = document.getElementById('shop-real-products');
@@ -5714,8 +5778,8 @@ async function buyGemsReal(gems, dollars){
     document.getElementById('shop-order-id2').textContent = orderId + '  (' + label + ')';
     document.getElementById('shop-order-box2').classList.remove('hidden');
     toast(`Order created for ${label}! Send $${dollars} via Cash App then submit your $cashtag.`, 'success', 6000);
-    // Switch to real money tab to show order box
-    document.querySelector('[data-shop-tab="real"]')?.click();
+    // Jump to the Shop page to show the order box / cashtag submission
+    showPage('shop');
   }catch(e){ toast('Could not create order: '+e.message,'error'); }
 }
 
