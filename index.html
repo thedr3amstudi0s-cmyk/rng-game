@@ -219,6 +219,40 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @media(max-width:900px){.shelf-row{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.shelf-row{grid-template-columns:repeat(2,1fr);gap:8px;} .pet-shelf-wrap{padding:14px 10px 8px;}}
 
+/* TRADE UP */
+.tradeup-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.tradeup-group-card{
+  background:var(--bg-card);border:2px solid var(--border);border-radius:var(--rl);
+  padding:14px 10px;text-align:center;cursor:pointer;transition:var(--t);position:relative;
+}
+.tradeup-group-card:hover{transform:translateY(-3px);border-color:#a855f7;box-shadow:0 10px 20px rgba(168,85,247,.25);}
+.tradeup-group-icon{font-size:2rem;display:block;margin-bottom:6px;}
+.tradeup-group-name{font-family:var(--font-d);font-size:.68rem;font-weight:700;margin-bottom:4px;min-height:2.1em;line-height:1.25;}
+.tradeup-group-count{display:inline-block;background:var(--bg-dark);border:1px solid var(--border);border-radius:14px;padding:2px 10px;font-family:var(--font-d);font-size:.62rem;color:var(--text-2);margin-bottom:6px;}
+.tradeup-group-arrow{font-size:.85rem;color:var(--text-3);}
+.tradeup-panel{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;
+  background:var(--bg-card2);border:2px solid #a855f7;border-radius:var(--rl);
+  padding:26px 24px 22px;width:min(90vw,380px);box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 40px rgba(168,85,247,.25);
+}
+.tradeup-panel-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--text-3);font-size:1.1rem;cursor:pointer;}
+.tradeup-panel-close:hover{color:var(--text-1);}
+.tradeup-panel-flow{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px;}
+.tradeup-count-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;}
+.tradeup-count-controls{display:flex;align-items:center;gap:10px;}
+.tradeup-count-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg-dark);color:var(--text-1);font-size:1rem;cursor:pointer;line-height:1;}
+.tradeup-count-btn:hover{border-color:#a855f7;color:#a855f7;}
+.tradeup-chance-display{margin:14px 0;text-align:center;font-family:var(--font-d);font-size:1.3rem;font-weight:900;color:#22c55e;}
+#tradeup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190;}
+
+/* MULTI-OPEN RESULT GRID (2x / 4x) */
+.multi-result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:16px;}
+.multi-result-card{background:var(--bg-card);border:2px solid var(--border);border-radius:var(--r);padding:14px 8px;text-align:center;}
+.multi-result-icon{font-size:2.2rem;display:block;margin-bottom:6px;}
+.multi-result-name{font-family:var(--font-d);font-size:.68rem;font-weight:700;margin-bottom:3px;min-height:2em;line-height:1.2;}
+.multi-result-rarity{font-family:var(--font-d);font-size:.6rem;letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase;}
+.multi-result-value{font-family:var(--font-m);font-size:.72rem;color:var(--text-2);}
+
 /* CRATE OPENING */
 .crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
 .crate-open-header h2{font-family:var(--font-d);font-size:1.3rem;font-weight:900;letter-spacing:.15em;}
@@ -524,6 +558,11 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
   100%{border-color:#ff0000;box-shadow:0 0 16px #ff000066}
 }
 .pet-rainbow{animation:rainbow-border-anim 2s linear infinite!important;border-width:2px!important;}
+@keyframes variant-neon-pulse{
+  0%,100%{box-shadow:0 0 14px #ec489988, 0 0 28px #ec489944;}
+  50%{box-shadow:0 0 22px #ec4899cc, 0 0 40px #ec489966;}
+}
+.variant-neon{animation:variant-neon-pulse 1.6s ease-in-out infinite!important;}
 .pet-source-icon{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
   background:var(--bg-dark);border:1px solid var(--border-b);display:flex;align-items:center;
   justify-content:center;font-size:.65rem;z-index:2;}
@@ -729,7 +768,9 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 
   <div class="game-layout">
     <nav class="side-nav">
-      <button class="nav-item active" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
+      <button class="nav-item" data-page="crates"><span class="nav-icon">📦</span><span class="nav-label">CRATES</span></button>
+      <button class="nav-item" data-page="petshop"><span class="nav-icon">🐾</span><span class="nav-label">PET SHOP</span></button>
+      <button class="nav-item" data-page="tradeup"><span class="nav-icon">🔺</span><span class="nav-label">TRADE UP</span></button>
       <button class="nav-item" data-page="inventory"><span class="nav-icon">🎒</span><span class="nav-label">INVENTORY</span></button>
       <button class="nav-item" data-page="pets"><span class="nav-icon">🔓</span><span class="nav-label">INDEX</span></button>
       <button class="nav-item" data-page="trade"><span class="nav-icon">🤝</span><span class="nav-label">TRADE</span></button>
@@ -804,18 +845,62 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
 
-        <!-- PET SHOP -->
-        <div style="margin-top:32px">
-          <div class="pet-shop-header">
-            <div class="pet-shop-title">🐾 PET SHOP</div>
-            <div class="pet-shop-desc">18 pets on the shelf right now. The shop restocks itself every 30 minutes — everyone sees the same lineup. Buy with 💎 Gems.</div>
-            <div class="pet-shop-timer" id="pet-shop-timer">🔄 Next restock in --:--</div>
+        <div class="result-panel hidden" id="result-panel-multi">
+          <div class="result-inner" style="max-width:560px">
+            <div id="multi-result-title" style="font-family:var(--font-d);font-size:.8rem;letter-spacing:.1em;color:#a855f7;margin-bottom:14px">🎁 MULTI-OPEN RESULTS</div>
+            <div id="multi-result-grid" class="multi-result-grid"></div>
+            <div class="result-buttons">
+              <button class="btn-keep" id="btn-keep-multi">KEEP ALL</button>
+              <button class="btn-sell-result" id="btn-sell-multi">SELL ALL FOR COINS</button>
+              <button class="btn-open-again" id="btn-open-again-multi">OPEN AGAIN</button>
+            </div>
           </div>
-          <div class="pet-shelf-wrap" id="pet-shelf-wrap">
-            <div class="shelf-row" id="shelf-row-0"></div>
-            <div class="shelf-row" id="shelf-row-1"></div>
-            <div class="shelf-row" id="shelf-row-2"></div>
+        </div>
+      </section>
+
+      <!-- PET SHOP -->
+      <section class="page" id="page-petshop">
+        <div class="page-header">
+          <h2>🐾 PET SHOP</h2>
+          <p>18 pets on the shelf right now. The shop restocks itself every 30 minutes — everyone sees the same lineup. Buy with 💎 Gems.</p>
+        </div>
+        <div class="pet-shop-header">
+          <div class="pet-shop-timer" id="pet-shop-timer">🔄 Next restock in --:--</div>
+        </div>
+        <div class="pet-shelf-wrap" id="pet-shelf-wrap">
+          <div class="shelf-row" id="shelf-row-0"></div>
+          <div class="shelf-row" id="shelf-row-1"></div>
+          <div class="shelf-row" id="shelf-row-2"></div>
+        </div>
+      </section>
+
+      <!-- TRADE UP -->
+      <section class="page" id="page-tradeup">
+        <div class="page-header">
+          <h2>🔺 TRADE UP</h2>
+          <p>Sacrifice duplicates of the same pet for a shot at a shinier version: Normal → ✨ Gold → 💎 Diamond → 🌈 Neon. Each step up hits harder. More copies = better odds, but every copy is gone whether you win or lose.</p>
+        </div>
+        <div id="tradeup-groups" class="tradeup-groups"></div>
+        <div id="tradeup-empty" class="hidden" style="color:var(--text-3);font-style:italic;margin-top:20px">
+          You don't have any duplicate pets eligible for Trade Up yet. Open crates or buy from the Pet Shop to collect more!
+        </div>
+
+        <!-- Detail panel -->
+        <div id="tradeup-overlay" class="hidden"></div>
+        <div id="tradeup-panel" class="tradeup-panel hidden">
+          <button id="tradeup-panel-close" class="tradeup-panel-close">✕</button>
+          <div class="tradeup-panel-flow" id="tradeup-panel-flow"></div>
+          <div id="tradeup-panel-owned" style="font-size:.8rem;color:var(--text-2);margin:14px 0 10px"></div>
+          <div class="tradeup-count-row">
+            <span style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2)">COPIES TO SACRIFICE</span>
+            <div class="tradeup-count-controls">
+              <button id="tradeup-count-minus" class="tradeup-count-btn">−</button>
+              <span id="tradeup-count-val" style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;min-width:24px;text-align:center;display:inline-block">1</span>
+              <button id="tradeup-count-plus" class="tradeup-count-btn">+</button>
+            </div>
           </div>
+          <div id="tradeup-chance-display" class="tradeup-chance-display"></div>
+          <button id="tradeup-btn-execute" class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#ec4899)">🔺 TRADE UP</button>
         </div>
       </section>
 
@@ -1127,6 +1212,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               <div style="font-size:.78rem;color:var(--text-2);margin-top:3px">Trigger a HUGE luck boost on your current crate</div>
             </div>
             <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyGemItem('luck_boost_huge',100)">💎 100 Gems</button>
+          </div>
+          <div id="petslot-purchase-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="font-family:var(--font-d);font-size:.85rem;font-weight:700;color:var(--text-1)">🐾 Extra Pet Slot</div>
+              <div style="font-size:.78rem;color:var(--text-2);margin-top:3px" id="petslot-purchase-desc">Equip another pet at once — its Golden Touch / Patient Soul / Gem Sniffer perks stack with your other slots.</div>
+            </div>
+            <button class="btn-primary" id="petslot-purchase-btn" style="width:auto;padding:9px 18px;white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7c3aed)" onclick="buyPetSlot()">💎 —</button>
           </div>
         </div>
       </section>
@@ -1890,10 +1982,13 @@ function getRotatedShopPets(){
 }
 
 // ── Shop perk helpers (numeric, separate from legacy regex-based crate-pet perks) ──
+// Sums a numeric perk (sellboost/pity/gemfind) across every equipped pet slot —
+// this is what makes buying extra pet slots actually useful.
 function getShopPerkValue(perkKey){
-  const pet = getEquippedPet();
-  if(!pet || pet.perk !== perkKey || pet.perkValue == null) return 0;
-  return pet.perkValue;
+  return getAllEquippedPets().reduce((sum, pet) => {
+    if(pet && pet.perk === perkKey && pet.perkValue != null) return sum + pet.perkValue;
+    return sum;
+  }, 0);
 }
 
 function getSellBonusMultiplier(){
@@ -1903,7 +1998,7 @@ function getSellBonusMultiplier(){
 
 function getPityReduction(){
   const v = getShopPerkValue('pity');
-  return v ? (v / 100) : 0;
+  return v ? Math.min(0.9, v / 100) : 0;
 }
 
 // Called after a successful crate roll — chance to find bonus gems
@@ -1957,14 +2052,14 @@ function updateShopTimerDisplay(){
   const m = Math.floor(ms / 60000);
   const s = Math.floor((ms % 60000) / 1000);
   el.textContent = `🔄 Next restock in ${m}:${s.toString().padStart(2,'0')}`;
-  if(ms < 1000 && document.getElementById('page-opening')?.classList.contains('active')){
+  if(ms < 1000 && document.getElementById('page-petshop')?.classList.contains('active')){
     setTimeout(() => renderPetShop(), 1200);
   }
 }
 function startShopTimer(){
   if(_shopTimerInterval) return;
   _shopTimerInterval = setInterval(() => {
-    if(document.getElementById('page-opening')?.classList.contains('active')) updateShopTimerDisplay();
+    if(document.getElementById('page-petshop')?.classList.contains('active')) updateShopTimerDisplay();
   }, 1000);
 }
 
@@ -1985,7 +2080,7 @@ async function buyShopPet(petId){
     db.collection('users').doc(S.user.uid).update({ seenItems: firebase.firestore.FieldValue.arrayUnion(pet.id) }).catch(()=>{});
   }
 
-  S.profile.totalValue = S.inventory.reduce((s,i) => { const it = getItem(i.itemId); return s + (it ? it.value : 0); }, 0);
+  S.profile.totalValue = S.inventory.reduce((s,i) => { const it = getInvEffectiveItem(i); return s + (it ? it.value : 0); }, 0);
   try{
     await db.collection('users').doc(S.user.uid).update({
       inventory: S.inventory,
@@ -1997,6 +2092,212 @@ async function buyShopPet(petId){
   renderPetShop();
   if(document.getElementById('page-inventory')?.classList.contains('active')) renderInventory();
 }
+
+// ============================================================
+// TRADE UP — sacrifice duplicate pets for a shot at Gold/Diamond/Neon
+// ============================================================
+let _tradeUpGroupKey = null;
+let _tradeUpCount = 1;
+
+function tradeUpGroupKey(itemId, variant){ return itemId + '__' + (variant || 'none'); }
+
+// Groups the player's inventory by (pet id + variant). Only includes pets
+// eligible for Trade Up (excludes VIP/Wheel pets and anything already Neon).
+function getTradeUpGroups(){
+  const groups = new Map();
+  for(const inv of S.inventory){
+    const base = getItem(inv.itemId);
+    if(!base || base.rarity !== 'pet') continue;
+    const bucket = findPetBucket(inv.itemId);
+    if(!isTradeUpEligible(base, bucket)) continue;
+    const variant = inv.variant || null;
+    if(!getNextVariant(variant)) continue; // already maxed at Neon
+    const key = tradeUpGroupKey(inv.itemId, variant);
+    if(!groups.has(key)){
+      groups.set(key, { key, itemId: inv.itemId, variant, base, uids: [] });
+    }
+    groups.get(key).uids.push(inv.uniqueId);
+  }
+  return [...groups.values()].sort((a,b) => (b.uids.length - a.uids.length) || a.base.name.localeCompare(b.base.name));
+}
+
+// Which crate/bucket a pet id belongs to in PETS_BY_CRATE (used for eligibility + labeling)
+function findPetBucket(itemId){
+  for(const [bucket, pets] of Object.entries(PETS_BY_CRATE)){
+    if(pets.some(p => p.id === itemId)) return bucket;
+  }
+  if(SHOP_PETS.some(p => p.id === itemId)) return 'shop';
+  return null;
+}
+
+function tradeUpChanceFor(count){ return Math.min(80, count * 10); }
+
+function renderTradeUpPage(){
+  const grid = document.getElementById('tradeup-groups');
+  const emptyMsg = document.getElementById('tradeup-empty');
+  if(!grid) return;
+  const groups = getTradeUpGroups();
+  grid.innerHTML = '';
+
+  if(!groups.length){
+    emptyMsg.classList.remove('hidden');
+  } else {
+    emptyMsg.classList.add('hidden');
+    groups.forEach(g => {
+      const curVariant = getVariantInfo(g.variant);
+      const nextVariant = getNextVariant(g.variant);
+      const card = document.createElement('div');
+      card.className = 'tradeup-group-card';
+      card.style.borderColor = curVariant.color || 'var(--border)';
+      const curIcon = curVariant.icon || '';
+      card.innerHTML = `
+        <span class="tradeup-group-icon">${g.base.icon}</span>
+        <div class="tradeup-group-name">${curIcon ? curIcon+' ' : ''}${g.base.name}</div>
+        <div class="tradeup-group-count">×${g.uids.length} owned</div>
+        <div class="tradeup-group-arrow">${curVariant.label || 'Normal'} → ${nextVariant.icon} ${nextVariant.label}</div>
+      `;
+      card.addEventListener('click', () => openTradeUpPanel(g.key));
+      grid.appendChild(card);
+    });
+  }
+
+  // If a panel is open for a group that no longer exists (e.g. all copies sold/traded), close it
+  if(_tradeUpGroupKey && !groups.find(g => g.key === _tradeUpGroupKey)){
+    closeTradeUpPanel();
+  } else if(_tradeUpGroupKey){
+    renderTradeUpPanel(); // refresh counts if still open
+  }
+}
+
+function openTradeUpPanel(key){
+  _tradeUpGroupKey = key;
+  _tradeUpCount = 1;
+  document.getElementById('tradeup-overlay').classList.remove('hidden');
+  document.getElementById('tradeup-panel').classList.remove('hidden');
+  renderTradeUpPanel();
+}
+
+function closeTradeUpPanel(){
+  _tradeUpGroupKey = null;
+  document.getElementById('tradeup-overlay')?.classList.add('hidden');
+  document.getElementById('tradeup-panel')?.classList.add('hidden');
+}
+
+function renderTradeUpPanel(){
+  const groups = getTradeUpGroups();
+  const g = groups.find(x => x.key === _tradeUpGroupKey);
+  if(!g){ closeTradeUpPanel(); return; }
+
+  const curVariant = getVariantInfo(g.variant);
+  const nextVariant = getNextVariant(g.variant);
+  const owned = g.uids.length;
+  _tradeUpCount = Math.max(1, Math.min(_tradeUpCount, owned, 8));
+
+  const flow = document.getElementById('tradeup-panel-flow');
+  flow.innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:2.4rem">${g.base.icon}</div>
+      <div style="font-family:var(--font-d);font-size:.68rem;color:${curVariant.color||'var(--text-2)'}">${curVariant.label || 'Normal'}</div>
+    </div>
+    <div style="font-size:1.4rem;color:var(--text-3)">→</div>
+    <div style="text-align:center">
+      <div style="font-size:2.4rem">${g.base.icon}</div>
+      <div style="font-family:var(--font-d);font-size:.68rem;color:${nextVariant.color}">${nextVariant.icon} ${nextVariant.label}</div>
+    </div>
+  `;
+
+  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}.`;
+  document.getElementById('tradeup-count-val').textContent = _tradeUpCount;
+
+  const chance = tradeUpChanceFor(_tradeUpCount);
+  const chanceEl = document.getElementById('tradeup-chance-display');
+  chanceEl.textContent = `${chance}% CHANCE TO SUCCEED`;
+  chanceEl.style.color = chance >= 50 ? '#22c55e' : chance >= 25 ? '#f59e0b' : '#ef4444';
+
+  const btn = document.getElementById('tradeup-btn-execute');
+  btn.disabled = false;
+  btn.textContent = `🔺 TRADE UP (sacrifice ${_tradeUpCount})`;
+
+  document.getElementById('tradeup-count-minus').disabled = _tradeUpCount <= 1;
+  document.getElementById('tradeup-count-plus').disabled = _tradeUpCount >= Math.min(owned, 8);
+}
+
+document.getElementById('tradeup-count-minus')?.addEventListener('click', () => {
+  _tradeUpCount = Math.max(1, _tradeUpCount - 1);
+  renderTradeUpPanel();
+});
+document.getElementById('tradeup-count-plus')?.addEventListener('click', () => {
+  _tradeUpCount = _tradeUpCount + 1;
+  renderTradeUpPanel();
+});
+document.getElementById('tradeup-panel-close')?.addEventListener('click', closeTradeUpPanel);
+document.getElementById('tradeup-overlay')?.addEventListener('click', closeTradeUpPanel);
+
+async function executeTradeUp(){
+  if(!S.user || !S.profile || !_tradeUpGroupKey) return;
+  const groups = getTradeUpGroups();
+  const g = groups.find(x => x.key === _tradeUpGroupKey);
+  if(!g){ closeTradeUpPanel(); return; }
+
+  const count = Math.max(1, Math.min(_tradeUpCount, g.uids.length, 8));
+  const chance = tradeUpChanceFor(count);
+  const nextVariant = getNextVariant(g.variant);
+  if(!nextVariant){ toast('This pet is already at max variant!', 'error'); return; }
+
+  const btn = document.getElementById('tradeup-btn-execute');
+  btn.disabled = true; btn.textContent = 'ROLLING...';
+
+  // Remove the sacrificed copies (locked items are protected)
+  const sacrificeUids = g.uids.filter(uid => {
+    const inv = S.inventory.find(i => i.uniqueId === uid);
+    return inv && inv.locked !== true;
+  }).slice(0, count);
+
+  if(sacrificeUids.length < count){
+    toast(`Some copies are locked — unlock them first (need ${count}, only ${sacrificeUids.length} unlocked).`, 'error');
+    btn.disabled = false; renderTradeUpPanel();
+    return;
+  }
+
+  const success = Math.random() * 100 < chance;
+
+  sacrificeUids.forEach(uid => {
+    const idx = S.inventory.findIndex(i => i.uniqueId === uid);
+    if(idx !== -1) S.inventory.splice(idx, 1);
+  });
+
+  let resultInv = null;
+  if(success){
+    resultInv = { itemId: g.itemId, uniqueId: genUID(), variant: nextVariant.key, crateSource: 'tradeup', obtainedAt: new Date().toISOString() };
+    S.inventory.push(resultInv);
+  }
+
+  const updateObj = { inventory: S.inventory };
+  getUnlockedSlotFields().forEach(f => {
+    if(S.profile[f] && sacrificeUids.includes(S.profile[f])){
+      S.profile[f] = null;
+      updateObj[f] = null;
+    }
+  });
+  S.profile.totalValue = S.inventory.reduce((s,i) => { const it = getInvEffectiveItem(i); return s + (it ? it.value : 0); }, 0);
+  updateObj.totalValue = S.profile.totalValue;
+
+  try{
+    await db.collection('users').doc(S.user.uid).update(updateObj);
+  }catch(e){ toast('Save error: ' + e.message, 'error'); }
+
+  if(success){
+    const eff = getEffectivePet(g.base, nextVariant.key);
+    toast(`🎉 TRADE UP SUCCESS! You got ${nextVariant.icon} ${eff.name}!`, 'gold', 6000);
+  } else {
+    toast(`💔 Trade up failed — the ${count} pet${count===1?'':'s'} ${count===1?'was':'were'} lost.`, 'error', 5000);
+  }
+
+  renderTradeUpPage();
+  if(document.getElementById('page-inventory')?.classList.contains('active')) renderInventory();
+}
+document.getElementById('tradeup-btn-execute')?.addEventListener('click', executeTradeUp);
+
 
 
 const CRATES = [
@@ -2171,13 +2472,100 @@ function rarityOdds(k,crateOdds){
 function genUID(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 
 // ============================================================
+// PET VARIANTS — Gold / Diamond / Neon (earned via Trade Up)
+// ============================================================
+const PET_VARIANTS = [
+  { key: null,      label: '',        icon: '',   color: null,      perkMult: 1,    valueMult: 1  },
+  { key: 'gold',    label: 'Gold',    icon: '✨', color: '#eab308', perkMult: 1.25, valueMult: 2  },
+  { key: 'diamond', label: 'Diamond', icon: '💎', color: '#67e8f9', perkMult: 1.6,  valueMult: 5  },
+  { key: 'neon',    label: 'Neon',    icon: '🌈', color: '#ec4899', perkMult: 2.2,  valueMult: 12, glow:true },
+];
+function getVariantInfo(key){ return PET_VARIANTS.find(v => v.key === (key||null)) || PET_VARIANTS[0]; }
+function getNextVariant(key){
+  const idx = PET_VARIANTS.findIndex(v => v.key === (key||null));
+  return (idx >= 0 && idx < PET_VARIANTS.length - 1) ? PET_VARIANTS[idx+1] : null;
+}
+// Pets that can never enter the variant system (unique purchase/prize pets)
+function isTradeUpEligible(basePet, crateSource){
+  if(!basePet || basePet.rarity !== 'pet') return false;
+  if(basePet.sellable === false || basePet.vip) return false;
+  if(INDEX_EXCLUDED_PET_BUCKETS.includes(crateSource)) return false;
+  return true;
+}
+
+// Returns a variant-scaled COPY of a base pet for display/perk purposes.
+// Boosts the perk's numeric strength (parsed straight out of perkDesc so it
+// works for both old crate pets and new shop pets) and scales sell value.
+function getEffectivePet(basePet, variantKey){
+  if(!basePet || !variantKey) return basePet;
+  const v = getVariantInfo(variantKey);
+  if(!v.key) return basePet;
+
+  let newPerkDesc = basePet.perkDesc;
+  let newPerkValue = basePet.perkValue;
+  if(newPerkDesc){
+    const m = newPerkDesc.match(/\d+/);
+    if(m){
+      const orig = parseInt(m[0], 10);
+      const scaled = Math.max(orig, Math.round(orig * v.perkMult));
+      newPerkDesc = newPerkDesc.replace(/\d+/, String(scaled));
+      newPerkValue = (basePet.perkValue != null) ? Math.round(basePet.perkValue * v.perkMult) : scaled;
+    }
+  }
+  const newValue = Math.round((basePet.value || 0) * v.valueMult);
+
+  return {
+    ...basePet,
+    variant: v.key,
+    variantLabel: v.label,
+    variantIcon: v.icon,
+    variantColor: v.color,
+    variantGlow: !!v.glow,
+    perkDesc: newPerkDesc,
+    perkValue: newPerkValue,
+    value: newValue,
+    name: `${v.icon} ${v.label} ${basePet.name}`,
+  };
+}
+
+// Look up an inventory entry's item, applying its variant scaling if present.
+function getInvEffectiveItem(inv){
+  const base = getItem(inv.itemId);
+  if(!base) return null;
+  if(!inv.variant) return base;
+  return getEffectivePet(base, inv.variant);
+}
+
+// ============================================================
 // PET HELPERS
 // ============================================================
+// Slot 0 (equippedPetUid) is the PRIMARY pet — it alone drives crate price,
+// spin speed, luck boosts, and multi-open (unchanged from the original single-pet system).
+// Slots 2-4 are purchasable extras whose pets stack Golden Touch / Patient Soul / Gem Sniffer bonuses.
+const PET_SLOT_FIELDS = ['equippedPetUid','equippedPetUid2','equippedPetUid3','equippedPetUid4'];
+function getUnlockedSlotFields(){
+  const n = Math.max(1, Math.min(PET_SLOT_FIELDS.length, S.profile?.petSlots || 1));
+  return PET_SLOT_FIELDS.slice(0, n);
+}
+function getAllEquippedUids(){
+  if(!S.profile) return [];
+  return getUnlockedSlotFields().map(f => S.profile[f]).filter(Boolean);
+}
+function getAllEquippedPets(){
+  return getAllEquippedUids().map(uid => {
+    const inv = S.inventory.find(i => i.uniqueId === uid);
+    return inv ? getInvEffectiveItem(inv) : null;
+  }).filter(Boolean);
+}
+function isMultiOpenPet(pet){
+  return !!(pet && pet.perk === 'speed' && pet.perkDesc && pet.perkDesc.includes('crates'));
+}
+
 function getEquippedPet(){
   if(!S.profile||!S.profile.equippedPetUid) return null;
   const inv=S.inventory.find(i=>i.uniqueId===S.profile.equippedPetUid);
   if(!inv) return null;
-  return getItem(inv.itemId);
+  return getInvEffectiveItem(inv);
 }
 
 // ====================== VIP HELPERS ======================
@@ -2203,6 +2591,26 @@ function getCratePrice(crate){
   return Math.max(1, price);
 }
 
+// How many crates get opened per click (Double/Quad Crack pets, or VIP).
+function getMultiOpenCount(){
+  if(hasVipPetEquipped()) return 2;
+  const pet = getEquippedPet();
+  if(pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates')) return 4;
+  if(pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates')) return 2;
+  return 1;
+}
+
+// Total coin cost for one "open" click, accounting for multi-open.
+// VIP: 2 crates for the price of 1 (unchanged perk).
+// Double/Quad Crack: 1st crate full price, each ADDITIONAL crate is 25% off (not free).
+function getTotalOpenPrice(crate){
+  const single = getCratePrice(crate);
+  if(hasVipPetEquipped()) return single;
+  const count = getMultiOpenCount();
+  if(count <= 1) return single;
+  return single + Math.floor(single * 0.75) * (count - 1);
+}
+
 function getSpinDuration(){
   if(hasVipPetEquipped()) return 2500; // 2.5s for VIP
 
@@ -2226,15 +2634,48 @@ async function equipPet(uniqueId){
   if(!inv)return;
   const pet=getItem(inv.itemId);
   if(!pet||pet.rarity!=='pet')return;
-  const newUid=S.profile.equippedPetUid===uniqueId?null:uniqueId;
-  S.profile.equippedPetUid=newUid;
-  try{ await db.collection('users').doc(S.user.uid).update({equippedPetUid:newUid}); }
+
+  const slotFields = getUnlockedSlotFields();
+  const currentSlotField = slotFields.find(f => S.profile[f] === uniqueId);
+  const updateObj = {};
+  let newlyEquipped = false;
+
+  if(currentSlotField){
+    // Already equipped in one of your unlocked slots — unequip it
+    S.profile[currentSlotField] = null;
+    updateObj[currentSlotField] = null;
+  } else {
+    // Only one Double/Quad Crack (multi-open) pet may be equipped across ALL slots at once
+    if(isMultiOpenPet(pet)){
+      const existingMultiOpen = getAllEquippedPets().find(isMultiOpenPet);
+      if(existingMultiOpen){
+        toast(`You already have ${existingMultiOpen.icon} ${existingMultiOpen.name} equipped — only one Double/Quad Crack pet can be equipped at a time.`, 'error', 4500);
+        return;
+      }
+    }
+    const emptyField = slotFields.find(f => !S.profile[f]);
+    if(!emptyField){
+      toast(`All ${slotFields.length} pet slot${slotFields.length===1?'':'s'} are full! Unequip a pet first, or buy another slot with 💎 Gems.`, 'error', 4500);
+      return;
+    }
+    S.profile[emptyField] = uniqueId;
+    updateObj[emptyField] = uniqueId;
+    newlyEquipped = true;
+  }
+
+  try{ await db.collection('users').doc(S.user.uid).update(updateObj); }
   catch(e){ toast('Error updating equipped pet','error'); return; }
-  toast(newUid?`${pet.icon} ${pet.name} equipped!`:'Pet unequipped.','success');
+
+  toast(newlyEquipped?`${pet.icon} ${pet.name} equipped!`:'Pet unequipped.','success');
   renderInventory();
   updateEquippedPetDisplay();
   if(S.currentCrate&&document.getElementById('page-opening').classList.contains('active')){
-    document.getElementById('open-price-display').textContent='Cost: 🪙 '+getCratePrice(S.currentCrate).toLocaleString();
+    const price=getCratePrice(S.currentCrate);
+    const totalPrice=getTotalOpenPrice(S.currentCrate);
+    const count=getMultiOpenCount();
+    document.getElementById('open-price-display').textContent = count > 1
+      ? `Cost: 🪙 ${totalPrice.toLocaleString()} for ${count}x crates`
+      : 'Cost: 🪙 '+price.toLocaleString();
   }
 }
 
@@ -2242,10 +2683,12 @@ function updateEquippedPetDisplay(){
   const disp=document.getElementById('equipped-pet-display');
   const desc=document.getElementById('equipped-pet-desc');
   if(!disp||!desc)return;
-  const pet=getEquippedPet();
-  if(pet){
-    disp.innerHTML=`${pet.icon} <span class="rainbow-text">${pet.name}</span>`;
-    desc.textContent='Perk: '+pet.perkName+' — '+pet.perkDesc;
+  const pets=getAllEquippedPets();
+  const slotFields=getUnlockedSlotFields();
+  if(pets.length){
+    disp.innerHTML=pets.map(p=>`${p.icon} <span class="rainbow-text">${p.name}</span>`).join(' &nbsp;•&nbsp; ');
+    desc.innerHTML=pets.map(p=>`<strong>${p.perkName}</strong> — ${p.perkDesc}`).join('<br>');
+    if(slotFields.length>1) desc.innerHTML += `<br><span style="color:var(--text-3)">${pets.length}/${slotFields.length} pet slots filled</span>`;
   } else {
     disp.textContent='None equipped';
     desc.textContent='Find secret pets (1 in 100k) in any crate!';
@@ -2366,7 +2809,9 @@ function showPage(id){
     updateAutoRollUI();
   }
   if(id==='shop'){ renderShopProducts2(); }
-  if(id==='gems'){ updateGemDisplay(); renderRebirthPanel(); }
+  if(id==='gems'){ updateGemDisplay(); renderRebirthPanel(); updatePetSlotPurchaseCard(); }
+  if(id==='petshop'){ renderPetShop(); startShopTimer(); }
+  if(id==='tradeup'){ renderTradeUpPage(); } else { closeTradeUpPanel(); }
   if(id==='inventory') renderInventory();
   if(id==='pets') renderCollectionIndex();
   if(id==='leaderboard') loadLeaderboard();
@@ -2622,8 +3067,8 @@ const REBIRTH_COINS_PER_GEM = 1000000; // coins above threshold needed per +1 ge
 const REBIRTH_STARTING_COINS = 400;    // coins after rebirthing
 
 function getRebirthGemsFor(coins){
-  if(coins < REBIRTH_THRESHOLD) return 1;
-  return Math.floor(((coins + 1000000) - REBIRTH_THRESHOLD) / REBIRTH_COINS_PER_GEM);
+  if(coins < REBIRTH_THRESHOLD) return 0;
+  return Math.floor((coins - REBIRTH_THRESHOLD) / REBIRTH_COINS_PER_GEM);
 }
 
 function renderRebirthPanel(){
@@ -2698,6 +3143,28 @@ function getPetSections(){
     .map(c => ({ id: 'sec_pets_'+c.id, label: c.icon+' '+c.name+' Pets', crateId: c.id, pets: PETS_BY_CRATE[c.id], bonus: Math.max(1000, Math.floor(c.price * 5)) }));
 }
 
+// Crate-drop pets only — excludes the VIP-purchase pet and the Lucky Wheel pet,
+// which aren't shown in the Collection Index at all.
+const INDEX_EXCLUDED_PET_BUCKETS = ['vip', 'wheel'];
+function getCratePetsFlat(){
+  return Object.entries(PETS_BY_CRATE)
+    .filter(([key]) => !INDEX_EXCLUDED_PET_BUCKETS.includes(key))
+    .flatMap(([, pets]) => pets);
+}
+
+// One section per Shop tier (Budding, Spry, Keen, Fierce, Mighty, Mythical) — shows each shop pet's actual rarity tier.
+const SHOP_TIER_ORDER = ['budding','spry','keen','fierce','mighty','mythical'];
+function getShopPetSections(){
+  return SHOP_TIER_ORDER
+    .filter(t => SHOP_PETS.some(p => p.tier === t))
+    .map(t => {
+      const pets = SHOP_PETS.filter(p => p.tier === t);
+      const tierName = pets[0].tierName;
+      const avgPrice = pets.reduce((s,p) => s + p.price, 0) / pets.length;
+      return { id: 'sec_shop_'+t, label: '🐾 '+tierName+' Shop Pets', pets, bonus: Math.max(500, Math.floor(avgPrice * 8)) };
+    });
+}
+
 async function claimSectionBonus(sectionId, bonusAmount, label){
   if(!S.user || !S.profile) return;
   const claimed = S.profile.claimedBonuses || [];
@@ -2741,6 +3208,7 @@ function renderCollectionIndex() {
 
   const RARITY_SECTIONS = getRaritySections();
   const PET_SECTIONS = getPetSections();
+  const SHOP_PET_SECTIONS = getShopPetSections();
 
   const TAB_FILTER = {
     all:       () => true,
@@ -2751,18 +3219,19 @@ function renderCollectionIndex() {
     pets:      i => i.rarity === 'pet',
   };
 
-  // All items + all pets flat list
-  const allPets = Object.values(PETS_BY_CRATE).flat();
+  // All items + all pets flat list (crate pets only — VIP pet & Wheel pet are excluded from the index)
+  const allPets = getCratePetsFlat();
   const uniquePets = [...new Map(allPets.map(p => [p.id, p])).values()];
-  const allItems = [...ITEMS, ...uniquePets];
+  const uniqueShopPets = [...new Map(SHOP_PETS.map(p => [p.id, p])).values()];
+  const allItems = [...ITEMS, ...uniquePets, ...uniqueShopPets];
 
   const filtered = allItems.filter(TAB_FILTER[activeTab] || (() => true));
 
   // Stats
   const totalItems = allItems.filter(i => i.rarity !== 'pet').length;
-  const totalPets  = uniquePets.length;
+  const totalPets  = uniquePets.length + uniqueShopPets.length;
   const ownedItems = allItems.filter(i => i.rarity !== 'pet' && seen.has(i.id)).length;
-  const ownedPets  = uniquePets.filter(p => seen.has(p.id)).length;
+  const ownedPets  = uniquePets.filter(p => seen.has(p.id)).length + uniqueShopPets.filter(p => seen.has(p.id)).length;
   const pct = Math.round((ownedItems + ownedPets) / (totalItems + totalPets) * 100);
 
   const statsEl = document.getElementById('collection-stats');
@@ -2839,6 +3308,22 @@ function renderCollectionIndex() {
   // Secret Pets — one divider per crate, only shown if the active tab includes pets
   if(activeTab === 'all' || activeTab === 'pets'){
     PET_SECTIONS.forEach(section => {
+      const groupItems = section.pets;
+      if(!groupItems.length) return;
+
+      const sectionComplete = groupItems.every(p => seen.has(p.id));
+      const alreadyClaimed = claimed.has(section.id);
+
+      renderSectionDivider(grid, section.label, alreadyClaimed, section.bonus);
+      renderItemRow(groupItems);
+
+      if(sectionComplete && !alreadyClaimed){
+        claimSectionBonus(section.id, section.bonus, section.label);
+      }
+    });
+
+    // Shop Pets — one divider per rarity tier (Budding, Spry, Keen, Fierce, Mighty, Mythical)
+    SHOP_PET_SECTIONS.forEach(section => {
       const groupItems = section.pets;
       if(!groupItems.length) return;
 
@@ -3038,9 +3523,6 @@ function loadCratesPage(){
     });
     grid.appendChild(c);
   });
-  // Render the rotating pet shop
-  renderPetShop();
-  startShopTimer();
 }
 
 // ============================================================
@@ -3050,9 +3532,16 @@ function openCratePage(crate){
   S.currentCrate=crate;
   document.getElementById('opening-crate-name').textContent=crate.name.toUpperCase();
   const price=getCratePrice(crate);
-  document.getElementById('open-price-display').textContent = price!==crate.price
-    ? `Cost: 🪙 ${price.toLocaleString()} (was ${crate.price.toLocaleString()})`
-    : 'Cost: 🪙 '+crate.price.toLocaleString();
+  const totalPrice=getTotalOpenPrice(crate);
+  const count=getMultiOpenCount();
+  if(count > 1){
+    document.getElementById('open-price-display').textContent =
+      `Cost: 🪙 ${totalPrice.toLocaleString()} for ${count}x crates`;
+  } else {
+    document.getElementById('open-price-display').textContent = price!==crate.price
+      ? `Cost: 🪙 ${price.toLocaleString()} (was ${crate.price.toLocaleString()})`
+      : 'Cost: 🪙 '+crate.price.toLocaleString();
+  }
   document.getElementById('opening-coin-balance').textContent=fmtNum(S.profile.coins);
   document.getElementById('result-panel').classList.add('hidden');
   updateLuckBar(crate);
@@ -3062,7 +3551,6 @@ function openCratePage(crate){
     const track = document.getElementById('spin-track-' + t);
     if(track) track.style.display = 'none';
   }
-  renderPetShop();
   showPage('opening');
 }
 
@@ -3162,11 +3650,7 @@ function buildSpinTrack(crate, winningItem, landIdx, trackId){
 }
 
 function getActiveTrackCount(){
-  if(hasVipPetEquipped()) return 2;
-  const pet = getEquippedPet();
-  if(pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates')) return 4;
-  if(pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates')) return 2;
-  return 1;
+  return getMultiOpenCount();
 }
 
 function rollItem(crateId){
@@ -3457,18 +3941,18 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
     return;
   }
 
-  const price = getCratePrice(crate);
+  const isVip = hasVipPetEquipped();
+  const pet = getEquippedPet();
+  const quadOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates');
+  const doubleOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates');
+  const openCount = getMultiOpenCount();
+  const price = getTotalOpenPrice(crate);
+
   if (S.profile.coins < price) {
     toast('Not enough coins! 🪙', 'error');
     unlockOpenBtn();
     return;
   }
-
-  const isVip = hasVipPetEquipped();
-  const pet = getEquippedPet();
-  const quadOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates');
-  const doubleOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates');
-  const openCount = isVip ? 2 : (quadOpen ? 4 : (doubleOpen ? 2 : 1));
 
   document.getElementById('result-panel').classList.add('hidden');
 
@@ -3528,7 +4012,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
     }
   }
   S.profile.totalValue = S.inventory.reduce((s, inv) => {
-    const it = getItem(inv.itemId);
+    const it = getInvEffectiveItem(inv);
     return s + (it ? it.value : 0);
   }, 0);
 
@@ -3547,43 +4031,39 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
     toast('Save error: ' + e.message, 'error');
   }
 
-  // Show result for first item
-  const firstInv = S.inventory[S.inventory.length - saveItems.length];
-  showResult(saveItems[0], getRarity(saveItems[0].rarity), firstInv);
-
-  // Auto-sell + toast for bonus items (multi-roll)
-  if (saveItems.length > 1) {
-    const bonusInvItems = S.inventory.slice(S.inventory.length - saveItems.length + 1);
-    const keptNames = [];
-    for (let bi = 0; bi < saveItems.length - 1; bi++) {
-      const bonusItem = saveItems[bi + 1];
-      const bonusInv  = bonusInvItems[bi];
-      if (!bonusItem || !bonusInv) continue;
+  if (saveItems.length === 1) {
+    const firstInv = S.inventory[S.inventory.length - 1];
+    showResult(saveItems[0], getRarity(saveItems[0].rarity), firstInv);
+  } else {
+    // Multi-open (2x / 4x): auto-sell per-item first (respecting settings), then
+    // pop up a result card for every item that's still in the inventory.
+    const rolledInvItems = S.inventory.slice(S.inventory.length - saveItems.length);
+    const keptItems = [];
+    const keptInvItems = [];
+    for (let bi = 0; bi < saveItems.length; bi++) {
+      const rolledItem = saveItems[bi];
+      const rolledInv  = rolledInvItems[bi];
+      if (!rolledItem || !rolledInv) continue;
       let autoSold = false;
-      if (S.autoSell && bonusItem.rarity !== 'pet') {
+      if (S.autoSell && rolledItem.rarity !== 'pet') {
         let shouldSell = false;
         if (S.autoSellMode === 'rarity') {
-          const itemTier   = rarityTierOrder.indexOf(bonusItem.rarity);
+          const itemTier   = rarityTierOrder.indexOf(rolledItem.rarity);
           const threshTier = rarityTierOrder.indexOf(S.autoSellRarity);
           shouldSell = itemTier !== -1 && threshTier !== -1 && itemTier <= threshTier;
         } else if (S.autoSellMode === 'price') {
-          shouldSell = bonusItem.value < S.autoSellPrice;
+          shouldSell = rolledItem.value < S.autoSellPrice;
         }
         if (shouldSell) {
-          toast(`⚡ Auto-sold bonus ${bonusItem.icon} ${bonusItem.name} for 🪙 ${fmtNum(Math.floor(bonusItem.value))}`, 'gold', 2500);
-          sellItems([bonusInv.uniqueId]);
+          toast(`⚡ Auto-sold ${rolledItem.icon} ${rolledItem.name} for 🪙 ${fmtNum(Math.floor(rolledItem.value))}`, 'gold', 2500);
+          sellItems([rolledInv.uniqueId]);
           autoSold = true;
         }
       }
-      if (!autoSold) keptNames.push(`${bonusItem.icon} ${bonusItem.name}`);
+      if (!autoSold) { keptItems.push(rolledItem); keptInvItems.push(rolledInv); }
     }
-    if (keptNames.length) {
-      const label = keptNames.join(', ');
-      if (isVip) {
-        toast(`🐉 VIP GOLDEN DRAKE — DOUBLE REWARD! ${label}`, 'gold', 5000);
-      } else {
-        toast(`🎁 ${quadOpen ? 'QUAD' : 'DOUBLE'} CRACK BONUS: ${label}!`, 'gold', 6000);
-      }
+    if (keptItems.length) {
+      showMultiResult(keptItems, keptInvItems);
     }
   }
 
@@ -3757,6 +4237,41 @@ document.getElementById('btn-open-again').addEventListener('click',()=>{
   document.getElementById('btn-open-crate').click();
 });
 
+document.getElementById('btn-keep-multi')?.addEventListener('click',()=>{ document.getElementById('result-panel-multi').classList.add('hidden'); toast('Items kept!','success'); });
+document.getElementById('btn-sell-multi')?.addEventListener('click',async()=>{
+  const invItems=S.lastOpenedInvItems; if(!invItems||!invItems.length)return;
+  await sellItems(invItems.map(i=>i.uniqueId));
+  document.getElementById('result-panel-multi').classList.add('hidden');
+});
+document.getElementById('btn-open-again-multi')?.addEventListener('click',()=>{
+  document.getElementById('result-panel-multi').classList.add('hidden');
+  document.getElementById('btn-open-crate').click();
+});
+
+// Shows a grid of N result cards for 2x/4x multi-opens (instead of just the first item)
+function showMultiResult(items, invItems){
+  S.lastOpenedInvItems = invItems;
+  const grid = document.getElementById('multi-result-grid');
+  grid.innerHTML = '';
+  items.forEach(item => {
+    const r = getRarity(item.rarity);
+    const col = item.rarity === 'pet' ? '#a855f7' : (r.color === '#ffffff' ? '#e0e0ff' : r.color);
+    const card = document.createElement('div');
+    card.className = 'multi-result-card' + (item.rarity === 'pet' ? ' pet-rainbow' : '');
+    card.style.borderColor = col;
+    card.innerHTML = `
+      <span class="multi-result-icon">${item.icon}</span>
+      <div class="multi-result-name">${item.name}</div>
+      <div class="multi-result-rarity" style="color:${col}">${item.rarity === 'pet' ? '??? PET' : r.name}</div>
+      <div class="multi-result-value">🪙 ${fmtNum(item.value)}</div>
+    `;
+    grid.appendChild(card);
+  });
+  document.getElementById('multi-result-title').textContent = `🎁 ${items.length}x MULTI-OPEN RESULTS`;
+  document.getElementById('result-panel').classList.add('hidden');
+  document.getElementById('result-panel-multi').classList.remove('hidden');
+}
+
 // ============================================================
 // INVENTORY
 // ============================================================
@@ -3803,14 +4318,14 @@ function renderInventory(){
   
   if(search) {
     items = items.filter(inv => {
-      const it = getItem(inv.itemId);
+      const it = getInvEffectiveItem(inv);
       return it && it.name.toLowerCase().includes(search);
     });
   }
 
   // Sort
   items.sort((a,b) => {
-    const ia = getItem(a.itemId), ib = getItem(b.itemId);
+    const ia = getInvEffectiveItem(a), ib = getInvEffectiveItem(b);
     if(!ia || !ib) return 0;
     if(sort === 'rarity') return (getRarity(ib.rarity).tier||0) - (getRarity(ia.rarity).tier||0);
     if(sort === 'value')  return (ib.value||0) - (ia.value||0);
@@ -3826,7 +4341,7 @@ function renderInventory(){
   }
 
   const total = S.inventory.reduce((s, inv) => {
-    const it = getItem(inv.itemId);
+    const it = getInvEffectiveItem(inv);
     return s + (it ? it.value : 0);
   }, 0);
   
@@ -3836,17 +4351,17 @@ function renderInventory(){
 
 // Enhanced makeItemCard with right-click lock
 function makeItemCard(inv, container, selectable = false){
-  const item = getItem(inv.itemId);
+  const item = getInvEffectiveItem(inv);
   if(!item) return null;
 
   const isPet = item.rarity === 'pet';
   const r = getRarity(item.rarity);
-  const col = r.color === '#ffffff' ? '#aaa' : r.color;
+  const col = item.variant ? item.variantColor : (r.color === '#ffffff' ? '#aaa' : r.color);
 
   const card = document.createElement('div');
-  card.className = `item-card${item.rarity==='divine' ? ' rarity-divine' : ''}${isPet ? ' pet-rainbow' : ''}`;
+  card.className = `item-card${item.rarity==='divine' ? ' rarity-divine' : ''}${isPet ? ' pet-rainbow' : ''}${item.variantGlow ? ' variant-neon' : ''}`;
   card.style.setProperty('--ic', col + 'aa');
-  card.style.setProperty('--ig', r.glow || '#9ca3af33');
+  card.style.setProperty('--ig', item.variant ? (col + '55') : (r.glow || '#9ca3af33'));
   card.dataset.uid = inv.uniqueId;
 
   if(selectable && S.selectedItems.has(inv.uniqueId)) card.classList.add('selected');
@@ -3858,16 +4373,17 @@ function makeItemCard(inv, container, selectable = false){
   const sourceCrate = CRATES.find(c => c.id === inv.crateSource);
   const sourceIconHTML = (isPet && sourceCrate) ? `<span class="pet-source-icon" title="Found in ${sourceCrate.name}">${sourceCrate.icon}</span>` : '';
 
+  const variantBadgeHTML = item.variant ? `<div style="font-size:.56rem;font-family:var(--font-d);font-weight:800;letter-spacing:.08em;color:${item.variantColor};margin-bottom:1px">${item.variantIcon} ${item.variantLabel.toUpperCase()}</div>` : '';
   const nameHTML = isPet ? `<div class="item-name rainbow-text">${item.name}</div>` : `<div class="item-name">${item.name}</div>`;
   const valueHTML = isPet ? `<div class="item-value-small" style="color:var(--text-2)">${item.perkName}</div>` : `<div class="item-value-small">🪙 ${fmtNum(item.value)}</div>`;
 
   let equipHTML = '';
   if(isPet && selectable){
-    const equipped = S.profile?.equippedPetUid === inv.uniqueId;
+    const equipped = getAllEquippedUids().includes(inv.uniqueId);
     equipHTML = `<button class="pet-equip-btn${equipped?' equipped':''}" type="button">${equipped?'★ EQUIPPED':'EQUIP'}</button>`;
   }
 
-  card.innerHTML = `${lockHTML}${sourceIconHTML}<span class="item-icon">${item.icon}</span>${nameHTML}${valueHTML}${equipHTML}`;
+  card.innerHTML = `${lockHTML}${sourceIconHTML}<span class="item-icon">${item.icon}</span>${variantBadgeHTML}${nameHTML}${valueHTML}${equipHTML}`;
 
   // Right click to lock/unlock
   card.addEventListener('contextmenu', e => {
@@ -3951,7 +4467,7 @@ document.getElementById('btn-sell-all').addEventListener('click', async () => {
   }
 
   const confirmMsg = `Sell ${toSell.length} items for ~${fmtNum(toSell.reduce((sum, inv) => {
-    const it = getItem(inv.itemId);
+    const it = getInvEffectiveItem(inv);
     return sum + (it ? it.value : 0);
   }, 0) * 0.9)} coins?`;
 
@@ -3992,12 +4508,12 @@ document.getElementById('btn-sell-selected').addEventListener('click',async()=>{
 
 async function sellItems(uniqueIds){
   let earned=0;
-  let unequipped=false;
+  const unequippedFields=[];
   const sellMult=getSellBonusMultiplier();
   for(const uid of uniqueIds){
     const idx=S.inventory.findIndex(i=>i.uniqueId===uid);
     if(idx===-1)continue;
-    const item=getItem(S.inventory[idx].itemId);
+    const item=getInvEffectiveItem(S.inventory[idx]);
 
     // === VIP PROTECTION ===
     if(item && item.sellable === false){
@@ -4005,23 +4521,24 @@ async function sellItems(uniqueIds){
       continue;
     }
     if(item) earned+=Math.floor(item.value*sellMult);
-    if(S.profile.equippedPetUid===uid){ S.profile.equippedPetUid=null; unequipped=true; }
+    const slotField=PET_SLOT_FIELDS.find(f=>S.profile[f]===uid);
+    if(slotField){ S.profile[slotField]=null; unequippedFields.push(slotField); }
     S.inventory.splice(idx,1);
   }
   S.profile.coins+=earned;
-  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+  S.profile.totalValue=S.inventory.reduce((s,inv)=>{const it=getInvEffectiveItem(inv);return s+(it?it.value:0);},0);
   try{
     const updateObj={
       coins:firebase.firestore.FieldValue.increment(earned),
       inventory:S.inventory,
       totalValue:S.profile.totalValue,
     };
-    if(unequipped) updateObj.equippedPetUid=null;
+    unequippedFields.forEach(f=>{ updateObj[f]=null; });
     await db.collection('users').doc(S.user.uid).update(updateObj);
   }catch(e){ toast('Save error','error'); return; }
   updateCoinDisplay(S.profile.coins);
   toast('Sold for 🪙 '+fmtNum(earned)+'!','gold');
-  if(unequipped) updateEquippedPetDisplay();
+  if(unequippedFields.length) updateEquippedPetDisplay();
   if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
 }
 
@@ -4315,11 +4832,11 @@ function renderTradeInventoryMini(){
   grid.innerHTML='';
   const inTrade=new Set((S.tradeMyItems||[]).map(i=>i.uniqueId));
   let items=[...S.inventory];
-  if(S.tradeSortBy==='rarity') items.sort((a,b)=>{const ia=getItem(a.itemId),ib=getItem(b.itemId);return(getRarity(ib?.rarity).tier||0)-(getRarity(ia?.rarity).tier||0);});
-  else if(S.tradeSortBy==='value') items.sort((a,b)=>{const ia=getItem(a.itemId),ib=getItem(b.itemId);return(ib?.value||0)-(ia?.value||0);});
-  else if(S.tradeSortBy==='name') items.sort((a,b)=>{const ia=getItem(a.itemId),ib=getItem(b.itemId);return(ia?.name||'').localeCompare(ib?.name||'');});
+  if(S.tradeSortBy==='rarity') items.sort((a,b)=>{const ia=getInvEffectiveItem(a),ib=getInvEffectiveItem(b);return(getRarity(ib?.rarity).tier||0)-(getRarity(ia?.rarity).tier||0);});
+  else if(S.tradeSortBy==='value') items.sort((a,b)=>{const ia=getInvEffectiveItem(a),ib=getInvEffectiveItem(b);return(ib?.value||0)-(ia?.value||0);});
+  else if(S.tradeSortBy==='name') items.sort((a,b)=>{const ia=getInvEffectiveItem(a),ib=getInvEffectiveItem(b);return(ia?.name||'').localeCompare(ib?.name||'');});
   items.forEach(inv=>{
-    const item=getItem(inv.itemId); if(!item)return;
+    const item=getInvEffectiveItem(inv); if(!item)return;
     const r=getRarity(item.rarity);
     const isPet=item.rarity==='pet';
     const col=r.color==='#ffffff'?'#aaa':r.color;
@@ -4339,7 +4856,7 @@ function renderTradeInventoryMini(){
 
 async function addToTrade(inv){
   if(!S.tradeRoomId)return;
-  const item=getItem(inv.itemId); if(!item)return;
+  const item=getInvEffectiveItem(inv); if(!item)return;
   const newItem={uniqueId:inv.uniqueId,itemId:inv.itemId,...item};
   const myItems=[...S.tradeMyItems,newItem];
   try{
@@ -4478,15 +4995,19 @@ async function executeTrade(){
       if(theirAgreedCoins>theirCoins) throw new Error("Partner doesn't have enough coins");
       myCoins=myCoins-myAgreedCoins+theirAgreedCoins;
       theirCoins=theirCoins-theirAgreedCoins+myAgreedCoins;
-            // Unequip pets that were traded away
-      let myEquippedPetUid = myData.equippedPetUid || null;
-      let theirEquippedPetUid = theirData.equippedPetUid || null;
-      if(myAgreedItems.some(ti=>ti.uniqueId===myEquippedPetUid)) myEquippedPetUid=null;
-      if(theirAgreedItems.some(ti=>ti.uniqueId===theirEquippedPetUid)) theirEquippedPetUid=null;
+            // Unequip pets that were traded away (checks all pet slots, not just primary)
+      const myEquipUpdates = {};
+      const theirEquipUpdates = {};
+      PET_SLOT_FIELDS.forEach(f=>{
+        const myUid = myData[f] || null;
+        if(myUid && myAgreedItems.some(ti=>ti.uniqueId===myUid)) myEquipUpdates[f]=null;
+        const theirUid = theirData[f] || null;
+        if(theirUid && theirAgreedItems.some(ti=>ti.uniqueId===theirUid)) theirEquipUpdates[f]=null;
+      });
 
       const ts=new Date().toISOString(); const tradeId=genUID();
-      const myVal=myInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
-      const theirVal=theirInv.reduce((s,inv)=>{const it=getItem(inv.itemId);return s+(it?it.value:0);},0);
+      const myVal=myInv.reduce((s,inv)=>{const it=getInvEffectiveItem(inv);return s+(it?it.value:0);},0);
+      const theirVal=theirInv.reduce((s,inv)=>{const it=getInvEffectiveItem(inv);return s+(it?it.value:0);},0);
       const myLog={tradeId,partnerId:S.tradePartnerUid,partnerName:theirData.username,
         itemsGiven:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         itemsReceived:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
@@ -4495,8 +5016,8 @@ async function executeTrade(){
         itemsGiven:theirAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         itemsReceived:myAgreedItems.map(i=>({itemId:i.itemId,name:i.name,rarity:i.rarity,value:i.value})),
         coinsGiven:theirAgreedCoins,coinsReceived:myAgreedCoins,timestamp:ts};
-        tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,equippedPetUid:myEquippedPetUid,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
-        tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,equippedPetUid:theirEquippedPetUid,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
+        tx.update(myRef,{inventory:myInv,coins:myCoins,totalValue:myVal,...myEquipUpdates,tradeHistory:firebase.firestore.FieldValue.arrayUnion(myLog)});
+        tx.update(theirRef,{inventory:theirInv,coins:theirCoins,totalValue:theirVal,...theirEquipUpdates,tradeHistory:firebase.firestore.FieldValue.arrayUnion(theirLog)});
     });
 
     // ── FIX: Mark completed and DELETE room immediately to prevent re-trigger ──
@@ -5007,8 +5528,10 @@ async function redeemCode(){
       const userData = userDoc.data();
       const reward = codeData.reward || {};
       let newCoins = userData.coins || 0;
+      let newGems = userData.gems || 0;
       let newInventory = [...(userData.inventory||[])];
       let grantedLabel = '';
+      let grantAutoRoll = false;
 
       if(reward.type === 'coins'){
         const amt = Math.max(0, Math.floor(reward.amount||0));
@@ -5031,7 +5554,7 @@ async function redeemCode(){
         newInventory.push({itemId:pet.id, uniqueId:genUID(), crateSource:reward.crateId||'code', obtainedAt:new Date().toISOString()});
         grantedLabel = `${pet.icon} ${pet.name}`;
       } else if(reward.type === 'bundle'){
-        // Bundle can include any combination of: coins, petId, itemIds[]
+        // Bundle can include any combination of: coins, gems, petId, itemIds[]
         const labels = [];
         if(reward.coins){
           const amt = Math.max(0, Math.floor(reward.coins));
@@ -5040,7 +5563,7 @@ async function redeemCode(){
         }
         if(reward.gems){
           const amt = Math.max(0, Math.floor(reward.gems));
-          userUpdate.gems = (userData.gems||0) + amt;
+          newGems += amt;
           labels.push(`💎 ${amt.toLocaleString()} gems`);
         }
         if(reward.petId){
@@ -5061,19 +5584,18 @@ async function redeemCode(){
         grantedLabel = labels.join(', ');
       } else if(reward.type === 'gems'){
         const amt = Math.max(0, Math.floor(reward.amount||0));
-        const curGems = userData.gems || 0;
-        userUpdate.gems = curGems + amt;
+        newGems += amt;
         grantedLabel = `💎 ${amt.toLocaleString()} gems`;
       } else if(reward.type === 'autoroll'){
         // Grant permanent autoroll to this user
+        grantAutoRoll = true;
         grantedLabel = '⚡ Auto-Roll (permanent)';
-        // Flag is saved via the tx.update below
       } else {
         throw new Error('BAD_REWARD');
       }
 
-      const userUpdate = { coins: newCoins, inventory: newInventory };
-      if(reward.type === 'autoroll') userUpdate.hasAutoRoll = true;
+      const userUpdate = { coins: newCoins, gems: newGems, inventory: newInventory };
+      if(grantAutoRoll) userUpdate.hasAutoRoll = true;
       tx.update(userRef, userUpdate);
       tx.update(codeRef, {
         used: true,
@@ -5082,14 +5604,16 @@ async function redeemCode(){
         usedAt: new Date().toISOString(),
       });
 
-      rewardResult = { label: grantedLabel, newCoins, newInventory, hasAutoRoll: reward.type === 'autoroll' };
+      rewardResult = { label: grantedLabel, newCoins, newGems, newInventory, hasAutoRoll: grantAutoRoll };
     });
 
     // Refresh local state after successful transaction
     if(rewardResult){
       S.profile.coins = rewardResult.newCoins;
+      S.profile.gems = rewardResult.newGems;
       S.inventory = rewardResult.newInventory;
       updateCoinDisplay(S.profile.coins);
+      updateGemDisplay();
       if(rewardResult.hasAutoRoll){
         S.hasAutoRoll = true;
         S.profile.hasAutoRoll = true;
@@ -5816,6 +6340,53 @@ async function buyGemItem(itemId, cost){
   }
 }
 
+// ============================================================
+// PET SLOTS — buy extra equip slots with gems
+// ============================================================
+const PET_SLOT_PRICES = [null, 300, 700, 1500]; // index = slot count AFTER purchase (slot 1 is free/default)
+function getPetSlotCount(){ return Math.max(1, Math.min(PET_SLOT_FIELDS.length, S.profile?.petSlots || 1)); }
+function getNextPetSlotCost(){
+  const cur = getPetSlotCount();
+  return cur < PET_SLOT_FIELDS.length ? PET_SLOT_PRICES[cur] : null; // cost to go from `cur` -> `cur+1`
+}
+
+function updatePetSlotPurchaseCard(){
+  const btn = document.getElementById('petslot-purchase-btn');
+  const desc = document.getElementById('petslot-purchase-desc');
+  if(!btn) return;
+  const cur = getPetSlotCount();
+  const cost = getNextPetSlotCost();
+  if(cost == null){
+    btn.textContent = 'MAXED (4/4)';
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    if(desc) desc.textContent = `You have all ${PET_SLOT_FIELDS.length} pet slots unlocked.`;
+  } else {
+    btn.textContent = `💎 ${cost.toLocaleString()}`;
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    if(desc) desc.textContent = `You have ${cur}/${PET_SLOT_FIELDS.length} slots. Unlock slot ${cur+1} to equip another pet at once — its Golden Touch / Patient Soul / Gem Sniffer perks stack with your other slots.`;
+  }
+}
+
+async function buyPetSlot(){
+  if(!S.user || !S.profile){ toast('Must be logged in.', 'error'); return; }
+  const cost = getNextPetSlotCost();
+  if(cost == null){ toast('You already have all pet slots unlocked!', 'error'); return; }
+  const ok = await spendGems(cost, 'pet_slot');
+  if(!ok) return;
+  const newCount = getPetSlotCount() + 1;
+  S.profile.petSlots = newCount;
+  try{
+    await db.collection('users').doc(S.user.uid).update({ petSlots: newCount });
+  }catch(e){ toast('Save error: ' + e.message, 'error'); }
+  toast(`🐾 Pet slot ${newCount} unlocked! You can now equip ${newCount} pets at once.`, 'gold', 5000);
+  updatePetSlotPurchaseCard();
+  updateGemDisplay();
+  renderInventory();
+  updateEquippedPetDisplay();
+}
+
 // ── Gem crates grid ───────────────────────────────────────────
 function gemEggSVG(){
   return `<svg viewBox="0 0 80 90" width="52" height="58" style="display:block;margin:0 auto 8px">
@@ -6012,7 +6583,7 @@ async function openGemCrate(crateId){
     db.collection('users').doc(S.user.uid).update({seenItems: firebase.firestore.FieldValue.arrayUnion(result.id)});
   }
 
-  S.profile.totalValue = S.inventory.reduce((s,i)=>{ const it=getItem(i.itemId); return s+(it?it.value:0);},0);
+  S.profile.totalValue = S.inventory.reduce((s,i)=>{ const it=getInvEffectiveItem(i); return s+(it?it.value:0);},0);
   try{
     await db.collection('users').doc(S.user.uid).update({
       inventory: S.inventory,
