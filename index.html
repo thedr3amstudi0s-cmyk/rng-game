@@ -1976,11 +1976,10 @@ function getRotatedShopPets(){
 // ── Shop perk helpers (numeric, separate from legacy regex-based crate-pet perks) ──
 // Sums a numeric perk (sellboost/pity/gemfind) across every equipped pet slot —
 // this is what makes buying extra pet slots actually useful.
+// Each equipped pet with this perk type adds a flat +10%, capped at 100% total.
 function getShopPerkValue(perkKey){
-  return getAllEquippedPets().reduce((sum, pet) => {
-    if(pet && pet.perk === perkKey && pet.perkValue != null) return sum + pet.perkValue;
-    return sum;
-  }, 0);
+  const count = getAllEquippedPets().filter(p => p && p.perk === perkKey).length;
+  return Math.min(100, count * 10);
 }
 
 function getSellBonusMultiplier(){
@@ -1990,7 +1989,7 @@ function getSellBonusMultiplier(){
 
 function getPityReduction(){
   const v = getShopPerkValue('pity');
-  return v ? Math.min(0.9, v / 100) : 0;
+  return v / 100;
 }
 
 // Called after a successful crate roll — chance to find bonus gems
@@ -2559,18 +2558,12 @@ function getCratePrice(crate){
   if(hasVipPetEquipped()){
     // VIP's price perk is a no-op (handled by getTotalOpenPrice's free-2nd-crate logic)
   } else {
-    // Sum discount % from every equipped pet with a 'discount' perk, capped at 80% off.
-    let totalPct = 0;
-    for(const pet of getAllEquippedPets()){
-      if(pet.perk === 'discount'){
-        const match = pet.perkDesc.match(/-(\d+)%/);
-        totalPct += match ? parseInt(match[1]) : 5;
-      }
-    }
-    totalPct = Math.min(80, totalPct);
-    if(totalPct > 0) price = Math.max(1, Math.floor(price * (1 - totalPct / 100)));
+    // Every equipped pet with a 'discount' perk adds a flat +10%, capped at 100% off.
+    const discountCount = getAllEquippedPets().filter(p => p.perk === 'discount').length;
+    const totalPct = Math.min(100, discountCount * 10);
+    if(totalPct > 0) price = Math.floor(price * (1 - totalPct / 100));
   }
-  return Math.max(1, price);
+  return Math.max(0, price);
 }
 
 // How many crates get opened per click. Multi-open pets STACK across slots
@@ -2602,20 +2595,11 @@ function getTotalOpenPrice(crate){
 function getSpinDuration(){
   if(hasVipPetEquipped()) return 2500; // 2.5s for VIP
 
-  // Sum speed % from every equipped pet with a plain 'speed' perk (excludes multi-open pets),
-  // capped at 80% reduction from the base 5000ms.
-  let totalPct = 0;
-  let hasInstant = false;
-  for(const pet of getAllEquippedPets()){
-    if(pet.perk === 'speed' && !isMultiOpenPet(pet)){
-      if(pet.perkDesc.includes('Instant')) { hasInstant = true; continue; }
-      if(pet.perkDesc.includes('90%')) { totalPct += 45; continue; } // nerfed 90% pets ~ half value
-      const match = pet.perkDesc.match(/(\d+)%\s+faster/);
-      totalPct += match ? Math.floor(parseInt(match[1]) / 2) : 10;
-    }
-  }
-  if(hasInstant) return 800;
-  totalPct = Math.min(80, totalPct);
+  // Every equipped pet with a plain 'speed' perk (excludes multi-open pets) adds
+  // a flat +10% faster, capped at 100% (fully instant).
+  const speedCount = getAllEquippedPets().filter(p => p.perk === 'speed' && !isMultiOpenPet(p)).length;
+  const totalPct = Math.min(100, speedCount * 10);
+  if(totalPct >= 100) return 100; // tiny floor so the reveal animation still has a frame to play
   return totalPct > 0 ? Math.floor(5000 * (1 - totalPct / 100)) : 5000;
 }
 
@@ -2636,14 +2620,7 @@ async function equipPet(uniqueId){
     S.profile[currentSlotField] = null;
     updateObj[currentSlotField] = null;
   } else {
-    // Every pet TYPE can only be equipped once at a time (no equipping two copies
-    // of the same species across different slots). Different pet types — including
-    // multiple Double/Quad Crack pets — can all be equipped together and their perks stack.
-    const sameTypeEquipped = getAllEquippedPets().find(p => p.id === pet.id);
-    if(sameTypeEquipped){
-      toast(`You already have a ${sameTypeEquipped.icon} ${pet.name} equipped — each pet type can only be equipped once.`, 'error', 4500);
-      return;
-    }
+    // Any pet can go in any open slot — no restriction on type or duplicates.
     const emptyField = slotFields.find(f => !S.profile[f]);
     if(!emptyField){
       toast(`All ${slotFields.length} pet slot${slotFields.length===1?'':'s'} are full! Unequip a pet first, or buy another slot with 💎 Gems.`, 'error', 4500);
@@ -3333,7 +3310,7 @@ function renderCollectionIndex() {
   
 function getLuckThresholds(crate){
   const reduction=getPityReduction();
-  const mult=1-Math.min(0.9,reduction);
+  const mult=1-reduction;
   return {minor:Math.max(1,Math.floor(crate.price*10*mult)),huge:Math.max(1,Math.floor(crate.price*100*mult))};
 }
 
@@ -3671,21 +3648,11 @@ function rollItem(crateId){
   }
 
   // === LUCK BOOST (including VIP) ===
-  // Every equipped pet's luck perk stacks additively, plus VIP's flat +50%.
+  // Every equipped pet with a 'luck' perk adds a flat +10%, capped at 100%. VIP keeps its own flat +50%.
   let luckMult = 1;
-  for(const pet of getAllEquippedPets()){
-    if(pet.id === "p_vip1"){
-      luckMult += 0.5;
-    } else if(pet.perk === 'luck'){
-      if(pet.perkDesc.includes('twice as powerful')){
-        luckMult += 1;
-      } else {
-        const match = pet.perkDesc.match(/\+(\d+)%\s+better/);
-        if(match) luckMult += parseInt(match[1]) / 100;
-      }
-    }
-  }
-  luckMult = Math.min(luckMult, 6); // sanity cap so odds can't go fully off the rails
+  if(hasVipPetEquipped()) luckMult += 0.5;
+  const luckCount = getAllEquippedPets().filter(p => p.perk === 'luck' && p.id !== 'p_vip1').length;
+  luckMult += Math.min(100, luckCount * 10) / 100;
 
   if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate === crateId){
     const entries = Object.entries(odds);
