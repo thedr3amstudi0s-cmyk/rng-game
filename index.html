@@ -891,15 +891,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <button id="tradeup-panel-close" class="tradeup-panel-close">✕</button>
           <div class="tradeup-panel-flow" id="tradeup-panel-flow"></div>
           <div id="tradeup-panel-owned" style="font-size:.8rem;color:var(--text-2);margin:14px 0 10px"></div>
-          <div class="tradeup-count-row">
-            <span style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2)">COPIES TO SACRIFICE</span>
-            <div class="tradeup-count-controls">
-              <button id="tradeup-count-minus" class="tradeup-count-btn">−</button>
-              <span id="tradeup-count-val" style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;min-width:24px;text-align:center;display:inline-block">1</span>
-              <button id="tradeup-count-plus" class="tradeup-count-btn">+</button>
-            </div>
-          </div>
-          <div id="tradeup-chance-display" class="tradeup-chance-display"></div>
+          <div id="tradeup-chance-display" class="tradeup-chance-display">100% CHANCE — GUARANTEED</div>
           <button id="tradeup-btn-execute" class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#ec4899)">🔺 TRADE UP</button>
         </div>
       </section>
@@ -2130,7 +2122,7 @@ function findPetBucket(itemId){
   return null;
 }
 
-function tradeUpChanceFor(count){ return Math.min(100, count * 10); }
+function tradeUpChanceFor(count){ return 100; } // guaranteed success
 
 function renderTradeUpPage(){
   const grid = document.getElementById('tradeup-groups');
@@ -2191,7 +2183,6 @@ function renderTradeUpPanel(){
   const curVariant = getVariantInfo(g.variant);
   const nextVariant = getNextVariant(g.variant);
   const owned = g.uids.length;
-  _tradeUpCount = Math.max(1, Math.min(_tradeUpCount, owned, 8));
 
   const flow = document.getElementById('tradeup-panel-flow');
   flow.innerHTML = `
@@ -2206,30 +2197,17 @@ function renderTradeUpPanel(){
     </div>
   `;
 
-  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}.`;
-  document.getElementById('tradeup-count-val').textContent = _tradeUpCount;
+  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}. Sacrifice 1 for a guaranteed upgrade.`;
 
-  const chance = tradeUpChanceFor(_tradeUpCount);
   const chanceEl = document.getElementById('tradeup-chance-display');
-  chanceEl.textContent = `${chance}% CHANCE TO SUCCEED`;
-  chanceEl.style.color = chance >= 50 ? '#22c55e' : chance >= 25 ? '#f59e0b' : '#ef4444';
+  chanceEl.textContent = `100% CHANCE — GUARANTEED`;
+  chanceEl.style.color = '#22c55e';
 
   const btn = document.getElementById('tradeup-btn-execute');
   btn.disabled = false;
-  btn.textContent = `🔺 TRADE UP (sacrifice ${_tradeUpCount})`;
-
-  document.getElementById('tradeup-count-minus').disabled = _tradeUpCount <= 1;
-  document.getElementById('tradeup-count-plus').disabled = _tradeUpCount >= Math.min(owned, 8);
+  btn.textContent = `🔺 TRADE UP (sacrifice 1)`;
 }
 
-document.getElementById('tradeup-count-minus')?.addEventListener('click', () => {
-  _tradeUpCount = Math.max(1, _tradeUpCount - 1);
-  renderTradeUpPanel();
-});
-document.getElementById('tradeup-count-plus')?.addEventListener('click', () => {
-  _tradeUpCount = _tradeUpCount + 1;
-  renderTradeUpPanel();
-});
 document.getElementById('tradeup-panel-close')?.addEventListener('click', closeTradeUpPanel);
 document.getElementById('tradeup-overlay')?.addEventListener('click', closeTradeUpPanel);
 
@@ -2239,7 +2217,7 @@ async function executeTradeUp(){
   const g = groups.find(x => x.key === _tradeUpGroupKey);
   if(!g){ closeTradeUpPanel(); return; }
 
-  const count = Math.max(1, Math.min(_tradeUpCount, g.uids.length, 8));
+  const count = 1; // guaranteed trade up always sacrifices exactly 1 copy
   const chance = tradeUpChanceFor(count);
   const nextVariant = getNextVariant(g.variant);
   if(!nextVariant){ toast('This pet is already at max variant!', 'error'); return; }
@@ -2579,25 +2557,34 @@ function getCratePrice(crate){
   let price = crate.price;
 
   if(hasVipPetEquipped()){
-    
+    // VIP's price perk is a no-op (handled by getTotalOpenPrice's free-2nd-crate logic)
   } else {
-    const pet = getEquippedPet();
-    if(pet && pet.perk === 'discount'){
-      const match = pet.perkDesc.match(/-(\d+)%/);
-      const pct = match ? parseInt(match[1]) : 5;
-      price = Math.max(1, Math.floor(price * (1 - pct / 100)));
+    // Sum discount % from every equipped pet with a 'discount' perk, capped at 80% off.
+    let totalPct = 0;
+    for(const pet of getAllEquippedPets()){
+      if(pet.perk === 'discount'){
+        const match = pet.perkDesc.match(/-(\d+)%/);
+        totalPct += match ? parseInt(match[1]) : 5;
+      }
     }
+    totalPct = Math.min(80, totalPct);
+    if(totalPct > 0) price = Math.max(1, Math.floor(price * (1 - totalPct / 100)));
   }
   return Math.max(1, price);
 }
 
-// How many crates get opened per click (Double/Quad Crack pets, or VIP).
+// How many crates get opened per click. Multi-open pets STACK across slots
+// (each contributes its own extra crates), plus VIP's built-in +1. Capped at 8 total.
 function getMultiOpenCount(){
-  if(hasVipPetEquipped()) return 2;
-  const pet = getEquippedPet();
-  if(pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates')) return 4;
-  if(pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates')) return 2;
-  return 1;
+  let extra = 0;
+  if(hasVipPetEquipped()) extra += 1;
+  for(const pet of getAllEquippedPets()){
+    if(isMultiOpenPet(pet)){
+      if(pet.perkDesc.includes('4 crates')) extra += 3;
+      else if(pet.perkDesc.includes('2 crates')) extra += 1;
+    }
+  }
+  return Math.min(8, 1 + extra);
 }
 
 // Total coin cost for one "open" click, accounting for multi-open.
@@ -2605,27 +2592,31 @@ function getMultiOpenCount(){
 // Double/Quad Crack: 1st crate full price, each ADDITIONAL crate is 25% off (not free).
 function getTotalOpenPrice(crate){
   const single = getCratePrice(crate);
-  if(hasVipPetEquipped()) return single;
   const count = getMultiOpenCount();
   if(count <= 1) return single;
-  return single + Math.floor(single * 0.75) * (count - 1);
+  const vipFreebies = hasVipPetEquipped() ? 1 : 0; // VIP's own +1 crate stays free
+  const payableExtras = Math.max(0, (count - 1) - vipFreebies);
+  return single + Math.floor(single * 0.75) * payableExtras;
 }
 
 function getSpinDuration(){
   if(hasVipPetEquipped()) return 2500; // 2.5s for VIP
 
-  const pet = getEquippedPet();
-  if(pet && pet.perk === 'speed'){
-    // NERFED: Instant pets now take 800ms minimum
-    if(pet.perkDesc.includes('Instant')) return 800;
-    // NERFED: 90% pets now take 1200ms
-    if(pet.perkDesc.includes('90%')) return 1200;
-    // NERFED: percentage pets have their bonus halved
-    const match=pet.perkDesc.match(/(\d+)%\s+faster/);
-    const pct=match?Math.floor(parseInt(match[1])/2):10;
-    return Math.floor(5000*(1-pct/100));
+  // Sum speed % from every equipped pet with a plain 'speed' perk (excludes multi-open pets),
+  // capped at 80% reduction from the base 5000ms.
+  let totalPct = 0;
+  let hasInstant = false;
+  for(const pet of getAllEquippedPets()){
+    if(pet.perk === 'speed' && !isMultiOpenPet(pet)){
+      if(pet.perkDesc.includes('Instant')) { hasInstant = true; continue; }
+      if(pet.perkDesc.includes('90%')) { totalPct += 45; continue; } // nerfed 90% pets ~ half value
+      const match = pet.perkDesc.match(/(\d+)%\s+faster/);
+      totalPct += match ? Math.floor(parseInt(match[1]) / 2) : 10;
+    }
   }
-  return 5000;
+  if(hasInstant) return 800;
+  totalPct = Math.min(80, totalPct);
+  return totalPct > 0 ? Math.floor(5000 * (1 - totalPct / 100)) : 5000;
 }
 
 async function equipPet(uniqueId){
@@ -2645,13 +2636,13 @@ async function equipPet(uniqueId){
     S.profile[currentSlotField] = null;
     updateObj[currentSlotField] = null;
   } else {
-    // Only one Double/Quad Crack (multi-open) pet may be equipped across ALL slots at once
-    if(isMultiOpenPet(pet)){
-      const existingMultiOpen = getAllEquippedPets().find(isMultiOpenPet);
-      if(existingMultiOpen){
-        toast(`You already have ${existingMultiOpen.icon} ${existingMultiOpen.name} equipped — only one Double/Quad Crack pet can be equipped at a time.`, 'error', 4500);
-        return;
-      }
+    // Every pet TYPE can only be equipped once at a time (no equipping two copies
+    // of the same species across different slots). Different pet types — including
+    // multiple Double/Quad Crack pets — can all be equipped together and their perks stack.
+    const sameTypeEquipped = getAllEquippedPets().find(p => p.id === pet.id);
+    if(sameTypeEquipped){
+      toast(`You already have a ${sameTypeEquipped.icon} ${pet.name} equipped — each pet type can only be equipped once.`, 'error', 4500);
+      return;
     }
     const emptyField = slotFields.find(f => !S.profile[f]);
     if(!emptyField){
@@ -3680,21 +3671,21 @@ function rollItem(crateId){
   }
 
   // === LUCK BOOST (including VIP) ===
+  // Every equipped pet's luck perk stacks additively, plus VIP's flat +50%.
   let luckMult = 1;
-
-  const equippedPet = getEquippedPet();
-  if (equippedPet) {
-    if (equippedPet.id === "p_vip1") {
-      luckMult = 1.5; // +50% Luck for VIP
-    } else if (equippedPet.perk === 'luck') {
-      if (equippedPet.perkDesc.includes('twice as powerful')) {
-        luckMult = 2;
+  for(const pet of getAllEquippedPets()){
+    if(pet.id === "p_vip1"){
+      luckMult += 0.5;
+    } else if(pet.perk === 'luck'){
+      if(pet.perkDesc.includes('twice as powerful')){
+        luckMult += 1;
       } else {
-        const match = equippedPet.perkDesc.match(/\+(\d+)%\s+better/);
-        luckMult = match ? 1 + (parseInt(match[1]) / 100) : 1;
+        const match = pet.perkDesc.match(/\+(\d+)%\s+better/);
+        if(match) luckMult += parseInt(match[1]) / 100;
       }
     }
   }
+  luckMult = Math.min(luckMult, 6); // sanity cap so odds can't go fully off the rails
 
   if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate === crateId){
     const entries = Object.entries(odds);
@@ -3706,7 +3697,7 @@ function rollItem(crateId){
     entries.forEach(([r]) => {
       const t = getRarity(r).tier || 0;
       if (S.luckBoost === 'minor') {
-        odds[r] *= t <= mid ? 0.5 : 2.5 * luckMult;
+        odds[r] *= t <= mid ? 0.5 : 1.5 * luckMult;
       } else {
         odds[r] *= t <= mid ? 0.1 : 4 * luckMult;
       }
