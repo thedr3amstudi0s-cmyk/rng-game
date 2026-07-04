@@ -3706,7 +3706,7 @@ function rollItem(crateId){
     entries.forEach(([r]) => {
       const t = getRarity(r).tier || 0;
       if (S.luckBoost === 'minor') {
-        odds[r] *= t <= mid ? 0.5 : 1.5 * luckMult;
+        odds[r] *= t <= mid ? 0.5 : 2.5 * luckMult;
       } else {
         odds[r] *= t <= mid ? 0.1 : 4 * luckMult;
       }
