@@ -2645,7 +2645,15 @@ async function equipPet(uniqueId){
     S.profile[currentSlotField] = null;
     updateObj[currentSlotField] = null;
   } else {
-    // Any pet can go in any open slot — no restriction on type or duplicates.
+    // Only one multi-open (Double/Quad Crack) pet may ever be equipped at once,
+    // no matter which multi-open pets they are — all other pets can duplicate freely.
+    if(isMultiOpenPet(pet)){
+      const existingMultiOpen = getAllEquippedPets().find(isMultiOpenPet);
+      if(existingMultiOpen){
+        toast(`You already have ${existingMultiOpen.icon} ${existingMultiOpen.name} equipped — only one multi-open pet can be equipped at a time.`, 'error', 4500);
+        return;
+      }
+    }
     const emptyField = slotFields.find(f => !S.profile[f]);
     if(!emptyField){
       toast(`All ${slotFields.length} pet slot${slotFields.length===1?'':'s'} are full! Unequip a pet first, or buy another slot with 💎 Gems.`, 'error', 4500);
