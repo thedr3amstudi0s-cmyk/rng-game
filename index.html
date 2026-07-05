@@ -2121,7 +2121,10 @@ function findPetBucket(itemId){
   return null;
 }
 
-function tradeUpChanceFor(count){ return 100; } // guaranteed success
+function tradeUpChanceFor(count){
+  // Base 40% + 10% per extra pet owned (beyond the first). Can fail.
+  return Math.min(100, 40 + (count - 1) * 10);
+}
 
 function renderTradeUpPage(){
   const grid = document.getElementById('tradeup-groups');
@@ -2196,8 +2199,12 @@ function renderTradeUpPanel(){
     </div>
   `;
 
-  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}. Sacrifice 1 for a guaranteed upgrade.`;
+  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}. Sacrifice 1 (+10% chance per extra owned).`;
 
+  const chanceEl = document.getElementById('tradeup-chance-display');
+  const chance = tradeUpChanceFor(owned);
+  chanceEl.textContent = `${chance}% CHANCE`;
+  chanceEl.style.color = chance >= 80 ? '#22c55e' : '#eab308';
   const chanceEl = document.getElementById('tradeup-chance-display');
   chanceEl.textContent = `100% CHANCE — GUARANTEED`;
   chanceEl.style.color = '#22c55e';
