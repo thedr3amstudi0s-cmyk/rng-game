@@ -2559,6 +2559,38 @@ function getAllEquippedPets(){
 function isMultiOpenPet(pet){
   return !!(pet && pet.perk === 'speed' && pet.perkDesc && pet.perkDesc.includes('crates'));
 }
+// Extracts the crate count (2 or 4) from a multi-open pet's perkDesc, regardless
+// of variant-scaling having changed the exact number in the text.
+function getMultiOpenCrateCount(pet){
+  if(!isMultiOpenPet(pet)) return 0;
+  const m = pet.perkDesc.match(/(\d+)\s*crates/);
+  if(!m) return 0;
+  return parseInt(m[1], 10) >= 3 ? 4 : 2; // snap to the nearest valid tier (2 or 4)
+}
+
+// Guarantees only ONE multi-open pet is ever equipped. If a profile somehow has
+// more than one (e.g. from before this rule existed), keeps the first and
+// unequips the rest, syncing the fix to Firestore. Safe to call anytime.
+async function sanitizeEquippedSlots(){
+  if(!S.profile) return;
+  const slotFields = getUnlockedSlotFields();
+  let seenMultiOpen = false;
+  const updateObj = {};
+  for(const f of slotFields){
+    const uid = S.profile[f];
+    if(!uid) continue;
+    const inv = S.inventory.find(i => i.uniqueId === uid);
+    const pet = inv ? getInvEffectiveItem(inv) : null;
+    if(!pet){ S.profile[f] = null; updateObj[f] = null; continue; } // dangling reference (pet no longer owned)
+    if(isMultiOpenPet(pet)){
+      if(seenMultiOpen){ S.profile[f] = null; updateObj[f] = null; }
+      else seenMultiOpen = true;
+    }
+  }
+  if(Object.keys(updateObj).length && S.user){
+    try{ await db.collection('users').doc(S.user.uid).update(updateObj); }catch(e){ /* best effort */ }
+  }
+}
 
 function getEquippedPet(){
   if(!S.profile||!S.profile.equippedPetUid) return null;
@@ -2595,10 +2627,9 @@ function getMultiOpenCount(){
   let has4 = false, has2 = false;
   if(hasVipPetEquipped()) has2 = true;
   for(const pet of getAllEquippedPets()){
-    if(isMultiOpenPet(pet)){
-      if(pet.perkDesc.includes('4 crates')) has4 = true;
-      else if(pet.perkDesc.includes('2 crates')) has2 = true;
-    }
+    const n = getMultiOpenCrateCount(pet);
+    if(n === 4) has4 = true;
+    else if(n === 2) has2 = true;
   }
   if(has4) return 4;
   if(has2) return 2;
@@ -2666,6 +2697,7 @@ async function equipPet(uniqueId){
 
   try{ await db.collection('users').doc(S.user.uid).update(updateObj); }
   catch(e){ toast('Error updating equipped pet','error'); return; }
+  await sanitizeEquippedSlots();
 
   toast(newlyEquipped?`${pet.icon} ${pet.name} equipped!`:'Pet unequipped.','success');
   renderInventory();
@@ -2983,6 +3015,7 @@ function startAuthObserver(){
       S.inventory=[...S.profile.inventory||[]];
       S.hasAutoRoll = S.profile.hasAutoRoll === true;
       S.gems = S.profile.gems || 0;
+      sanitizeEquippedSlots();
       updateAutoRollUI();
       updateGemDisplay();
       setTimeout(updateAutoRollInlineBtn, 100);
@@ -3933,9 +3966,6 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   }
 
   const isVip = hasVipPetEquipped();
-  const pet = getEquippedPet();
-  const quadOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('4 crates');
-  const doubleOpen = pet && pet.perk === 'speed' && pet.perkDesc.includes('2 crates');
   const openCount = getMultiOpenCount();
   const price = getTotalOpenPrice(crate);
 
@@ -5019,7 +5049,7 @@ async function executeTrade(){
 
     // Refresh local state from Firestore
     const doc=await db.collection('users').doc(S.user.uid).get();
-    if(doc.exists){ S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]]; updateCoinDisplay(S.profile.coins); }
+    if(doc.exists){ S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]]; updateCoinDisplay(S.profile.coins); sanitizeEquippedSlots(); }
     resetTradeState();
     toast('🎉 Trade completed successfully!','success');
     if(document.getElementById('page-inventory').classList.contains('active')) renderInventory();
@@ -5036,7 +5066,7 @@ async function handleTradeComplete(room){
   // Called when we see completed:true on a room we didn't execute ourselves
   try{
     const doc=await db.collection('users').doc(S.user.uid).get();
-    if(doc.exists){ S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]]; updateCoinDisplay(S.profile.coins); }
+    if(doc.exists){ S.profile=doc.data(); S.inventory=[...S.profile.inventory||[]]; updateCoinDisplay(S.profile.coins); sanitizeEquippedSlots(); }
   }catch(e){}
   resetTradeState();
   toast('🎉 Trade completed successfully!','success');
