@@ -891,7 +891,15 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           <button id="tradeup-panel-close" class="tradeup-panel-close">✕</button>
           <div class="tradeup-panel-flow" id="tradeup-panel-flow"></div>
           <div id="tradeup-panel-owned" style="font-size:.8rem;color:var(--text-2);margin:14px 0 10px"></div>
-          <div id="tradeup-chance-display" class="tradeup-chance-display">100% CHANCE — GUARANTEED</div>
+          <div class="tradeup-count-row">
+            <span style="font-family:var(--font-d);font-size:.7rem;letter-spacing:.1em;color:var(--text-2)">PETS TO ADD (+10% EACH)</span>
+            <div class="tradeup-count-controls">
+              <button id="tradeup-count-minus" class="tradeup-count-btn">−</button>
+              <span id="tradeup-count-val" style="font-family:var(--font-d);font-size:1.1rem;font-weight:900;min-width:24px;text-align:center;display:inline-block">1</span>
+              <button id="tradeup-count-plus" class="tradeup-count-btn">+</button>
+            </div>
+          </div>
+          <div id="tradeup-chance-display" class="tradeup-chance-display"></div>
           <button id="tradeup-btn-execute" class="btn-primary" style="background:linear-gradient(135deg,#a855f7,#ec4899)">🔺 TRADE UP</button>
         </div>
       </section>
@@ -2121,10 +2129,7 @@ function findPetBucket(itemId){
   return null;
 }
 
-function tradeUpChanceFor(count){
-  // Base 40% + 10% per extra pet owned (beyond the first). Can fail.
-  return Math.min(100, 40 + (count - 1) * 10);
-}
+function tradeUpChanceFor(count){ return Math.min(100, count * 10); }
 
 function renderTradeUpPage(){
   const grid = document.getElementById('tradeup-groups');
@@ -2185,6 +2190,7 @@ function renderTradeUpPanel(){
   const curVariant = getVariantInfo(g.variant);
   const nextVariant = getNextVariant(g.variant);
   const owned = g.uids.length;
+  _tradeUpCount = Math.max(1, Math.min(_tradeUpCount, owned, 10));
 
   const flow = document.getElementById('tradeup-panel-flow');
   flow.innerHTML = `
@@ -2199,18 +2205,30 @@ function renderTradeUpPanel(){
     </div>
   `;
 
-  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}. Sacrifice 1 (+10% chance per extra owned).`;
+  document.getElementById('tradeup-panel-owned').textContent = `${g.base.name} — you own ${owned} eligible cop${owned===1?'y':'ies'}.`;
+  document.getElementById('tradeup-count-val').textContent = _tradeUpCount;
 
+  const chance = tradeUpChanceFor(_tradeUpCount);
   const chanceEl = document.getElementById('tradeup-chance-display');
-  const chance = tradeUpChanceFor(owned);
-  chanceEl.textContent = `${chance}% CHANCE`;
-  chanceEl.style.color = chance >= 80 ? '#22c55e' : '#eab308';
+  chanceEl.textContent = `${chance}% CHANCE TO SUCCEED`;
+  chanceEl.style.color = chance >= 70 ? '#22c55e' : chance >= 40 ? '#f59e0b' : '#ef4444';
 
   const btn = document.getElementById('tradeup-btn-execute');
   btn.disabled = false;
-  btn.textContent = `🔺 TRADE UP (sacrifice 1)`;
+  btn.textContent = `🔺 TRADE UP (sacrifice ${_tradeUpCount})`;
+
+  document.getElementById('tradeup-count-minus').disabled = _tradeUpCount <= 1;
+  document.getElementById('tradeup-count-plus').disabled = _tradeUpCount >= Math.min(owned, 10);
 }
 
+document.getElementById('tradeup-count-minus')?.addEventListener('click', () => {
+  _tradeUpCount = Math.max(1, _tradeUpCount - 1);
+  renderTradeUpPanel();
+});
+document.getElementById('tradeup-count-plus')?.addEventListener('click', () => {
+  _tradeUpCount = _tradeUpCount + 1;
+  renderTradeUpPanel();
+});
 document.getElementById('tradeup-panel-close')?.addEventListener('click', closeTradeUpPanel);
 document.getElementById('tradeup-overlay')?.addEventListener('click', closeTradeUpPanel);
 
@@ -2220,7 +2238,7 @@ async function executeTradeUp(){
   const g = groups.find(x => x.key === _tradeUpGroupKey);
   if(!g){ closeTradeUpPanel(); return; }
 
-  const count = 1; // guaranteed trade up always sacrifices exactly 1 copy
+  const count = Math.max(1, Math.min(_tradeUpCount, g.uids.length, 10));
   const chance = tradeUpChanceFor(count);
   const nextVariant = getNextVariant(g.variant);
   if(!nextVariant){ toast('This pet is already at max variant!', 'error'); return; }
@@ -2573,15 +2591,18 @@ function getCratePrice(crate){
 // How many crates get opened per click. Multi-open pets STACK across slots
 // (each contributes its own extra crates), plus VIP's built-in +1. Capped at 8 total.
 function getMultiOpenCount(){
-  let extra = 0;
-  if(hasVipPetEquipped()) extra += 1;
+  // No stacking — the best single source wins. Result is always 1, 2, or 4, never higher.
+  let has4 = false, has2 = false;
+  if(hasVipPetEquipped()) has2 = true;
   for(const pet of getAllEquippedPets()){
     if(isMultiOpenPet(pet)){
-      if(pet.perkDesc.includes('4 crates')) extra += 3;
-      else if(pet.perkDesc.includes('2 crates')) extra += 1;
+      if(pet.perkDesc.includes('4 crates')) has4 = true;
+      else if(pet.perkDesc.includes('2 crates')) has2 = true;
     }
   }
-  return Math.min(8, 1 + extra);
+  if(has4) return 4;
+  if(has2) return 2;
+  return 1;
 }
 
 // Total coin cost for one "open" click, accounting for multi-open.
