@@ -2205,9 +2205,6 @@ function renderTradeUpPanel(){
   const chance = tradeUpChanceFor(owned);
   chanceEl.textContent = `${chance}% CHANCE`;
   chanceEl.style.color = chance >= 80 ? '#22c55e' : '#eab308';
-  const chanceEl = document.getElementById('tradeup-chance-display');
-  chanceEl.textContent = `100% CHANCE — GUARANTEED`;
-  chanceEl.style.color = '#22c55e';
 
   const btn = document.getElementById('tradeup-btn-execute');
   btn.disabled = false;
