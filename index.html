@@ -2543,8 +2543,9 @@ function getInvEffectiveItem(inv){
 // Slots 2-4 are purchasable extras whose pets stack Golden Touch / Patient Soul / Gem Sniffer bonuses.
 const PET_SLOT_FIELDS = ['equippedPetUid','equippedPetUid2','equippedPetUid3','equippedPetUid4'];
 function getUnlockedSlotFields(){
-  const n = Math.max(1, Math.min(PET_SLOT_FIELDS.length, S.profile?.petSlots || 1));
-  return PET_SLOT_FIELDS.slice(0, n);
+  // All 4 slots are available to everyone by default.
+  // petSlots can still be used to track purchases but doesn't gate slot access.
+  return PET_SLOT_FIELDS;
 }
 function getAllEquippedUids(){
   if(!S.profile) return [];
@@ -2663,7 +2664,8 @@ async function equipPet(uniqueId){
   if(!S.user||!S.profile)return;
   const inv=S.inventory.find(i=>i.uniqueId===uniqueId);
   if(!inv)return;
-  const pet=getItem(inv.itemId);
+  // Use the EFFECTIVE (variant-scaled) pet so perkDesc checks are accurate
+  const pet=getInvEffectiveItem(inv);
   if(!pet||pet.rarity!=='pet')return;
 
   const slotFields = getUnlockedSlotFields();
@@ -2672,19 +2674,19 @@ async function equipPet(uniqueId){
   let newlyEquipped = false;
 
   if(currentSlotField){
-    // Already equipped in one of your unlocked slots — unequip it
+    // Already equipped — unequip it
     S.profile[currentSlotField] = null;
     updateObj[currentSlotField] = null;
   } else {
-    // Only one multi-open (Double/Quad Crack) pet may ever be equipped at once,
-    // no matter which multi-open pets they are — all other pets can duplicate freely.
+    // Block equipping a second multi-open pet regardless of which one it is
     if(isMultiOpenPet(pet)){
       const existingMultiOpen = getAllEquippedPets().find(isMultiOpenPet);
       if(existingMultiOpen){
-        toast(`You already have ${existingMultiOpen.icon} ${existingMultiOpen.name} equipped — only one multi-open pet can be equipped at a time.`, 'error', 4500);
+        toast(`You already have ${existingMultiOpen.icon} ${existingMultiOpen.name} equipped — only one multi-open pet at a time.`, 'error', 4500);
         return;
       }
     }
+    // Find an empty slot across ALL unlocked slots
     const emptyField = slotFields.find(f => !S.profile[f]);
     if(!emptyField){
       toast(`All ${slotFields.length} pet slot${slotFields.length===1?'':'s'} are full! Unequip a pet first, or buy another slot with 💎 Gems.`, 'error', 4500);
