@@ -1995,12 +1995,13 @@ function getRotatedShopPets(){
 }
 
 // ── Shop perk helpers (numeric, separate from legacy regex-based crate-pet perks) ──
-// Sums a numeric perk (sellboost/pity/gemfind) across every equipped pet slot —
-// this is what makes buying extra pet slots actually useful.
-// Each equipped pet with this perk type adds a flat +10%, capped at 100% total.
+// Sums a numeric perk (sellboost/pity/gemfind) across every equipped pet slot.
+// Reads the real perkValue on each pet (set by their rarity/tier), capped at 100% total.
 function getShopPerkValue(perkKey){
-  const count = getAllEquippedPets().filter(p => p && p.perk === perkKey).length;
-  return Math.min(100, count * 10);
+  const total = getAllEquippedPets()
+    .filter(p => p && p.perk === perkKey)
+    .reduce((sum, p) => sum + (p.perkValue ?? 10), 0);
+  return Math.min(100, total);
 }
 
 function getSellBonusMultiplier(){
@@ -2621,9 +2622,12 @@ function hasVipPetEquipped() {
 
 function getCratePrice(crate){
   if(!crate) return 0;
-  // Start from base price, apply discount from ALL equipped discount pets (+10% per pet, max 100%)
-  const discountCount = getAllEquippedPets().filter(p => p.perk === 'discount').length;
-  const totalPct = Math.min(100, discountCount * 10);
+  // Sum real perkValue from each equipped discount pet, capped at 100%
+  const totalPct = Math.min(100,
+    getAllEquippedPets()
+      .filter(p => p.perk === 'discount')
+      .reduce((s, p) => s + (p.perkValue ?? 5), 0)
+  );
   return Math.max(0, Math.floor(crate.price * (1 - totalPct / 100)));
 }
 
@@ -2656,13 +2660,15 @@ function getMultiOpenCount(){
 }
 
 function getSpinDuration(){
-  if(hasVipPetEquipped()) return 2500; // 2.5s for VIP
+  if(hasVipPetEquipped()) return 100; // VIP = near-instant
 
-  // Every equipped pet with a plain 'speed' perk (excludes multi-open pets) adds
-  // a flat +10% faster, capped at 100% (fully instant).
-  const speedCount = getAllEquippedPets().filter(p => p.perk === 'speed' && !isMultiOpenPet(p)).length;
-  const totalPct = Math.min(100, speedCount * 10);
-  if(totalPct >= 100) return 100; // tiny floor so the reveal animation still has a frame to play
+  // Sum real perkValue from each equipped speed pet (excludes multi-open pets), capped at 100%
+  const totalPct = Math.min(100,
+    getAllEquippedPets()
+      .filter(p => p.perk === 'speed' && !isMultiOpenPet(p))
+      .reduce((s, p) => s + (p.perkValue ?? 10), 0)
+  );
+  if(totalPct >= 100) return 100;
   return totalPct > 0 ? Math.floor(5000 * (1 - totalPct / 100)) : 5000;
 }
 
@@ -2747,61 +2753,61 @@ function renderActiveBoosts(){
 
   if(pets.length === 0){ panel.style.display='none'; return; }
 
-  // --- DISCOUNT ---
-  const discountCount = pets.filter(p=>p.perk==='discount').length;
-  if(discountCount > 0){
+  // --- DISCOUNT — use getCratePrice on a dummy 1000-coin crate to get real % ---
+  const hasDisco = pets.some(p=>p.perk==='discount');
+  if(hasDisco){
+    const discountCount = pets.filter(p=>p.perk==='discount').length;
     const pct = Math.min(100, discountCount * 10);
-    boosts.push({ icon:'💸', label:`Crate Discount`, val:`-${pct}% off all crate prices`, color:'#22c55e' });
+    boosts.push({ icon:'💸', label:'Crate Discount', val:`-${pct}% off all crate prices`, color:'#22c55e' });
   }
 
-  // --- SPEED ---
-  const speedCount = pets.filter(p=>p.perk==='speed' && !isMultiOpenPet(p)).length;
-  if(speedCount > 0){
-    const pct = Math.min(100, speedCount * 10);
-    const dur = pct >= 100 ? 'Instant' : `${(5000 * (1-pct/100)/1000).toFixed(1)}s spins`;
-    boosts.push({ icon:'⚡', label:'Spin Speed', val:`+${pct}% faster (${dur})`, color:'#f59e0b' });
+  // --- SPEED — use actual getSpinDuration() ---
+  const hasSpeed = pets.some(p=>p.perk==='speed' && !isMultiOpenPet(p));
+  if(hasSpeed && !hasVipPetEquipped()){
+    const dur = getSpinDuration();
+    const pct = Math.round((1 - dur/5000)*100);
+    const label = pct >= 100 ? 'Instant' : `${(dur/1000).toFixed(1)}s spins`;
+    boosts.push({ icon:'⚡', label:'Spin Speed', val:`+${pct}% faster (${label})`, color:'#f59e0b' });
   }
 
-  // --- MULTI-OPEN ---
+  // --- MULTI-OPEN — use getMultiOpenCount() ---
   const count = getMultiOpenCount();
   if(count > 1){
     const pricePct = hasVipPetEquipped() ? '100%' : count === 4 ? '350%' : '175%';
     boosts.push({ icon:'📦', label:'Multi-Open', val:`Opens ${count} crates — total cost ${pricePct} of single price`, color:'#a855f7' });
   }
 
-  // --- LUCK ---
-  const luckCount = pets.filter(p=>p.perk==='luck' && p.id !== 'p_vip1').length;
-  const luckVip   = hasVipPetEquipped();
-  if(luckCount > 0 || luckVip){
-    let pct = Math.min(100, luckCount * 10);
-    if(luckVip) pct += 50;
-    boosts.push({ icon:'🍀', label:'Luck Boost', val:`+${pct}% better odds during luck boosts`, color:'#22c55e' });
+  // --- LUCK — sum real perkValues from all equipped luck pets + VIP ---
+  const luckVip = hasVipPetEquipped();
+  const luckPets = pets.filter(p=>p.perk==='luck' && p.id !== 'p_vip1');
+  if(luckPets.length > 0 || luckVip){
+    const rawPct = luckPets.reduce((s,p)=> s + (p.perkValue ?? 10), 0);
+    const totalPct = rawPct + (luckVip ? 50 : 0);
+    boosts.push({ icon:'🍀', label:'Luck Boost', val:`+${totalPct}% better odds during luck boosts`, color:'#22c55e' });
   }
 
-  // --- SELL BONUS ---
-  const sellCount = pets.filter(p=>p.perk==='sellboost').length;
-  if(sellCount > 0){
-    const pct = Math.min(100, sellCount * 10);
+  // --- SELL BONUS — use actual getSellBonusMultiplier() ---
+  const sellMult = getSellBonusMultiplier();
+  if(sellMult > 1){
+    const pct = Math.round((sellMult - 1) * 100);
     boosts.push({ icon:'🪙', label:'Sell Bonus', val:`+${pct}% coins when selling`, color:'#f59e0b' });
   }
 
-  // --- PITY (patience) ---
-  const pityCount = pets.filter(p=>p.perk==='pity').length;
-  if(pityCount > 0){
-    const pct = Math.min(100, pityCount * 10);
-    boosts.push({ icon:'⏳', label:'Luck Threshold', val:`-${pct}% coins needed for luck boosts`, color:'#3b82f6' });
+  // --- PITY — use actual getPityReduction() ---
+  const pityPct = Math.round(getPityReduction() * 100);
+  if(pityPct > 0){
+    boosts.push({ icon:'⏳', label:'Luck Threshold', val:`-${pityPct}% coins needed for luck boosts`, color:'#3b82f6' });
   }
 
-  // --- GEM FINDER ---
-  const gemCount = pets.filter(p=>p.perk==='gemfind').length;
-  if(gemCount > 0){
-    const pct = Math.min(100, gemCount * 10);
-    boosts.push({ icon:'💎', label:'Gem Finder', val:`${pct}% chance to find bonus gems on each open`, color:'#a855f7' });
+  // --- GEM FINDER — use actual getShopPerkValue() ---
+  const gemPct = getShopPerkValue('gemfind');
+  if(gemPct > 0){
+    boosts.push({ icon:'💎', label:'Gem Finder', val:`${gemPct}% chance to find bonus gems on each open`, color:'#a855f7' });
   }
 
   // --- VIP ---
   if(luckVip){
-    boosts.push({ icon:'🐉', label:'VIP Drake', val:'2x rolls • 2x speed • +50% luck boost power', color:'#f59e0b' });
+    boosts.push({ icon:'🐉', label:'VIP Drake', val:'2x rolls • instant spins • +50% luck boost power', color:'#f59e0b' });
   }
 
   if(boosts.length === 0){ panel.style.display='none'; return; }
@@ -3803,11 +3809,13 @@ function rollItem(crateId){
   }
 
   // === LUCK BOOST (including VIP) ===
-  // Every equipped pet with a 'luck' perk adds a flat +10%, capped at 100%. VIP keeps its own flat +50%.
+  // Sum real perkValue from each equipped luck pet. VIP keeps its own flat +50%.
   let luckMult = 1;
   if(hasVipPetEquipped()) luckMult += 0.5;
-  const luckCount = getAllEquippedPets().filter(p => p.perk === 'luck' && p.id !== 'p_vip1').length;
-  luckMult += Math.min(100, luckCount * 10) / 100;
+  const luckRaw = getAllEquippedPets()
+    .filter(p => p.perk === 'luck' && p.id !== 'p_vip1')
+    .reduce((s, p) => s + (p.perkValue ?? 10), 0);
+  luckMult += Math.min(100, luckRaw) / 100;
 
   if(S.luckBoost && !S.luckBoostUsed && S.luckBoostCrate === crateId){
     const entries = Object.entries(odds);
