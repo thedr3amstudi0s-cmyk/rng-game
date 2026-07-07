@@ -2660,7 +2660,7 @@ function getMultiOpenCount(){
 }
 
 function getSpinDuration(){
-  if(hasVipPetEquipped()) return 50; // VIP = near-instant
+  if(hasVipPetEquipped()) return 20; // VIP = near-instant
 
   // Sum real perkValue from each equipped speed pet (excludes multi-open pets), capped at 100%
   const totalPct = Math.min(100,
