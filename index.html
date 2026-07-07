@@ -2612,23 +2612,28 @@ function hasVipPetEquipped() {
 
 function getCratePrice(crate){
   if(!crate) return 0;
-  let price = crate.price;
-
-  if(hasVipPetEquipped()){
-    // VIP's price perk is a no-op (handled by getTotalOpenPrice's free-2nd-crate logic)
-  } else {
-    // Every equipped pet with a 'discount' perk adds a flat +10%, capped at 100% off.
-    const discountCount = getAllEquippedPets().filter(p => p.perk === 'discount').length;
-    const totalPct = Math.min(100, discountCount * 10);
-    if(totalPct > 0) price = Math.floor(price * (1 - totalPct / 100));
-  }
-  return Math.max(0, price);
+  // Start from base price, apply discount from ALL equipped discount pets (+10% per pet, max 100%)
+  const discountCount = getAllEquippedPets().filter(p => p.perk === 'discount').length;
+  const totalPct = Math.min(100, discountCount * 10);
+  return Math.max(0, Math.floor(crate.price * (1 - totalPct / 100)));
 }
 
-// How many crates get opened per click. Multi-open pets STACK across slots
-// (each contributes its own extra crates), plus VIP's built-in +1. Capped at 8 total.
+// Total coin cost for one "open" click:
+// • 1 crate  → 100% of discounted price
+// • 2 crates → 175% total (both crates together)
+// • 4 crates → 350% total (all four crates together)
+// • VIP      → 2 crates for price of 1 (100% total, unchanged perk)
+function getTotalOpenPrice(crate){
+  const single = getCratePrice(crate);
+  const count = getMultiOpenCount();
+  if(count === 1) return single;
+  if(hasVipPetEquipped()) return single; // VIP: 2 crates free
+  if(count === 4) return Math.floor(single * 3.50);
+  return Math.floor(single * 1.75); // 2x
+}
+
 function getMultiOpenCount(){
-  // No stacking — the best single source wins. Result is always 1, 2, or 4, never higher.
+  // Best single source wins: 1, 2, or 4.
   let has4 = false, has2 = false;
   if(hasVipPetEquipped()) has2 = true;
   for(const pet of getAllEquippedPets()){
@@ -2639,18 +2644,6 @@ function getMultiOpenCount(){
   if(has4) return 4;
   if(has2) return 2;
   return 1;
-}
-
-// Total coin cost for one "open" click, accounting for multi-open.
-// VIP: 2 crates for the price of 1 (unchanged perk).
-// Double/Quad Crack: 1st crate full price, each ADDITIONAL crate is 25% off (not free).
-function getTotalOpenPrice(crate){
-  const single = getCratePrice(crate);
-  const count = getMultiOpenCount();
-  if(count <= 1) return single;
-  const vipFreebies = hasVipPetEquipped() ? 1 : 0; // VIP's own +1 crate stays free
-  const payableExtras = Math.max(0, (count - 1) - vipFreebies);
-  return single + Math.floor(single * 0.75) * payableExtras;
 }
 
 function getSpinDuration(){
@@ -2763,7 +2756,8 @@ function renderActiveBoosts(){
   // --- MULTI-OPEN ---
   const count = getMultiOpenCount();
   if(count > 1){
-    boosts.push({ icon:'📦', label:'Multi-Open', val:`Opens ${count} crates per click`, color:'#a855f7' });
+    const pricePct = hasVipPetEquipped() ? '100%' : count === 4 ? '350%' : '175%';
+    boosts.push({ icon:'📦', label:'Multi-Open', val:`Opens ${count} crates — total cost ${pricePct} of single price`, color:'#a855f7' });
   }
 
   // --- LUCK ---
