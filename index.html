@@ -830,6 +830,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
             <button id="btn-autoroll-toggle" class="hidden" style="padding:10px 18px;border-radius:var(--r);font-family:var(--font-d);font-size:.72rem;font-weight:700;letter-spacing:.08em;border:2px solid #22c55e;color:#22c55e;background:transparent;cursor:pointer;transition:.2s">⚡ AUTO</button>
           </div>
           <div class="open-coins-info">Balance: <span id="opening-coin-balance">0</span> 🪙</div>
+          <div id="active-boosts-panel" style="display:none;margin-top:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;max-width:480px;margin-left:auto;margin-right:auto">
+            <div style="font-family:var(--font-d);font-size:.62rem;letter-spacing:.12em;color:var(--text-3);margin-bottom:8px">⚡ ACTIVE BOOSTS</div>
+            <div id="active-boosts-list" style="display:flex;flex-direction:column;gap:5px"></div>
+          </div>
         </div>
         <div class="result-panel hidden" id="result-panel">
           <div class="result-inner">
@@ -2728,6 +2732,85 @@ function updateEquippedPetDisplay(){
     disp.textContent='None equipped';
     desc.textContent='Find secret pets (1 in 100k) in any crate!';
   }
+  renderActiveBoosts();
+}
+
+function renderActiveBoosts(){
+  const panel = document.getElementById('active-boosts-panel');
+  const list  = document.getElementById('active-boosts-list');
+  if(!panel || !list) return;
+
+  const pets = getAllEquippedPets();
+  const boosts = [];
+
+  if(pets.length === 0){ panel.style.display='none'; return; }
+
+  // --- DISCOUNT ---
+  const discountCount = pets.filter(p=>p.perk==='discount').length;
+  if(discountCount > 0){
+    const pct = Math.min(100, discountCount * 10);
+    boosts.push({ icon:'💸', label:`Crate Discount`, val:`-${pct}% off all crate prices`, color:'#22c55e' });
+  }
+
+  // --- SPEED ---
+  const speedCount = pets.filter(p=>p.perk==='speed' && !isMultiOpenPet(p)).length;
+  if(speedCount > 0){
+    const pct = Math.min(100, speedCount * 10);
+    const dur = pct >= 100 ? 'Instant' : `${(5000 * (1-pct/100)/1000).toFixed(1)}s spins`;
+    boosts.push({ icon:'⚡', label:'Spin Speed', val:`+${pct}% faster (${dur})`, color:'#f59e0b' });
+  }
+
+  // --- MULTI-OPEN ---
+  const count = getMultiOpenCount();
+  if(count > 1){
+    boosts.push({ icon:'📦', label:'Multi-Open', val:`Opens ${count} crates per click`, color:'#a855f7' });
+  }
+
+  // --- LUCK ---
+  const luckCount = pets.filter(p=>p.perk==='luck' && p.id !== 'p_vip1').length;
+  const luckVip   = hasVipPetEquipped();
+  if(luckCount > 0 || luckVip){
+    let pct = Math.min(100, luckCount * 10);
+    if(luckVip) pct += 50;
+    boosts.push({ icon:'🍀', label:'Luck Boost', val:`+${pct}% better odds during luck boosts`, color:'#22c55e' });
+  }
+
+  // --- SELL BONUS ---
+  const sellCount = pets.filter(p=>p.perk==='sellboost').length;
+  if(sellCount > 0){
+    const pct = Math.min(100, sellCount * 10);
+    boosts.push({ icon:'🪙', label:'Sell Bonus', val:`+${pct}% coins when selling`, color:'#f59e0b' });
+  }
+
+  // --- PITY (patience) ---
+  const pityCount = pets.filter(p=>p.perk==='pity').length;
+  if(pityCount > 0){
+    const pct = Math.min(100, pityCount * 10);
+    boosts.push({ icon:'⏳', label:'Luck Threshold', val:`-${pct}% coins needed for luck boosts`, color:'#3b82f6' });
+  }
+
+  // --- GEM FINDER ---
+  const gemCount = pets.filter(p=>p.perk==='gemfind').length;
+  if(gemCount > 0){
+    const pct = Math.min(100, gemCount * 10);
+    boosts.push({ icon:'💎', label:'Gem Finder', val:`${pct}% chance to find bonus gems on each open`, color:'#a855f7' });
+  }
+
+  // --- VIP ---
+  if(luckVip){
+    boosts.push({ icon:'🐉', label:'VIP Drake', val:'2x rolls • 2x speed • +50% luck boost power', color:'#f59e0b' });
+  }
+
+  if(boosts.length === 0){ panel.style.display='none'; return; }
+
+  panel.style.display='block';
+  list.innerHTML = boosts.map(b => `
+    <div style="display:flex;align-items:center;gap:8px;font-size:.76rem">
+      <span style="font-size:1rem">${b.icon}</span>
+      <span style="font-family:var(--font-d);font-weight:700;color:${b.color};min-width:120px;font-size:.68rem;letter-spacing:.04em">${b.label.toUpperCase()}</span>
+      <span style="color:var(--text-2)">${b.val}</span>
+    </div>
+  `).join('');
 }
 
 function updateWheelRedDot(){
@@ -3580,6 +3663,7 @@ function openCratePage(crate){
   }
   document.getElementById('opening-coin-balance').textContent=fmtNum(S.profile.coins);
   document.getElementById('result-panel').classList.add('hidden');
+  renderActiveBoosts();
   updateLuckBar(crate);
   buildCrateInfoPanel(crate);
   buildSpinTrack(crate, null, 999, 'spin-track-0');
