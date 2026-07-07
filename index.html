@@ -4319,6 +4319,7 @@ function showResult(item,r,invItem){
     rarEl.classList.add('rainbow-text');
     rarEl.style.borderColor='#fff';
     document.getElementById('result-value').textContent='Perk: '+item.perkName+' — '+item.perkDesc;
+    document.getElementById('btn-sell-result').style.display='none';
     panel.classList.remove('hidden');
     return;
   }
@@ -4333,6 +4334,7 @@ function showResult(item,r,invItem){
   rarEl.style.color=col;
   rarEl.style.borderColor=col+'88';
   document.getElementById('result-value').textContent='Value: 🪙 '+fmtNum(item.value);
+  document.getElementById('btn-sell-result').style.display=''; // show for non-pets
   panel.classList.remove('hidden');
 }
 
@@ -4386,10 +4388,10 @@ function showMultiResult(items, invItems){
       <span class="multi-result-icon">${item.icon}</span>
       <div class="multi-result-name">${item.name}</div>
       <div class="multi-result-rarity" style="color:${col}">${item.rarity === 'pet' ? '🐾 PET' : r.name}</div>
-      <div class="multi-result-value">🪙 ${fmtNum(item.value)}</div>
+      <div class="multi-result-value">${item.rarity === 'pet' ? item.perkName : '🪙 '+fmtNum(item.value)}</div>
       <div class="mr-btn-row">
         <button class="mr-btn-keep" data-uid="${inv.uniqueId}">KEEP</button>
-        <button class="mr-btn-sell" data-uid="${inv.uniqueId}">SELL</button>
+        ${item.rarity === 'pet' ? '' : `<button class="mr-btn-sell" data-uid="${inv.uniqueId}">SELL</button>`}
       </div>
     `;
 
@@ -4397,20 +4399,24 @@ function showMultiResult(items, invItems){
     card.querySelector('.mr-btn-keep').addEventListener('click', () => {
       card.classList.remove('mr-sold');
       card.querySelector('.mr-btn-keep').disabled = true;
-      card.querySelector('.mr-btn-sell').disabled = false;
+      const sellBtn = card.querySelector('.mr-btn-sell');
+      if(sellBtn) sellBtn.disabled = false;
       toast(`${item.icon} ${item.name} kept!`, 'success', 1500);
       checkAllDecided();
     });
 
-    // Per-card SELL — sells immediately and greys out the card
-    card.querySelector('.mr-btn-sell').addEventListener('click', async () => {
-      card.querySelector('.mr-btn-keep').disabled = true;
-      card.querySelector('.mr-btn-sell').disabled = true;
-      await sellItems([inv.uniqueId]);
-      card.classList.add('mr-sold');
-      card.innerHTML = `<div style="padding:14px 4px;font-size:.72rem;color:var(--text-3)">✔ Sold</div>`;
-      checkAllDecided();
-    });
+    // Per-card SELL — sells immediately and greys out the card (not shown for pets)
+    const sellBtn = card.querySelector('.mr-btn-sell');
+    if(sellBtn){
+      sellBtn.addEventListener('click', async () => {
+        card.querySelector('.mr-btn-keep').disabled = true;
+        sellBtn.disabled = true;
+        await sellItems([inv.uniqueId]);
+        card.classList.add('mr-sold');
+        card.innerHTML = `<div style="padding:14px 4px;font-size:.72rem;color:var(--text-3)">✔ Sold</div>`;
+        checkAllDecided();
+      });
+    }
 
     grid.appendChild(card);
   });
@@ -4420,12 +4426,11 @@ function showMultiResult(items, invItems){
   document.getElementById('result-panel-multi').classList.remove('hidden');
 
   function checkAllDecided(){
-    // Close automatically only when every card has been individually decided
     const cards=[...grid.querySelectorAll('.multi-result-card')];
     const allDone=cards.every(c=>{
       if(c.classList.contains('mr-sold')) return true;
       const kBtn=c.querySelector('.mr-btn-keep');
-      return kBtn && kBtn.disabled;
+      return kBtn && kBtn.disabled; // kept (or pet auto-kept)
     });
     if(allDone){
       setTimeout(()=>{
@@ -4529,9 +4534,11 @@ function makeItemCard(inv, container, selectable = false){
 
   if(selectable && S.selectedItems.has(inv.uniqueId)) card.classList.add('selected');
 
-  // Lock indicator
-  const locked = inv.locked === true;
-  const lockHTML = locked ? `<span style="position:absolute;top:4px;right:4px;font-size:1.1rem;filter:drop-shadow(0 0 4px #f59e0b);">🔒</span>` : '';
+  // Lock indicator — pets are permanently protected (show shield), non-pets show lock when locked
+  const locked = !isPet && inv.locked === true;
+  const lockHTML = isPet
+    ? `<span style="position:absolute;top:4px;right:4px;font-size:.9rem;opacity:.6" title="Pets cannot be sold">🛡️</span>`
+    : locked ? `<span style="position:absolute;top:4px;right:4px;font-size:1.1rem;filter:drop-shadow(0 0 4px #f59e0b);">🔒</span>` : '';
 
   const sourceCrate = CRATES.find(c => c.id === inv.crateSource);
   const sourceIconHTML = (isPet && sourceCrate) ? `<span class="pet-source-icon" title="Found in ${sourceCrate.name}">${sourceCrate.icon}</span>` : '';
@@ -4548,10 +4555,10 @@ function makeItemCard(inv, container, selectable = false){
 
   card.innerHTML = `${lockHTML}${sourceIconHTML}<span class="item-icon">${item.icon}</span>${variantBadgeHTML}${nameHTML}${valueHTML}${equipHTML}`;
 
-  // Right click to lock/unlock
+  // Right click to lock/unlock — disabled for pets (they're permanently protected)
   card.addEventListener('contextmenu', e => {
     e.preventDefault();
-    toggleLock(inv.uniqueId);
+    if(!isPet) toggleLock(inv.uniqueId);
   });
 
   // Rest of your existing click handlers...
@@ -4585,17 +4592,17 @@ function makeItemCard(inv, container, selectable = false){
 
 // Toggle lock
 function toggleLock(uniqueId){
-  const item = S.inventory.find(i => i.uniqueId === uniqueId);
-  if(!item) return;
+  const inv = S.inventory.find(i => i.uniqueId === uniqueId);
+  if(!inv) return;
+  const item = getItem(inv.itemId);
+  if(item && item.rarity === 'pet'){
+    toast('🐾 Pets cannot be sold or locked — they are permanent!', 'gold', 2500);
+    return;
+  }
 
-  item.locked = !item.locked;
-
-  // Save to Firestore
-  db.collection('users').doc(S.user.uid).update({
-    inventory: S.inventory
-  }).catch(() => {});
-
-  toast(item.locked ? '🔒 Item Locked' : '🔓 Item Unlocked', 'gold');
+  inv.locked = !inv.locked;
+  db.collection('users').doc(S.user.uid).update({ inventory: S.inventory }).catch(() => {});
+  toast(inv.locked ? '🔒 Item Locked' : '🔓 Item Unlocked', 'gold');
   renderInventory();
 }
 
@@ -4609,6 +4616,7 @@ document.getElementById('btn-sell-all').addEventListener('click', async () => {
   let toSell = S.inventory.filter(inv => {
     const item = getItem(inv.itemId);
     if(!item || inv.locked === true) return false; // Skip locked items
+    if(item.rarity === 'pet') return false; // Pets are permanent — never sell
     if(item.sellable === false) return false; // VIP protection
 
     // Respect auto-sell settings if enabled
@@ -4678,9 +4686,10 @@ async function sellItems(uniqueIds){
     if(idx===-1)continue;
     const item=getInvEffectiveItem(S.inventory[idx]);
 
-    // === VIP PROTECTION ===
-    if(item && item.sellable === false){
-      toast("This item cannot be sold!", "error");
+    // === PET & VIP PROTECTION — pets can never be sold ===
+    if(item && (item.rarity === 'pet' || item.sellable === false)){
+      if(item.rarity === 'pet') toast(`${item.icon} ${item.name} cannot be sold — pets are permanent!`, 'error', 3000);
+      else toast("This item cannot be sold!", "error");
       continue;
     }
     if(item) earned+=Math.floor(item.value*sellMult);
