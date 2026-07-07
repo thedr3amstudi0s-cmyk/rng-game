@@ -247,11 +247,19 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 
 /* MULTI-OPEN RESULT GRID (2x / 4x) */
 .multi-result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:16px;}
-.multi-result-card{background:var(--bg-card);border:2px solid var(--border);border-radius:var(--r);padding:14px 8px;text-align:center;}
+.multi-result-card{background:var(--bg-card);border:2px solid var(--border);border-radius:var(--r);padding:14px 8px 10px;text-align:center;position:relative;transition:var(--t);}
+.multi-result-card.mr-sold{opacity:.35;filter:grayscale(.8);}
 .multi-result-icon{font-size:2.2rem;display:block;margin-bottom:6px;}
 .multi-result-name{font-family:var(--font-d);font-size:.68rem;font-weight:700;margin-bottom:3px;min-height:2em;line-height:1.2;}
 .multi-result-rarity{font-family:var(--font-d);font-size:.6rem;letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase;}
-.multi-result-value{font-family:var(--font-m);font-size:.72rem;color:var(--text-2);}
+.multi-result-value{font-family:var(--font-m);font-size:.72rem;color:var(--text-2);margin-bottom:8px;}
+.mr-btn-row{display:flex;gap:4px;justify-content:center;}
+.mr-btn-keep{flex:1;padding:4px 2px;border-radius:6px;border:1px solid #22c55e;background:transparent;color:#22c55e;font-family:var(--font-d);font-size:.6rem;font-weight:700;cursor:pointer;transition:.15s;}
+.mr-btn-keep:hover{background:#22c55e22;}
+.mr-btn-keep:disabled{opacity:.35;cursor:default;}
+.mr-btn-sell{flex:1;padding:4px 2px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;font-family:var(--font-d);font-size:.6rem;font-weight:700;cursor:pointer;transition:.15s;}
+.mr-btn-sell:hover{background:#ef444422;}
+.mr-btn-sell:disabled{opacity:.35;cursor:default;}
 
 /* CRATE OPENING */
 .crate-open-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
@@ -850,12 +858,13 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
 
         <div class="result-panel hidden" id="result-panel-multi">
-          <div class="result-inner" style="max-width:560px">
-            <div id="multi-result-title" style="font-family:var(--font-d);font-size:.8rem;letter-spacing:.1em;color:#a855f7;margin-bottom:14px">🎁 MULTI-OPEN RESULTS</div>
+          <div class="result-inner" style="max-width:600px">
+            <div id="multi-result-title" style="font-family:var(--font-d);font-size:.8rem;letter-spacing:.1em;color:#a855f7;margin-bottom:6px">🎁 MULTI-OPEN RESULTS</div>
+            <div style="font-size:.72rem;color:var(--text-3);margin-bottom:14px">Click KEEP or SELL on each item individually, or use the buttons below.</div>
             <div id="multi-result-grid" class="multi-result-grid"></div>
-            <div class="result-buttons">
+            <div class="result-buttons" style="margin-top:12px">
               <button class="btn-keep" id="btn-keep-multi">KEEP ALL</button>
-              <button class="btn-sell-result" id="btn-sell-multi">SELL ALL FOR COINS</button>
+              <button class="btn-sell-result" id="btn-sell-multi">SELL ALL</button>
               <button class="btn-open-again" id="btn-open-again-multi">OPEN AGAIN</button>
             </div>
           </div>
@@ -4338,39 +4347,92 @@ document.getElementById('btn-open-again').addEventListener('click',()=>{
   document.getElementById('btn-open-crate').click();
 });
 
-document.getElementById('btn-keep-multi')?.addEventListener('click',()=>{ document.getElementById('result-panel-multi').classList.add('hidden'); toast('Items kept!','success'); });
-document.getElementById('btn-sell-multi')?.addEventListener('click',async()=>{
-  const invItems=S.lastOpenedInvItems; if(!invItems||!invItems.length)return;
-  await sellItems(invItems.map(i=>i.uniqueId));
+document.getElementById('btn-keep-multi')?.addEventListener('click',()=>{
+  // Sell any that are still pending (none sold yet = keep all, or sell remaining unsold)
   document.getElementById('result-panel-multi').classList.add('hidden');
+  toast('Items kept!','success');
+});
+document.getElementById('btn-sell-multi')?.addEventListener('click',async()=>{
+  const panel=document.getElementById('result-panel-multi');
+  // Sell every item not already sold individually
+  const toSell=(S.lastOpenedInvItems||[]).filter(inv=>{
+    const card=panel.querySelector(`.multi-result-card[data-uid="${inv.uniqueId}"]`);
+    return card && !card.classList.contains('mr-sold');
+  });
+  if(toSell.length) await sellItems(toSell.map(i=>i.uniqueId));
+  panel.classList.add('hidden');
 });
 document.getElementById('btn-open-again-multi')?.addEventListener('click',()=>{
   document.getElementById('result-panel-multi').classList.add('hidden');
   document.getElementById('btn-open-crate').click();
 });
 
-// Shows a grid of N result cards for 2x/4x multi-opens (instead of just the first item)
+// Shows a grid of N result cards for 2x/4x multi-opens — each card has its own Keep / Sell button
 function showMultiResult(items, invItems){
   S.lastOpenedInvItems = invItems;
   const grid = document.getElementById('multi-result-grid');
   grid.innerHTML = '';
-  items.forEach(item => {
+
+  items.forEach((item, idx) => {
+    const inv = invItems[idx];
+    if(!item || !inv) return;
     const r = getRarity(item.rarity);
     const col = item.rarity === 'pet' ? '#a855f7' : (r.color === '#ffffff' ? '#e0e0ff' : r.color);
     const card = document.createElement('div');
     card.className = 'multi-result-card' + (item.rarity === 'pet' ? ' pet-rainbow' : '');
     card.style.borderColor = col;
+    card.dataset.uid = inv.uniqueId;
     card.innerHTML = `
       <span class="multi-result-icon">${item.icon}</span>
       <div class="multi-result-name">${item.name}</div>
-      <div class="multi-result-rarity" style="color:${col}">${item.rarity === 'pet' ? '??? PET' : r.name}</div>
+      <div class="multi-result-rarity" style="color:${col}">${item.rarity === 'pet' ? '🐾 PET' : r.name}</div>
       <div class="multi-result-value">🪙 ${fmtNum(item.value)}</div>
+      <div class="mr-btn-row">
+        <button class="mr-btn-keep" data-uid="${inv.uniqueId}">KEEP</button>
+        <button class="mr-btn-sell" data-uid="${inv.uniqueId}">SELL</button>
+      </div>
     `;
+
+    // Per-card KEEP — just marks the card as kept (item already in inventory)
+    card.querySelector('.mr-btn-keep').addEventListener('click', () => {
+      card.classList.remove('mr-sold');
+      card.querySelector('.mr-btn-keep').disabled = true;
+      card.querySelector('.mr-btn-sell').disabled = false;
+      toast(`${item.icon} ${item.name} kept!`, 'success', 1500);
+      checkAllDecided();
+    });
+
+    // Per-card SELL — sells immediately and greys out the card
+    card.querySelector('.mr-btn-sell').addEventListener('click', async () => {
+      card.querySelector('.mr-btn-keep').disabled = true;
+      card.querySelector('.mr-btn-sell').disabled = true;
+      await sellItems([inv.uniqueId]);
+      card.classList.add('mr-sold');
+      card.innerHTML = `<div style="padding:14px 4px;font-size:.72rem;color:var(--text-3)">✔ Sold</div>`;
+      checkAllDecided();
+    });
+
     grid.appendChild(card);
   });
+
   document.getElementById('multi-result-title').textContent = `🎁 ${items.length}x MULTI-OPEN RESULTS`;
   document.getElementById('result-panel').classList.add('hidden');
   document.getElementById('result-panel-multi').classList.remove('hidden');
+
+  function checkAllDecided(){
+    // Close automatically only when every card has been individually decided
+    const cards=[...grid.querySelectorAll('.multi-result-card')];
+    const allDone=cards.every(c=>{
+      if(c.classList.contains('mr-sold')) return true;
+      const kBtn=c.querySelector('.mr-btn-keep');
+      return kBtn && kBtn.disabled;
+    });
+    if(allDone){
+      setTimeout(()=>{
+        document.getElementById('result-panel-multi').classList.add('hidden');
+      }, 800);
+    }
+  }
 }
 
 // ============================================================
