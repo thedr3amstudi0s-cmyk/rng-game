@@ -831,6 +831,18 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
               <div class="luck-bar-milestone" style="left:90%"></div>
             </div>
             <div class="luck-bar-status" id="luck-bar-status"></div>
+
+            <!-- PITY BAR — top 5 most expensive crates only -->
+            <div id="pity-container" style="display:none;margin-top:10px">
+              <div class="luck-bar-header">
+                <span class="luck-bar-label" style="color:#ef4444">🎯 PITY</span>
+                <span id="pity-count" class="luck-bar-count">0 / 50000 opens</span>
+              </div>
+              <div class="luck-bar-track">
+                <div id="pity-fill" style="height:100%;width:0%;border-radius:8px;background:linear-gradient(90deg,#ef4444,#dc2626);transition:width .5s cubic-bezier(.34,1.56,.64,1)"></div>
+              </div>
+              <div id="pity-status" class="luck-bar-status">Open crates to build pity</div>
+            </div>
           </div>
           <div class="open-price-display" id="open-price-display"></div>
           <div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap">
@@ -1701,9 +1713,9 @@ const PETS_BY_CRATE = {
     {id:'p_ete3', name:'Eternal Coin Dragon', rarity:'pet', icon:'🐉', value:88000000, desc:'Endless riches.', perk:'discount', perkName:'Eternal Deal I', perkDesc:'-27% off all crate prices'},
   ],
   'genesis': [
-    {id:'p_gen1', name:'Genesis Phoenix', rarity:'pet', icon:'🐦‍🔥', value:95000000, desc:'Birth of fortune.', perk:'luck', perkName:'Genesis Luck I', perkDesc:'Luck boosts are twice as powerful + fill 50% faster'},
+    {id:'p_gen1', name:'Genesis Phoenix', rarity:'pet', icon:'🐦‍🔥', value:95000000, desc:'Birth of all fortune.', perk:'luck', perkName:'Genesis Luck II', perkDesc:'Luck boosts are 2.5x as powerful + fill 70% faster + +15% base luck on every open'},
     {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 1'},
-    {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Genesis Deal I', perkDesc:'-30% off all crate prices'},
+    {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Genesis Deal II', perkDesc:'-35% off all crate prices + +25% sell bonus + +15% gem find chance'},
   ],
   // VIP-exclusive pet — purchase only, NEVER drops from any crate.
   // Kept in its own bucket so it's excluded from getPetsForCrate() / crate odds entirely.
@@ -2012,6 +2024,55 @@ function getSellBonusMultiplier(){
 function getPityReduction(){
   const v = getShopPerkValue('pity');
   return v / 100;
+}
+
+// ============================================================
+// PITY SYSTEM
+// Applies to gem crates (PITY_CRATES). Each open without a pet
+// increments the counter. Once it hits PITY_THRESHOLD (adjusted
+// by equipped Patient Soul pets), the next open is guaranteed a pet.
+// ============================================================
+const PITY_CRATES = ['ultra', 'cosmic', 'transcendent', 'eternal', 'genesis'];
+const PITY_THRESHOLD_BASE = 50000; // opens without a pet before pity triggers
+
+// Effective threshold — Patient Soul pets reduce it (each % of reduction = fewer opens needed).
+function getPityThreshold(){
+  const reduction = getPityReduction(); // 0–1 from pet perks, cap 1
+  return Math.max(1, Math.floor(PITY_THRESHOLD_BASE * (1 - Math.min(1, reduction))));
+}
+
+function getPityCounter(crateId){
+  if(!PITY_CRATES.includes(crateId)) return null;
+  return S.profile?.pityCounter?.[crateId] ?? 0;
+}
+
+async function incrementPity(crateId){
+  if(!PITY_CRATES.includes(crateId) || !S.profile) return;
+  if(!S.profile.pityCounter) S.profile.pityCounter = {};
+
+  let amount = 1;
+  if (has4xPityPetEquipped()) amount = 4;
+  else if (has2xPityPetEquipped()) amount = 2;
+
+  S.profile.pityCounter[crateId] = (S.profile.pityCounter[crateId] ?? 0) + amount;
+
+  try{ 
+    await db.collection('users').doc(S.user.uid).update({ pityCounter: S.profile.pityCounter }); 
+  }catch(e){}
+
+  console.log(`[PITY] ${crateId} +${amount} → ${S.profile.pityCounter[crateId]}`);
+
+  // FORCE UI UPDATE
+  if (S.currentCrate && S.currentCrate.id === crateId) {
+    updateLuckBar(S.currentCrate);
+  }
+}
+  
+async function resetPity(crateId){
+  if(!PITY_CRATES.includes(crateId) || !S.profile) return;
+  if(!S.profile.pityCounter) S.profile.pityCounter = {};
+  S.profile.pityCounter[crateId] = 0;
+  try{ await db.collection('users').doc(S.user.uid).update({ pityCounter: S.profile.pityCounter }); }catch(e){}
 }
 
 // Called after a successful crate roll — chance to find bonus gems
@@ -2620,6 +2681,44 @@ function hasVipPetEquipped() {
   return pet && pet.id === "p_vip1";
 }
 
+// 2X PET CHECK
+function has2xPityPetEquipped(){
+  if(!S.profile) return false;
+  const equippedIds = PET_SLOT_FIELDS.map(f => S.profile[f]).filter(Boolean);
+  
+  console.log('[2X CHECK] Equipped IDs:', equippedIds);
+  
+  return equippedIds.some(uid => {
+    const item = S.inventory.find(i => i.uniqueId === uid); // find in inventory
+    if(!item) return false;
+    const pet = getItem(item.itemId); // use base itemId
+    if(!pet) return false;
+    
+    const is2x = pet.perk === 'pity2x' || ['p_vip1','p_ete2','p_tra2','p_cos2'].includes(pet.id);
+    if(is2x) console.log('[2X CHECK] ✅ Found 2x pet:', pet.id);
+    return is2x;
+  });
+}
+
+// 4X PET CHECK
+function has4xPityPetEquipped(){
+  if(!S.profile) return false;
+  const equippedIds = PET_SLOT_FIELDS.map(f => S.profile[f]).filter(Boolean);
+  
+  console.log('[4X CHECK] Equipped IDs:', equippedIds);
+  
+  return equippedIds.some(uid => {
+    const item = S.inventory.find(i => i.uniqueId === uid);
+    if(!item) return false;
+    const pet = getItem(item.itemId);
+    if(!pet) return false;
+    
+    const is4x = pet.perk === 'pity4x' || pet.id === 'p_gen2' || pet.id.includes('4x');
+    if(is4x) console.log('[4X CHECK] ✅ Found 4x pet:', pet.id);
+    return is4x;
+  });
+}
+
 function getCratePrice(crate){
   if(!crate) return 0;
   // Sum real perkValue from each equipped discount pet, capped at 100%
@@ -2793,10 +2892,11 @@ function renderActiveBoosts(){
     boosts.push({ icon:'🪙', label:'Sell Bonus', val:`+${pct}% coins when selling`, color:'#f59e0b' });
   }
 
-  // --- PITY — use actual getPityReduction() ---
+  // --- PITY — use actual getPityThreshold() ---
   const pityPct = Math.round(getPityReduction() * 100);
   if(pityPct > 0){
-    boosts.push({ icon:'⏳', label:'Luck Threshold', val:`-${pityPct}% coins needed for luck boosts`, color:'#3b82f6' });
+    const threshold = getPityThreshold();
+    boosts.push({ icon:'⏳', label:'Pity Threshold', val:`-${pityPct}% fewer opens for guaranteed pet (${threshold} opens needed instead of ${PITY_THRESHOLD_BASE})`, color:'#3b82f6' });
   }
 
   // --- GEM FINDER — use actual getShopPerkValue() ---
@@ -2912,8 +3012,8 @@ const S = {
   gems: 0, currentGemCrate: null,
   lastOpenedInvItem: null,
   listenersInitialized: false,
-  // FIX: track per-session which trade rooms we've already executed, prevents double execution on refresh
   executedTradeIds: new Set(),
+  pityCounter: {},     // pity system per crate
 };
 
 // ============================================================
@@ -3106,6 +3206,9 @@ function startAuthObserver(){
       }
       if(!doc||!doc.exists){ toast('Profile not found. Please log in again.','error'); await auth.signOut(); return; }
       S.profile=doc.data();
+      if (S.profile && !S.profile.pityCounter) {
+        S.profile.pityCounter = {};
+      }
       S.inventory=[...S.profile.inventory||[]];
       S.hasAutoRoll = S.profile.hasAutoRoll === true;
       S.gems = S.profile.gems || 0;
@@ -3494,6 +3597,37 @@ function updateLuckBar(crate){
   const fill=document.getElementById('luck-bar-fill');
   const count=document.getElementById('luck-bar-count');
   const status=document.getElementById('luck-bar-status');
+  const pityContainer = document.getElementById('pity-container');
+  const pityFill = document.getElementById('pity-fill');
+  const pityCount = document.getElementById('pity-count');
+  const pityStatus = document.getElementById('pity-status');
+
+  // === PITY BAR — always update first so early returns don't hide it ===
+  if(crate && PITY_CRATES.includes(crate.id)){
+    const counter = getPityCounter(crate.id);
+    const threshold = getPityThreshold();
+    const pct = Math.min(100, (counter / threshold) * 100);
+    const remaining = Math.max(0, threshold - counter);
+    if(pityContainer) pityContainer.style.display = 'block';
+    if(pityFill) pityFill.style.width = pct + '%';
+    if(pityCount) pityCount.textContent = `${counter} / ${threshold} opens`;
+    if(pityStatus){
+      if(remaining === 0){
+        pityStatus.textContent = '🔴 PITY READY — guaranteed pet next open!';
+        pityStatus.style.color = '#ef4444';
+      } else if(pct >= 75){
+        pityStatus.textContent = `⚠️ ${remaining} more opens for guaranteed pet!`;
+        pityStatus.style.color = '#ef4444';
+      } else {
+        pityStatus.textContent = `${remaining} more opens for guaranteed pet`;
+        pityStatus.style.color = 'var(--text-3)';
+      }
+    }
+  } else {
+    if(pityContainer) pityContainer.style.display = 'none';
+  }
+
+  // === LUCK BAR ===
   if(!fill||!count||!status) return;
   if(!crate){
     fill.style.width='0%'; fill.className='luck-bar-fill';
@@ -3785,6 +3919,20 @@ function getActiveTrackCount(){
 function rollItem(crateId){
   const crate=CRATES.find(c=>c.id===crateId);
   if(!crate) return null;
+
+  // === PITY CHECK — guaranteed pet if threshold reached ===
+  if(PITY_CRATES.includes(crateId)){
+    const counter = getPityCounter(crateId);
+    const threshold = getPityThreshold();
+    if(counter >= threshold){
+      const pitPets = getPetsForCrate(crateId);
+      if(pitPets && pitPets.length > 0){
+        const pet = pitPets[Math.floor(Math.random() * pitPets.length)];
+        toast(`🔴 PITY TRIGGERED after ${counter} opens! You got ${pet.icon} ${pet.name}!`, 'gold', 7000);
+        return pet;
+      }
+    }
+  }
 
   const cratePets=getPetsForCrate(crateId);
   for(const pet of cratePets){
@@ -4121,6 +4269,16 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   S.profile.luckCoinsPerCrate[crate.id] = (S.profile.luckCoinsPerCrate[crate.id] || 0) + price;
   checkLuckMilestone(crate);
   maybeGrantGemFind();
+
+  // Pity tracking for top-5 crates
+  if(PITY_CRATES.includes(crate.id)){
+    const gotPet = saveItems.some(it => it.rarity === 'pet');
+    if(gotPet){
+      await resetPity(crate.id);
+    } else {
+      await incrementPity(crate.id);
+    }
+  }
 
   for (const it of saveItems) {
     const r = getRarity(it.rarity);
@@ -5371,11 +5529,11 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 // baseline snap before each spin.
 // ============================================================
 const WHEEL_PRIZES=[
-  {label:'500',        amount:500,   color:'#ef4444', textColor:'#fff', weight:42},
+  {label:'500',        amount:500,   color:'#ef4444', textColor:'#fff', weight:0.1},
   {label:'1000',        amount:1000,   color:'#f97316', textColor:'#fff', weight:28},
   {label:'1500',        amount:1500,   color:'#eab308', textColor:'#fff', weight:18},
   {label:'3000',       amount:3000,  color:'#22c55e', textColor:'#fff', weight:11.9},
-  {label:'1 IN 1,000\nPET', amount:'pet', color:'#ffffff', textColor:'#4a90e2', weight:0.1},
+  {label:'1 IN 1,000\nPET', amount:'pet', color:'#ffffff', textColor:'#4a90e2', weight:42},
 ];
 const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5 — still 5 equal-size visual segments
 const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
@@ -5756,19 +5914,9 @@ async function redeemCode(){
           for(const iid of reward.itemIds){
             const item = getItem(iid);
             if(!item) throw new Error('BAD_REWARD');
-            newInventory.push({
-              itemId:item.id,
-              uniqueId:genUID(),
-              crateSource:'code',
-              obtainedAt:new Date().toISOString()
-            });
+            newInventory.push({itemId:item.id, uniqueId:genUID(), crateSource:'code', obtainedAt:new Date().toISOString()});
             labels.push(`${item.icon} ${item.name}`);
           }
-        }
-        
-        if(reward.autoroll){
-          grantAutoRoll = true;
-          labels.push('⚡ Auto-Roll');
         }
         if(!labels.length) throw new Error('BAD_REWARD');
         grantedLabel = labels.join(', ');
@@ -5941,14 +6089,9 @@ const SHOP_CASHTAG = '$DR3AMSTUDI0S';
 const DEFAULT_PRODUCTS = [
   {
     id: 'vip_pack',
-    label: 'VIP Pack — 🐉 VIP Golden Drake + 500 Gems + ⚡ Auto-Roll',
+    label: 'VIP Pack — 🐉 VIP Golden Drake + 500 Gems',
     priceLabel: '$10.00',
-    reward: {
-      type: 'bundle',
-      petId: 'p_vip1',
-      gems: 500,
-      autoroll: true
-    },
+    reward: { type: 'bundle', petId: 'p_vip1', gems: 500 },
     active: true,
   },
   {
@@ -6642,7 +6785,8 @@ function openGemCratePage(crateId){
   document.getElementById('open-price-display').innerHTML = `Cost: 💎 <span style="color:#a855f7;font-weight:900">${crate.gemPrice.toLocaleString()} Gems</span> &nbsp;(Balance: 💎 <span id="gem-price-balance">${fmtNum(S.profile.gems||0)}</span>)`;
   document.getElementById('opening-coin-balance').parentElement.style.display = 'none';
   document.getElementById('result-panel').classList.add('hidden');
-  updateLuckBar(null);
+  updateLuckBar(crate);
+  renderActiveBoosts();
   buildGemCrateInfoPanel(crate);
   // Build a spin track from gem crate items
   const fakeCrate = {...crate, price: crate.gemPrice, id: crate.id};
@@ -6696,7 +6840,8 @@ function openGemCratePage(crateId){
   document.getElementById('open-price-display').innerHTML = `Cost: 💎 <span style="color:#a855f7;font-weight:900">${crate.gemPrice.toLocaleString()} Gems</span> &nbsp;(Balance: 💎 <span id="gem-price-balance">${fmtNum(S.profile.gems||0)}</span>)`;
   document.getElementById('opening-coin-balance').parentElement.style.display = 'none';
   document.getElementById('result-panel').classList.add('hidden');
-  updateLuckBar(null);
+  updateLuckBar(crate);
+  renderActiveBoosts();
   buildGemCrateInfoPanel(crate);
   // Build a spin track from gem crate items
   const fakeCrate = {...crate, price: crate.gemPrice, id: crate.id};
@@ -6746,10 +6891,21 @@ async function openGemCrate(crateId){
   // Pet check first (1 in 10,000)
   const pets = PETS_BY_CRATE[crate.id] || [];
   let result = null;
-  for(const pet of pets){
-    if(Math.random() < 0.0001){ result = pet; break; }
-  }
 
+  // PITY SYSTEM — guaranteed pet after enough non-pet opens
+  const isPityCrate = PITY_CRATES.includes(crate.id);
+  const pityCounter = isPityCrate ? getPityCounter(crate.id) : 0;
+  const pityThreshold = getPityThreshold();
+  const pityTriggered = isPityCrate && pityCounter >= pityThreshold;
+
+  if(pityTriggered){
+    const pitPets = getPetsForCrate(crate.id);
+    if(pitPets && pitPets.length > 0){
+      result = pitPets[Math.floor(Math.random() * pitPets.length)];
+      toast(`🌟 PITY TRIGGERED after ${pityCounter} opens! You got ${result.icon} ${result.name}!`, 'gold', 7000);
+      await resetPity(crate.id);
+    }
+  }
   if(!result){
     // Roll normal item
     const pool = crate.items.map(id => getItem(id)).filter(Boolean);
@@ -6784,6 +6940,16 @@ async function openGemCrate(crateId){
       inventory: S.inventory,
       totalValue: S.profile.totalValue,
     });
+
+    // Increment pity on non-pet rolls; reset if a pet was rolled naturally
+    if(isPityCrate){
+      if(result.rarity === 'pet'){
+        await resetPity(crate.id);
+      } else {
+        await incrementPity(crate.id);
+      }
+      updateLuckBar(crate);
+    }
   }catch(e){ toast('Save error: '+e.message,'error'); }
 
   const r = getRarity(result.rarity);
