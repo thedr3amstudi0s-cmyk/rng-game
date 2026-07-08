@@ -2051,8 +2051,12 @@ async function incrementPity(crateId){
   if(!S.profile.pityCounter) S.profile.pityCounter = {};
 
   let amount = 1;
-  if (has4xPityPetEquipped()) amount = 4;
-  else if (has2xPityPetEquipped()) amount = 2;
+
+  if (has4xPityPetEquipped()) {
+    amount = 4;
+  } else if (has2xPityPetEquipped()) {
+    amount = 2;
+  }
 
   S.profile.pityCounter[crateId] = (S.profile.pityCounter[crateId] ?? 0) + amount;
 
@@ -2062,17 +2066,21 @@ async function incrementPity(crateId){
 
   console.log(`[PITY] ${crateId} +${amount} → ${S.profile.pityCounter[crateId]}`);
 
-  // FORCE UI UPDATE
+  // Force UI update
   if (S.currentCrate && S.currentCrate.id === crateId) {
     updateLuckBar(S.currentCrate);
   }
 }
   
-async function resetPity(crateId){
-  if(!PITY_CRATES.includes(crateId) || !S.profile) return;
-  if(!S.profile.pityCounter) S.profile.pityCounter = {};
+function resetPity(crateId){
+  if(!S.profile || !S.profile.pityCounter) return;
   S.profile.pityCounter[crateId] = 0;
-  try{ await db.collection('users').doc(S.user.uid).update({ pityCounter: S.profile.pityCounter }); }catch(e){}
+  try{
+    db.collection('users').doc(S.user.uid).update({
+      [`pityCounter.${crateId}`]: 0
+    });
+  }catch(e){}
+  console.log(`[PITY] Reset pity for ${crateId}`);
 }
 
 // Called after a successful crate roll — chance to find bonus gems
@@ -2844,82 +2852,60 @@ function updateEquippedPetDisplay(){
 
 function renderActiveBoosts(){
   const panel = document.getElementById('active-boosts-panel');
-  const list  = document.getElementById('active-boosts-list');
+  const list = document.getElementById('active-boosts-list');
   if(!panel || !list) return;
 
-  const pets = getAllEquippedPets();
-  const boosts = [];
+  const equipped = PET_SLOT_FIELDS.map(f => S.profile?.[f]).filter(Boolean);
+  let html = '';
 
-  if(pets.length === 0){ panel.style.display='none'; return; }
+  equipped.forEach(uid => {
+    const item = S.inventory.find(i => i.uniqueId === uid);
+    if(!item) return;
+    const pet = getItem(item.itemId);
+    if(!pet) return;
 
-  // --- DISCOUNT — use getCratePrice on a dummy 1000-coin crate to get real % ---
-  const hasDisco = pets.some(p=>p.perk==='discount');
-  if(hasDisco){
-    const discountCount = pets.filter(p=>p.perk==='discount').length;
-    const pct = Math.min(100, discountCount * 10);
-    boosts.push({ icon:'💸', label:'Crate Discount', val:`-${pct}% off all crate prices`, color:'#22c55e' });
+    // Handle both old 'perk' and new 'perks' array format
+    const perks = pet.perks || (pet.perk ? [pet.perk] : []);
+
+    perks.forEach(perkId => {
+      let name = pet.perkName || perkId;
+      let desc = pet.perkDesc || pet.desc || 'Active boost';
+
+      // Enhanced descriptions for powerful pets
+      if (pet.id === 'p_gen1') {
+        name = 'Genesis Luck II';
+        desc = '2.5× Luck Boosts • 70% Faster Pity • +15% Base Luck';
+      } else if (pet.id === 'p_gen2') {
+        name = 'Quad Crack';
+        desc = 'Open 4 crates at once for the price of 1';
+      } else if (pet.id === 'p_gen3') {
+        name = 'Creation Boar';
+        desc = '-35% Crates • +25% Sell Value • +15% Gems';
+      } else if (pet.id === 'p_vip1') {
+        name = 'VIP Golden Drake';
+        desc = '2× Rolls • 2× Speed';
+      } else if (pet.id === 'p_gem_egg1') {
+        name = 'Celestial Drake';
+        desc = '2× Rolls • 1.5× Speed • +60% Luck • 38% off';
+      }
+
+      html += `
+        <div style="display:flex;gap:8px;align-items:center;background:#1f2937;border:1px solid #4b5563;border-radius:6px;padding:8px 12px;margin-bottom:4px">
+          <span style="font-size:1.3em">⚡</span>
+          <div style="flex:1">
+            <div style="color:#22d3ee;font-weight:700">${name}</div>
+            <div style="color:#9ca3af;font-size:0.8rem;line-height:1.3">${desc}</div>
+          </div>
+        </div>`;
+    });
+  });
+
+  if(html){
+    list.innerHTML = html;
+    panel.style.display = 'block';
+  } else {
+    panel.style.display = 'none';
   }
-
-  // --- SPEED — use actual getSpinDuration() ---
-  const hasSpeed = pets.some(p=>p.perk==='speed' && !isMultiOpenPet(p));
-  if(hasSpeed && !hasVipPetEquipped()){
-    const dur = getSpinDuration();
-    const pct = Math.round((1 - dur/5000)*100);
-    const label = pct >= 100 ? 'Instant' : `${(dur/1000).toFixed(1)}s spins`;
-    boosts.push({ icon:'⚡', label:'Spin Speed', val:`+${pct}% faster (${label})`, color:'#f59e0b' });
-  }
-
-  // --- MULTI-OPEN — use getMultiOpenCount() ---
-  const count = getMultiOpenCount();
-  if(count > 1){
-    const pricePct = hasVipPetEquipped() ? '100%' : count === 4 ? '350%' : '175%';
-    boosts.push({ icon:'📦', label:'Multi-Open', val:`Opens ${count} crates — total cost ${pricePct} of single price`, color:'#a855f7' });
-  }
-
-  // --- LUCK — sum real perkValues from all equipped luck pets + VIP ---
-  const luckVip = hasVipPetEquipped();
-  const luckPets = pets.filter(p=>p.perk==='luck' && p.id !== 'p_vip1');
-  if(luckPets.length > 0 || luckVip){
-    const rawPct = luckPets.reduce((s,p)=> s + (p.perkValue ?? 10), 0);
-    const totalPct = rawPct + (luckVip ? 50 : 0);
-    boosts.push({ icon:'🍀', label:'Luck Boost', val:`+${totalPct}% better odds during luck boosts`, color:'#22c55e' });
-  }
-
-  // --- SELL BONUS — use actual getSellBonusMultiplier() ---
-  const sellMult = getSellBonusMultiplier();
-  if(sellMult > 1){
-    const pct = Math.round((sellMult - 1) * 100);
-    boosts.push({ icon:'🪙', label:'Sell Bonus', val:`+${pct}% coins when selling`, color:'#f59e0b' });
-  }
-
-  // --- PITY — use actual getPityThreshold() ---
-  const pityPct = Math.round(getPityReduction() * 100);
-  if(pityPct > 0){
-    const threshold = getPityThreshold();
-    boosts.push({ icon:'⏳', label:'Pity Threshold', val:`-${pityPct}% fewer opens for guaranteed pet (${threshold} opens needed instead of ${PITY_THRESHOLD_BASE})`, color:'#3b82f6' });
-  }
-
-  // --- GEM FINDER — use actual getShopPerkValue() ---
-  const gemPct = getShopPerkValue('gemfind');
-  if(gemPct > 0){
-    boosts.push({ icon:'💎', label:'Gem Finder', val:`${gemPct}% chance to find bonus gems on each open`, color:'#a855f7' });
-  }
-
-  // --- VIP ---
-  if(luckVip){
-    boosts.push({ icon:'🐉', label:'VIP Drake', val:'2x rolls • 2x spins • +50% luck boost power', color:'#f59e0b' });
-  }
-
-  if(boosts.length === 0){ panel.style.display='none'; return; }
-
-  panel.style.display='block';
-  list.innerHTML = boosts.map(b => `
-    <div style="display:flex;align-items:center;gap:8px;font-size:.76rem">
-      <span style="font-size:1rem">${b.icon}</span>
-      <span style="font-family:var(--font-d);font-weight:700;color:${b.color};min-width:120px;font-size:.68rem;letter-spacing:.04em">${b.label.toUpperCase()}</span>
-      <span style="color:var(--text-2)">${b.val}</span>
-    </div>
-  `).join('');
 }
 
 function updateWheelRedDot(){
@@ -3924,15 +3910,21 @@ function rollItem(crateId){
   if(PITY_CRATES.includes(crateId)){
     const counter = getPityCounter(crateId);
     const threshold = getPityThreshold();
+    
     if(counter >= threshold){
       const pitPets = getPetsForCrate(crateId);
       if(pitPets && pitPets.length > 0){
         const pet = pitPets[Math.floor(Math.random() * pitPets.length)];
+        
         toast(`🔴 PITY TRIGGERED after ${counter} opens! You got ${pet.icon} ${pet.name}!`, 'gold', 7000);
-        return pet;
+        
+        // Reset pity (no await needed here if resetPity is not async)
+        resetPity(crateId);
+        
+        return pet;   // ALWAYS return exactly 1 pet
       }
     }
-  }
+}
 
   const cratePets=getPetsForCrate(crateId);
   for(const pet of cratePets){
