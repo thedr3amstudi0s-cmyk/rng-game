@@ -219,6 +219,36 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 @media(max-width:900px){.shelf-row{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.shelf-row{grid-template-columns:repeat(2,1fr);gap:8px;} .pet-shelf-wrap{padding:14px 10px 8px;}}
 
+/* BATTLE PASS */
+.bp-header-card{display:flex;align-items:center;gap:14px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-bottom:14px;flex-wrap:wrap;}
+.bp-level-badge{font-family:var(--font-d);font-size:1.4rem;font-weight:900;color:var(--gold);min-width:60px;text-align:center;text-shadow:0 0 12px rgba(245,158,11,.4);}
+.bp-xp-track{height:12px;background:var(--bg-dark);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.bp-xp-fill{height:100%;background:linear-gradient(90deg,#a855f7,#3b82f6);border-radius:8px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+.bp-premium-badge{background:linear-gradient(135deg,var(--gold),#f97316);color:#000;font-family:var(--font-d);font-size:.7rem;font-weight:900;letter-spacing:.1em;padding:5px 12px;border-radius:20px;}
+.bp-buy-cta{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(249,115,22,.08));border:2px solid var(--gold);border-radius:var(--rl);padding:16px 18px;margin-bottom:20px;flex-wrap:wrap;}
+.bp-track{display:flex;flex-direction:column;gap:0;}
+.bp-tier{display:grid;grid-template-columns:52px 1fr 1fr;align-items:center;gap:0;position:relative;}
+.bp-tier-num{font-family:var(--font-d);font-size:.72rem;font-weight:900;text-align:center;color:var(--text-3);padding:12px 0;position:relative;z-index:1;}
+.bp-tier-num.bp-tier-current{color:var(--gold);}
+.bp-tier-num.bp-tier-done{color:#22c55e;}
+.bp-spine{position:absolute;left:25px;top:0;bottom:0;width:2px;background:var(--border);z-index:0;}
+.bp-spine-done{background:linear-gradient(#22c55e,#22c55e);}
+.bp-reward-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin:6px 6px 6px 0;transition:var(--t);}
+.bp-reward-card.bp-claimed{border-color:#22c55e44;opacity:.7;}
+.bp-reward-card.bp-locked{opacity:.5;}
+.bp-reward-card.bp-premium-card{border-color:#f59e0b66;background:linear-gradient(135deg,rgba(245,158,11,.08),var(--bg-card));}
+.bp-reward-card.bp-premium-card.bp-locked{border-color:#f59e0b22;}
+.bp-reward-icon{font-size:1.5rem;display:block;margin-bottom:3px;}
+.bp-reward-label{font-family:var(--font-d);font-size:.6rem;color:var(--text-2);margin-bottom:2px;letter-spacing:.04em;}
+.bp-reward-val{font-family:var(--font-d);font-size:.65rem;font-weight:700;color:var(--text-1);}
+.bp-reward-tag{display:inline-block;font-size:.52rem;font-family:var(--font-d);font-weight:700;padding:1px 6px;border-radius:10px;margin-bottom:4px;}
+.bp-tag-free{background:#22c55e22;color:#22c55e;}
+.bp-tag-premium{background:#f59e0b22;color:#f59e0b;}
+.bp-claim-btn{margin-top:6px;width:100%;padding:5px 0;border-radius:6px;border:1px solid #22c55e;background:transparent;color:#22c55e;font-family:var(--font-d);font-size:.6rem;font-weight:700;cursor:pointer;letter-spacing:.06em;transition:.15s;}
+.bp-claim-btn:hover{background:#22c55e22;}
+.bp-claim-btn:disabled{opacity:.4;cursor:default;}
+@media(max-width:600px){.bp-tier{grid-template-columns:38px 1fr 1fr;} .bp-buy-cta{flex-direction:column;}}
+
 /* TRADE UP */
 .tradeup-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
 .tradeup-group-card{
@@ -787,6 +817,7 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       <button class="nav-item" data-page="wheel"><span class="nav-icon">🎰</span><span class="nav-label">WHEEL</span></button>
       <button class="nav-item" data-page="shop"><span class="nav-icon">🛒</span><span class="nav-label">SHOP</span></button>
       <button class="nav-item" data-page="gems"><span class="nav-icon">💎</span><span class="nav-label">GEMS</span></button>
+      <button class="nav-item" data-page="battlepass"><span class="nav-icon">🎖️</span><span class="nav-label">PASS</span></button>
       <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span class="nav-label">SETTINGS</span></button>
     </nav>
 
@@ -1102,50 +1133,61 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
 
       <!-- SHOP -->
       <section class="page" id="page-shop">
-        <div class="page-header"><h2>🛒 SHOP</h2></div>
+        <div class="page-header"><h2>🛒 SHOP</h2><p>Pay via Cash App to <strong id="shop-cashtag" style="color:var(--text-1)">$DR3AMSTUDI0S</strong>. Click Buy, send payment with your order ID in the note, then submit your $cashtag.</p></div>
 
-        <div id="shop-tab-real">
-          <div style="font-size:.82rem;color:var(--text-3);margin-bottom:16px">
-            Pay via Cash App to <strong id="shop-cashtag2" style="color:var(--text-2)">$DR3AMSTUDI0S</strong>.
-            Click Buy, send payment with your order ID in the note, then submit your $cashtag.
+        <!-- Products -->
+        <div id="shop-products-list" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px"></div>
+
+        <!-- Order box (shown after clicking Buy) -->
+        <div id="shop-order-box" class="hidden" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px">
+          <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
+          <div id="shop-order-id" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
+          <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="shop-cashtag-input" placeholder="$YourCashtag"
+              style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
+            <button class="btn-primary" id="shop-submit-tag-btn" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
           </div>
-          <div id="shop-real-products" style="display:flex;flex-direction:column;gap:12px"></div>
-          <div id="shop-order-box2" class="hidden" style="margin-top:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
-            <div id="shop-order-id2" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
-            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
+          <div id="shop-order-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
+        </div>
+
+        <!-- Player's own order history -->
+        <div id="shop-status-list" style="margin-bottom:20px"></div>
+
+        <!-- ADMIN: Pending Orders -->
+        <div class="hidden" id="admin-orders-section" style="margin-bottom:24px">
+          <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">🛠️ ADMIN — PENDING ORDERS</div>
+          <div id="admin-orders-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <!-- ADMIN: Approved Orders (with revoke) -->
+        <div class="hidden" id="admin-approved-section" style="margin-bottom:24px">
+          <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">✅ ADMIN — APPROVED ORDERS</div>
+          <div id="admin-approved-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <!-- ADMIN: Manage Products -->
+        <div class="hidden" id="admin-shop-manage-section" style="margin-bottom:24px">
+          <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">🛍️ ADMIN — MANAGE PRODUCTS</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input type="text" id="shop-cashtag-input2" placeholder="$YourCashtag"
-                style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
-              <button class="btn-primary" id="shop-submit-tag-btn2" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
+              <input type="text" id="new-prod-label" placeholder="Product name" style="flex:2;min-width:180px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)"/>
+              <input type="text" id="new-prod-price-label" placeholder="$4.99" style="flex:1;min-width:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
             </div>
-            <div id="shop-order-msg2" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
-          </div>
-          <div id="shop-status-list2" style="margin-top:14px"></div>
-          <div class="hidden" id="admin-shop-manage-section2" style="margin-top:20px">
-            <div style="font-family:var(--font-d);font-size:.75rem;letter-spacing:.15em;color:var(--text-2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">🛍️ ADMIN — MANAGE PRODUCTS</div>
-            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <input type="text" id="new-prod-label2" placeholder="Product name" style="flex:2;min-width:180px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)"/>
-                <input type="text" id="new-prod-price-label2" placeholder="$4.99" style="flex:1;min-width:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                <select id="new-prod-reward-type2" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)">
-                  <option value="coins">Coins</option>
-                  <option value="gems">Gems</option>
-                  <option value="item">Specific item</option>
-                  <option value="pet">Specific pet</option>
-                  <option value="bundle">Bundle</option>
-                  <option value="autoroll">Auto-Roll</option>
-                </select>
-                <input type="number" id="new-prod-amount2" placeholder="Amount" min="0" style="width:130px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
-                <input type="text" id="new-prod-item-id2" placeholder="Item/Pet ID" style="width:160px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
-              </div>
-              <button class="btn-primary" id="add-product-btn2" style="width:auto;padding:10px 20px;align-self:flex-start">+ ADD PRODUCT</button>
-              <div id="add-product-msg2" style="font-size:.8rem;min-height:18px"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <select id="new-prod-reward-type" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)">
+                <option value="coins">Coins only</option>
+                <option value="item">Specific item</option>
+                <option value="pet">Specific pet</option>
+                <option value="bundle">Bundle (coins + pet/item)</option>
+              </select>
+              <input type="number" id="new-prod-coins" placeholder="Coin amount" min="0" style="width:130px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
+              <input type="text" id="new-prod-item-id" placeholder="Item/Pet ID (e.g. p_vip1)" style="width:160px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
             </div>
-            <div id="admin-products-list2" style="display:flex;flex-direction:column;gap:8px"></div>
+            <button class="btn-primary" id="add-product-btn" style="width:auto;padding:10px 20px;align-self:flex-start">+ ADD PRODUCT</button>
+            <div id="add-product-msg" style="font-size:.8rem;min-height:18px"></div>
           </div>
+          <div id="admin-products-list" style="display:flex;flex-direction:column;gap:8px"></div>
         </div>
       </section>
 
@@ -1249,6 +1291,42 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
       </section>
 
       <!-- ACHIEVEMENTS -->
+      <!-- BATTLE PASS -->
+      <section class="page" id="page-battlepass">
+        <div class="page-header">
+          <h2 id="bp-season-title">🎖️ BATTLE PASS</h2>
+          <p id="bp-season-subtitle">Earn XP by opening crates and climb 50 levels. Premium Pass holders unlock exclusive pets, gems, and coins at every tier.</p>
+        </div>
+
+        <!-- XP bar + level + premium status -->
+        <div class="bp-header-card" id="bp-header-card">
+          <div class="bp-level-badge" id="bp-level-badge">LV 1</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-family:var(--font-d);font-size:.72rem;color:var(--text-2)">SEASON XP</span>
+              <span style="font-family:var(--font-m);font-size:.72rem;color:var(--text-3)" id="bp-xp-label">0 / 1000 XP to next level</span>
+            </div>
+            <div class="bp-xp-track">
+              <div class="bp-xp-fill" id="bp-xp-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <div id="bp-premium-badge" class="bp-premium-badge hidden">⭐ PREMIUM</div>
+        </div>
+
+        <!-- Buy premium CTA (shown if not premium) -->
+        <div id="bp-buy-cta" class="bp-buy-cta">
+          <div>
+            <div style="font-family:var(--font-d);font-size:.9rem;font-weight:900;color:var(--gold);margin-bottom:4px">⭐ UPGRADE TO PREMIUM PASS</div>
+            <div style="font-size:.8rem;color:var(--text-2)">Unlock every Premium reward — exclusive seasonal pets, tons of gems &amp; coins — for just <strong>$15/month</strong>.</div>
+          </div>
+          <button class="btn-primary" style="background:linear-gradient(135deg,var(--gold),#f97316);white-space:nowrap;width:auto;padding:10px 22px" onclick="buyPremiumPass()">GET PREMIUM — $15</button>
+        </div>
+
+        <!-- Reward track -->
+        <div class="bp-track" id="bp-track"></div>
+      </section>
+
+      <!-- ACHIEVEMENTS -->
       <section class="page" id="page-achievements">
         <div class="page-header"><h2>ACHIEVEMENTS</h2><p>Play more. Unlock more.</p></div>
         <div class="achievement-grid" id="achievements-grid"></div>
@@ -1342,55 +1420,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
         </div>
 
         <div class="settings-section">
-          <div class="settings-section-title">💎 SHOP</div>
-          <div style="font-size:.8rem;color:var(--text-3);margin-bottom:12px">
-            Pay via Cash App to <strong id="shop-cashtag" style="color:var(--text-2)">$YourCashtag</strong>.
-            Click Buy on an item below, send payment with your order ID in the note, then submit your $cashtag so we can verify it.
-          </div>
-          <div id="shop-products-list" style="display:flex;flex-direction:column;gap:12px"></div>
-          <div id="shop-order-box" class="hidden" style="margin-top:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR ORDER ID</div>
-            <div id="shop-order-id" style="font-family:var(--font-m);font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:12px"></div>
-            <div style="font-family:var(--font-d);font-size:.75rem;color:var(--text-2);letter-spacing:.08em;margin-bottom:6px">YOUR CASH APP $CASHTAG</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input type="text" id="shop-cashtag-input" placeholder="$YourCashtag"
-                style="flex:1;min-width:160px;background:var(--bg-card);border:1px solid var(--border);
-                border-radius:var(--r);padding:10px 14px;font-size:.9rem;color:var(--text-1);font-family:var(--font-m);"/>
-              <button class="btn-primary" id="shop-submit-tag-btn" style="width:auto;padding:10px 20px;white-space:nowrap">SUBMIT</button>
-            </div>
-            <div id="shop-order-msg" style="margin-top:8px;font-size:.82rem;min-height:18px"></div>
-          </div>
-          <div id="shop-status-list" style="margin-top:14px"></div>
-        </div>
-
-        <div class="settings-section hidden" id="admin-shop-manage-section">
-          <div class="settings-section-title">🛍️ ADMIN — MANAGE SHOP PRODUCTS</div>
-          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input type="text" id="new-prod-label" placeholder="Product name (e.g. Coin Pack 5K)"
-                style="flex:2;min-width:180px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)"/>
-              <input type="text" id="new-prod-price-label" placeholder="$4.99"
-                style="flex:1;min-width:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <select id="new-prod-reward-type" style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1)">
-                <option value="coins">Coins only</option>
-                <option value="item">Specific item</option>
-                <option value="pet">Specific pet</option>
-                <option value="bundle">Bundle (coins + pet/item)</option>
-              </select>
-              <input type="number" id="new-prod-coins" placeholder="Coin amount" min="0"
-                style="width:130px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
-              <input type="text" id="new-prod-item-id" placeholder="Item/Pet ID (e.g. p_vip1)"
-                style="width:160px;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:.85rem;color:var(--text-1);font-family:var(--font-m)"/>
-            </div>
-            <button class="btn-primary" id="add-product-btn" style="width:auto;padding:10px 20px;align-self:flex-start">+ ADD PRODUCT</button>
-            <div id="add-product-msg" style="font-size:.8rem;min-height:18px"></div>
-          </div>
-          <div id="admin-products-list" style="display:flex;flex-direction:column;gap:8px"></div>
-        </div>
-
-        <div class="settings-section">
           <div class="settings-section-title">🎟️ REDEEM CODE</div>
           <div class="settings-row" style="flex-wrap:wrap;gap:10px">
             <div class="settings-row-info" style="flex:1;min-width:200px">
@@ -1408,10 +1437,6 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
           </div>
         </div>
 
-        <div class="settings-section hidden" id="admin-orders-section">
-          <div class="settings-section-title">🛠️ ADMIN — PENDING ORDERS</div>
-          <div id="admin-orders-list" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
       </section>
 
     </main>
@@ -3023,6 +3048,7 @@ function showPage(id){
   }
   if(id==='shop'){ renderShopProducts2(); }
   if(id==='gems'){ updateGemDisplay(); renderRebirthPanel(); updatePetSlotPurchaseCard(); }
+  if(id==='battlepass'){ renderBattlePass(); }
   if(id==='petshop'){ renderPetShop(); startShopTimer(); }
   if(id==='tradeup'){ renderTradeUpPage(); } else { closeTradeUpPanel(); }
   if(id==='inventory') renderInventory();
@@ -4261,6 +4287,7 @@ document.getElementById('btn-open-crate').addEventListener('click', async () => 
   S.profile.luckCoinsPerCrate[crate.id] = (S.profile.luckCoinsPerCrate[crate.id] || 0) + price;
   checkLuckMilestone(crate);
   maybeGrantGemFind();
+  grantBpXp(crate);
 
   // Pity tracking for top-5 crates
   if(PITY_CRATES.includes(crate.id)){
@@ -6093,6 +6120,13 @@ const DEFAULT_PRODUCTS = [
     reward: { type: 'autoroll' },
     active: true,
   },
+  {
+    id: 'premium_pass',
+    label: '⭐ PREMIUM BATTLE PASS — Unlock all Premium tier rewards for this season!',
+    priceLabel: '$15.00/month',
+    reward: { type: 'premiumpass' },
+    active: true,
+  },
 ];
 
 function isAdminUser(){
@@ -6205,25 +6239,50 @@ function renderMyOrders(orders){
   if(!list) return;
   if(!orders.length){ list.innerHTML = ''; return; }
 
+  const hidden = JSON.parse(localStorage.getItem('hiddenOrders')||'[]');
+  const visible = orders.filter(o => !hidden.includes(o.orderId));
+  const hiddenCount = orders.length - visible.length;
+
   const statusColor = { pending: 'var(--gold)', approved: '#22c55e', rejected: '#ef4444' };
   const statusLabel = { pending: '⏳ Pending review', approved: '✅ Approved', rejected: '❌ Rejected' };
 
-  list.innerHTML = orders.map(o => `
+  list.innerHTML = (visible.length ? visible.map(o => `
     <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
         <span style="font-family:var(--font-m);font-size:.8rem;color:var(--text-2)">${escHtml(o.orderId)}</span>
-        <span style="font-family:var(--font-d);font-size:.72rem;color:${statusColor[o.status]||'var(--text-2)'}">${statusLabel[o.status]||o.status}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-family:var(--font-d);font-size:.72rem;color:${statusColor[o.status]||'var(--text-2)'}">${statusLabel[o.status]||o.status}</span>
+          <button onclick="hideOrder('${o.orderId}')" title="Hide this order" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:.8rem;padding:0 2px;line-height:1" title="Hide from list">✕</button>
+        </div>
       </div>
       ${o.status === 'approved' && o.code ? `
         <div style="margin-top:8px;font-family:var(--font-m);font-size:.85rem;color:var(--gold)">
-          Your code: <strong>${escHtml(o.code)}</strong> — paste it into Redeem Code below!
+          Your code: <strong>${escHtml(o.code)}</strong> — redeem it in Settings!
         </div>` : ''}
       ${o.status === 'rejected' ? `
         <div style="margin-top:6px;font-size:.78rem;color:var(--text-3)">
           Payment couldn't be verified. Contact the admin if you believe this is an error.
         </div>` : ''}
     </div>
-  `).join('');
+  `).join('') : '') +
+  (hiddenCount > 0 ? `<div style="font-size:.75rem;color:var(--text-3);margin-top:4px"><button onclick="showAllOrders()" style="background:none;border:none;color:var(--text-3);cursor:pointer;text-decoration:underline;font-size:.75rem">Show ${hiddenCount} hidden order${hiddenCount===1?'':'s'}</button></div>` : '');
+}
+
+function hideOrder(orderId){
+  const hidden = JSON.parse(localStorage.getItem('hiddenOrders')||'[]');
+  if(!hidden.includes(orderId)) hidden.push(orderId);
+  localStorage.setItem('hiddenOrders', JSON.stringify(hidden));
+  // Re-render without re-fetching
+  const unsub = db.collection('orders').where('uid','==',S.user.uid).get()
+    .then(snap => renderMyOrders(snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))));
+}
+
+function showAllOrders(){
+  localStorage.setItem('hiddenOrders', '[]');
+  const el = document.getElementById('shop-status-list');
+  if(el) el.querySelector('button[onclick^="showAll"]')?.click();
+  db.collection('orders').where('uid','==',S.user?.uid).get()
+    .then(snap => renderMyOrders(snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))));
 }
 
 function listenToMyOrders(){
@@ -6256,9 +6315,25 @@ async function approveOrder(orderId){
     const order = orderSnap.data();
     if(order.status !== 'pending'){ toast('Order is not pending.', 'error'); return; }
 
+    if(order.reward?.type === 'premiumpass'){
+      // Grant premium pass directly to the user's profile
+      const seasonKey = getBpSeasonKey();
+      const userRef = db.collection('users').doc(order.uid);
+      const update = {};
+      update[`battlePass.${seasonKey}.premium`] = true;
+      await userRef.update(update);
+      await orderRef.update({
+        status: 'approved',
+        approvedAt: new Date().toISOString(),
+        approvedBy: S.user.uid,
+        code: 'PREMIUM_GRANTED',
+      });
+      toast(`✅ Premium Pass granted to ${order.username}!`, 'success', 5000);
+      return;
+    }
+
     // Generate a fresh one-time code carrying this order's reward
     const code = await makeCode(order.reward);
-
     await orderRef.update({
       status: 'approved',
       code,
@@ -6307,26 +6382,6 @@ function renderAdminOrders(orders){
       </div>
     </div>
   `).join('');
-}
-
-function listenToAdminOrders(){
-  if(!isAdminUser()) return;
-  document.getElementById('admin-orders-section').classList.remove('hidden');
-  if(adminOrdersListener) adminOrdersListener();
-
-  const unsub = db.collection('orders')
-    .where('status', '==', 'pending')
-    .onSnapshot(snap=>{
-      const orders = snap.docs.map(d=>d.data());
-      renderAdminOrders(orders);
-    }, err=>{
-      if(err.code === 'permission-denied') {
-        console.warn('Admin orders access denied (expected for non-admins)');
-      } else {
-        console.warn('Admin orders listener error:', err.message);
-      }
-    });
-  adminOrdersListener = unsub;
 }
 
 // ── ADMIN: manage shop products ────────────────────────────────
@@ -6541,12 +6596,13 @@ document.addEventListener('DOMContentLoaded', () => {
 let currentOrderId2 = null;
 
 function renderShopProducts2(){
-  const list = document.getElementById('shop-real-products');
+  // Products now render into the consolidated shop page
+  const list = document.getElementById('shop-products-list');
   if(!list) return;
   const products = shopProductsCache.length ? shopProductsCache : DEFAULT_PRODUCTS;
   const active = products.filter(p => p.active !== false);
   if(!active.length){
-    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No products right now.</div>';
+    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No products available right now.</div>';
     return;
   }
   list.innerHTML = active.map(p => `
@@ -6558,18 +6614,10 @@ function renderShopProducts2(){
       <button class="btn-primary" style="width:auto;padding:9px 18px;white-space:nowrap" onclick="createOrder2('${p.id}')">BUY</button>
     </div>
   `).join('');
+
   if(isAdminUser()){
-    const admin = document.getElementById('admin-shop-manage-section2');
-    if(admin) admin.classList.remove('hidden');
-    const adminList = document.getElementById('admin-products-list2');
-    if(adminList) adminList.innerHTML = active.map(p => `
-      <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-        <div>
-          <div style="font-family:var(--font-d);font-size:.8rem;color:var(--text-1)">${escHtml(p.label)} <span style="color:var(--gold)">${escHtml(p.priceLabel)}</span></div>
-        </div>
-        <button class="btn-ghost" style="border-color:#ef4444;color:#ef4444" onclick="toggleProductActive('${p.id}',false)">✗ DISABLE</button>
-      </div>
-    `).join('');
+    document.getElementById('admin-shop-manage-section').classList.remove('hidden');
+    renderAdminProducts(products);
   }
 }
 
@@ -6587,19 +6635,19 @@ async function createOrder2(productId){
       createdAt: new Date().toISOString(),
     });
     currentOrderId2 = orderId;
-    document.getElementById('shop-order-id2').textContent = orderId + '  (' + product.label + ')';
-    document.getElementById('shop-order-box2').classList.remove('hidden');
+    document.getElementById('shop-order-id').textContent = orderId + '  (' + product.label + ')';
+    document.getElementById('shop-order-box').classList.remove('hidden');
     toast('Order created! Send payment then submit your $cashtag.', 'success', 5000);
   }catch(e){ toast('Could not create order: ' + e.message, 'error'); }
 }
 
 async function submitCashTag2(){
   if(!currentOrderId2){ toast('No active order.', 'error'); return; }
-  const input = document.getElementById('shop-cashtag-input2');
-  const msg   = document.getElementById('shop-order-msg2');
+  const input = document.getElementById('shop-cashtag-input');
+  const msg   = document.getElementById('shop-order-msg');
   const cashtag = input.value.trim();
   if(!cashtag){ msg.style.color='#ef4444'; msg.textContent='Enter your $cashtag.'; return; }
-  const btn = document.getElementById('shop-submit-tag-btn2');
+  const btn = document.getElementById('shop-submit-tag-btn');
   btn.disabled = true; btn.textContent = 'SUBMITTING...';
   try{
     await db.collection('orders').doc(currentOrderId2).update({
@@ -6612,8 +6660,54 @@ async function submitCashTag2(){
   btn.disabled=false; btn.textContent='SUBMIT';
 }
 
-document.getElementById('shop-submit-tag-btn2')?.addEventListener('click', submitCashTag2);
-document.getElementById('shop-cashtag2')?.textContent && (document.getElementById('shop-cashtag2').textContent = '$DR3AMSTUDI0S');
+document.getElementById('shop-submit-tag-btn')?.addEventListener('click', submitCashTag2);
+
+// ── Approved orders panel with revoke ─────────────────────────
+function renderApprovedOrders(orders){
+  const list = document.getElementById('admin-approved-list');
+  if(!list) return;
+  if(!orders.length){
+    list.innerHTML = '<div style="color:var(--text-3);font-style:italic;font-size:.85rem">No approved orders yet.</div>';
+    return;
+  }
+  list.innerHTML = orders.map(o => `
+    <div style="background:var(--bg-dark);border:1px solid #22c55e44;border-radius:var(--r);padding:14px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+        <span style="font-family:var(--font-m);font-size:.85rem;color:var(--gold)">${escHtml(o.orderId)}</span>
+        <span style="font-family:var(--font-d);font-size:.72rem;color:#22c55e">✅ Approved</span>
+      </div>
+      <div style="font-size:.82rem;color:var(--text-2);margin-bottom:2px">User: <strong>${escHtml(o.username||'')}</strong> · Tag: <strong>${escHtml(o.cashtag||'—')}</strong></div>
+      <div style="font-size:.75rem;color:var(--text-3);margin-bottom:10px">Product: ${escHtml(o.productLabel||o.product||'')} · Approved: ${o.approvedAt ? new Date(o.approvedAt).toLocaleString() : '—'}</div>
+      <button class="btn-ghost" style="border-color:#ef4444;color:#ef4444;width:auto;padding:7px 14px" onclick="revokeOrder('${o.orderId}')">🗑️ REVOKE & REMOVE</button>
+    </div>
+  `).join('');
+}
+
+async function revokeOrder(orderId){
+  if(!isAdminUser()){ toast('Not authorized.', 'error'); return; }
+  if(!confirm(`Revoke order ${orderId}? This permanently deletes it from the approved list.`)) return;
+  try{
+    await db.collection('orders').doc(orderId).delete();
+    toast(`Order ${orderId} revoked and removed.`, 'success', 4000);
+  }catch(e){ toast('Revoke failed: ' + e.message, 'error'); }
+}
+
+function listenToAdminOrders(){
+  if(!isAdminUser()) return;
+  document.getElementById('admin-orders-section').classList.remove('hidden');
+  document.getElementById('admin-approved-section').classList.remove('hidden');
+  if(adminOrdersListener) adminOrdersListener();
+
+  const unsub = db.collection('orders')
+    .onSnapshot(snap=>{
+      const orders = snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+      renderAdminOrders(orders.filter(o=>o.status==='pending' && o.cashtag));
+      renderApprovedOrders(orders.filter(o=>o.status==='approved'));
+    }, err=>{
+      if(err.code !== 'permission-denied') console.warn('Admin orders listener error:', err.message);
+    });
+  adminOrdersListener = unsub;
+}
 
 // ── Gem shop purchases ────────────────────────────────────────
 async function buyGemsReal(gems, dollars){
@@ -6629,8 +6723,8 @@ async function buyGemsReal(gems, dollars){
       createdAt: new Date().toISOString(),
     });
     currentOrderId2 = orderId;
-    document.getElementById('shop-order-id2').textContent = orderId + '  (' + label + ')';
-    document.getElementById('shop-order-box2').classList.remove('hidden');
+    document.getElementById('shop-order-id').textContent = orderId + '  (' + label + ')';
+    document.getElementById('shop-order-box').classList.remove('hidden');
     toast(`Order created for ${label}! Send $${dollars} via Cash App then submit your $cashtag.`, 'success', 6000);
     // Jump to the Shop page to show the order box / cashtag submission
     showPage('shop');
@@ -6679,6 +6773,245 @@ function getNextPetSlotCost(){
   const cur = getPetSlotCount();
   return cur < PET_SLOT_FIELDS.length ? PET_SLOT_PRICES[cur] : null; // cost to go from `cur` -> `cur+1`
 }
+
+// ============================================================
+// BATTLE PASS CONSTANTS & HELPERS
+// ============================================================
+const BP_MAX_LEVEL = 50;
+const BP_XP_PER_LEVEL_BASE = 1000;
+
+function getBpSeason() {
+  return {
+    icon: "🎖️",
+    name: "Season 1: Neon Genesis",
+    subtitle: "Earn XP by opening crates. Premium unlocks exclusive rewards.",
+    pets: [
+      {id: "p_neon1", name: "Neon Fox", icon: "🦊", rarity: "legendary"},
+      {id: "p_neon2", name: "Cyber Drake", icon: "🐉", rarity: "mythic"},
+      {id: "p_neon3", name: "Void Phoenix", icon: "🔥", rarity: "divine"}
+    ]
+  };
+}
+
+function getBpSeasonKey() {
+  return "season1";
+}
+
+function getBpXpForLevel(targetLevel) {
+  let total = 0;
+  for (let lv = 1; lv < targetLevel; lv++) {
+    total += Math.floor(BP_XP_PER_LEVEL_BASE * Math.pow(1.10, lv - 1));
+  }
+  return total;
+}
+
+function getBpXpNeededForNext(level) {
+  return Math.floor(BP_XP_PER_LEVEL_BASE * Math.pow(1.10, level - 1));
+}
+
+function getBpLevel(totalXp) {
+  if (!totalXp) return 1;
+  let level = 1;
+  let xpRemaining = totalXp;
+  while (level < BP_MAX_LEVEL) {
+    const needed = getBpXpNeededForNext(level);
+    if (xpRemaining < needed) break;
+    xpRemaining -= needed;
+    level++;
+  }
+  return level;
+}
+
+function getBpXpIntoLevel(totalXp) {
+  if (!totalXp) return 0;
+  let level = 1, rem = totalXp;
+  while (level < BP_MAX_LEVEL) {
+    const needed = getBpXpNeededForNext(level);
+    if (rem < needed) return rem;
+    rem -= needed;
+    level++;
+  }
+  return 0;
+}
+
+function getBpXpForCrate(crate) {
+  if (!crate) return 15;
+  const p = crate.price || 0;
+  if (p >= 4000000) return 500;
+  if (p >= 2000000) return 300;
+  if (p >= 500000)  return 150;
+  if (p >= 100000)  return 75;
+  if (p >= 10000)   return 35;
+  return 15;
+}
+
+// Build reward track
+function buildBpTrack(season) {
+  const track = [];
+  const pets = season.pets || [];
+  for (let lv = 1; lv <= BP_MAX_LEVEL; lv++) {
+    const free = [], prem = [];
+
+    const coins = lv * 50000;
+    free.push({type:'coins', val:coins, icon:'🪙', label:'Coins', display: coins.toLocaleString()});
+
+    if (lv % 5 === 0) {
+      free.push({type:'gems', val:lv*2, icon:'💎', label:'Gems', display:lv*2+' 💎'});
+      prem.push({type:'gems', val:lv*4, icon:'💎', label:'Bonus Gems', display:'+'+lv*4+' 💎'});
+    }
+
+    prem.push({type:'coins', val:coins*2, icon:'🪙', label:'Premium Coins', display:(coins*2).toLocaleString()});
+
+    if (lv % 10 === 0) {
+      prem.push({type:'gems', val:lv*10, icon:'💎', label:'Premium Gems', display:lv*10+' 💎'});
+    }
+
+    if (lv === 10 && pets[0]) free.push({type:'pet', petId:pets[0].id, icon:pets[0].icon, label:'Pet', display:pets[0].name});
+    if (lv === 25 && pets[1]) free.push({type:'pet', petId:pets[1].id, icon:pets[1].icon, label:'Pet', display:pets[1].name});
+    if (lv === 15 && pets[2]) prem.push({type:'pet', petId:pets[2].id, icon:pets[2].icon, label:'Premium Pet', display:pets[2].name, premium:true});
+
+    if (lv === 50) {
+      free.push({type:'gems', val:500, icon:'💎', label:'SEASON COMPLETE', display:'500 💎'});
+      prem.push({type:'gems', val:2000, icon:'💎', label:'PREMIUM COMPLETE', display:'2000 💎'});
+    }
+
+    track.push({level: lv, free, premium: prem});
+  }
+  return track;
+}
+
+function renderBattlePass() {
+  if (!S.profile) return;
+  const season = getBpSeason();
+  const seasonKey = getBpSeasonKey();
+  const bpData = S.profile.battlePass?.[seasonKey] || {xp: 0, claimed: []};
+  const xp = bpData.xp || 0;
+  const level = getBpLevel(xp);
+  const xpInto = getBpXpIntoLevel(xp);
+  const isPremium = bpData.premium === true;
+  const claimed = bpData.claimed || [];
+
+  document.getElementById('bp-season-title').textContent = season.icon + ' ' + season.name;
+  document.getElementById('bp-season-subtitle').textContent = season.subtitle;
+  document.getElementById('bp-level-badge').textContent = `LV ${level}`;
+  
+  const xpLabel = level >= BP_MAX_LEVEL ? 'MAX LEVEL' : `${xpInto.toLocaleString()} / ${getBpXpNeededForNext(level).toLocaleString()} XP`;
+  document.getElementById('bp-xp-label').textContent = xpLabel;
+  document.getElementById('bp-xp-fill').style.width = level >= BP_MAX_LEVEL ? '100%' : Math.min(100, (xpInto / getBpXpNeededForNext(level) * 100)) + '%';
+  document.getElementById('bp-premium-badge').classList.toggle('hidden', !isPremium);
+  document.getElementById('bp-buy-cta').style.display = isPremium ? 'none' : '';
+
+  const track = buildBpTrack(season);
+  const container = document.getElementById('bp-track');
+  container.innerHTML = '';
+
+  track.forEach(tier => {
+    const reached = level >= tier.level;
+    const row = document.createElement('div');
+    row.className = 'bp-tier';
+
+    const spine = document.createElement('div');
+    spine.className = 'bp-spine' + (reached ? ' bp-spine-done' : '');
+    row.appendChild(spine);
+
+    const num = document.createElement('div');
+    num.className = 'bp-tier-num' + (level === tier.level ? ' bp-tier-current' : reached ? ' bp-tier-done' : '');
+    num.innerHTML = reached ? `<span style="color:#22c55e">✓</span><br>${tier.level}` : tier.level;
+    row.appendChild(num);
+
+    // Free column
+    const freeCol = document.createElement('div');
+    freeCol.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding:4px;';
+    tier.free.forEach(r => {
+      const claimKey = `${tier.level}_free_${r.type}_${r.val||r.petId}`;
+      const isClaimed = claimed.includes(claimKey);
+      const canClaim = reached && !isClaimed;
+      const card = document.createElement('div');
+      card.className = `bp-reward-card ${isClaimed ? 'bp-claimed' : ''}`;
+      card.innerHTML = `
+        <span class="bp-tag-free bp-reward-tag">FREE</span>
+        <span class="bp-reward-icon">${r.icon}</span>
+        <div class="bp-reward-label">${r.label}</div>
+        <div class="bp-reward-val">${r.display}</div>
+        ${canClaim ? `<button class="bp-claim-btn" onclick="claimBpReward('${claimKey}','${r.type}',${r.val||0},'${r.petId||''}')">CLAIM</button>` : ''}
+      `;
+      freeCol.appendChild(card);
+    });
+    row.appendChild(freeCol);
+
+    // Premium column
+    const premCol = document.createElement('div');
+    premCol.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding:4px;';
+    tier.premium.forEach(r => {
+      const claimKey = `${tier.level}_prem_${r.type}_${r.val||r.petId}`;
+      const isClaimed = claimed.includes(claimKey);
+      const canClaim = reached && isPremium && !isClaimed;
+      const card = document.createElement('div');
+      card.className = `bp-reward-card bp-premium-card ${isClaimed ? 'bp-claimed' : (!isPremium || !reached) ? 'bp-locked' : ''}`;
+      card.innerHTML = `
+        <span class="bp-tag-premium bp-reward-tag">⭐ PREMIUM</span>
+        <span class="bp-reward-icon">${r.icon}</span>
+        <div class="bp-reward-label">${!isPremium ? '🔒 ' : ''}${r.label}</div>
+        <div class="bp-reward-val">${r.display}</div>
+        ${canClaim ? `<button class="bp-claim-btn" onclick="claimBpReward('${claimKey}','${r.type}',${r.val||0},'${r.petId||''}')">CLAIM</button>` : ''}
+      `;
+      premCol.appendChild(card);
+    });
+    row.appendChild(premCol);
+
+    container.appendChild(row);
+  });
+}
+
+async function claimBpReward(claimKey, type, val, petId) {
+  if (!S.user || !S.profile) return;
+  const seasonKey = getBpSeasonKey();
+  const bpData = S.profile.battlePass?.[seasonKey] || {claimed: []};
+  let claimed = [...(bpData.claimed || [])];
+  if (claimed.includes(claimKey)) {
+    toast('Already claimed!', 'error');
+    return;
+  }
+  claimed.push(claimKey);
+
+  if (type === 'coins') {
+    S.profile.coins = (S.profile.coins || 0) + val;
+    updateCoinDisplay(S.profile.coins);
+  } else if (type === 'gems') {
+    await grantGems(val);
+  } else if (type === 'pet' && petId) {
+    const pet = getItem(petId);
+    if (pet) {
+      S.inventory.push({itemId: petId, uniqueId: genUID(), crateSource: 'battlepass', obtainedAt: new Date().toISOString()});
+      toast(`${pet.icon} ${pet.name} added!`, 'success');
+    }
+  }
+
+  if (!S.profile.battlePass) S.profile.battlePass = {};
+  if (!S.profile.battlePass[seasonKey]) S.profile.battlePass[seasonKey] = {};
+  S.profile.battlePass[seasonKey].claimed = claimed;
+
+  try {
+    const update = {[`battlePass.${seasonKey}.claimed`]: claimed};
+    if (type === 'coins') update.coins = S.profile.coins;
+    if (type === 'pet') update.inventory = S.inventory;
+    await db.collection('users').doc(S.user.uid).update(update);
+  } catch (e) {
+    toast('Save error', 'error');
+  }
+
+  renderBattlePass();
+}
+
+async function buyPremiumPass() {
+  toast('Go to the Shop page → "PREMIUM BATTLE PASS" product → pay via Cash App. An admin will activate it.', 'gold', 8000);
+  showPage('shop');
+}
+
+// Call this when opening the battle pass page
+document.querySelector('[data-page="battlepass"]').addEventListener('click', () => {
+  setTimeout(renderBattlePass, 100);
+});
 
 function updatePetSlotPurchaseCard(){
   const btn = document.getElementById('petslot-purchase-btn');
