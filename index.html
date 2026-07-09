@@ -2201,7 +2201,7 @@ async function buyShopPet(petId){
 }
 
 // ============================================================
-// TRADE UP — 10% per pet, always consume on fail
+// TRADE UP — Real Rarity Upgrades (10% per pet)
 // ============================================================
 function getTradeUpGroups() {
   const groups = {};
@@ -2286,51 +2286,47 @@ function openTradeUpPanel(petId, copies) {
 }
 
 async function executeTradeUp(petId, count) {
-    const groups = getTradeUpGroups();
-    const available = groups[petId] || [];
-    if (available.length < count) {
-        return toast('Not enough copies', 'error');
+  const groups = getTradeUpGroups();
+  const available = groups[petId] || [];
+  if (available.length < count) return toast('Not enough copies', 'error');
+
+  // Remove sacrificed pets
+  for (let i = 0; i < count; i++) {
+    const copy = available[i];
+    const idx = S.inventory.findIndex(inv => inv.uniqueId === copy.uniqueId);
+    if (idx > -1) S.inventory.splice(idx, 1);
+  }
+
+  const basePet = getItem(petId);
+  const successChance = Math.min(100, count * 10);
+  const success = Math.random() * 100 < successChance;
+
+  let resultPet = basePet;
+
+  if (success) {
+    // Real upgrade logic
+    if (basePet.name.includes('Normal') || !basePet.name.includes('Gold')) {
+      resultPet = getItem(basePet.id.replace('_n', '_g')) || basePet; // Normal → Gold
+    } else if (basePet.name.includes('Gold')) {
+      resultPet = getItem(basePet.id.replace('_g', '_d')) || basePet; // Gold → Diamond
+    } else if (basePet.name.includes('Diamond')) {
+      resultPet = getItem(basePet.id.replace('_d', '_n')) || basePet; // Diamond → Neon
     }
 
-    // Remove sacrificed pets
-    for (let i = 0; i < count; i++) {
-        const copy = available[i];
-        const idx = S.inventory.findIndex(inv => inv.uniqueId === copy.uniqueId);
-        if (idx > -1) S.inventory.splice(idx, 1);
-    }
+    const newItem = {itemId: resultPet.id, uniqueId: genUID(), crateSource: 'tradeup', obtainedAt: new Date().toISOString()};
+    S.inventory.push(newItem);
+    toast(`🎉 SUCCESS! Upgraded to ${resultPet.name}!`, 'gold', 4500);
+  } else {
+    toast(`😔 Failed — ${count} copies consumed.`, 'error');
+  }
 
-    const successChance = Math.min(100, count * 10);
-    const success = Math.random() * 100 < successChance;
-
-    if (success) {
-        const allPets = Object.values(ITEMS)
-            .filter(item => item.rarity === 'pet')
-            .sort((a, b) => a.value - b.value);
-
-        const currentIndex = allPets.findIndex(p => p.id === petId);
-
-        if (currentIndex !== -1 && currentIndex < allPets.length - 1) {
-            const upgradedPet = allPets[currentIndex + 1];
-
-            S.inventory.push({
-                itemId: upgradedPet.id,
-                uniqueId: genUID(),
-                crateSource: 'tradeup',
-                obtainedAt: new Date().toISOString()
-            });
-
-            toast(`🎉 Success! You received ${upgradedPet.icon} ${upgradedPet.name}!`, 'gold');
-        } else {
-            toast('🎉 Success! Your pet is already at the highest tier.', 'gold');
-        }
-    } else {
-        toast('❌ Trade Up failed! The sacrificed pets were lost.', 'error');
-    }
-
-    saveGame();
-    await saveToFirestore();
+  try {
+    await db.collection('users').doc(S.user.uid).update({inventory: S.inventory});
+    renderTradeUpPage();
     renderInventory();
-    updateInventoryBadge();
+  } catch(e) {
+    toast('Save failed', 'error');
+  }
 }
 
 function closeTradeUpPanel() {
