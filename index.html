@@ -6885,6 +6885,27 @@ function renderBattlePass() {
   });
 }
 
+async function grantBpXp(amount) {
+  if (!S.user || !S.profile) return;
+  const seasonKey = getBpSeasonKey();
+  if (!S.profile.battlePass) S.profile.battlePass = {};
+  if (!S.profile.battlePass[seasonKey]) S.profile.battlePass[seasonKey] = {xp: 0, claimed: []};
+
+  S.profile.battlePass[seasonKey].xp = (S.profile.battlePass[seasonKey].xp || 0) + amount;
+
+  try {
+    await db.collection('users').doc(S.user.uid).update({
+      [`battlePass.${seasonKey}.xp`]: firebase.firestore.FieldValue.increment(amount)
+    });
+    toast(`+${amount} Battle Pass XP!`, 'success', 2000);
+    if (document.getElementById('page-battlepass').classList.contains('active')) {
+      renderBattlePass();
+    }
+  } catch(e) {
+    console.error("BP XP save failed", e);
+  }
+}
+  
 async function claimBpReward(claimKey, type, val, petId) {
   if (!S.user || !S.profile) return;
   const seasonKey = getBpSeasonKey();
