@@ -1142,7 +1142,10 @@ input,select{font-family:inherit;color:inherit;border:none;outline:none;backgrou
                     style="border-radius:50%;display:block;box-shadow:0 0 40px rgba(245,158,11,0.5);"></canvas>
           </div>
           <p id="wheel-result" style="min-height:36px;font-size:1.2rem;font-weight:700;color:var(--gold);margin:10px 0;font-family:var(--font-d);letter-spacing:.05em;"></p>
-          <button id="spin-btn" class="btn-primary" style="width:100%;margin-bottom:10px;">SPIN WHEEL (FREE)</button>
+          <button id="spin-btn" class="btn-primary" style="width:100%;margin-bottom:8px;">SPIN WHEEL (FREE)</button>
+          <div id="wheel-extra-spins-badge" style="display:none;text-align:center;font-family:var(--font-d);font-size:.72rem;color:#a855f7;margin-bottom:10px;background:var(--bg-card);border:1px solid #a855f744;border-radius:20px;padding:5px 14px">
+            🎰 <span id="wheel-extra-count">0</span> extra spin(s) stored — buy more in the Gems tab
+          </div>
           <div id="wheel-odds-list" style="margin-top:20px;text-align:left;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px"></div>
         </div>
       </section>
@@ -5638,14 +5641,29 @@ function spinLuckyWheel(){
   if(!isAdmin){
     const cooldown  = 24 * 60 * 60 * 1000;
     const effective = Math.max(lastSpinTime, S.profile?.lastWheelSpin || 0);
-    if(effective !== 0 && Date.now() - effective < cooldown){
-      toast('You can only spin once every 24 hours!', 'error');
-      return;
+    const onCooldown = effective !== 0 && Date.now() - effective < cooldown;
+
+    if(onCooldown){
+      // Check if they have a stored extra spin to burn
+      const extras = S.profile?.extraWheelSpins || 0;
+      if(extras > 0){
+        S.profile.extraWheelSpins = extras - 1;
+        db.collection('users').doc(S.user.uid).update({
+          extraWheelSpins: firebase.firestore.FieldValue.increment(-1)
+        }).catch(()=>{});
+        toast(`🎰 Used 1 extra spin (${S.profile.extraWheelSpins} remaining)`, 'gold', 2500);
+        updateWheelSpinBadge();
+      } else {
+        toast('You can only spin once every 24 hours! Buy extra spins with 💎 Gems.', 'error');
+        return;
+      }
+    } else {
+      // Normal free spin — set cooldown
+      const now = Date.now();
+      lastSpinTime = now;
+      if(S.profile) S.profile.lastWheelSpin = now;
+      db.collection('users').doc(S.user.uid).update({lastWheelSpin: now}).catch(()=>{});
     }
-    const now = Date.now();
-    lastSpinTime = now;
-    if(S.profile) S.profile.lastWheelSpin = now;
-    db.collection('users').doc(S.user.uid).update({lastWheelSpin: now}).catch(()=>{});
   }
 
   isSpinning = true;
@@ -5775,6 +5793,30 @@ function enterWheelPage(){
   drawWheel(wheelRotation);
   if(!isSpinning) startIdleRotation();
   updateWheelRedDot();
+  updateWheelSpinBadge();
+}
+
+function updateWheelSpinBadge(){
+  const extras = S.profile?.extraWheelSpins || 0;
+  const badge = document.getElementById('wheel-extra-spins-badge');
+  const count = document.getElementById('wheel-extra-count');
+  if(!badge || !count) return;
+  if(extras > 0){
+    badge.style.display = 'block';
+    count.textContent = extras;
+  } else {
+    badge.style.display = 'none';
+  }
+  // Also update the spin button label to reflect state
+  const cooldown = 24*60*60*1000;
+  const effective = Math.max(lastSpinTime, S.profile?.lastWheelSpin || 0);
+  const onCooldown = effective !== 0 && Date.now() - effective < cooldown;
+  const btn = document.getElementById('spin-btn');
+  if(btn){
+    if(!onCooldown) btn.textContent = 'SPIN WHEEL (FREE)';
+    else if(extras > 0) btn.textContent = `SPIN WHEEL (USE EXTRA SPIN — ${extras} left)`;
+    else btn.textContent = 'SPIN WHEEL';
+  }
 }
 
 function leaveWheelPage(){
@@ -6682,12 +6724,15 @@ async function buyGemItem(itemId, cost){
   if(!ok) return;
 
   if(itemId === 'wheel_spin'){
-    // Grant an extra wheel spin (bypass cooldown once)
-    S.profile.lastWheelSpin = 0;
-    lastSpinTime = 0;
-    await db.collection('users').doc(S.user.uid).update({lastWheelSpin: 0});
-    toast('🎰 Extra wheel spin unlocked! Head to the Wheel tab.', 'gold', 4000);
+    // Add to the extra-spins counter so multiple purchases all stack
+    const current = S.profile.extraWheelSpins || 0;
+    S.profile.extraWheelSpins = current + 1;
+    await db.collection('users').doc(S.user.uid).update({
+      extraWheelSpins: firebase.firestore.FieldValue.increment(1)
+    });
+    toast(`🎰 Extra spin purchased! You now have ${S.profile.extraWheelSpins} extra spin${S.profile.extraWheelSpins===1?'':'s'}. Head to the Wheel tab.`, 'gold', 4000);
     updateGemDisplay();
+    updateWheelSpinBadge();
   } else if(itemId === 'luck_boost_minor'){
     if(!S.currentCrate){ toast('Open a crate page first!', 'error'); await grantGems(cost); return; }
     S.luckBoost = 'minor'; S.luckBoostCrate = S.currentCrate.id; S.luckBoostUsed = false;
