@@ -5545,11 +5545,11 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 // baseline snap before each spin.
 // ============================================================
 const WHEEL_PRIZES=[
-  {label:'500',        amount:500,   color:'#ef4444', textColor:'#fff', weight:0.1},
+  {label:'500',        amount:500,   color:'#ef4444', textColor:'#fff', weight:42},
   {label:'1000',        amount:1000,   color:'#f97316', textColor:'#fff', weight:28},
   {label:'1500',        amount:1500,   color:'#eab308', textColor:'#fff', weight:18},
   {label:'3000',       amount:3000,  color:'#22c55e', textColor:'#fff', weight:11.9},
-  {label:'1 IN 1,000\nPET', amount:'pet', color:'#ffffff', textColor:'#4a90e2', weight:42},
+  {label:'1 IN 1,000\nPET', amount:'pet', color:'#ffffff', textColor:'#4a90e2', weight:0.1},
 ];
 const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5 — still 5 equal-size visual segments
 const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
