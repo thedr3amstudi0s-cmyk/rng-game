@@ -1589,6 +1589,27 @@ const RARITIES = {
   eternal:      {name:'Eternal',      color:'#22d3ee', glow:'#67e8f944', tier:17},
   genesis:      {name:'Genesis',      color:'#fbbf24', glow:'#fbbf2488', tier:18},
   infinite:     {name:'Infinite',     color:'#ffffff', glow:'#ffffff99', tier:19},
+  // 20 new rarities (tiers 20-39)
+  void:         {name:'Void',         color:'#6d28d9', glow:'#6d28d988', tier:20},
+  abyssal:      {name:'Abyssal',      color:'#1d4ed8', glow:'#1d4ed888', tier:21},
+  spectral2:    {name:'Spectral II',  color:'#0ea5e9', glow:'#0ea5e988', tier:22},
+  celestial2:   {name:'Celestial II', color:'#f0abfc', glow:'#f0abfc88', tier:23},
+  paradox:      {name:'Paradox',      color:'#84cc16', glow:'#84cc1688', tier:24},
+  oblivion:     {name:'Oblivion',     color:'#be123c', glow:'#be123c88', tier:25},
+  galactic:     {name:'Galactic',     color:'#6366f1', glow:'#6366f188', tier:26},
+  tempest:      {name:'Tempest',      color:'#38bdf8', glow:'#38bdf888', tier:27},
+  phantom:      {name:'Phantom',      color:'#a3a3a3', glow:'#a3a3a388', tier:28},
+  sovereign:    {name:'Sovereign',    color:'#ca8a04', glow:'#ca8a0488', tier:29},
+  mythical2:    {name:'Mythical II',  color:'#e11d48', glow:'#e11d4888', tier:30},
+  radiant:      {name:'Radiant',      color:'#fde68a', glow:'#fde68a88', tier:31},
+  nullspace:    {name:'Null Space',   color:'#1e1b4b', glow:'#a78bfa88', tier:32},
+  apex:         {name:'Apex',         color:'#f43f5e', glow:'#f43f5e88', tier:33},
+  omnipotent:   {name:'Omnipotent',   color:'#d4d4d4', glow:'#d4d4d488', tier:34},
+  singularity:  {name:'Singularity',  color:'#facc15', glow:'#facc1588', tier:35},
+  ultimatum:    {name:'Ultimatum',    color:'#fb7185', glow:'#fb718588', tier:36},
+  primeval:     {name:'Primeval',     color:'#4ade80', glow:'#4ade8088', tier:37},
+  zenith:       {name:'Zenith',       color:'#e879f9', glow:'#e879f988', tier:38},
+  omega:        {name:'Omega',        color:'#ff6600', glow:'#ff660088', tier:39},
   pet:          {name:'???',         color:'#ffffff', glow:'#ffffff88', tier:1000},
 };
 
@@ -1645,6 +1666,28 @@ const ITEMS = [
   {id:'co01',name:'COSMIC WILL',      rarity:'cosmic',   icon:'🌌', value:0,  desc:'The will of all reality.'},
   {id:'tr01',name:'TRANSCENDENT WILL',rarity:'transcendent',icon:'🌟',value:5000000,desc:'Beyond all comprehension.'},
     {id:'in01',name:'∞ INFINITE',       rarity:'infinite', icon:'♾️', value:9100000,  desc:'True limitless power.'},
+
+  // 20 new rarity items
+  {id:'vo01',name:'VOID RIFT',          rarity:'void',        icon:'🌀', value:12000000,  desc:'A tear in the fabric of existence.'},
+  {id:'ab01',name:'ABYSS SHARD',        rarity:'abyssal',     icon:'🌊', value:16000000,  desc:'Crystallized darkness from the deep.'},
+  {id:'s201',name:'SPECTRAL CROWN',     rarity:'spectral2',   icon:'👑', value:21000000,  desc:'Worn by those who walk between worlds.'},
+  {id:'ce01',name:'CELESTIAL PRISM',    rarity:'celestial2',  icon:'🌈', value:28000000,  desc:'Refracts starlight into pure power.'},
+  {id:'pa01',name:'PARADOX KEY',        rarity:'paradox',     icon:'🗝️', value:36000000,  desc:'Unlocks doors that shouldn\'t exist.'},
+  {id:'ob01',name:'OBLIVION BLADE',     rarity:'oblivion',    icon:'⚔️', value:46000000,  desc:'Erases what it strikes from memory.'},
+  {id:'ga01',name:'GALACTIC CORE',      rarity:'galactic',    icon:'🌌', value:58000000,  desc:'A compressed galaxy in your palm.'},
+  {id:'te01',name:'TEMPEST HERALD',     rarity:'tempest',     icon:'⛈️', value:72000000,  desc:'Commands storms across dimensions.'},
+  {id:'ph01',name:'PHANTOM ECHO',       rarity:'phantom',     icon:'👻', value:89000000,  desc:'The last whisper of a forgotten god.'},
+  {id:'so01',name:'SOVEREIGN SEAL',     rarity:'sovereign',   icon:'🏰', value:110000000, desc:'Authority over all that exists.'},
+  {id:'m201',name:'MYTHICAL CORE',      rarity:'mythical2',   icon:'🐲', value:135000000, desc:'The heart of a mythical being.'},
+  {id:'ra01',name:'RADIANT SIGIL',      rarity:'radiant',     icon:'✨', value:165000000, desc:'Blinds those unworthy to hold it.'},
+  {id:'ns01',name:'NULL SPACE ORB',     rarity:'nullspace',   icon:'🔮', value:200000000, desc:'Contains absolute nothingness.'},
+  {id:'ap01',name:'APEX FRAGMENT',      rarity:'apex',        icon:'💠', value:240000000, desc:'The topmost shard of reality\'s peak.'},
+  {id:'om01',name:'OMNIPOTENT RELIC',   rarity:'omnipotent',  icon:'🌟', value:290000000, desc:'Power without limits or reason.'},
+  {id:'si01',name:'SINGULARITY POINT',  rarity:'singularity', icon:'⚫', value:350000000, desc:'Everything compressed to a single dot.'},
+  {id:'ul01',name:'ULTIMATUM DECREE',   rarity:'ultimatum',   icon:'📜', value:420000000, desc:'The final word on all things.'},
+  {id:'pe01',name:'PRIMEVAL SEED',      rarity:'primeval',    icon:'🌱', value:500000000, desc:'From this, all universes were born.'},
+  {id:'ze01',name:'ZENITH CROWN',       rarity:'zenith',      icon:'🪬', value:600000000, desc:'Worn only at the absolute top.'},
+  {id:'oo01',name:'OMEGA CORE',         rarity:'omega',       icon:'🔱', value:750000000, desc:'The end of all things, contained.'},
 ];
 
 // ============================================================
@@ -1763,14 +1806,19 @@ const PETS_BY_CRATE = {
   ],
   'genesis': [
     {id:'p_gen1', name:'Genesis Phoenix', rarity:'pet', icon:'🐦‍🔥', value:95000000, desc:'Birth of all fortune.', perk:'luck', perkName:'Genesis Luck II', perkDesc:'Luck boosts are 2.5x as powerful + fill 70% faster + +15% base luck on every open'},
-    {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 1'},
+    {id:'p_gen2', name:'Origin Speedster', rarity:'pet', icon:'⚡', value:95000000, desc:'The first burst of speed.', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 2'},
     {id:'p_gen3', name:'Creation Boar', rarity:'pet', icon:'🐗', value:95000000, desc:'Source of all value.', perk:'discount', perkName:'Genesis Deal II', perkDesc:'-35% off all crate prices + +25% sell bonus + +15% gem find chance'},
   ],
   // VIP-exclusive pet — purchase only, NEVER drops from any crate.
   // Kept in its own bucket so it's excluded from getPetsForCrate() / crate odds entirely.
-   'vip': [
+  'vip': [
     {id:'p_vip1', name:'VIP Golden Drake', rarity:'pet', icon:'🐉', value:0, desc:'A mark of true status. Bought, not found.', perk:'vip', perkName:'VIP Golden Drake', perkDesc:'2x Rolls • 2x Speed', sellable: false, vip: true},
   ],
+  
+  'shop': [
+  {id:'p_shop1', name:'Waffle', rarity:'pet', icon:'🧇', value:0, desc:'Just a waffle', perk:'speed', perkName:'Quad Crack', perkDesc:'Open 4 crates at once for the price of 2'},
+  ],
+    
   // Wheel-exclusive pet — only obtainable from the 1-in-1,000,000 Lucky Wheel segment.
   // Never drops from any crate and is not part of any crate's pet pool.
   'wheel': [
@@ -1805,7 +1853,7 @@ const PETS_BY_CRATE = {
 
 // Helper to get pets for a crate
 function getPetsForCrate(crateId) {
-  return PETS_BY_CRATE[crateId] || PETS_BY_CRATE['basic']; // fallback
+  return PETS_BY_CRATE[crateId] || [];
 }
 
 const SHOP_PETS = [
@@ -2102,9 +2150,9 @@ async function incrementPity(crateId){
   let amount = 1;
 
   if (has4xPityPetEquipped()) {
-    amount = 1;
+    amount = 4;
   } else if (has2xPityPetEquipped()) {
-    amount = 1;
+    amount = 2;
   }
 
   S.profile.pityCounter[crateId] = (S.profile.pityCounter[crateId] ?? 0) + amount;
@@ -2801,16 +2849,16 @@ function getCratePrice(crate){
 
 // Total coin cost for one "open" click:
 // • 1 crate  → 100% of discounted price
-// • 2 crates → 175% total (both crates together)
-// • 4 crates → 350% total (all four crates together)
+// • 2 crates → 100% total (both crates together)
+// • 4 crates → 200% total (all four crates together)
 // • VIP      → 2 crates for price of 1 (100% total, unchanged perk)
 function getTotalOpenPrice(crate){
   const single = getCratePrice(crate);
   const count = getMultiOpenCount();
   if(count === 1) return single;
   if(hasVipPetEquipped()) return single; // VIP: 2 crates free
-  if(count === 4) return Math.floor(single * 3.50);
-  return Math.floor(single * 1.75); // 2x
+  if(count === 4) return Math.floor(single * 2);
+  return single;
 }
 
 function getMultiOpenCount(){
@@ -5589,11 +5637,11 @@ document.getElementById('admin-refresh-btn').addEventListener('click',async()=>{
 // baseline snap before each spin.
 // ============================================================
 const WHEEL_PRIZES=[
-  {label:'500',        amount:500,   color:'#ef4444', textColor:'#fff', weight:42},
+  {label:'500',        amount:500,   color:'#ef4444', textColor:'#fff', weight:0.1},
   {label:'1000',        amount:1000,   color:'#f97316', textColor:'#fff', weight:28},
   {label:'1500',        amount:1500,   color:'#eab308', textColor:'#fff', weight:18},
   {label:'3000',       amount:3000,  color:'#22c55e', textColor:'#fff', weight:11.9},
-  {label:'1 IN 1,000\nPET', amount:'pet', color:'#ffffff', textColor:'#4a90e2', weight:0.1},
+  {label:'1 IN 1,000\nPET', amount:'pet', color:'#ffffff', textColor:'#4a90e2', weight:42},
 ];
 const WHEEL_SEG_COUNT = WHEEL_PRIZES.length;   // 5 — still 5 equal-size visual segments
 const WHEEL_SEG_DEG   = 360 / WHEEL_SEG_COUNT; // 72°
@@ -6188,9 +6236,9 @@ const SHOP_CASHTAG = '$DR3AMSTUDI0S';
 const DEFAULT_PRODUCTS = [
   {
     id: 'vip_pack',
-    label: 'VIP Pack — 🐉 VIP Golden Drake + 500 Gems',
+    label: 'VIP Pack — 🐉 VIP Golden Drake + 250 Gems',
     priceLabel: '$10.00',
-    reward: { type: 'bundle', petId: 'p_vip1', gems: 500 },
+    reward: { type: 'bundle', petId: 'p_vip1', gems: 250 },
     active: true,
   },
   {
@@ -6205,6 +6253,13 @@ const DEFAULT_PRODUCTS = [
     label: '⭐ PREMIUM BATTLE PASS — Unlock all Premium tier rewards for this season!',
     priceLabel: '$15.00/month',
     reward: { type: 'premiumpass' },
+    active: true,
+  },
+  {
+    id: 'waffle_pack',
+    label: '🧇A pet that can open 4x + 500 gems🧇',
+    priceLabel: '$20.00',
+    reward: { type: 'bundle', petId: 'p_shop1', gems: 500 },
     active: true,
   },
 ];
