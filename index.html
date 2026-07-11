@@ -2612,6 +2612,7 @@ const PET_VARIANTS = [
   { key: 'gold',    label: 'Gold',    icon: '✨', color: '#eab308', perkMult: 1.25, valueMult: 2  },
   { key: 'diamond', label: 'Diamond', icon: '💎', color: '#67e8f9', perkMult: 1.6,  valueMult: 5  },
   { key: 'neon',    label: 'Neon',    icon: '🌈', color: '#ec4899', perkMult: 2.2,  valueMult: 12, glow:true },
+  { key: 'frozen',    label: 'Frozen',    icon: '🧊', color: '#acddde', perkMult: 3,  valueMult: 30, glow:true },
 ];
 function getVariantInfo(key){ return PET_VARIANTS.find(v => v.key === (key||null)) || PET_VARIANTS[0]; }
 function getNextVariant(key){
